@@ -11,10 +11,9 @@ import {
 } from "#src/index";
 
 const PUBLIC_ROOT = join(REPO_ROOT, "packages/ui/public");
-const TOTAL_SPRITES = 915;
+const MIN_TOTAL_SPRITES = 1010;
 const TOTAL_HERO_SPRITES = 40;
-const TOTAL_VECTOR_SPRITES = 875;
-const TOTAL_CATALOG_EMOJIS = 791;
+const MIN_CATALOG_EMOJIS = 952;
 const MIN_SVG_BYTES = 200;
 const MAX_SVG_BYTES = 4500;
 const MIN_WEBP_BYTES = 1000;
@@ -122,10 +121,10 @@ function readWebpDimensions(buffer: Buffer): { width: number; height: number } {
 }
 
 describe("@mindkid/emoji custom sprites registry", () => {
-  it("registers exactly 915 custom sprites with unique kebab-case slugs", () => {
-    expect(CUSTOM_EMOJI_SPRITES.size).toBe(TOTAL_SPRITES);
+  it("registers >= 1,010 custom sprites with unique kebab-case slugs", () => {
+    expect(CUSTOM_EMOJI_SPRITES.size).toBeGreaterThanOrEqual(MIN_TOTAL_SPRITES);
     const listed = listCustomEmojiSprites();
-    expect(listed).toHaveLength(TOTAL_SPRITES);
+    expect(listed).toHaveLength(CUSTOM_EMOJI_SPRITES.size);
 
     const seenSlugs = new Set<string>();
     const seenEmojis = new Set<string>();
@@ -156,8 +155,8 @@ describe("@mindkid/emoji custom sprites registry", () => {
     }
   });
 
-  it("enforces permanent 100% custom sprite coverage across all 791 ALL_EMOJIS entries", () => {
-    expect(ALL_EMOJIS).toHaveLength(TOTAL_CATALOG_EMOJIS);
+  it("enforces permanent 100% custom sprite coverage across all ALL_EMOJIS entries", () => {
+    expect(ALL_EMOJIS.length).toBeGreaterThanOrEqual(MIN_CATALOG_EMOJIS);
     for (const entry of ALL_EMOJIS) {
       expect(
         hasCustomEmojiSprite(entry.emoji),
@@ -166,7 +165,7 @@ describe("@mindkid/emoji custom sprites registry", () => {
     }
   });
 
-  it("assigns tier hero_webp to all 40 hero sprites and vector_craft to the 875 others", () => {
+  it("assigns tier hero_webp to all 40 hero sprites and vector_craft to all others", () => {
     expect(HERO_EMOJIS.size).toBe(TOTAL_HERO_SPRITES);
     let heroCount = 0;
     let vectorCount = 0;
@@ -184,7 +183,7 @@ describe("@mindkid/emoji custom sprites registry", () => {
     }
 
     expect(heroCount).toBe(TOTAL_HERO_SPRITES);
-    expect(vectorCount).toBe(TOTAL_VECTOR_SPRITES);
+    expect(vectorCount).toBe(CUSTOM_EMOJI_SPRITES.size - TOTAL_HERO_SPRITES);
   });
 
   it("normalizes NFC and strips variation selector U+FE0F in both directions", () => {

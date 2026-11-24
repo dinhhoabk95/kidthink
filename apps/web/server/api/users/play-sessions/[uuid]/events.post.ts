@@ -9,6 +9,7 @@ import {
   getOrSetGuestDeviceId,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
+import { requireCurrentConsent } from "#server/utils/consent-guard";
 import { readJsonBodyWithLimit } from "#server/utils/request-body";
 
 const EventsSchema = z
@@ -38,6 +39,7 @@ export default defineEventHandler(async (event) => {
   }
 
   await enforceTwoAxisRateLimit(event, "play:events", String(user.user_id));
+  await requireCurrentConsent(Number(user.user_id), "child_data");
 
   const rawBody = await readJsonBodyWithLimit(event);
   const parsed = EventsSchema.safeParse(rawBody);

@@ -251,5 +251,12 @@ export const C5_PHO_02_SEED: SkillSeed = {
       theme: "nature",
       rounds: 3,
     },
+    {
+      code: "GL-C5-PHO-INTRO-7302",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 2,
+      theme: "body",
+    },
   ],
 };

@@ -1,98 +1,38 @@
-import { getOwnerDb, notificationEndpoints } from "@mindkid/db";
-import { InternalError, ValidationError } from "@mindkid/errors/common";
-import { encryptFcmToken } from "@mindkid/notification";
-import { and, eq } from "drizzle-orm";
-import { defineEventHandler, readBody } from "h3";
+import { ValidationError } from "@mindkid/errors/common";
+import { defineEventHandler } from "h3";
 import { z } from "zod";
-
+import { registerUserNotificationEndpoint } from "#server/services/notification-service";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { readRequestBody } from "#server/utils/request-body";
 
-const endpointRegistrationSchema = z.object({
-  provider: z.literal("fcm_web", {
-    error: "Provider phải là fcm_web",
-  }),
-  client_installation_id: z
-    .string()
-    .uuid({ message: "client_installation_id phải là UUID hợp lệ" }),
-  token: z.string().min(10, { message: "Token quá ngắn hoặc không hợp lệ" }),
-});
+const endpointRegistrationSchema = z
+  .object({
+    provider: z.literal("fcm_web", {
+      error: "Provider phải là fcm_web",
+    }),
+    client_installation_id: z
+      .string()
+      .uuid({ message: "client_installation_id phải là UUID hợp lệ" }),
+    token: z
+      .string()
+      .min(10, { message: "Token quá ngắn hoặc không hợp lệ" })
+      .max(4096, { message: "Token vượt quá độ dài tối đa cho phép" }),
+  })
+  .strict();
 
 export default defineEventHandler(async (event) => {
   const user = requireWebUserSession(event);
   const userId = Number(user.user_id);
-  const body = (await readBody(event).catch(() => ({}))) || {};
+  const body = await readRequestBody(event);
   const parsed = endpointRegistrationSchema.safeParse(body);
 
   if (!parsed.success) {
     throw new ValidationError(parsed.error.issues[0]?.message);
   }
 
-  const {
-    provider,
-    client_installation_id: installationId,
-    token,
-  } = parsed.data;
-
-  // Encrypt token and get HMAC fingerprint
-  const { tokenEncrypted, tokenFingerprint } = encryptFcmToken(token);
-
-  const db = getOwnerDb();
-
-  // Check if endpoint exists for (userId, installationId)
-  const [existing] = await db
-    .select()
-    .from(notificationEndpoints)
-    .where(
-      and(
-        eq(notificationEndpoints.userId, userId),
-        eq(notificationEndpoints.clientInstallationId, installationId)
-      )
-    );
-
-  let resultEndpoint = existing;
-
-  if (existing) {
-    // Rotate / update token
-    const [updated] = await db
-      .update(notificationEndpoints)
-      .set({
-        tokenEncrypted,
-        tokenFingerprint,
-        status: "active",
-        lastSeenAt: new Date(),
-        invalidatedAt: null,
-        updatedAt: new Date(),
-      })
-      .where(eq(notificationEndpoints.id, existing.id))
-      .returning();
-
-    resultEndpoint = updated;
-  } else {
-    // Create new endpoint
-    const [created] = await db
-      .insert(notificationEndpoints)
-      .values({
-        userId,
-        provider,
-        clientInstallationId: installationId,
-        tokenEncrypted,
-        tokenFingerprint,
-        status: "active",
-        lastSeenAt: new Date(),
-      })
-      .returning();
-
-    resultEndpoint = created;
-  }
-
-  if (!resultEndpoint) {
-    throw new InternalError("ENDPOINT_FAILED");
-  }
-
-  // BR-BPS-04: Token is NEVER echoed back in response
-  return {
-    uuid: resultEndpoint.uuid,
-    provider: resultEndpoint.provider,
-    status: resultEndpoint.status,
-  };
+  return await registerUserNotificationEndpoint(userId, {
+    provider: parsed.data.provider,
+    clientInstallationId: parsed.data.client_installation_id,
+    token: parsed.data.token,
+  });
 });

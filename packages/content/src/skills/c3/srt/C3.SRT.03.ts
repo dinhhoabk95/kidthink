@@ -237,6 +237,16 @@ export const C3_SRT_03_SEED: SkillSeed = {
   dataset: C3_SRT_03_DATASET,
   levels: [
     {
+      code: "GL-C3-SRT-INTRO-7003",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "art",
+      rounds: 1,
+      sequence_no: 1,
+    },
+    {
       code: "GL-C3-SRT-TAP-0004",
       template: "GT-001",
       band: "3-4",

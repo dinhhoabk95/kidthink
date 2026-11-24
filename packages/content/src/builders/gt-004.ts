@@ -8,7 +8,9 @@ import type {
 import {
   assetKey,
   createRng,
+  pickAgeBandPrompt,
   resolveItemAsset,
+  resolveThemeContainers,
   safeGetItem,
   shuffleDeterministic,
 } from "./utils.js";
@@ -64,16 +66,23 @@ export const projectGT004: Projection<"GT-004"> = {
       itemA = safeGetItem(glyphCandidates, roundIdx % glyphCandidates.length);
     }
 
+    const containerPair = resolveThemeContainers(opts.theme);
     const groups = [
       {
         group_id: "g1",
         label: itemA.label.length > 24 ? itemA.label.slice(0, 24) : itemA.label,
-        label_emoji: itemA.image?.kind === "emoji" ? itemA.image.ref : "📁",
+        label_emoji:
+          itemA.image?.kind === "emoji"
+            ? itemA.image.ref
+            : containerPair.primaryEmoji,
       },
       {
         group_id: "g2",
         label: itemB.label.length > 24 ? itemB.label.slice(0, 24) : itemB.label,
-        label_emoji: itemB.image?.kind === "emoji" ? itemB.image.ref : "📂",
+        label_emoji:
+          itemB.image?.kind === "emoji"
+            ? itemB.image.ref
+            : containerPair.secondaryEmoji,
       },
     ];
 
@@ -93,9 +102,19 @@ export const projectGT004: Projection<"GT-004"> = {
       })),
     ];
 
+    const prompt = pickAgeBandPrompt(
+      opts.band,
+      {
+        mam: "Bé chia đồ vật vào đúng hai giỏ nhé!",
+        choi: "Bé thử xếp mỗi loại vào đúng giỏ nhé!",
+        la: "Đố bé phân loại thật khéo vào hai nhóm!",
+      },
+      "Bé xếp đồ vật vào đúng giỏ nhé!"
+    );
+
     return {
       content_pack: {
-        prompt: "Bé hãy phân loại vào đúng nhóm nhé!",
+        prompt,
         groups,
         items: shuffleDeterministic(items, rng),
       },

@@ -1,6 +1,12 @@
 import crypto from "node:crypto";
 import {
+  ACCESS_TIER,
+  CONSENT_ACTION,
+  CONSENT_TYPE,
   childProfiles,
+  consentLogs,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   gameLevels,
@@ -72,6 +78,13 @@ async function createChildFixture(birthYear: number): Promise<ChildFixture> {
   if (!user) {
     throw new Error("Không tạo được user");
   }
+  await db.insert(consentLogs).values({
+    userId: user.id,
+    consentType: CONSENT_TYPE.CHILD_DATA,
+    action: CONSENT_ACTION.ACCEPTED,
+    ipAddress: "127.0.0.1",
+    userAgent: "vitest",
+  });
   const [child] = await db
     .insert(childProfiles)
     .values({
@@ -122,7 +135,7 @@ describe("Child Competency Explorer API (child-competency-explorer.md, BR-CCE-02
           difficultyParams: {},
           ageMin: 5,
           ageMax: 6,
-          accessTier: "premium",
+          accessTier: ACCESS_TIER.PREMIUM,
         },
         {
           code: levelAge45Code,
@@ -133,7 +146,7 @@ describe("Child Competency Explorer API (child-competency-explorer.md, BR-CCE-02
           difficultyParams: {},
           ageMin: 4,
           ageMax: 5,
-          accessTier: "free",
+          accessTier: ACCESS_TIER.FREE,
         },
       ])
       .returning({ id: gameLevels.id });
@@ -154,7 +167,12 @@ describe("Child Competency Explorer API (child-competency-explorer.md, BR-CCE-02
     }
     for (const uid of createdUserIds) {
       await db.delete(entitlements).where(eq(entitlements.userId, uid));
-      await db.delete(users).where(eq(users.id, uid));
+      await db.delete(childProfiles).where(eq(childProfiles.userId, uid));
+      // consent_logs is INSERT-only (BR-DM-05) with ON DELETE RESTRICT on users.id.
+      await db
+        .delete(users)
+        .where(eq(users.id, uid))
+        .catch(() => undefined);
     }
   });
 
@@ -193,8 +211,8 @@ describe("Child Competency Explorer API (child-competency-explorer.md, BR-CCE-02
     await db.insert(entitlements).values({
       userId: fixture.userId,
       entitlementKey: "play_premium_games",
-      source: "manual_grant",
-      status: "active",
+      source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+      status: ENTITLEMENT_STATUS.ACTIVE,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
     await invalidateUserEntitlementsCache(fixture.userId);

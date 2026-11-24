@@ -1,11 +1,15 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import {
+  CHILD_STATUS,
+  CONSENT_ACTION,
+  CONSENT_TYPE,
   cancelUserDeletion,
   consentLogs,
   getOwnerDb,
   hardPurgeUser,
   requestUserDeletion,
+  USER_STATUS,
   userAccounts,
 } from "#src/index";
 import { childProfiles } from "#src/schema/child";
@@ -19,7 +23,13 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
 
     const [u] = await db
       .insert(users)
-      .values({ email, displayName: "Parent Purge Test" })
+      .values({
+        email,
+        displayName: "Parent Purge Test",
+        emailVerified: true,
+        status: USER_STATUS.ACTIVE,
+        emailVerifiedAt: new Date("2026-07-01T00:00:00Z"),
+      })
       .returning();
     if (!u) {
       throw new Error("Failed to insert user");
@@ -29,8 +39,8 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
       .insert(consentLogs)
       .values({
         userId: u.id,
-        consentType: "child_data",
-        action: "accepted",
+        consentType: CONSENT_TYPE.CHILD_DATA,
+        action: CONSENT_ACTION.ACCEPTED,
         ipAddress: "127.0.0.1",
         userAgent: "test-agent",
       })
@@ -59,11 +69,27 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
         displayName: "Bé Mai",
         birthYear: 2020,
         avatarId: "preset_dog_01",
-        status: "archived",
+        status: CHILD_STATUS.ARCHIVED,
       })
       .returning();
     if (!archivedChild) {
       throw new Error("Failed to insert archived child");
+    }
+
+    const individualPurgeAt = new Date("2026-08-25T00:00:00Z");
+    const [individuallyDeletedChild] = await db
+      .insert(childProfiles)
+      .values({
+        userId: u.id,
+        displayName: "Bé Trúc",
+        birthYear: 2021,
+        avatarId: "preset_fox_01",
+        status: CHILD_STATUS.PENDING_DELETION,
+        purgeAt: individualPurgeAt,
+      })
+      .returning();
+    if (!individuallyDeletedChild) {
+      throw new Error("Failed to insert individually deleted child");
     }
 
     await db.insert(userAccounts).values({
@@ -86,23 +112,41 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
     await requestUserDeletion(db, u.id, baseDate);
 
     const [uDeleted] = await db.select().from(users).where(eq(users.id, u.id));
-    expect(uDeleted?.status).toBe("deleted");
+    expect(uDeleted?.status).toBe(USER_STATUS.DELETED);
 
     const [childPending] = await db
       .select()
       .from(childProfiles)
       .where(eq(childProfiles.id, child.id));
-    expect(childPending?.status).toBe("pending_deletion");
+    expect(childPending?.status).toBe(CHILD_STATUS.PENDING_DELETION);
 
     await cancelUserDeletion(db, u.id);
     const [uRestored] = await db.select().from(users).where(eq(users.id, u.id));
-    expect(uRestored?.status).toBe("active");
+    expect(uRestored?.status).toBe(USER_STATUS.ACTIVE);
+    expect(uRestored?.purgeAt).toBeNull();
+
+    const [childRestored] = await db
+      .select()
+      .from(childProfiles)
+      .where(eq(childProfiles.id, child.id));
+    expect(childRestored?.status).toBe(CHILD_STATUS.ACTIVE);
 
     const [archivedAfterCancel] = await db
       .select()
       .from(childProfiles)
       .where(eq(childProfiles.id, archivedChild.id));
-    expect(archivedAfterCancel?.status).toBe("archived");
+    expect(archivedAfterCancel?.status).toBe(CHILD_STATUS.ARCHIVED);
+
+    const [individuallyDeletedAfterCancel] = await db
+      .select()
+      .from(childProfiles)
+      .where(eq(childProfiles.id, individuallyDeletedChild.id));
+    expect(individuallyDeletedAfterCancel?.status).toBe(
+      CHILD_STATUS.PENDING_DELETION
+    );
+    expect(individuallyDeletedAfterCancel?.purgeAt?.getTime()).toBe(
+      individualPurgeAt.getTime()
+    );
 
     const { scheduledPurgeAt: purgeAt2 } = await requestUserDeletion(
       db,
@@ -159,5 +203,42 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
       .where(eq(consentLogs.id, consent.id));
     expect(consentIntact).toBeDefined();
     expect(consentIntact?.userId).toBe(u.id);
+  });
+
+  it("BR-CDC-10: cancelUserDeletion khôi phục USER_STATUS.PENDING_VERIFICATION khi emailVerified = false", async () => {
+    const db = getOwnerDb();
+    const email = `purge-unverified-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
+
+    const [unverifiedUser] = await db
+      .insert(users)
+      .values({
+        email,
+        displayName: "Unverified Parent",
+        emailVerified: false,
+        status: USER_STATUS.PENDING_VERIFICATION,
+      })
+      .returning();
+    if (!unverifiedUser) {
+      throw new Error("Failed to insert unverified user");
+    }
+
+    const baseDate = new Date("2026-08-01T00:00:00Z");
+    await requestUserDeletion(db, unverifiedUser.id, baseDate);
+
+    const [deletedUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, unverifiedUser.id));
+    expect(deletedUser?.status).toBe(USER_STATUS.DELETED);
+
+    await cancelUserDeletion(db, unverifiedUser.id);
+
+    const [restoredUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, unverifiedUser.id));
+    expect(restoredUser?.status).toBe(USER_STATUS.PENDING_VERIFICATION);
+    expect(restoredUser?.status).not.toBe(USER_STATUS.ACTIVE);
+    expect(restoredUser?.purgeAt).toBeNull();
   });
 });

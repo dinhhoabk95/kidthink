@@ -227,5 +227,12 @@ export const C5_STO_02_SEED: SkillSeed = {
       theme: "animal",
       rounds: 3,
     },
+    {
+      code: "GL-C5-STO-INTRO-6002",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 3,
+      theme: "homeland",
+    },
   ],
 };

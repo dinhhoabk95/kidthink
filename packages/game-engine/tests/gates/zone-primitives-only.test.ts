@@ -28,14 +28,10 @@ function findPromptTextCalls(source: string): number[] {
 }
 
 /**
- * Engine không vào khung năm vùng, kèm lý do (`play-stage-zones.md` mục 5 hàng
- * "Intro GT-000", câu hỏi mở số 5, quyết 2026-10-03). Danh sách ngắn và có lý do:
- * thêm mã vào đây là một quyết định của spec, không phải đường tắt.
+ * Engine không vào khung năm vùng, kèm lý do (`play-stage-zones.md` mục 5).
+ * Mọi 38 engine (`GT-000..GT-037`) nay đã dời hoàn toàn sang khung năm vùng (`usesPromptZone = true`).
  */
-const EXEMPT_CODES: Readonly<Record<string, string>> = {
-  "GT-000":
-    "màn làm quen không chấm điểm, không khay, không nộp bài; ba nút là DOM của trang",
-};
+const EXEMPT_CODES: Readonly<Record<string, string>> = {};
 
 const CODE_FOLDER = /^GT-\d{3}$/;
 

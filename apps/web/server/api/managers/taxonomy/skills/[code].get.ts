@@ -1,17 +1,7 @@
-import {
-  competencies,
-  contentSkillMap,
-  gameLevels,
-  getOwnerDb,
-  learningObjectives,
-  skillPrerequisites,
-  skills,
-  strands,
-} from "@mindkid/db";
-import { NotFoundError, ValidationError } from "@mindkid/errors/common";
-import { and, eq } from "drizzle-orm";
+import { ValidationError } from "@mindkid/errors/common";
 import { defineEventHandler, getRouterParams } from "h3";
 import { z } from "zod";
+import { getManagerTaxonomySkillDetail } from "#server/services/taxonomy-service";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const SkillCodeParamsSchema = z.object({
@@ -19,148 +9,12 @@ const SkillCodeParamsSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  // Both super_admin and content_reviewer can read (BR-TXB-01)
   await requireManagerSession(event);
 
   const parsedParams = SkillCodeParamsSchema.safeParse(getRouterParams(event));
   if (!parsedParams.success) {
     throw new ValidationError();
   }
-  const { code } = parsedParams.data;
 
-  const db = getOwnerDb();
-
-  // 1. Fetch skill
-  const skillRows = await db
-    .select({
-      id: skills.id,
-      code: skills.code,
-      name: skills.name,
-      description: skills.description,
-      strandId: skills.strandId,
-      ageMin: skills.ageMin,
-      ageMax: skills.ageMax,
-      difficulty: skills.difficulty,
-      thinkingProcesses: skills.thinkingProcesses,
-      whatAxis: skills.whatAxis,
-      tier: skills.tier,
-      strandCode: strands.code,
-      strandName: strands.name,
-      competencyCode: competencies.code,
-      competencyName: competencies.name,
-    })
-    .from(skills)
-    .innerJoin(strands, eq(skills.strandId, strands.id))
-    .innerJoin(competencies, eq(strands.competencyId, competencies.id))
-    .where(eq(skills.code, code))
-    .limit(1);
-
-  const skill = skillRows[0];
-  if (!skill) {
-    throw new NotFoundError();
-  }
-
-  // 2. Fetch learning objectives
-  const los = await db
-    .select()
-    .from(learningObjectives)
-    .where(eq(learningObjectives.skillId, skill.id))
-    .orderBy(learningObjectives.position);
-
-  // 3. Fetch 2-way prerequisites (Upstream prerequisites and Downstream unlocks) (BR-TXB-05)
-  const upstreamPrereqs = await db
-    .select({
-      skillId: skills.id,
-      code: skills.code,
-      name: skills.name,
-      strength: skillPrerequisites.strength,
-    })
-    .from(skillPrerequisites)
-    .innerJoin(skills, eq(skillPrerequisites.prerequisiteId, skills.id))
-    .where(eq(skillPrerequisites.skillId, skill.id));
-
-  const downstreamUnlocks = await db
-    .select({
-      skillId: skills.id,
-      code: skills.code,
-      name: skills.name,
-      strength: skillPrerequisites.strength,
-    })
-    .from(skillPrerequisites)
-    .innerJoin(skills, eq(skillPrerequisites.skillId, skills.id))
-    .where(eq(skillPrerequisites.prerequisiteId, skill.id));
-
-  // 4. Fetch attached content (game levels)
-  const attachedLevelsRows = await db
-    .select({
-      id: gameLevels.id,
-      code: gameLevels.code,
-      title: gameLevels.title,
-      access_tier: gameLevels.accessTier,
-      weight: contentSkillMap.weight,
-    })
-    .from(contentSkillMap)
-    .innerJoin(
-      gameLevels,
-      and(
-        eq(contentSkillMap.entityType, "game_level"),
-        eq(contentSkillMap.entityId, gameLevels.id)
-      )
-    )
-    .where(eq(contentSkillMap.skillId, skill.id));
-
-  const uniqueLevelsMap = new Map<
-    number,
-    (typeof attachedLevelsRows)[number] & { status: "published" }
-  >();
-  for (const row of attachedLevelsRows) {
-    if (!uniqueLevelsMap.has(row.id)) {
-      uniqueLevelsMap.set(row.id, { ...row, status: "published" });
-    }
-  }
-  const attachedLevels = Array.from(uniqueLevelsMap.values());
-
-  // 5. Structure response per §7.2
-  return {
-    identifiers: {
-      code: skill.code,
-      name: skill.name,
-      description: skill.description,
-      strand_code: skill.strandCode,
-      strand_name: skill.strandName,
-      competency_code: skill.competencyCode,
-      competency_name: skill.competencyName,
-      tier: skill.tier,
-      status: "seeded",
-      is_deprecated: false,
-    },
-    attributes: {
-      age_min: skill.ageMin,
-      age_max: skill.ageMax,
-      difficulty: skill.difficulty,
-      thinking_processes: skill.thinkingProcesses || [],
-      what_axis: skill.whatAxis || [],
-    },
-    learning_objectives: los.map((lo) => ({
-      id: lo.id,
-      code: lo.code,
-      behaviour: lo.behaviour,
-      observable_criteria: lo.observableCriteria,
-      position: lo.position,
-    })),
-    prerequisites: {
-      upstream: upstreamPrereqs,
-      downstream: downstreamUnlocks,
-    },
-    attached_content: {
-      levels: attachedLevels,
-      total_published: attachedLevels.length,
-      total_draft: 0,
-    },
-    actions: {
-      author_url: `/studio/levels?skill_code=${skill.code}`,
-      pr_notice:
-        "Taxonomy là Lớp 1 — thay đổi cấu trúc taxonomy cần thực hiện qua Pull Request trong kho lưu trữ, không thể sửa trực tiếp từ giao diện quản trị.",
-    },
-  };
+  return await getManagerTaxonomySkillDetail(parsedParams.data.code);
 });

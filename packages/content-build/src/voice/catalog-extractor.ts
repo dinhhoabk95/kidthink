@@ -11,6 +11,9 @@ import {
   DONG_DAO_CELEBRATION_CHANTS,
   GT001_STORY_LINE,
   GT001_THEME_STORIES,
+  GT002_ALL_STORY_LINES,
+  GT002_DEFAULT_STORY_LINE,
+  GT002_THEME_STORIES,
   PRESCHOOL_ENCOURAGEMENT_BY_BAND,
   RETRY_ENCOURAGEMENTS,
   spokenKeywordForAsset,
@@ -61,11 +64,19 @@ const Gt000StepExtractSchema = z.object({
 
 const Gt000PackExtractSchema = z.object({
   prompt: z.string().optional(),
+  story_context: z
+    .object({
+      hook_line: z.string().optional(),
+      resolution_line: z.string().optional(),
+    })
+    .optional(),
   assets: z.array(Gt000AssetExtractSchema),
   steps: z.array(Gt000StepExtractSchema).optional(),
   segments: z
     .array(
       z.object({
+        scene_cue: z.string().optional(),
+        milestone_line: z.string().optional(),
         steps: z.array(Gt000StepExtractSchema),
       })
     )
@@ -276,6 +287,36 @@ function collectGt000Pack(
 ): void {
   if (pack.prompt) {
     collector.add(pack.prompt, "gt000_step", `${sourceRef}:prompt`);
+  }
+  if (pack.story_context?.hook_line) {
+    collector.add(
+      pack.story_context.hook_line,
+      "gt000_step",
+      `${sourceRef}:hook`
+    );
+  }
+  if (pack.story_context?.resolution_line) {
+    collector.add(
+      pack.story_context.resolution_line,
+      "gt000_step",
+      `${sourceRef}:resolution`
+    );
+  }
+  for (const [segIdx, seg] of (pack.segments ?? []).entries()) {
+    if (seg.scene_cue) {
+      collector.add(
+        seg.scene_cue,
+        "gt000_step",
+        `${sourceRef}:seg${segIdx + 1}:cue`
+      );
+    }
+    if (seg.milestone_line) {
+      collector.add(
+        seg.milestone_line,
+        "gt000_step",
+        `${sourceRef}:seg${segIdx + 1}:milestone`
+      );
+    }
   }
 
   const assetMap = new Map<string, Gt000AssetExtract>();
@@ -519,6 +560,13 @@ function collectSharedKidUiConstants(collector: CatalogCollector): void {
   collector.add(GT001_STORY_LINE, "kid_ui", "gt001:story:default");
   for (const [themeCode, storyText] of Object.entries(GT001_THEME_STORIES)) {
     collector.add(storyText, "kid_ui", `gt001:story:${themeCode}`);
+  }
+  collector.add(GT002_DEFAULT_STORY_LINE, "kid_ui", "gt002:story:default");
+  for (const [themeCode, storyText] of Object.entries(GT002_THEME_STORIES)) {
+    collector.add(storyText, "kid_ui", `gt002:story:${themeCode}`);
+  }
+  for (const [idx, storyText] of GT002_ALL_STORY_LINES.entries()) {
+    collector.add(storyText, "kid_ui", `gt002:story_line:${idx + 1}`);
   }
 }
 

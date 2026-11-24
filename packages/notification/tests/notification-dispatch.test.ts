@@ -1,7 +1,10 @@
 import {
   getOwnerDb,
+  NOTIFICATION_CHANNEL,
+  NOTIFICATION_STATUS,
   notificationDeliveries,
   notifications,
+  RECIPIENT_TYPE,
   users,
 } from "@mindkid/db";
 import { disconnectQueue, getQueue } from "@mindkid/queue";
@@ -61,8 +64,8 @@ describe("dispatchTransactionalEmail (BR-JOB-01, BR-JOB-02, BR-NOT-09, BR-NOT-12
       .from(notificationDeliveries)
       .where(eq(notificationDeliveries.notificationId, notificationId));
 
-    expect(delivery?.channel).toBe("email");
-    expect(delivery?.status).toBe("queued");
+    expect(delivery?.channel).toBe(NOTIFICATION_CHANNEL.EMAIL);
+    expect(delivery?.status).toBe(NOTIFICATION_STATUS.QUEUED);
 
     const job = await getQueue().getJob(`email:send:${notificationId}`);
     expect(job, "jobId phải suy từ notificationId (BR-JOB-02)").toBeDefined();
@@ -143,7 +146,7 @@ describe("dispatchTransactionalEmail (BR-JOB-01, BR-JOB-02, BR-NOT-09, BR-NOT-12
     const [notification] = await db
       .insert(notifications)
       .values({
-        recipientType: "user",
+        recipientType: RECIPIENT_TYPE.USER,
         recipientId: userId,
         templateCode: CODE,
         payload: {},
@@ -152,8 +155,8 @@ describe("dispatchTransactionalEmail (BR-JOB-01, BR-JOB-02, BR-NOT-09, BR-NOT-12
     const notificationId = notification?.id ?? 0;
     await db.insert(notificationDeliveries).values({
       notificationId,
-      channel: "email",
-      status: "queued",
+      channel: NOTIFICATION_CHANNEL.EMAIL,
+      status: NOTIFICATION_STATUS.QUEUED,
     });
     created.push(notificationId);
 

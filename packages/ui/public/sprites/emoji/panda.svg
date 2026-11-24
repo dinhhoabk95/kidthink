@@ -1,81 +1,26 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Gấu trúc</title>
   <defs>
-    <radialGradient cx="40%" cy="32%" id="pandaHead" r="70%">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="62%" stop-color="#fafaf9" />
-      <stop offset="100%" stop-color="#e7e5e4" />
-    </radialGradient>
-    <radialGradient cx="35%" cy="35%" id="pandaDark" r="70%">
-      <stop offset="0%" stop-color="#57534e" />
-      <stop offset="100%" stop-color="#292524" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="pdFur" r="70%"><stop offset="0%" stop-color="#ffffff" /><stop offset="55%" stop-color="#f8fafc" /><stop offset="100%" stop-color="#e2e8f0" /></radialGradient>
   </defs>
-  <ellipse cx="60" cy="73" fill="#57534e" opacity="0.28" rx="40" ry="36" />
-  <circle
-    cx="31"
-    cy="33"
-    fill="url(#pandaDark)"
-    r="15"
-    stroke="#44403c"
-    stroke-width="4"
-  />
-  <circle
-    cx="89"
-    cy="33"
-    fill="url(#pandaDark)"
-    r="15"
-    stroke="#44403c"
-    stroke-width="4"
-  />
-  <ellipse
-    cx="60"
-    cy="68"
-    fill="url(#pandaHead)"
-    rx="40"
-    ry="36"
-    stroke="#57534e"
-    stroke-width="4"
-  />
-  <ellipse
-    cx="43"
-    cy="63"
-    fill="url(#pandaDark)"
-    rx="11"
-    ry="13"
-    transform="rotate(20 43 63)"
-  />
-  <ellipse
-    cx="77"
-    cy="63"
-    fill="url(#pandaDark)"
-    rx="11"
-    ry="13"
-    transform="rotate(-20 77 63)"
-  />
-  <circle cx="45" cy="61" fill="#ffffff" r="4.8" />
-  <circle cx="45.5" cy="61.5" fill="#1c1917" r="2.8" />
-  <circle cx="44.2" cy="59.8" fill="#ffffff" r="1.4" />
-  <circle cx="75" cy="61" fill="#ffffff" r="4.8" />
-  <circle cx="74.5" cy="61.5" fill="#1c1917" r="2.8" />
-  <circle cx="73.2" cy="59.8" fill="#ffffff" r="1.4" />
-  <circle cx="32" cy="77" fill="#fb7185" fill-opacity="0.48" r="5.5" />
-  <circle cx="88" cy="77" fill="#fb7185" fill-opacity="0.48" r="5.5" />
-  <ellipse cx="60" cy="74" fill="#292524" rx="6" ry="4" />
-  <path
-    d="M60 78V83M52 83C55 87 58 87 60 83C62 87 65 87 68 83"
-    stroke="#44403c"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="2.8"
-  />
-  <ellipse
-    cx="48"
-    cy="43"
-    fill="#ffffff"
-    fill-opacity="0.75"
-    rx="9"
-    ry="4"
-    transform="rotate(-18 48 43)"
-  />
+  <ellipse cx="60" cy="106" fill="#1e293b" opacity="0.22" rx="38" ry="5.5" />
+    <!-- Ears -->
+    <circle cx="40" cy="24" fill="#27272a" r="8" stroke="#18181b" stroke-width="3.5" />
+    <circle cx="76" cy="24" fill="#27272a" r="8" stroke="#18181b" stroke-width="3.5" />
+    <!-- Full seated body + black shoulder saddle + hind legs -->
+    <ellipse cx="58" cy="74" fill="url(#pdFur)" rx="28" ry="26" stroke="#334155" stroke-width="4" />
+    <path d="M33 60C42 52 74 52 83 60C85 68 79 73 72 70C65 66 51 66 44 70C37 73 31 68 33 60Z" fill="#27272a" stroke="#18181b" stroke-linejoin="round" stroke-width="3.4" />
+    <ellipse cx="38" cy="95" fill="#27272a" rx="11" ry="8" stroke="#18181b" stroke-width="3.5" />
+    <ellipse cx="78" cy="95" fill="#27272a" rx="11" ry="8" stroke="#18181b" stroke-width="3.5" />
+    <!-- Bamboo stalk -->
+    <path d="M88 30L80 96" stroke="#15803d" stroke-linecap="round" stroke-width="5.5" />
+    <path d="M88 42C96 38 102 40 104 45C97 48 91 46 88 42ZM85 60C93 56 99 58 101 63C94 66 88 64 85 60Z" fill="#22c55e" stroke="#14532d" stroke-linejoin="round" stroke-width="2.6" />
+    <!-- Head & eye patches -->
+    <ellipse cx="58" cy="40" fill="url(#pdFur)" rx="22" ry="19" stroke="#334155" stroke-width="4" />
+    <ellipse cx="48" cy="40" fill="#27272a" rx="6.5" ry="5.2" transform="rotate(-18 48 40)" />
+    <ellipse cx="68" cy="40" fill="#27272a" rx="6.5" ry="5.2" transform="rotate(18 68 40)" />
+    <circle cx="49" cy="39" fill="#ffffff" r="1.8" />
+    <circle cx="67" cy="39" fill="#ffffff" r="1.8" />
+    <ellipse cx="58" cy="47" fill="#18181b" rx="4" ry="2.6" />
+    <path d="M53 52C56 55 60 55 63 52" stroke="#18181b" stroke-linecap="round" stroke-width="2.4" />
 </svg>

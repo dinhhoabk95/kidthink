@@ -1,5 +1,5 @@
 import { hashPassword } from "@mindkid/auth";
-import { getAppDb, users } from "@mindkid/db";
+import { getAppDb, USER_STATUS, users } from "@mindkid/db";
 import { RestrictedModeError } from "@mindkid/errors/auth";
 import { createEvent } from "h3";
 import { describe, expect, it } from "vitest";
@@ -18,14 +18,14 @@ describe("Task 6 — Server-Enforced Restricted Mode (D-EQ)", () => {
         email,
         passwordHash: passHash,
         displayName: "Pending User",
-        status: "pending_verification",
+        status: USER_STATUS.PENDING_VERIFICATION,
       })
       .returning();
     if (!user) {
       throw new Error("Expected inserted user");
     }
 
-    expect(user.status).toBe("pending_verification");
+    expect(user.status).toBe(USER_STATUS.PENDING_VERIFICATION);
 
     const event = createEvent(
       {
@@ -72,7 +72,7 @@ describe("Task 6 — Server-Enforced Restricted Mode (D-EQ)", () => {
         email,
         passwordHash: passHash,
         displayName: "Active User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {

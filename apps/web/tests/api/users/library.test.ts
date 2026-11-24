@@ -1,9 +1,12 @@
 import {
+  ACCESS_TIER,
+  CONTENT_ENTITY_TYPE,
   collections,
   curricula,
   gameLevels,
   getOwnerDb,
   libraryItems,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
@@ -89,7 +92,7 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
         email: `lib_user1_${ts}_${rand}@tinimath.test`,
         passwordHash: "hash123",
         displayName: "Library User 1",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     user1Id = u1.id;
@@ -100,7 +103,7 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
         email: `lib_user2_${ts}_${rand}@tinimath.test`,
         passwordHash: "hash123",
         displayName: "Library User 2",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     _user2Id = u2.id;
@@ -129,7 +132,7 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
         templateCode,
         difficulty: 1,
         title: "Đếm số trái cây",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         contentPack: { items: ["apple"] },
         difficultyParams: { count: 3 },
       })
@@ -157,7 +160,7 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
         templateCode,
         difficulty: 2,
         title: "Phân biệt hình tam giác",
-        accessTier: "premium",
+        accessTier: ACCESS_TIER.PREMIUM,
         contentPack: { items: ["triangle"] },
         difficultyParams: { count: 4 },
       })
@@ -170,7 +173,7 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
       .values({
         code: `CUR-P3-LIB-${ts}-${rand}`.slice(0, 50),
         title: "Lộ trình tư duy toán 3-4 tuổi",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })
@@ -198,14 +201,14 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
       // Bookmark standard game level and archived premium game level
       await db.insert(libraryItems).values({
         userId: user1Id,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gameLevel1Id,
         note: "Trò chơi yêu thích của bé",
       });
 
       await db.insert(libraryItems).values({
         userId: user1Id,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gameLevel2Id,
       });
 
@@ -234,7 +237,7 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
       const db = getOwnerDb();
       await db.insert(libraryItems).values({
         userId: user1Id,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gameLevel1Id,
       });
 
@@ -272,7 +275,7 @@ describe("Task #82 — Library & Collections API Suite (BR-MLB-01..07)", () => {
 
       await db.insert(libraryItems).values({
         userId: user1Id,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gameLevel1Id,
         collectionId: col.id,
       });

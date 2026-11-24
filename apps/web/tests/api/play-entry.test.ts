@@ -1,6 +1,14 @@
-import { childProfiles, getOwnerDb, users } from "@mindkid/db";
+import {
+  CONSENT_ACTION,
+  CONSENT_TYPE,
+  childProfiles,
+  consentLogs,
+  getOwnerDb,
+  users,
+} from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 import getPlayHomeHandler from "#server/api/users/play/home.get";
+import { invalidateUserConsentCache } from "#server/utils/consent-guard";
 
 function mockEvent(
   method: string,
@@ -63,6 +71,15 @@ describe("Play Entry & Kid Lobby API (BR-PEN-01..07)", () => {
       })
       .returning();
 
+    await db.insert(consentLogs).values({
+      userId: user.id,
+      consentType: CONSENT_TYPE.CHILD_DATA,
+      action: CONSENT_ACTION.ACCEPTED,
+      ipAddress: "127.0.0.1",
+      userAgent: "vitest",
+    });
+    await invalidateUserConsentCache(user.id);
+
     const [child] = await db
       .insert(childProfiles)
       .values({
@@ -79,5 +96,36 @@ describe("Play Entry & Kid Lobby API (BR-PEN-01..07)", () => {
     expect(res.child.display_name).toBe("Bé Test");
     expect(res.competency_cards).toHaveLength(6);
     expect(res.locked_items[0].icon).toBe("🔒");
+  });
+
+  it("GET /api/users/play/home returns 428 CONSENT_REQUIRED when active_child_id is set but child_data consent is missing", async () => {
+    const db = getOwnerDb();
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: `play_home_noconsent_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`,
+        passwordHash: "hash123",
+        displayName: "Parent User No Consent",
+      })
+      .returning();
+
+    await invalidateUserConsentCache(user.id);
+
+    const [child] = await db
+      .insert(childProfiles)
+      .values({
+        userId: user.id,
+        displayName: "Bé Chưa Đồng Ý",
+        birthYear: 2021,
+        avatarId: "bunny_1",
+      })
+      .returning();
+
+    const event = mockEvent("GET", user.id, { active_child_id: child.uuid });
+
+    await expect(getPlayHomeHandler(event)).rejects.toMatchObject({
+      statusCode: 428,
+      code: "CONSENT_REQUIRED",
+    });
   });
 });

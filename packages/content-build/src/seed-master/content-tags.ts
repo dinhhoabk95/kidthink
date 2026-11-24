@@ -1,8 +1,13 @@
-import { contentTags, normalizeMechanicTagCode } from "@mindkid/db";
+import {
+  contentTags,
+  type DbExecutor,
+  normalizeMechanicTagCode,
+  TAG_AXIS_CODEC,
+  TAG_STATUS,
+} from "@mindkid/db";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { CONTENT_THEMES } from "@mindkid/shared";
-import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { TAG_VOCABULARY } from "../vocabulary.js";
+import { TAG_VOCABULARY } from "#src/vocabulary";
 
 export interface TagSeedItem {
   code: string;
@@ -190,22 +195,23 @@ const RAW_CONTENT_TAGS: TagSeedItem[] = [
 export const SEED_CONTENT_TAGS: TagSeedItem[] =
   dedupeByAxisPriority(RAW_CONTENT_TAGS);
 
-export async function seedContentTags(db: NodePgDatabase) {
+export async function seedContentTags(db: DbExecutor) {
   for (const tag of SEED_CONTENT_TAGS) {
+    const axisCode = TAG_AXIS_CODEC.toCode(tag.axis);
     await db
       .insert(contentTags)
       .values({
         code: tag.code,
-        axis: tag.axis,
+        axis: axisCode,
         label: tag.label,
-        status: "active",
+        status: TAG_STATUS.ACTIVE,
       })
       .onConflictDoUpdate({
         target: contentTags.code,
         set: {
-          axis: tag.axis,
+          axis: axisCode,
           label: tag.label,
-          status: "active",
+          status: TAG_STATUS.ACTIVE,
         },
       });
   }

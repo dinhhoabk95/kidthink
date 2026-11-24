@@ -1,43 +1,54 @@
 import { requireEnv } from "@mindkid/config";
 import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { defineEventHandler, setHeader } from "h3";
+import {
+  GUEST_SEO_TTL,
+  withGuestSeoCache,
+} from "#server/utils/guest-seo-cache";
 
 export default defineEventHandler(async (event) => {
   setHeader(event, "Content-Type", "application/xml; charset=utf-8");
   setHeader(event, "Cache-Control", "public, max-age=3600");
 
   const siteUrl = requireEnv("SITE_URL");
-  const now = new Date().toISOString().split("T")[0];
 
-  let levels: Array<{ code: string; updatedAt: Date | null }> = [];
-  try {
-    const db = getOwnerDb();
-    levels = await db
-      .select({
-        code: gameLevels.code,
-        updatedAt: gameLevels.updatedAt,
-      })
-      .from(gameLevels);
-  } catch (_err) {
-    // Fallback if db offline or during static compilation
-    levels = [];
-  }
+  return await withGuestSeoCache<string>({
+    namespace: "sitemap",
+    key: "games",
+    ttlSeconds: GUEST_SEO_TTL.LONG,
+    fetcher: async () => {
+      const now = new Date().toISOString().split("T")[0];
+      let levels: Array<{ code: string; updatedAt: Date | null }> = [];
+      try {
+        const db = getOwnerDb();
+        levels = await db
+          .select({
+            code: gameLevels.code,
+            updatedAt: gameLevels.updatedAt,
+          })
+          .from(gameLevels);
+      } catch (_err) {
+        // Fallback if db offline or during static compilation
+        levels = [];
+      }
 
-  const urlsXml = levels
-    .map(
-      (lvl) => `  <url>
+      const urlsXml = levels
+        .map(
+          (lvl) => `  <url>
     <loc>${siteUrl}/games/${lvl.code}</loc>
     <lastmod>${(lvl.updatedAt || new Date()).toISOString().split("T")[0]}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>`
-    )
-    .join("\n");
+        )
+        .join("\n");
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urlsXml || `  <url><loc>${siteUrl}/games</loc><lastmod>${now}</lastmod></url>`}
 </urlset>`;
 
-  return xml.trim();
+      return xml.trim();
+    },
+  });
 });

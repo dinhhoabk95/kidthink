@@ -1,24 +1,42 @@
 import {
+  ACCESS_TIER,
   aiUsageLog,
   childProfiles,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
+  entitlementKeys,
+  entitlements,
   gameLevels,
   getDb,
   getOwnerDb,
+  SEED_ENTITLEMENT_KEYS,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
 import { AI_SUGGESTION_LABEL } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { aiAssistantService } from "#server/services/ai-assistant.js";
-import { grantCredits } from "#server/services/ai-credit.js";
+import { getCreditBalance, grantCredits } from "#server/services/ai-credit.js";
 import { aiProvider } from "#server/services/ai-provider.js";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
+  beforeAll(async () => {
+    const db = getOwnerDb();
+    for (const key of SEED_ENTITLEMENT_KEYS) {
+      await db.insert(entitlementKeys).values(key).onConflictDoNothing();
+    }
+  });
+
   afterEach(() => {
     aiProvider.resetMockModes();
   });
 
-  async function createTestParent(initialCredits = 10) {
+  async function createTestParent(
+    initialCredits = 10,
+    aiEntitlement: "active" | "none" | "expired" = "active"
+  ) {
     const db = getOwnerDb();
     const uid = Math.floor(Math.random() * 800_000) + 100_000;
 
@@ -27,7 +45,7 @@ describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
       .values({
         email: `test-ai-parent-${uid}@example.com`,
         displayName: "Người dùng Test AI",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -46,6 +64,21 @@ describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
     if (!child) {
       throw new Error("Failed to insert child");
     }
+
+    if (aiEntitlement !== "none") {
+      const expiresAt =
+        aiEntitlement === "expired"
+          ? new Date(Date.now() - 60_000)
+          : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      await db.insert(entitlements).values({
+        userId: user.id,
+        entitlementKey: "use_ai_analysis",
+        source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+        status: ENTITLEMENT_STATUS.ACTIVE,
+        expiresAt,
+      });
+    }
+    await invalidateUserEntitlementsCache(user.id);
 
     if (initialCredits > 0) {
       await grantCredits({
@@ -198,7 +231,7 @@ describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
       title: "Mức chơi AI Test",
       contentPack: {},
       difficultyParams: {},
-      accessTier: "free",
+      accessTier: ACCESS_TIER.FREE,
     });
 
     const res = await aiAssistantService.suggestContent(user.id, {
@@ -210,5 +243,33 @@ describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
     expect(res.credits_spent).toBe(1);
     expect(res.remaining_balance).toBe(4);
     expect(Array.isArray(res.suggestions)).toBe(true);
+  });
+
+  it("blocks user with AI credits but missing use_ai_analysis entitlement (403 ENTITLEMENT_REQUIRED) without debiting credits", async () => {
+    const { user, child } = await createTestParent(5, "none");
+
+    await expect(
+      aiAssistantService.summarizeReport(user.id, child.uuid, 30)
+    ).rejects.toMatchObject({
+      status: 403,
+      code: "ENTITLEMENT_REQUIRED",
+    });
+
+    const wallet = await getCreditBalance(user.id);
+    expect(wallet.balance).toBe(5);
+  });
+
+  it("blocks user with AI credits but expired use_ai_analysis entitlement (403 ENTITLEMENT_REQUIRED) without debiting credits", async () => {
+    const { user, child } = await createTestParent(5, "expired");
+
+    await expect(
+      aiAssistantService.summarizeReport(user.id, child.uuid, 30)
+    ).rejects.toMatchObject({
+      status: 403,
+      code: "ENTITLEMENT_REQUIRED",
+    });
+
+    const wallet = await getCreditBalance(user.id);
+    expect(wallet.balance).toBe(5);
   });
 });

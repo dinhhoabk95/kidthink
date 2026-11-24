@@ -1,12 +1,18 @@
 import {
+  ACCESS_TIER,
   auditLogs,
+  CONTENT_ENTITY_TYPE,
   childProfiles,
   curricula,
   curriculumItems,
+  ENTITLEMENT_GROUP,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   gameLevels,
   getOwnerDb,
+  PLAY_COMPLETION_STATUS,
   playSessions,
   telemetryEvents,
   users,
@@ -114,7 +120,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
       .values([
         {
           key: "play_standard_games",
-          group: "content",
+          group: ENTITLEMENT_GROUP.CONTENT,
           label: "Chơi game chuẩn",
         },
       ])
@@ -124,8 +130,8 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
       {
         userId: userEntitledId,
         entitlementKey: "play_standard_games",
-        source: "manual_grant",
-        status: "active",
+        source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+        status: ENTITLEMENT_STATUS.ACTIVE,
       },
     ]);
 
@@ -166,7 +172,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
         templateCode,
         difficulty: 1,
         title: "Trò chơi học đếm ngoại tuyến",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         contentPack: { items: ["apple", "banana"] },
         difficultyParams: { count: 3 },
       })
@@ -194,7 +200,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
         templateCode,
         difficulty: 1,
         title: "Trò chơi hình khối tuần 1",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         contentPack: { items: ["circle", "square"] },
         difficultyParams: { count: 2 },
       })
@@ -208,7 +214,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
       .values({
         code: curriculumCode,
         title: "Chương trình mẫu Offline Tuần 1-4",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })
@@ -220,7 +226,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gl.id,
         isRequired: true,
       },
@@ -229,7 +235,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
         weekNo: 1,
         sessionNo: 2,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gl2.id,
         isRequired: true,
       },
@@ -360,7 +366,7 @@ describe("Offline Curriculum Pack & Sync APIs (BR-PWA, BR-OCP, BR-OFF)", () => {
           gameLevelId,
           templateCode,
           startedAt: new Date(),
-          completionStatus: "in_progress",
+          completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
         })
         .onConflictDoNothing()
         .returning();

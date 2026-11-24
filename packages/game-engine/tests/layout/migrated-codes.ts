@@ -5,6 +5,7 @@
  * `zone-primitives-only`) đọc từ một nguồn này.
  */
 export const MIGRATED_CODES: readonly string[] = [
+  "GT-000",
   "GT-001",
   "GT-002",
   "GT-018",

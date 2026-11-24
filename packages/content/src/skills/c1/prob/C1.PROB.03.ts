@@ -216,6 +216,16 @@ export const C1_PROB_03_SEED: SkillSeed = {
   dataset: C1_PROB_03_DATASET,
   levels: [
     {
+      code: "GL-C1-PROB-INTRO-7003",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "home",
+      rounds: 1,
+      sequence_no: 1,
+    },
+    {
       code: "GL-C1-PROB-PICT-0005",
       template: "GT-031",
       band: "5-6",

@@ -1,10 +1,13 @@
 import {
+  ACCESS_TIER,
+  CONTENT_ENTITY_TYPE,
   childDailyStats,
   childProfiles,
   contentSkillMap,
   gameLevels,
   getOwnerDb,
   levelDailyStats,
+  PLAY_COMPLETION_STATUS,
   playSessions,
   skillDailyStats,
   skills,
@@ -56,7 +59,7 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
         title: "Level Rollup Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
     if (!gl) {
@@ -68,7 +71,7 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       await db
         .insert(contentSkillMap)
         .values({
-          entityType: "game_level",
+          entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
           entityId: gl.id,
           skillId: firstSkill.id,
           weight: "1.00",
@@ -81,7 +84,7 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       childProfileId: child.id,
       gameLevelId: gl.id,
       templateCode: gtCode,
-      completionStatus: "completed",
+      completionStatus: PLAY_COMPLETION_STATUS.COMPLETED,
       durationSeconds: 120,
       score: 100,
       starsEarned: 3,
@@ -94,7 +97,7 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       guestDeviceId: `guest-dev-${Date.now()}`,
       gameLevelId: gl.id,
       templateCode: gtCode,
-      completionStatus: "completed",
+      completionStatus: PLAY_COMPLETION_STATUS.COMPLETED,
       durationSeconds: 90,
       score: 80,
       starsEarned: 2,

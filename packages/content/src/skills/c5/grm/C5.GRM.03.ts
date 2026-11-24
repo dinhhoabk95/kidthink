@@ -225,5 +225,12 @@ export const C5_GRM_03_SEED: SkillSeed = {
       theme: "weather",
       rounds: 3,
     },
+    {
+      code: "GL-C5-GRM-INTRO-7303",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 3,
+      theme: "family",
+    },
   ],
 };

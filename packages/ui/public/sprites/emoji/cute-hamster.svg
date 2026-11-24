@@ -1,0 +1,27 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chuột Hamster</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="hamCoat" r="70%"><stop offset="0%" stop-color="#fed7aa" /><stop offset="55%" stop-color="#fb923c" /><stop offset="100%" stop-color="#ea580c" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#7c2d12" opacity="0.22" rx="32" ry="5.5" />
+    <!-- Round ears -->
+    <circle cx="38" cy="30" fill="#fb923c" r="9" stroke="#7c2d12" stroke-width="3.6" />
+    <circle cx="38" cy="30" fill="#fda4af" r="4.8" />
+    <circle cx="82" cy="30" fill="#fb923c" r="9" stroke="#7c2d12" stroke-width="3.6" />
+    <circle cx="82" cy="30" fill="#fda4af" r="4.8" />
+    <!-- Plump bicolor body -->
+    <path d="M32 64C30 42 42 26 60 26C78 26 90 42 88 64C91 84 80 100 60 100C40 100 29 84 32 64Z" fill="url(#hamCoat)" stroke="#7c2d12" stroke-width="3.8" />
+    <!-- Cream belly & puffy cheeks -->
+    <path d="M38 56C44 50 76 50 82 56C86 72 78 97 60 97C42 97 34 72 38 56Z" fill="#fffbeb" stroke="#9a3412" stroke-width="3" />
+    <circle cx="40" cy="54" fill="#fffbeb" r="10" stroke="#7c2d12" stroke-width="3.2" />
+    <circle cx="80" cy="54" fill="#fffbeb" r="10" stroke="#7c2d12" stroke-width="3.2" />
+    <!-- Feet & paws holding sunflower seed -->
+    <ellipse cx="45" cy="99" fill="#fda4af" rx="7" ry="4" stroke="#7c2d12" stroke-width="3.2" />
+    <ellipse cx="75" cy="99" fill="#fda4af" rx="7" ry="4" stroke="#7c2d12" stroke-width="3.2" />
+    <path d="M60 64C65 64 68 71 60 78C52 71 55 64 60 64Z" fill="#44403c" stroke="#1c1917" stroke-width="2.8" />
+    <path d="M60 66V76" stroke="#fafaf9" stroke-linecap="round" stroke-width="1.8" />
+    <circle cx="51" cy="70" fill="#fda4af" r="4.2" stroke="#7c2d12" stroke-width="2.8" />
+    <circle cx="69" cy="70" fill="#fda4af" r="4.2" stroke="#7c2d12" stroke-width="2.8" />
+    <circle cx="49" cy="45" fill="#1c1917" r="3" /><circle cx="48.2" cy="44.1" fill="#ffffff" r="1.1" /><circle cx="71" cy="45" fill="#1c1917" r="3" /><circle cx="70.2" cy="44.1" fill="#ffffff" r="1.1" />
+    <ellipse cx="60" cy="50" fill="#fb7185" rx="3" ry="2.2" />
+</svg>

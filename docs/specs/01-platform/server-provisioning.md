@@ -45,7 +45,8 @@ Việt Nam, vì thứ nó cần chỉ là một bản Ubuntu 24.04 và một kho
 | `pnpm deploy provision --host <tên>` | Người vận hành | Lớp bọc SSH, chạy từ máy trạm                |
 | `infra/scripts/mindkid.sh provision` → `infra/scripts/lib/cmd-provision.sh` |                | Nội dung thật, chạy trên máy chủ bằng `root` |
 | `infra/nginx/`                       |                | Khuôn cấu hình, biến thay là tên miền        |
-| `infra/docker-compose.prod.yml`      |                | PostgreSQL 18 và Valkey 9                    |
+| `infra/docker-compose.prod.yml`      |                | PostgreSQL 18, Valkey 9, Garage HQ S3 và Cloudflare Tunnel (`cloudflared`) cho Giai đoạn 2 (`MINDKID_RUNTIME=vps`) |
+| `infra/cloudflare/*.tf`              | Terraform CI   | Hạ tầng Cloudflare Free Giai đoạn 1 (`< 1.000 DAU`: 3x D1, WAF 5 Rules, DNS, SSL) và chuyển mạch `backend_mode = "vps"` ở Giai đoạn 2 |
 
 ## 4. Main flow
 

@@ -1,0 +1,12 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Búp bê gỗ lồng nhau</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="wndRed" r="70%"><stop offset="0%" stop-color="#fb7185" /><stop offset="55%" stop-color="#e11d48" /><stop offset="100%" stop-color="#9f1239" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#881337" opacity="0.22" rx="30" ry="5" />
+    <path d="M60 18C75 18 82 32 80 48C88 60 88 86 76 100H44C32 86 32 60 40 48C38 32 45 18 60 18Z" fill="url(#wndRed)" stroke="#881337" stroke-linejoin="round" stroke-width="3.8" />
+    <circle cx="60" cy="36" fill="#fef3c7" r="12" stroke="#78350f" stroke-width="3" />
+    <circle cx="56" cy="35" fill="#1c1917" r="2" /><circle cx="64" cy="35" fill="#1c1917" r="2" />
+    <ellipse cx="60" cy="76" fill="#fef9c3" rx="16" ry="18" stroke="#78350f" stroke-width="3" />
+    <circle cx="60" cy="76" fill="#f43f5e" r="6" />
+</svg>

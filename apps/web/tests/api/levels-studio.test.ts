@@ -1,4 +1,10 @@
-import { gameLevels, getOwnerDb, managers } from "@mindkid/db";
+import {
+  ACCESS_TIER,
+  gameLevels,
+  getOwnerDb,
+  MANAGER_ROLE,
+  managers,
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import getLevelConfigHandler from "#server/api/managers/levels/[code]/config.get";
@@ -22,7 +28,7 @@ beforeEach(async () => {
         email: "studio-tester@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "Studio Tester",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
         isActive: true,
       })
       .onConflictDoUpdate({
@@ -104,7 +110,7 @@ describe("Game Level Read-Only Management API", () => {
         ageMin: 3,
         ageMax: 4,
         difficulty: 1,
-        accessTier: "premium",
+        accessTier: ACCESS_TIER.PREMIUM,
         contentPack: {
           prompt: "Tìm quả táo màu đỏ",
           target_item: {

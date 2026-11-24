@@ -1,58 +1,59 @@
 import { sql } from "drizzle-orm";
 import {
-  bigint,
-  boolean,
   index,
   integer,
-  jsonb,
-  pgEnum,
-  pgTable,
   primaryKey,
-  smallint,
-  timestamp,
+  sqliteTable,
+  text,
   unique,
   uniqueIndex,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/sqlite-core";
+import type { JsonRecord } from "#src/constants/json";
+import {
+  type AccessTier,
+  PLAY_COMPLETION_STATUS,
+  type PlayCompletionStatus,
+} from "#src/constants/learning-enums";
 import { childProfiles } from "./child.ts";
-import { idPk, insertOnlyTimestamps, timestamps } from "./columns.ts";
-import { accessTierEnum, gameLevels } from "./game.ts";
+import {
+  idPk,
+  insertOnlyTimestamps,
+  nowTimestampMs,
+  timestampMs,
+  timestamps,
+  uuidCol,
+} from "./columns.ts";
+import { gameLevels } from "./game.ts";
 import { skills } from "./taxonomy.ts";
 
-export const playCompletionStatusEnum = pgEnum("play_completion_status", [
-  "in_progress",
-  "completed",
-  "abandoned",
-]);
-
-export const playSessions = pgTable(
+export const playSessions = sqliteTable(
   "play_sessions",
   {
     id: idPk(),
-    sessionUuid: uuid("session_uuid").defaultRandom().notNull(),
-    childProfileId: bigint("child_profile_id", { mode: "number" }).references(
+    sessionUuid: uuidCol("session_uuid"),
+    childProfileId: integer("child_profile_id").references(
       () => childProfiles.id,
       { onDelete: "cascade" }
     ),
-    guestDeviceId: varchar("guest_device_id", { length: 100 }),
-    gameLevelId: bigint("game_level_id", { mode: "number" })
+    guestDeviceId: text("guest_device_id"),
+    gameLevelId: integer("game_level_id")
       .notNull()
       .references(() => gameLevels.id, { onDelete: "restrict" }),
-    templateCode: varchar("template_code", { length: 20 }).notNull(),
-    isPreview: boolean("is_preview").notNull().default(false),
-    completionStatus: playCompletionStatusEnum("completion_status")
+    templateCode: text("template_code").notNull(),
+    isPreview: integer("is_preview", { mode: "boolean" })
       .notNull()
-      .default("in_progress"),
-    accessTierAtStart: accessTierEnum("access_tier_at_start"),
-    layoutSeed: bigint("layout_seed", { mode: "number" }),
-    starsEarned: smallint("stars_earned").default(0),
+      .default(false),
+    completionStatus: integer("completion_status")
+      .$type<PlayCompletionStatus>()
+      .notNull()
+      .default(PLAY_COMPLETION_STATUS.IN_PROGRESS),
+    accessTierAtStart: integer("access_tier_at_start").$type<AccessTier>(),
+    layoutSeed: integer("layout_seed"),
+    starsEarned: integer("stars_earned").default(0),
     score: integer("score").default(0),
     durationSeconds: integer("duration_seconds").default(0),
-    startedAt: timestamp("started_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    completedAt: timestamp("completed_at", { withTimezone: true }),
+    startedAt: nowTimestampMs("started_at"),
+    completedAt: timestampMs("completed_at"),
     ...timestamps(),
   },
   (table) => [
@@ -71,21 +72,19 @@ export const playSessions = pgTable(
   ]
 );
 
-export const telemetryEvents = pgTable(
+export const telemetryEvents = sqliteTable(
   "telemetry_events",
   {
-    sessionUuid: uuid("session_uuid").notNull(),
+    sessionUuid: text("session_uuid").notNull(),
     seq: integer("seq").notNull(),
-    childUuid: uuid("child_uuid"),
-    gameLevelId: bigint("game_level_id", { mode: "number" }),
-    templateCode: varchar("template_code", { length: 20 }),
-    eventName: varchar("event_name", { length: 100 }).notNull(),
+    childUuid: text("child_uuid"),
+    gameLevelId: integer("game_level_id"),
+    templateCode: text("template_code"),
+    eventName: text("event_name").notNull(),
     occurredAtMs: integer("occurred_at_ms"),
-    payload: jsonb("payload"),
-    clientTimestamp: timestamp("client_timestamp", { withTimezone: true }),
-    ingestedAt: timestamp("ingested_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    payload: text("payload", { mode: "json" }).$type<JsonRecord>(),
+    clientTimestamp: timestampMs("client_timestamp"),
+    ingestedAt: nowTimestampMs("ingested_at"),
     ...insertOnlyTimestamps(),
   },
   (table) => [
@@ -97,25 +96,27 @@ export const telemetryEvents = pgTable(
   ]
 );
 
-export const childSessionSummaries = pgTable(
+export const childSessionSummaries = sqliteTable(
   "child_session_summaries",
   {
     id: idPk(),
-    childProfileId: bigint("child_profile_id", { mode: "number" })
+    childProfileId: integer("child_profile_id")
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
-    sessionUuid: uuid("session_uuid").notNull(),
-    gameLevelId: bigint("game_level_id", { mode: "number" })
+    sessionUuid: text("session_uuid").notNull(),
+    gameLevelId: integer("game_level_id")
       .notNull()
       .references(() => gameLevels.id, { onDelete: "restrict" }),
-    templateCode: varchar("template_code", { length: 20 }).notNull(),
-    completionStatus: playCompletionStatusEnum("completion_status").notNull(),
+    templateCode: text("template_code").notNull(),
+    completionStatus: integer("completion_status")
+      .$type<PlayCompletionStatus>()
+      .notNull(),
     score: integer("score").notNull().default(0),
     durationSeconds: integer("duration_seconds").notNull().default(0),
-    starsEarned: smallint("stars_earned").notNull().default(0),
+    starsEarned: integer("stars_earned").notNull().default(0),
     hintsUsed: integer("hints_used").notNull().default(0),
     retriesCount: integer("retries_count").notNull().default(0),
-    completedAt: timestamp("completed_at", { withTimezone: true }),
+    completedAt: timestampMs("completed_at"),
     ...timestamps(),
   },
   (table) => [
@@ -128,14 +129,14 @@ export const childSessionSummaries = pgTable(
   ]
 );
 
-export const childDailyStats = pgTable(
+export const childDailyStats = sqliteTable(
   "child_daily_stats",
   {
     id: idPk(),
-    childProfileId: bigint("child_profile_id", { mode: "number" })
+    childProfileId: integer("child_profile_id")
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
-    dateIct: varchar("date_ict", { length: 10 }).notNull(),
+    dateIct: text("date_ict").notNull(),
     sessionsCount: integer("sessions_count").notNull().default(0),
     totalPlayTimeSeconds: integer("total_play_time_seconds")
       .notNull()
@@ -157,12 +158,12 @@ export const childDailyStats = pgTable(
   ]
 );
 
-export const levelDailyStats = pgTable(
+export const levelDailyStats = sqliteTable(
   "level_daily_stats",
   {
     id: idPk(),
-    levelCode: varchar("level_code", { length: 50 }).notNull(),
-    dateIct: varchar("date_ict", { length: 10 }).notNull(),
+    levelCode: text("level_code").notNull(),
+    dateIct: text("date_ict").notNull(),
     playsCount: integer("plays_count").notNull().default(0),
     completionsCount: integer("completions_count").notNull().default(0),
     abandonedCount: integer("abandoned_count").notNull().default(0),
@@ -178,14 +179,14 @@ export const levelDailyStats = pgTable(
   ]
 );
 
-export const skillDailyStats = pgTable(
+export const skillDailyStats = sqliteTable(
   "skill_daily_stats",
   {
     id: idPk(),
-    skillId: bigint("skill_id", { mode: "number" })
+    skillId: integer("skill_id")
       .notNull()
       .references(() => skills.id, { onDelete: "cascade" }),
-    dateIct: varchar("date_ict", { length: 10 }).notNull(),
+    dateIct: text("date_ict").notNull(),
     exposureCount: integer("exposure_count").notNull().default(0),
     avgAccuracyPercent: integer("avg_accuracy_percent").notNull().default(0),
     ...timestamps(),

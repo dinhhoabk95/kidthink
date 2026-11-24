@@ -1,0 +1,24 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con lừa xám</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="g_graydonkey" r="70%"><stop offset="0%" stop-color="#cbd5e1" /><stop offset="55%" stop-color="#94a3b8" /><stop offset="100%" stop-color="#64748b" /></radialGradient>
+  </defs>
+  <ellipse cx="62" cy="106" fill="#1e293b" opacity="0.22" rx="40" ry="5.5" />
+    <path d="M90 62C99 67 102 79 99 89" stroke="#1e293b" stroke-linecap="round" stroke-width="3.6" /><ellipse cx="99" cy="91" fill="#334155" rx="3.5" ry="5" stroke="#1e293b" stroke-width="2.6" /><path d="M28 32L21 13C26 12 31 18 33 30ZM37 32L42 13C46 15 45 22 41 32Z" fill="#94a3b8" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.6" />
+    <!-- Far legs -->
+    <path d="M47 76L44 102H51L53 76ZM81 76L79 102H86L88 76Z" fill="#64748b" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.4" />
+    <path d="M44 98H51V103H44ZM79 98H86V103H79Z" fill="#1e293b" />
+    <!-- Torso & Neck -->
+    <path d="M36 49C42 52 37 50 64 50C91 50 95 62 91 72C87 82 43 82 39 70C35 62 32 59 36 49Z" fill="url(#g_graydonkey)" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M46 77C56 83 74 83 84 77" fill="#f1f5f9" opacity="0.85" />
+    <path d="M36 38L49 51" stroke="#334155" stroke-linecap="round" stroke-width="4.5" />
+    <!-- Near legs -->
+    <path d="M39 74L36 104H44L47 74ZM73 74L71 104H79L81 74Z" fill="url(#g_graydonkey)" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M36 99H44V104H36ZM71 99H79V104H71Z" fill="#1e293b" stroke="#1e293b" stroke-linejoin="round" stroke-width="2.2" />
+    <!-- Head -->
+    <ellipse cx="30" cy="43" fill="url(#g_graydonkey)" rx="13" ry="12" stroke="#1e293b" stroke-width="3.8" />
+    <ellipse cx="21" cy="47" fill="#f8fafc" rx="7.5" ry="6" stroke="#1e293b" stroke-width="3.2" />
+    <circle cx="19" cy="46" fill="#1e293b" r="1.8" />
+    <path d="M19 50C22 52 25 51 26 49" stroke="#1e293b" stroke-linecap="round" stroke-width="2.2" />
+    <circle cx="28" cy="40" fill="#1c1917" r="2.7" /><circle cx="27.2" cy="39.2" fill="#ffffff" r="1" />
+</svg>

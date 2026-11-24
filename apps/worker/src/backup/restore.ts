@@ -1,201 +1,358 @@
-import { spawn } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { createInterface } from "node:readline";
+import { DatabaseSync } from "node:sqlite";
 import { pipeline } from "node:stream/promises";
 import { createGunzip } from "node:zlib";
-import { requireEnv } from "@mindkid/config";
+import { flushKvCachePrefixes } from "@mindkid/cache";
+import { isCloudflareRuntime, requireEnv } from "@mindkid/config";
 import { BACKUP_DIR } from "@mindkid/config/backup";
-import { backupLog, getOwnerDb } from "@mindkid/db";
-import { desc, eq } from "drizzle-orm";
-import postgres from "postgres";
+import { DB } from "@mindkid/db";
+import {
+  createLocalBackupLog,
+  listRecentLocalBackupLogs,
+  updateLocalBackupLog,
+} from "#src/backup/backup-log-store";
+import { runAccountPurgeSweep } from "#src/consumers/account-purge";
 import { readErrorMessage } from "#src/errors";
 
-const rl = createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+const SQLITE_HEADER_MAGIC = "SQLite format 3\0";
+const ENCRYPTION_KEY_BYTES = 32;
+const POST_RESTORE_CACHE_PREFIXES = [
+  "ba:v1:user:",
+  "ba:v1:manager:",
+  "user:entitlements:",
+] as const;
 
-const question = (query: string): Promise<string> =>
-  new Promise((resolve) => rl.question(query, resolve));
+export interface RestoreSqliteInput {
+  readonly encryptedFilePath: string;
+  readonly targetSqlitePath: string;
+  readonly encryptionKey: string;
+}
 
-function getEncryptionKey() {
+export interface RestoreSqliteResult {
+  readonly rtoMs: number;
+  readonly flushedKeys: number;
+  readonly purgedAccounts: number;
+}
+
+function getEncryptionKey(): string {
   const encryptionKey = requireEnv("BACKUP_ENCRYPTION_KEY");
-  if (encryptionKey.length !== 32) {
-    throw new Error("BACKUP_ENCRYPTION_KEY must be 32 characters");
+  if (encryptionKey.length !== ENCRYPTION_KEY_BYTES) {
+    throw new Error(
+      `BACKUP_ENCRYPTION_KEY must be ${ENCRYPTION_KEY_BYTES} characters`
+    );
   }
   return encryptionKey;
 }
 
-function getDbUrl() {
-  return requireEnv("DATABASE_URL");
+function assertTargetNotWriteLocked(targetSqlitePath: string): void {
+  if (!fs.existsSync(targetSqlitePath)) {
+    return;
+  }
+
+  let checkDb: DatabaseSync | undefined;
+  try {
+    checkDb = new DatabaseSync(targetSqlitePath, { timeout: 250 });
+    checkDb.exec("BEGIN IMMEDIATE; ROLLBACK;");
+  } catch (error) {
+    throw new Error(
+      `Target SQLite database is busy or holds an active write lock: ${readErrorMessage(error)}`
+    );
+  } finally {
+    if (checkDb?.isOpen) {
+      checkDb.close();
+    }
+  }
 }
 
-async function main() {
-  const encryptionKey = getEncryptionKey();
-  const dbUrl = getDbUrl();
-
-  console.log("Fetching successful backups...");
-  const backups = await getOwnerDb()
-    .select()
-    .from(backupLog)
-    .where(eq(backupLog.status, "success"))
-    .orderBy(desc(backupLog.startedAt))
-    .limit(10);
-
-  if (backups.length === 0) {
-    console.log("No successful backups found.");
-    process.exit(0);
-  }
-
-  console.log("\nAvailable Backups:");
-  // The local copy is the bare filename in BACKUP_DIR; storagePath is the
-  // object key in the bucket, which carries a prefix and date directories.
-  for (const b of backups) {
-    let sizeStr = "Unknown";
-    if (b.storagePath) {
-      const filePath = path.join(BACKUP_DIR, path.basename(b.storagePath));
-      if (fs.existsSync(filePath)) {
-        const stats = fs.statSync(filePath);
-        sizeStr = `${(stats.size / 1024 / 1024).toFixed(2)} MB`;
-      }
+function assertValidSqliteFile(sqliteFilePath: string): void {
+  const fd = fs.openSync(sqliteFilePath, "r");
+  try {
+    const header = Buffer.alloc(16);
+    const bytesRead = fs.readSync(fd, header, 0, 16, 0);
+    if (bytesRead < 16 || header.toString("utf8") !== SQLITE_HEADER_MAGIC) {
+      throw new Error("Invalid SQLite backup header after decryption");
     }
-    console.log(
-      `- ID: ${b.id} | Date: ${b.startedAt?.toISOString()} | Type: ${b.backupType} | Size: ${sizeStr}`
-    );
+  } finally {
+    fs.closeSync(fd);
   }
 
-  const selectedId = await question(
-    "\nPaste the ID of the backup you want to restore: "
+  const verifyDb = new DatabaseSync(sqliteFilePath, { readOnly: true });
+  try {
+    const row = verifyDb.prepare("PRAGMA integrity_check").get() as
+      | { readonly integrity_check?: string }
+      | undefined;
+    if (row?.integrity_check !== "ok") {
+      throw new Error(
+        `SQLite integrity_check failed: ${row?.integrity_check ?? "unknown"}`
+      );
+    }
+  } finally {
+    verifyDb.close();
+  }
+}
+
+async function decryptBackupToSqliteFile(
+  encryptedFilePath: string,
+  outputSqlitePath: string,
+  encryptionKey: string
+): Promise<void> {
+  const fileHandle = await fs.promises.open(encryptedFilePath, "r");
+  let iv: Buffer;
+  let authTag: Buffer;
+  let totalSize: number;
+
+  try {
+    const stats = await fileHandle.stat();
+    totalSize = stats.size;
+    if (totalSize <= 32) {
+      throw new Error("Encrypted backup file is corrupted or truncated");
+    }
+
+    iv = Buffer.alloc(16);
+    await fileHandle.read(iv, 0, 16, 0);
+
+    authTag = Buffer.alloc(16);
+    await fileHandle.read(authTag, 0, 16, totalSize - 16);
+  } finally {
+    await fileHandle.close();
+  }
+
+  const decipher = crypto.createDecipheriv(
+    "aes-256-gcm",
+    Buffer.from(encryptionKey, "utf8"),
+    iv
   );
-  // `selectedId` đọc từ stdin nên là chuỗi; `b.id` là số.
-  const targetBackup = backups.find((b) => b.id === Number(selectedId));
+  decipher.setAuthTag(authTag);
 
-  if (!targetBackup?.storagePath) {
-    console.error("Invalid ID or missing storage path.");
-    process.exit(1);
-  }
+  const fileStream = fs.createReadStream(encryptedFilePath, {
+    start: 16,
+    end: totalSize - 17,
+  });
 
-  const backupFile = path.join(
-    BACKUP_DIR,
-    path.basename(targetBackup.storagePath)
+  await pipeline(
+    fileStream,
+    decipher,
+    createGunzip(),
+    fs.createWriteStream(outputSqlitePath)
   );
-  if (!fs.existsSync(backupFile)) {
-    console.error(`Backup file not found: ${backupFile}`);
-    process.exit(1);
+}
+
+/**
+ * Flushes auth session namespaces and user entitlement caches after DB restore.
+ * Never uses FLUSHALL so BullMQ job queues stay intact.
+ */
+export async function flushPostRestoreAuthAndCache(): Promise<number> {
+  return await flushKvCachePrefixes(POST_RESTORE_CACHE_PREFIXES);
+}
+
+async function reapplyPostRestorePurgeTombstones(
+  targetSqlitePath: string
+): Promise<number> {
+  if (path.basename(targetSqlitePath) !== "mindkid.sqlite") {
+    const res = await runAccountPurgeSweep();
+    return res.purgedCount;
   }
 
-  // Check if DB is active (đang nhận ghi)
-  const sql = postgres(dbUrl);
-  const activity = await sql`
-    SELECT count(*) FROM pg_stat_activity 
-    WHERE datname = current_database() 
-    AND pid <> pg_backend_pid()
-    AND state = 'active'
-  `;
+  const driver = DB.getSqliteDriver();
+  const prevPaths = driver.getPaths();
+  const targetDir = path.dirname(path.resolve(targetSqlitePath));
+  const changedDir = path.resolve(prevPaths.dataDir) !== targetDir;
 
-  if (Number.parseInt(activity[0]?.count ?? "0", 10) > 0) {
-    console.error(
-      "ERROR: Target database has active connections and might be receiving writes. Aborting restore to prevent data corruption."
-    );
-    process.exit(1);
-  }
-
-  const confirm = await question(
-    "\nWARNING: This will OVERWRITE the current database.\nTo confirm, type RESTORE: "
-  );
-  if (confirm !== "RESTORE") {
-    console.log("Aborted.");
-    process.exit(0);
-  }
-
-  console.log("Starting restore process...");
-  const startTime = Date.now();
-
-  const [log] = await getOwnerDb()
-    .insert(backupLog)
-    .values({
-      backupType: "drill",
-      status: "started",
-      startedAt: new Date(),
-    })
-    .returning();
-
-  if (!log) {
-    console.error("Failed to create backup log");
-    process.exit(1);
+  if (changedDir) {
+    DB.configureSqlite({ dataDir: targetDir });
   }
 
   try {
-    const fileHandle = await fs.promises.open(backupFile, "r");
-    const iv = Buffer.alloc(16);
-    await fileHandle.read(iv, 0, 16, 0);
+    const res = await runAccountPurgeSweep();
+    return res.purgedCount;
+  } finally {
+    if (changedDir) {
+      DB.configureSqlite({ dataDir: prevPaths.dataDir });
+    }
+  }
+}
 
-    const stats = await fileHandle.stat();
-    const authTag = Buffer.alloc(16);
-    await fileHandle.read(authTag, 0, 16, stats.size - 16);
-    await fileHandle.close();
-
-    const decipher = crypto.createDecipheriv(
-      "aes-256-gcm",
-      Buffer.from(encryptionKey, "utf8"),
-      iv
+export async function restoreSqliteBackupFile(
+  input: RestoreSqliteInput
+): Promise<RestoreSqliteResult> {
+  if (input.encryptionKey.length !== ENCRYPTION_KEY_BYTES) {
+    throw new Error(
+      `BACKUP_ENCRYPTION_KEY must be ${ENCRYPTION_KEY_BYTES} characters`
     );
-    decipher.setAuthTag(authTag);
+  }
+  if (!fs.existsSync(input.encryptedFilePath)) {
+    throw new Error(`Backup file not found: ${input.encryptedFilePath}`);
+  }
+  if (input.targetSqlitePath === ":memory:") {
+    throw new Error("Cannot restore onto an in-memory SQLite target");
+  }
 
-    const fileStream = fs.createReadStream(backupFile, {
-      start: 16,
-      end: stats.size - 17,
+  const startTime = Date.now();
+  const targetDir = path.dirname(input.targetSqlitePath);
+  fs.mkdirSync(targetDir, { recursive: true });
+
+  const driver = DB.getSqliteDriver();
+  const currentPaths = driver.getPaths();
+  if (
+    !currentPaths.isMemory &&
+    path.resolve(currentPaths.dbPath) === path.resolve(input.targetSqlitePath)
+  ) {
+    driver.closeSync();
+  }
+
+  assertTargetNotWriteLocked(input.targetSqlitePath);
+
+  const tempRestorePath = `${input.targetSqlitePath}.sqlite.restore.tmp`;
+  fs.rmSync(tempRestorePath, { force: true });
+
+  try {
+    await decryptBackupToSqliteFile(
+      input.encryptedFilePath,
+      tempRestorePath,
+      input.encryptionKey
+    );
+
+    assertValidSqliteFile(tempRestorePath);
+
+    fs.rmSync(`${input.targetSqlitePath}-wal`, { force: true });
+    fs.rmSync(`${input.targetSqlitePath}-shm`, { force: true });
+    fs.renameSync(tempRestorePath, input.targetSqlitePath);
+  } finally {
+    fs.rmSync(tempRestorePath, { force: true });
+  }
+
+  const flushedKeys = await flushPostRestoreAuthAndCache();
+  const purgedAccounts = await reapplyPostRestorePurgeTombstones(
+    input.targetSqlitePath
+  );
+
+  return {
+    rtoMs: Date.now() - startTime,
+    flushedKeys,
+    purgedAccounts,
+  };
+}
+
+async function main(): Promise<void> {
+  console.log(
+    "Lưu ý D1 remote: Nếu restore Cloudflare D1, hãy chạy `wrangler d1 export` / D1 Time Travel rồi flush `AuthCoordinatorDO` cho các prefix `ba:v1:*` và `user:entitlements:*`."
+  );
+
+  if (isCloudflareRuntime()) {
+    console.log(
+      "Môi trường Cloudflare runtime không hỗ trợ restore SQLite file cục bộ trực tiếp."
+    );
+    return;
+  }
+
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  const question = (query: string): Promise<string> =>
+    new Promise((resolve) => rl.question(query, resolve));
+
+  try {
+    const encryptionKey = getEncryptionKey();
+    const targetPaths = DB.getSqliteDriver().getPaths();
+    if (targetPaths.isMemory) {
+      throw new Error("Cannot restore onto :memory: SQLite database");
+    }
+
+    console.log("Fetching successful backups...");
+    const backups = listRecentLocalBackupLogs(BACKUP_DIR, 10, {
+      status: "success",
     });
 
-    const gunzip = createGunzip();
+    if (backups.length === 0) {
+      console.log("No successful backups found.");
+      return;
+    }
 
-    const psqlProcess = spawn("psql", [dbUrl], {
-      stdio: ["pipe", "inherit", "inherit"],
-    });
-
-    const psqlPromise = new Promise<void>((resolve, reject) => {
-      psqlProcess.on("close", (code) => {
-        if (code === 0) {
-          resolve();
-        } else {
-          reject(new Error(`psql restore failed with code ${code}`));
+    console.log("\nAvailable Backups:");
+    for (const b of backups) {
+      let sizeStr = "Unknown";
+      if (b.storagePath) {
+        const filePath = path.join(BACKUP_DIR, path.basename(b.storagePath));
+        if (fs.existsSync(filePath)) {
+          const stats = fs.statSync(filePath);
+          sizeStr = `${(stats.size / 1024 / 1024).toFixed(2)} MB`;
         }
-      });
-      psqlProcess.on("error", reject);
+      }
+      console.log(
+        `- ID: ${b.id} | Date: ${b.startedAt?.toISOString()} | Type: ${b.backupType} | Size: ${sizeStr}`
+      );
+    }
+
+    const selectedId = await question(
+      "\nPaste the ID of the backup you want to restore: "
+    );
+    const targetBackup = backups.find((b) => b.id === Number(selectedId));
+
+    if (!targetBackup?.storagePath) {
+      console.error("Invalid ID or missing storage path.");
+      process.exitCode = 1;
+      return;
+    }
+
+    const backupFile = path.join(
+      BACKUP_DIR,
+      path.basename(targetBackup.storagePath)
+    );
+    if (!fs.existsSync(backupFile)) {
+      console.error(`Backup file not found: ${backupFile}`);
+      process.exitCode = 1;
+      return;
+    }
+
+    const confirm = await question(
+      `\nWARNING: This will OVERWRITE ${targetPaths.dbPath}.\nTo confirm, type RESTORE: `
+    );
+    if (confirm !== "RESTORE") {
+      console.log("Aborted.");
+      return;
+    }
+
+    console.log("Starting SQLite restore process...");
+    const log = createLocalBackupLog(BACKUP_DIR, {
+      backupType: "drill",
+      status: "started",
+      startedAt: new Date(),
     });
 
-    await Promise.all([
-      pipeline(fileStream, decipher, gunzip, psqlProcess.stdin),
-      psqlPromise,
-    ]);
-
-    const rtoMs = Date.now() - startTime;
-    console.log(`Restore completed in ${rtoMs}ms (RTO)`);
-
-    await getOwnerDb()
-      .update(backupLog)
-      .set({
+    try {
+      const result = await restoreSqliteBackupFile({
+        encryptedFilePath: backupFile,
+        targetSqlitePath: targetPaths.dbPath,
+        encryptionKey,
+      });
+      console.log(
+        `Restore completed in ${result.rtoMs}ms (RTO), flushed ${result.flushedKeys} cache/auth keys, purged ${result.purgedAccounts} expired accounts.`
+      );
+      updateLocalBackupLog(BACKUP_DIR, log.id, {
         status: "success",
         finishedAt: new Date(),
-      })
-      .where(eq(backupLog.id, log.id));
-  } catch (error) {
-    console.error("Restore failed:", error);
-    await getOwnerDb()
-      .update(backupLog)
-      .set({
+      });
+    } catch (error) {
+      console.error("Restore failed:", error);
+      updateLocalBackupLog(BACKUP_DIR, log.id, {
         status: "failed",
         errorMessage: readErrorMessage(error),
         finishedAt: new Date(),
-      })
-      .where(eq(backupLog.id, log.id));
-    process.exit(1);
+      });
+      process.exitCode = 1;
+    }
   } finally {
-    await sql.end();
     rl.close();
   }
 }
 
-main();
+if (process.argv[1]?.endsWith("restore.ts")) {
+  main().catch((error) => {
+    console.error("Restore failed:", readErrorMessage(error));
+    process.exit(1);
+  });
+}

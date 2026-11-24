@@ -1,10 +1,7 @@
-import { getOwnerDb } from "@mindkid/db";
 import { InternalError } from "@mindkid/errors/common";
-import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
 import { saveLibraryItem } from "#server/services/index.js";
-import { throwValidationError } from "#server/utils/api-error";
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { defineApiRoute } from "#server/utils/define-api-route";
 
 const SaveLibraryItemSchema = z
   .object({
@@ -19,39 +16,33 @@ const SaveLibraryItemSchema = z
     "Cần cung cấp entity_id hoặc code của nội dung cần lưu"
   );
 
-export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
-  const userId = Number(user.user_id);
-  const db = getOwnerDb();
+export default defineApiRoute({
+  auth: "user",
+  body: SaveLibraryItemSchema,
+  status: 201,
+  async handler({ auth, body }) {
+    const saved = await saveLibraryItem({
+      userId: Number(auth.user_id),
+      entityType: body.entity_type,
+      entityId: body.entity_id,
+      code: body.code,
+      collectionId: body.collection_id,
+      note: body.note,
+    });
 
-  const body = await readBody(event);
-  const parsed = SaveLibraryItemSchema.safeParse(body);
-  if (!parsed.success) {
-    throwValidationError(parsed.error);
-  }
+    if (!saved) {
+      throw new InternalError("Lưu mục thư viện thất bại");
+    }
 
-  const saved = await saveLibraryItem(db, {
-    userId,
-    entityType: parsed.data.entity_type,
-    entityId: parsed.data.entity_id,
-    code: parsed.data.code,
-    collectionId: parsed.data.collection_id,
-    note: parsed.data.note,
-  });
-
-  if (!saved) {
-    throw new InternalError("Lưu mục thư viện thất bại");
-  }
-
-  setResponseStatus(event, 201);
-  return {
-    success: true,
-    item: {
-      entity_type: saved.entityType,
-      entity_id: saved.entityId,
-      collection_id: saved.collectionId,
-      note: saved.note,
-      created_at: saved.createdAt.toISOString(),
-    },
-  };
+    return {
+      success: true,
+      item: {
+        entity_type: saved.entityType,
+        entity_id: saved.entityId,
+        collection_id: saved.collectionId,
+        note: saved.note,
+        created_at: saved.createdAt.toISOString(),
+      },
+    };
+  },
 });

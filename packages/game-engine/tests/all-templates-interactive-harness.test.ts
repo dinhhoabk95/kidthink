@@ -52,6 +52,7 @@ function createMockCanvasContext(): CanvasRenderingContext2D {
     stroke: () => undefined,
     fillText: () => undefined,
     strokeText: () => undefined,
+    rect: () => undefined,
     roundRect: () => undefined,
     setLineDash: () => undefined,
     getLineDash: () => [],

@@ -1,10 +1,14 @@
-import { childProfiles, type getOwnerDb } from "@mindkid/db";
+import {
+  CHILD_STATUS,
+  type ChildProfileEntity,
+  type OwnerDb,
+} from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import { NoActiveChildError } from "@mindkid/errors/child";
-import { and, eq } from "drizzle-orm";
 import { deleteCookie, type H3Event } from "h3";
 import { getActiveChildUuid } from "#server/utils/auth-runtime";
-
-type ChildProfileRow = typeof childProfiles.$inferSelect;
+import { requireCurrentConsent } from "#server/utils/consent-guard";
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 /**
  * Hồ sơ trẻ trong cookie `active_child_id`, thuộc đúng user và còn hoạt động
@@ -13,22 +17,30 @@ type ChildProfileRow = typeof childProfiles.$inferSelect;
  */
 export async function requireOwnedActiveChild(
   event: H3Event,
-  db: ReturnType<typeof getOwnerDb>,
   userId: number
-): Promise<ChildProfileRow> {
+): Promise<ChildProfileEntity>;
+export async function requireOwnedActiveChild(
+  event: H3Event,
+  db: OwnerDb,
+  userId: number
+): Promise<ChildProfileEntity>;
+export async function requireOwnedActiveChild(
+  event: H3Event,
+  dbOrUserId: OwnerDb | number,
+  maybeUserId?: number
+): Promise<ChildProfileEntity> {
+  const userId =
+    typeof dbOrUserId === "number" ? dbOrUserId : (maybeUserId as number);
   const childUuid = getActiveChildUuid(event);
-  const [child] = await db
-    .select()
-    .from(childProfiles)
-    .where(
-      and(
-        eq(childProfiles.uuid, childUuid),
-        eq(childProfiles.userId, userId),
-        eq(childProfiles.status, "active")
-      )
-    )
-    .limit(1);
-  if (!child) {
+  await requireCurrentConsent(userId, "child_data");
+  const { childProfiles } =
+    typeof dbOrUserId === "number"
+      ? useOwnerRepositories()
+      : createRepositories(dbOrUserId);
+
+  const child = await childProfiles.findByUuidForUser(childUuid, userId);
+
+  if (child?.status !== CHILD_STATUS.ACTIVE) {
     deleteCookie(event, "active_child_id", { path: "/" });
     throw new NoActiveChildError(
       "Hồ sơ trẻ không tồn tại hoặc đã bị lưu trữ. Vui lòng chọn lại."

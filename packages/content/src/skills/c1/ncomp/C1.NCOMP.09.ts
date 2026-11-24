@@ -455,5 +455,14 @@ export const C1_NCOMP_09_SEED: SkillSeed = {
       rounds: 3,
       montessori_ref: "WB13-D2",
     },
+    {
+      code: "GL-C1-NCOMP-INTRO-6012",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 3,
+      theme: "nature",
+      rounds: 3,
+      sequence_no: 61,
+    },
   ],
 };

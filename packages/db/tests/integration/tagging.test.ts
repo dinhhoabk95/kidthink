@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { assertSkillMapWeight, getOwnerDb } from "#src/index";
 import {
-  contentEntityTypeEnum,
+  assertSkillMapWeight,
+  CONTENT_ENTITY_TYPE,
+  CONTENT_ENTITY_TYPE_VALUES,
+  getOwnerDb,
+  TAG_AXIS,
+} from "#src/index";
+import {
   contentSkillMap,
   contentTagMap,
   contentTags,
@@ -17,10 +22,10 @@ describe("Tagging Schema Integration Tests", () => {
     expect(() => assertSkillMapWeight("1.00")).not.toThrow();
   });
 
-  it("BR-SCT-08: content_tag_map and content_skill_map use content_entity_type enum with 2 values", async () => {
-    expect(contentEntityTypeEnum.enumValues).toEqual([
-      "game_level",
-      "curriculum",
+  it("BR-SCT-08: content_tag_map and content_skill_map use content_entity_type tinyint values", async () => {
+    expect(CONTENT_ENTITY_TYPE_VALUES).toEqual([
+      CONTENT_ENTITY_TYPE.GAME_LEVEL,
+      CONTENT_ENTITY_TYPE.CURRICULUM,
     ]);
 
     const db = getOwnerDb();
@@ -28,7 +33,7 @@ describe("Tagging Schema Integration Tests", () => {
       .insert(contentTags)
       .values({
         code: `tag-sct08-${Date.now()}`,
-        axis: "what",
+        axis: TAG_AXIS.WHAT,
         label: "Kiểm thử BR-SCT-08",
       })
       .returning();
@@ -37,10 +42,7 @@ describe("Tagging Schema Integration Tests", () => {
     }
 
     const baseEntityId = Math.floor(Math.random() * 800_000_000) + 100_000_000;
-    for (const [
-      idx,
-      entityType,
-    ] of contentEntityTypeEnum.enumValues.entries()) {
+    for (const [idx, entityType] of CONTENT_ENTITY_TYPE_VALUES.entries()) {
       const [row] = await db
         .insert(contentTagMap)
         .values({
@@ -60,7 +62,7 @@ describe("Tagging Schema Integration Tests", () => {
       .insert(contentTags)
       .values({
         code: `tag-test-${Date.now()}`,
-        axis: "what",
+        axis: TAG_AXIS.WHAT,
         label: "Nhận biết số",
       })
       .returning();
@@ -73,7 +75,7 @@ describe("Tagging Schema Integration Tests", () => {
     const [map] = await db
       .insert(contentTagMap)
       .values({
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: randomTagEntityId,
         tagId: tag.id,
       })
@@ -94,7 +96,7 @@ describe("Tagging Schema Integration Tests", () => {
       const [map] = await db
         .insert(contentSkillMap)
         .values({
-          entityType: "game_level",
+          entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
           entityId: randomSkillEntityId,
           skillId: sk.id,
           weight: "0.80",

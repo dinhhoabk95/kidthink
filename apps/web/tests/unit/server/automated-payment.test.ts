@@ -1,9 +1,11 @@
 import crypto from "node:crypto";
 import {
   auditLogs,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
+  PAYMENT_ORDER_STATUS,
   packages,
   paymentOrders,
   paymentTransactions,
@@ -56,7 +58,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         packageCode: "PKG-standard",
         offerCode: "annual",
         amountVnd: 299_000,
-        status: "pending",
+        status: PAYMENT_ORDER_STATUS.PENDING,
       })
       .returning();
     if (!order) {
@@ -89,7 +91,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
       .select()
       .from(paymentOrders)
       .where(eq(paymentOrders.id, order.id));
-    expect(updatedOrder?.status).toBe("approved");
+    expect(updatedOrder?.status).toBe(PAYMENT_ORDER_STATUS.APPROVED);
 
     // Verify payment_transactions ledger record
     const [txRecord] = await db
@@ -108,7 +110,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
       .from(entitlements)
       .where(eq(entitlements.userId, user.id));
     expect(userEntitlements.length).toBeGreaterThanOrEqual(1);
-    expect(userEntitlements[0]?.status).toBe("active");
+    expect(userEntitlements[0]?.status).toBe(ENTITLEMENT_STATUS.ACTIVE);
 
     // Verify audit log
     const [audit] = await db
@@ -145,7 +147,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         packageCode: "PKG-standard",
         offerCode: "annual",
         amountVnd: 299_000,
-        status: "pending",
+        status: PAYMENT_ORDER_STATUS.PENDING,
       })
       .returning();
     if (!order) {
@@ -181,7 +183,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
       .where(eq(entitlements.userId, user.id));
     expect(userEntitlements).toHaveLength(5);
     for (const e of userEntitlements) {
-      expect(e.status).toBe("active");
+      expect(e.status).toBe(ENTITLEMENT_STATUS.ACTIVE);
     }
   });
 
@@ -226,7 +228,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         packageCode: "PKG-standard",
         offerCode: "annual",
         amountVnd: 299_000,
-        status: "pending",
+        status: PAYMENT_ORDER_STATUS.PENDING,
       })
       .returning();
     if (!order) {
@@ -256,7 +258,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
       .select()
       .from(paymentOrders)
       .where(eq(paymentOrders.id, order.id));
-    expect(heldOrder?.status).toBe("under_review");
+    expect(heldOrder?.status).toBe(PAYMENT_ORDER_STATUS.UNDER_REVIEW);
 
     const [mismatchTx] = await db
       .select()
@@ -316,7 +318,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         packageCode: "PKG-standard",
         offerCode: "annual",
         amountVnd: 299_000,
-        status: "approved",
+        status: PAYMENT_ORDER_STATUS.APPROVED,
       })
       .returning();
     if (!order) {
@@ -342,7 +344,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
       .select()
       .from(paymentOrders)
       .where(eq(paymentOrders.id, order.id));
-    expect(after?.status).toBe("approved");
+    expect(after?.status).toBe(PAYMENT_ORDER_STATUS.APPROVED);
   });
 
   it("Scenario: BR-APM-08 — pending_proof order is approved by a verified webhook", async () => {
@@ -364,7 +366,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         packageCode: "PKG-standard",
         offerCode: "annual",
         amountVnd: 299_000,
-        status: "pending_proof",
+        status: PAYMENT_ORDER_STATUS.PENDING_PROOF,
       })
       .returning();
     if (!order) {
@@ -408,7 +410,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         packageCode: "PKG-standard",
         offerCode: "annual",
         amountVnd: 299_000,
-        status: "approved",
+        status: PAYMENT_ORDER_STATUS.APPROVED,
       })
       .returning();
     if (!order) {
@@ -472,7 +474,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         packageCode: "PKG-standard",
         offerCode: "annual",
         amountVnd: 299_000,
-        status: "pending",
+        status: PAYMENT_ORDER_STATUS.PENDING,
       })
       .returning();
     if (!order) {
@@ -541,7 +543,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
         packageCode: "PKG-standard",
         offerCode: "annual",
         amountVnd: 299_000,
-        status: "pending",
+        status: PAYMENT_ORDER_STATUS.PENDING,
       })
       .returning();
     if (!order) {

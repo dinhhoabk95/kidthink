@@ -1,8 +1,12 @@
 import { deleteCached, getCached, setCached } from "@mindkid/cache";
-import { consentLogs, consentRequirements, getOwnerDb } from "@mindkid/db";
+import {
+  CONSENT_ACTION,
+  CONSENT_ACTION_CODEC,
+  CONSENT_TYPE_CODEC,
+} from "@mindkid/db";
 import { ConsentRequiredError } from "@mindkid/errors/account";
 import type { ConsentType } from "@mindkid/shared";
-import { and, desc, eq } from "drizzle-orm";
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 /**
  * Closed allow-list of exempt paths when terms or privacy requires re-consent (D-QX, BR-CSM-05).
@@ -91,27 +95,20 @@ export async function requireConsentActive(
   userId: number,
   type: ConsentType
 ): Promise<void> {
-  const db = getOwnerDb();
+  const repos = useOwnerRepositories();
+  const consentCode = CONSENT_TYPE_CODEC.toCode(type);
 
-  const [latestLog, req] = await Promise.all([
-    db
-      .select()
-      .from(consentLogs)
-      .where(
-        and(eq(consentLogs.userId, userId), eq(consentLogs.consentType, type))
-      )
-      .orderBy(desc(consentLogs.createdAt), desc(consentLogs.id))
-      .limit(1)
-      .then((rows) => rows[0]),
-    db
-      .select()
-      .from(consentRequirements)
-      .where(eq(consentRequirements.consentType, type))
-      .limit(1)
-      .then((rows) => rows[0]),
+  const [latestLog, reqRows] = await Promise.all([
+    repos.consents.findLatestByUserAndType(userId, consentCode),
+    repos.consents.getRequirements([consentCode]),
   ]);
+  const req = reqRows[0];
 
-  if (!latestLog || latestLog.action === "withdrawn") {
+  const parsedAction = latestLog
+    ? CONSENT_ACTION_CODEC.parseCode(latestLog.action)
+    : null;
+
+  if (!latestLog || parsedAction !== CONSENT_ACTION.ACCEPTED) {
     const consentName = CONSENT_NAMES[type] || "văn bản pháp lý";
     throw new ConsentRequiredError({
       reason: `Chưa đồng ý với ${consentName}.`,
@@ -119,9 +116,14 @@ export async function requireConsentActive(
     });
   }
 
+  const createdAtMs =
+    latestLog.createdAt instanceof Date
+      ? latestLog.createdAt.getTime()
+      : new Date(latestLog.createdAt).getTime();
+
   if (
     req?.reconsentRequiredAt &&
-    latestLog.createdAt.getTime() < req.reconsentRequiredAt.getTime()
+    createdAtMs < req.reconsentRequiredAt.getTime()
   ) {
     throw new ConsentRequiredError({
       reason: "Chính sách đã cập nhật yêu cầu tái đồng ý.",

@@ -1,0 +1,10 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi cánh chim</title>
+  <defs>
+    <linearGradient id="wingPlume" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#f8fafc" /><stop offset="100%" stop-color="#bae6fd" /></linearGradient>
+  </defs>
+  <ellipse cx="58" cy="105" fill="#1e3a8a" opacity="0.22" rx="34" ry="5" />
+    <!-- Anatomical primary, secondary & covert feather layers -->
+    <path d="M22 86C18 62 32 34 66 20C88 12 104 16 106 24C98 30 86 34 74 37C90 36 101 40 102 47C92 52 80 55 68 57C82 57 92 61 92 68C81 73 69 75 57 76C69 78 77 82 76 88C62 92 40 94 22 86Z" fill="url(#wingPlume)" stroke="#1e3a8a" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M26 82C28 60 42 40 68 29C62 42 54 52 43 60C55 58 64 61 63 67C51 73 38 78 26 82Z" fill="#e0f2fe" stroke="#1d4ed8" stroke-linejoin="round" stroke-width="2.8" />
+</svg>

@@ -5,8 +5,12 @@
  * động (`BR-STK-07`). Bảng `child_stickers` chỉ INSERT (`BR-STK-02`).
  */
 
-import { childStickers, gameLevels, type getOwnerDb } from "@mindkid/db";
-import { and, asc, eq } from "drizzle-orm";
+import type { DbExecutor } from "@mindkid/db";
+import {
+  createRepositories,
+  type MindKidRepositories,
+} from "@mindkid/db/repositories";
+import { useOwnerRepositories } from "#server/utils/repositories";
 import {
   type AlbumTheme,
   groupStickerAlbum,
@@ -14,9 +18,6 @@ import {
   pickSticker,
   type StickerDef,
 } from "./child-sticker-pick.ts";
-
-type Db = ReturnType<typeof getOwnerDb>;
-export type DbTx = Parameters<Parameters<Db["transaction"]>[0]>[0];
 
 export interface AwardPlayStickerInput {
   readonly childId: number;
@@ -28,102 +29,6 @@ export interface AwardPlayStickerInput {
 
 export type AwardLessonStickerInput = AwardPlayStickerInput;
 
-/** `theme_id` của level đã xuất bản (`BR-STK-04`). */
-async function loadLevelThemes(
-  tx: DbTx,
-  input: AwardPlayStickerInput
-): Promise<readonly (string | null)[]> {
-  if (input.levelThemes !== undefined) {
-    return input.levelThemes;
-  }
-  if (input.themeId !== undefined) {
-    return [input.themeId];
-  }
-  const [row] = await tx
-    .select({ themeId: gameLevels.themeId })
-    .from(gameLevels)
-    .where(eq(gameLevels.code, input.levelCode))
-    .limit(1);
-  return [row?.themeId ?? null];
-}
-
-async function loadOwnedEmojis(
-  tx: DbTx,
-  childId: number,
-  themeCode: string
-): Promise<string[]> {
-  const rows = await tx
-    .select({ emoji: childStickers.emoji })
-    .from(childStickers)
-    .where(
-      and(
-        eq(childStickers.childProfileId, childId),
-        eq(childStickers.themeCode, themeCode)
-      )
-    );
-  return rows.map((row) => row.emoji);
-}
-
-async function findPlaySticker(
-  tx: DbTx,
-  childId: number,
-  playSessionId: number
-): Promise<StickerDef | null> {
-  const [row] = await tx
-    .select({
-      theme_code: childStickers.themeCode,
-      emoji: childStickers.emoji,
-      label: childStickers.label,
-    })
-    .from(childStickers)
-    .where(
-      and(
-        eq(childStickers.childProfileId, childId),
-        eq(childStickers.playSessionId, playSessionId)
-      )
-    )
-    .limit(1);
-  return row ?? null;
-}
-
-/**
- * Trao sticker cho một phiên chơi vừa đóng. Gọi **trong** transaction đóng phiên,
- * chỉ khi phiên thật sự vừa chuyển sang `completed` (`BR-STK-01`). Unique
- * `(child, play_session)` là lớp chặn thứ hai: trùng thì trả sticker đã có.
- */
-export async function awardPlaySticker(
-  tx: DbTx,
-  input: AwardPlayStickerInput
-): Promise<StickerDef> {
-  const themeCode = pickLevelTheme(
-    await loadLevelThemes(tx, input),
-    input.levelCode
-  );
-  const sticker = pickSticker(
-    themeCode,
-    await loadOwnedEmojis(tx, input.childId, themeCode)
-  );
-  const [created] = await tx
-    .insert(childStickers)
-    .values({
-      childProfileId: input.childId,
-      playSessionId: input.playSessionId,
-      themeCode: sticker.theme_code,
-      emoji: sticker.emoji,
-      label: sticker.label,
-    })
-    .onConflictDoNothing()
-    .returning({ id: childStickers.id });
-  if (created) {
-    return sticker;
-  }
-  return (
-    (await findPlaySticker(tx, input.childId, input.playSessionId)) ?? sticker
-  );
-}
-
-export const awardLessonSticker = awardPlaySticker;
-
 export interface LoadStickerAlbumInput {
   readonly childId: number;
   readonly themeCode?: string;
@@ -133,24 +38,103 @@ export interface StickerAlbumView {
   readonly themes: readonly AlbumTheme[];
 }
 
+function isRepositories(
+  target: DbExecutor | MindKidRepositories
+): target is MindKidRepositories {
+  return "childStickers" in target;
+}
+
+function toRepositories(
+  target?: DbExecutor | MindKidRepositories
+): MindKidRepositories {
+  if (!target) {
+    return useOwnerRepositories();
+  }
+  return isRepositories(target) ? target : createRepositories(target);
+}
+
+/** `theme_id` của level đã xuất bản (`BR-STK-04`). */
+async function loadLevelThemes(
+  repos: MindKidRepositories,
+  input: AwardPlayStickerInput
+): Promise<readonly (string | null)[]> {
+  if (input.levelThemes !== undefined) {
+    return input.levelThemes;
+  }
+  if (input.themeId !== undefined) {
+    return [input.themeId];
+  }
+  const level = await repos.gameLevels.findByCode(input.levelCode);
+  return [level?.themeId ?? null];
+}
+
+/**
+ * Trao sticker cho một phiên chơi vừa đóng. Gọi **trong** transaction đóng phiên,
+ * chỉ khi phiên thật sự vừa chuyển sang `completed` (`BR-STK-01`). Unique
+ * `(child, play_session)` là lớp chặn thứ hai: trùng thì trả sticker đã có.
+ */
+export async function awardPlaySticker(
+  txOrRepos: DbExecutor | MindKidRepositories,
+  input: AwardPlayStickerInput
+): Promise<StickerDef> {
+  const repos = toRepositories(txOrRepos);
+  const themeCode = pickLevelTheme(
+    await loadLevelThemes(repos, input),
+    input.levelCode
+  );
+  const ownedEmojis = await repos.childStickers.listOwnedEmojis(
+    input.childId,
+    themeCode
+  );
+  const sticker = pickSticker(themeCode, ownedEmojis);
+
+  const awarded = await repos.childStickers.awardIfAbsent({
+    childProfileId: input.childId,
+    playSessionId: input.playSessionId,
+    themeCode: sticker.theme_code,
+    emoji: sticker.emoji,
+    label: sticker.label,
+  });
+
+  return {
+    theme_code: awarded.themeCode,
+    emoji: awarded.emoji,
+    label: awarded.label,
+  };
+}
+
+export const awardLessonSticker = awardPlaySticker;
+
 /** Album của **một** trẻ (`BR-STK-07`), gom theo chủ đề (§7.2). */
 export async function loadStickerAlbum(
-  db: Db,
   input: LoadStickerAlbumInput
+): Promise<StickerAlbumView>;
+export async function loadStickerAlbum(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  input: LoadStickerAlbumInput
+): Promise<StickerAlbumView>;
+export async function loadStickerAlbum(
+  first: DbExecutor | MindKidRepositories | LoadStickerAlbumInput,
+  maybeInput?: LoadStickerAlbumInput
 ): Promise<StickerAlbumView> {
-  const filters = [
-    eq(childStickers.childProfileId, input.childId),
-    ...(input.themeCode ? [eq(childStickers.themeCode, input.themeCode)] : []),
-  ];
-  const rows = await db
-    .select({
-      theme_code: childStickers.themeCode,
-      emoji: childStickers.emoji,
-      label: childStickers.label,
-      awarded_at: childStickers.awardedAt,
-    })
-    .from(childStickers)
-    .where(and(...filters))
-    .orderBy(asc(childStickers.awardedAt), asc(childStickers.id));
-  return { themes: groupStickerAlbum(rows) };
+  const repos =
+    maybeInput === undefined
+      ? useOwnerRepositories()
+      : toRepositories(first as DbExecutor | MindKidRepositories);
+  const input = maybeInput ?? (first as LoadStickerAlbumInput);
+
+  const rows = await repos.childStickers.listByChild(
+    input.childId,
+    input.themeCode
+  );
+  return {
+    themes: groupStickerAlbum(
+      rows.map((row) => ({
+        theme_code: row.themeCode,
+        emoji: row.emoji,
+        label: row.label,
+        awarded_at: row.awardedAt,
+      }))
+    ),
+  };
 }

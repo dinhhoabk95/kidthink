@@ -64,7 +64,7 @@ export const projectGT031: Projection<"GT-031"> = {
 
     return {
       content_pack: {
-        prompt: `Bé hãy chọn các đồng tiền để có đúng ${targetAmount} đồng nhé!`,
+        prompt: `Đi chợ quê chọn gộp đúng ${targetAmount} đồng nhé!`,
         coins,
         target_amount: targetAmount,
         item_to_buy: {

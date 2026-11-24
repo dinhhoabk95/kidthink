@@ -248,6 +248,16 @@ export const C6_WM_02_SEED: SkillSeed = {
   dataset: C6_WM_02_DATASET,
   levels: [
     {
+      code: "GL-C6-WM-INTRO-7002",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "animal",
+      rounds: 1,
+      sequence_no: 1,
+    },
+    {
       code: "GL-C1-DOT-PAIR-0004",
       template: "GT-005",
       band: "4-5",

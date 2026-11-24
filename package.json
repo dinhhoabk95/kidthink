@@ -11,10 +11,12 @@
   "scripts": {
     "prepare": "lefthook install",
     "dev": "pnpm --filter @mindkid/web dev",
+    "dev:local": "DB_CONNECTION=sqlite pnpm --filter @mindkid/web dev",
     "dev:admin": "pnpm --filter @mindkid/admin dev",
     "dev:worker": "pnpm --filter @mindkid/worker dev",
     "dev:all": "pnpm --parallel --filter './apps/*' dev",
     "build": "pnpm --recursive --if-present run build",
+    "build:local": "DB_CONNECTION=sqlite MINDKID_RUNTIME=cloudflare pnpm build",
     "format": "biome format --write .",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
@@ -28,7 +30,16 @@
     "db:generate": "pnpm --filter @mindkid/db run generate",
     "db:migrate": "pnpm --filter @mindkid/db run migrate",
     "db:seed": "pnpm --filter @mindkid/db run seed && pnpm --filter @mindkid/content-build run seed:all",
-    "deploy": "tsx scripts/deploy/cli.ts"
+    "db:local:init": "pnpm --filter @mindkid/db run sqlite:init",
+    "db:local:seed": "pnpm --filter @mindkid/db run sqlite:seed && DB_CONNECTION=sqlite MINDKID_SEED_MASTER_ONLY=1 pnpm --filter @mindkid/content-build run seed:all",
+    "deploy": "tsx scripts/deploy/cli.ts",
+    "verify:cf-budget": "tsx scripts/deploy/verify-cf-budget.ts",
+    "cutover:rehearse": "tsx scripts/cutover/cf-to-vps.ts --rehearse",
+    "cutover:cf-to-vps": "tsx scripts/cutover/cf-to-vps.ts --execute",
+    "voice:audition": "pnpm --filter @mindkid/content-build run voice:audition",
+    "voice:extract": "pnpm --filter @mindkid/content-build run voice:extract",
+    "voice:generate": "pnpm --filter @mindkid/content-build run voice:generate",
+    "voice:verify": "pnpm --filter @mindkid/content-build run voice:verify"
   },
   "devDependencies": {
     "@biomejs/biome": "~2.6.8",

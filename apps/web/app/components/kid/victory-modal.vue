@@ -26,7 +26,7 @@
             :class="{ 'star-pill--dim': (stars ?? 0) < 1 }"
           >
             <UIcon
-              class="star-icon w-12 h-12 text-amber-400 fill-current"
+              class="star-icon w-12 h-12 text-warning-50 fill-current"
               name="i-lucide-star"
               v-if="(stars ?? 0) >= 1"
             />
@@ -36,7 +36,7 @@
             :class="{ 'star-pill--dim': (stars ?? 0) < 2 }"
           >
             <UIcon
-              class="star-icon star-icon--big w-12 h-12 text-amber-400 fill-current"
+              class="star-icon star-icon--big w-12 h-12 text-warning-50 fill-current"
               name="i-lucide-star"
               v-if="(stars ?? 0) >= 2"
             />
@@ -46,7 +46,7 @@
             :class="{ 'star-pill--dim': (stars ?? 0) < 3 }"
           >
             <UIcon
-              class="star-icon w-12 h-12 text-amber-400 fill-current"
+              class="star-icon w-12 h-12 text-warning-50 fill-current"
               name="i-lucide-star"
               v-if="(stars ?? 0) >= 3"
             />
@@ -93,6 +93,21 @@
           </button>
         </div>
 
+        <!-- Góc Ba Mẹ Koguma (Jibutsu vật thật & Taiwa đối thoại tại nhà) -->
+        <div class="parent-corner-slot" v-if="hasKogumaContext">
+          <KidKogumaParentCorner
+            :age-band="ageBand"
+            :koguma-unit="kogumaUnit"
+            :koguma-unit-code="kogumaUnitCode"
+            :level-code="levelCode"
+            :moet-theme-id="moetThemeId"
+            :skill-code="skillCode"
+            :template-code="templateCode"
+            :theme-id="themeId"
+            @announce="(phrase) => emit('announce', phrase)"
+          />
+        </div>
+
         <!-- Lời mời đăng ký cho guest sau khi chơi xong, qua Parent Gate (`BR-PEN-05`). -->
         <div class="guest-register-section" v-if="isGuest">
           <button
@@ -120,8 +135,10 @@
 
 <script lang="ts" setup>
   import { FeedbackSystem } from "@mindkid/game-engine";
+  import type { KogumaUnitSummary } from "@mindkid/taxonomy";
   import { computed, ref, toRef, watch } from "vue";
   import KidGiftUnboxStage from "~/components/kid/gift-unbox-stage.vue";
+  import KidKogumaParentCorner from "~/components/kid/koguma-parent-corner.vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
   import { useFocusTrap } from "~/composables/play/use-focus-trap";
@@ -145,6 +162,14 @@
       isGuest?: boolean;
       celebration?: CelebrationTier;
       sticker?: VictorySticker | null;
+      kogumaUnit?: KogumaUnitSummary | null;
+      kogumaUnitCode?: string;
+      skillCode?: string;
+      levelCode?: string;
+      templateCode?: string;
+      themeId?: string;
+      ageBand?: string;
+      moetThemeId?: string;
     }>(),
     {
       stars: null,
@@ -152,7 +177,18 @@
       isGuest: false,
       celebration: "great",
       sticker: null,
+      kogumaUnit: null,
     }
+  );
+
+  const hasKogumaContext = computed(() =>
+    Boolean(
+      props.kogumaUnit ||
+        props.kogumaUnitCode ||
+        props.skillCode ||
+        props.levelCode ||
+        props.moetThemeId
+    )
   );
 
   const emit = defineEmits<{
@@ -209,15 +245,15 @@
 
   const celebrationSubtitle = computed(() => {
     if (props.isIntro) {
-      return "Bé đã hoàn thành bài làm quen!";
+      return "Tùng dinh dinh, bé đã làm quen khay gỗ rồi!";
     }
     if (props.celebration === "good") {
-      return "Bé đã hoàn thành cả bài rồi!";
+      return "Dung dăng dung dẻ, bé đi trọn bài học rồi!";
     }
     if (props.celebration === "nice_try") {
-      return "Bé đi hết chặng đường rồi, giỏi lắm!";
+      return "Bé đi hết chặng đường rồi, Gấu Con khen bé ngoan lắm!";
     }
-    return "Bé làm đúng hết rồi!";
+    return "Tùng dinh dinh, bé khéo tay tinh mắt quá!";
   });
 </script>
 
@@ -227,10 +263,11 @@
     inset: 0;
     z-index: 50;
     display: flex;
-    align-items: center;
+    align-items: safe center;
     justify-content: center;
     padding: 1rem;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .backdrop-glow {
@@ -265,7 +302,7 @@
   .clay-card {
     background-color: var(--color-surface-50);
     border-radius: 2.5rem;
-    border: 4px solid var(--color-surface-300);
+    border: 4px solid var(--color-warning-300);
     /* Gấu thò xuống 2rem trong thẻ; cung sao bắt đầu dưới đó (QA 2026-10-03). */
     padding: 3.5rem 2rem 2rem 2rem;
     display: flex;
@@ -478,6 +515,10 @@
     justify-content: center;
   }
 
+  .parent-corner-slot {
+    width: 100%;
+  }
+
   .btn-guest-register {
     min-height: 4rem;
     padding: 0.75rem 1.25rem;
@@ -564,7 +605,7 @@
       flex: 1;
       display: grid;
       grid-template-columns: 1fr auto;
-      grid-template-rows: auto auto 1fr;
+      grid-template-rows: auto auto 1fr auto;
       column-gap: 1.5rem;
       align-items: center;
       padding: 0.75rem 1.5rem;
@@ -624,10 +665,16 @@
 
     .action-buttons {
       grid-column: 2;
-      grid-row: 1 / -1;
+      grid-row: 1 / 4;
       width: auto;
       flex-direction: column;
       gap: 0.75rem;
+    }
+
+    .parent-corner-slot,
+    .guest-register-section {
+      grid-column: 1 / -1;
+      width: 100%;
     }
 
     .btn-continue,

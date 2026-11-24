@@ -1,9 +1,11 @@
 import { randomUUID } from "node:crypto";
 import {
+  ACCESS_TIER,
   childDailyStats,
   childProfiles,
   gameLevels,
   getOwnerDb,
+  PLAY_COMPLETION_STATUS,
   playSessions,
   telemetryEvents,
   users,
@@ -24,7 +26,7 @@ async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
       instruction: "Instruction",
       contentPack: {},
       difficultyParams: {},
-      accessTier: "free",
+      accessTier: ACCESS_TIER.FREE,
     })
     .returning();
 
@@ -44,7 +46,7 @@ describe("Task P1.6 & #293 S3 — Job sweep:abandoned (BR-PSL-07, BR-HPL-02)", (
         gameLevelId: glId,
         templateCode,
         guestDeviceId: "device-sweep-1",
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
         startedAt: fortyMinsAgo,
       })
       .returning();
@@ -57,13 +59,13 @@ describe("Task P1.6 & #293 S3 — Job sweep:abandoned (BR-PSL-07, BR-HPL-02)", (
       .from(playSessions)
       .where(eq(playSessions.id, session.id));
 
-    expect(updated?.completionStatus).toBe("abandoned");
+    expect(updated?.completionStatus).toBe(PLAY_COMPLETION_STATUS.ABANDONED);
   });
 
   it("Task #293 S3: abandoned session without telemetry events records 0s (not 1800s), and session with last event at 45s records 45s", async () => {
     const db = getOwnerDb();
     const { glId, templateCode } = await createTestLevel(db);
-    const now = new Date();
+    const now = new Date("2026-06-15T12:00:00+07:00");
     const dateIct = getDateIct(now);
     const fortyMinsAgo = new Date(now.getTime() - 40 * 60 * 1000);
 
@@ -104,7 +106,7 @@ describe("Task P1.6 & #293 S3 — Job sweep:abandoned (BR-PSL-07, BR-HPL-02)", (
         childProfileId: childZero.id,
         gameLevelId: glId,
         templateCode,
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
         startedAt: fortyMinsAgo,
       })
       .returning();
@@ -118,7 +120,7 @@ describe("Task P1.6 & #293 S3 — Job sweep:abandoned (BR-PSL-07, BR-HPL-02)", (
         childProfileId: childWithEvents.id,
         gameLevelId: glId,
         templateCode,
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
         startedAt: fortyMinsAgo,
       })
       .returning();
@@ -144,7 +146,9 @@ describe("Task P1.6 & #293 S3 — Job sweep:abandoned (BR-PSL-07, BR-HPL-02)", (
       .select()
       .from(playSessions)
       .where(eq(playSessions.id, sessionZero.id));
-    expect(updatedZero?.completionStatus).toBe("abandoned");
+    expect(updatedZero?.completionStatus).toBe(
+      PLAY_COMPLETION_STATUS.ABANDONED
+    );
     expect(updatedZero?.durationSeconds).toBe(0);
 
     const [statsZero] = await db
@@ -162,7 +166,9 @@ describe("Task P1.6 & #293 S3 — Job sweep:abandoned (BR-PSL-07, BR-HPL-02)", (
       .select()
       .from(playSessions)
       .where(eq(playSessions.id, sessionWithEvents.id));
-    expect(updatedEvents?.completionStatus).toBe("abandoned");
+    expect(updatedEvents?.completionStatus).toBe(
+      PLAY_COMPLETION_STATUS.ABANDONED
+    );
     expect(updatedEvents?.durationSeconds).toBe(45);
 
     const [statsEvents] = await db

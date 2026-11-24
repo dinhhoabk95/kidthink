@@ -404,6 +404,12 @@ importers:
       '@mindkid/audit':
         specifier: workspace:*
         version: link:../../packages/audit
+      '@mindkid/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@mindkid/cache':
+        specifier: workspace:*
+        version: link:../../packages/cache
       '@mindkid/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -440,9 +446,6 @@ importers:
       ioredis:
         specifier: 6.1.0-beta.1
         version: 6.1.0-beta.1(supports-color@10.2.2)
-      postgres:
-        specifier: ^4.1.1
-        version: 4.1.1
     devDependencies:
       '@types/node':
         specifier: ^26.6.6
@@ -608,6 +611,9 @@ importers:
       '@mindkid/shared':
         specifier: workspace:*
         version: link:../shared
+      '@mindkid/storage':
+        specifier: workspace:*
+        version: link:../storage
       '@mindkid/taxonomy':
         specifier: workspace:*
         version: link:../taxonomy

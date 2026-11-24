@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>MindKid · Phòng Nghe Thử Giọng Cô Giáo Mầm Non (Pha 0 Audition)</title>
+  <style>
+    :root {
+      --bg: #fdfaf5;
+      --surface: #ffffff;
+      --border: #e5dccb;
+      --text: #1e293b;
+      --muted: #64748b;
+      --brand: #4f46e5;
+      --brand-soft: #eef2ff;
+      --cta: #ea580c;
+      --cta-soft: #fff7ed;
+      --ok: #15803d;
+      --ok-soft: #f0fdf4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 28px 20px 64px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .container { max-width: 1360px; margin: 0 auto; }
+    header {
+      background: var(--surface);
+      border: 3px solid var(--border);
+      border-radius: 24px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 6px 0 var(--border);
+    }
+    h1 { margin: 0 0 8px; font-size: 1.65rem; color: #1e1b4b; }
+    .meta-bar { display: flex; flex-wrap: wrap; gap: 16px; color: var(--muted); font-size: 0.95rem; }
+    .engine-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .engine-card {
+      background: var(--surface);
+      border: 3px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 4px 0 var(--border);
+    }
+    .engine-card h3 { margin: 0; font-size: 1.08rem; color: #1e1b4b; }
+    .engine-card .desc { margin: 0; font-size: 0.9rem; color: var(--muted); }
+    .badge {
+      align-self: flex-start;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .badge.offline { background: var(--ok-soft); color: var(--ok); border: 1px solid #bbf7d0; }
+    .badge.online { background: var(--brand-soft); color: var(--brand); border: 1px solid #c7d2fe; }
+    .badge.warn { background: #fef2f2; color: #b91c1c; }
+    .metrics { font-size: 0.88rem; display: grid; gap: 4px; background: #f8fafc; padding: 10px 12px; border-radius: 12px; }
+    .metrics .highlight { color: var(--cta); font-size: 0.96rem; }
+    .cmd-box { background: #0f172a; color: #f8fafc; padding: 8px 10px; border-radius: 10px; font-size: 0.78rem; overflow-x: auto; }
+    .seq-btn {
+      margin-top: auto;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 2px solid var(--brand);
+      background: var(--brand-soft);
+      color: var(--brand);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .seq-btn:hover { background: var(--brand); color: #fff; }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--surface);
+      border: 3px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 6px 0 var(--border);
+    }
+    th, td { padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top; text-align: left; }
+    th { background: #f8f4ec; font-size: 0.9rem; color: #334155; }
+    tr:last-child td { border-bottom: none; }
+    .col-id { width: 120px; }
+    .col-text { width: 36%; }
+    .sample-code { display: inline-block; font-weight: 800; font-size: 1rem; color: var(--brand); margin-bottom: 6px; }
+    .cat-pill { display: block; font-size: 0.75rem; background: #f1f5f9; color: #475569; padding: 3px 8px; border-radius: 8px; width: fit-content; }
+    .note { font-size: 0.82rem; color: var(--muted); margin-bottom: 4px; }
+    .raw-text { font-weight: 700; font-size: 1.02rem; margin-bottom: 6px; color: #0f172a; }
+    .spoken-script { font-size: 0.88rem; color: #334155; background: var(--cta-soft); border-left: 3px solid var(--cta); padding: 6px 10px; border-radius: 6px; }
+    .spoken-script span { font-weight: 700; color: var(--cta); }
+    .player-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .play-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 14px;
+      border: 2px solid #cbd5e1;
+      background: #fff;
+      cursor: pointer;
+      text-align: left;
+      transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+    }
+    .play-btn:hover { border-color: var(--brand); background: var(--brand-soft); }
+    .play-btn.playing { border-color: var(--cta); background: var(--cta-soft); transform: translateY(-1px); }
+    .play-btn .icon { font-size: 1rem; color: var(--brand); width: 18px; text-align: center; }
+    .play-btn.playing .icon { color: var(--cta); }
+    .btn-meta { display: flex; flex-direction: column; line-height: 1.25; }
+    .btn-meta strong { font-size: 0.85rem; color: #1e293b; }
+    .btn-meta small { font-size: 0.74rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎧 Phòng Nghe Thử Giọng Cô Giáo Mầm Non (Pha 0 · Voice Audition)</h1>
+      <div class="meta-bar">
+        <span><strong>Phần cứng đo thực tế:</strong> darwin x64 · Intel(R) Core(TM) i7-1068NG7 CPU @ 2.30GHz (8 threads, 16GB RAM)</span>
+        <span><strong>Tổng catalog toàn dự án:</strong> 7.587 câu duy nhất</span>
+        <span><strong>Chuẩn âm thanh:</strong> MP3 44.1kHz · Mono · 64kbps · -16 LUFS · Fade 20ms/40ms</span>
+        <span><strong>Tạo lúc:</strong> 2026-11-17T15:03:56.908Z</span>
+      </div>
+    </header>
+
+    <section class="engine-grid">
+      <div class="engine-card">
+    <div class="badge online">Online miễn phí · Tự nhiên ấm áp</div>
+    <h3>Edge Neural · Hoài My (Chuẩn)</h3>
+    <p class="desc">Microsoft Edge Neural vi-VN-HoaiMyNeural nguyên bản, hậu kỳ FFmpeg tốc độ 0.92x chuẩn -16 LUFS.</p>
+    <div class="metrics">
+      <div><span>Synth TB:</span> <strong>5588 ms/câu</strong></div>
+      <div><span>Tổng TB (+FFmpeg):</span> <strong>5866 ms/câu</strong></div>
+      <div><span>Luồng song song:</span> <strong>x2</strong></div>
+      <div><span>Ước tính 7.587 câu:</span> <strong class="highlight">~7 giờ 32 phút</strong></div>
+    </div>
+    <div class="cmd-box"><code>pnpm voice:generate --engine=edge-hoaimy --concurrency=2</code></div>
+    <button class="seq-btn" data-seq-engine="edge-hoaimy" type="button" >▶ Nghe trọn bộ 12 câu của giọng này</button>
+  </div>
+<div class="engine-card">
+    <div class="badge online">Online miễn phí · Dịu dàng mầm non</div>
+    <h3>Edge Neural · Hoài My Cô Giáo Mầm Non</h3>
+    <p class="desc">Biến thể cô giáo mầm non từ HoaiMyNeural (rate -8% từ engine + nâng formant/pitch nhẹ +2% qua DSP).</p>
+    <div class="metrics">
+      <div><span>Synth TB:</span> <strong>9901 ms/câu</strong></div>
+      <div><span>Tổng TB (+FFmpeg):</span> <strong>10149 ms/câu</strong></div>
+      <div><span>Luồng song song:</span> <strong>x2</strong></div>
+      <div><span>Ước tính 7.587 câu:</span> <strong class="highlight">~13 giờ 3 phút</strong></div>
+    </div>
+    <div class="cmd-box"><code>pnpm voice:generate --engine=edge-hoaimy-teacher --concurrency=2</code></div>
+    <button class="seq-btn" data-seq-engine="edge-hoaimy-teacher" type="button" >▶ Nghe trọn bộ 12 câu của giọng này</button>
+  </div>
+<div class="engine-card">
+    <div class="badge offline">100% Offline ONNX CPU · Biểu cảm kể chuyện</div>
+    <h3>VieNeu v3 Nano · Mỹ Duyên (Đọc truyện Bắc)</h3>
+    <p class="desc">Mô hình VieNeu-TTS v3 Nano chạy thuần ONNX CPU trên Intel Mac, giọng nữ miền Bắc phong cách kể chuyện ấm áp.</p>
+    <div class="metrics">
+      <div><span>Synth TB:</span> <strong>975 ms/câu</strong></div>
+      <div><span>Tổng TB (+FFmpeg):</span> <strong>1260 ms/câu</strong></div>
+      <div><span>Luồng song song:</span> <strong>x2</strong></div>
+      <div><span>Ước tính 7.587 câu:</span> <strong class="highlight">~1 giờ 37 phút</strong></div>
+    </div>
+    <div class="cmd-box"><code>pnpm voice:generate --engine=vieneu-myduyen --concurrency=2</code></div>
+    <button class="seq-btn" data-seq-engine="vieneu-myduyen" type="button" >▶ Nghe trọn bộ 12 câu của giọng này</button>
+  </div>
+<div class="engine-card">
+    <div class="badge offline">100% Offline ONNX CPU · Trong trẻo tự nhiên</div>
+    <h3>VieNeu v3 Nano · Trúc Ly (Tự nhiên Bắc)</h3>
+    <p class="desc">Mô hình VieNeu-TTS v3 Nano ONNX CPU, giọng nữ miền Bắc tự nhiên, phát âm tròn vành rõ chữ.</p>
+    <div class="metrics">
+      <div><span>Synth TB:</span> <strong>830 ms/câu</strong></div>
+      <div><span>Tổng TB (+FFmpeg):</span> <strong>1078 ms/câu</strong></div>
+      <div><span>Luồng song song:</span> <strong>x2</strong></div>
+      <div><span>Ước tính 7.587 câu:</span> <strong class="highlight">~1 giờ 23 phút</strong></div>
+    </div>
+    <div class="cmd-box"><code>pnpm voice:generate --engine=vieneu-trucly --concurrency=2</code></div>
+    <button class="seq-btn" data-seq-engine="vieneu-trucly" type="button" >▶ Nghe trọn bộ 12 câu của giọng này</button>
+  </div>
+<div class="engine-card">
+    <div class="badge offline">100% Offline ONNX CPU · Zero-shot Clone</div>
+    <h3>VieNeu v3 Nano · Clone Giọng Cô Giáo TiniMath</h3>
+    <p class="desc">Zero-shot voice cloning trực tiếp từ mẫu thu âm giọng cô giáo gốc của TiniMath (flash_memory_intro + co_may_hinh_chon).</p>
+    <div class="metrics">
+      <div><span>Synth TB:</span> <strong>1012 ms/câu</strong></div>
+      <div><span>Tổng TB (+FFmpeg):</span> <strong>1299 ms/câu</strong></div>
+      <div><span>Luồng song song:</span> <strong>x2</strong></div>
+      <div><span>Ước tính 7.587 câu:</span> <strong class="highlight">~1 giờ 40 phút</strong></div>
+    </div>
+    <div class="cmd-box"><code>pnpm voice:generate --engine=vieneu-teacher-clone --concurrency=2</code></div>
+    <button class="seq-btn" data-seq-engine="vieneu-teacher-clone" type="button" >▶ Nghe trọn bộ 12 câu của giọng này</button>
+  </div>
+<div class="engine-card">
+    <div class="badge offline">100% Offline Siêu tốc · ~0.5s/câu</div>
+    <h3>Piper ONNX · VAIS-1000 (Phòng thu Bắc)</h3>
+    <p class="desc">Mô hình VITS vi_VN-vais1000-medium chạy offline siêu tốc trên CPU Intel, âm lượng đồng đều.</p>
+    <div class="metrics">
+      <div><span>Synth TB:</span> <strong>148 ms/câu</strong></div>
+      <div><span>Tổng TB (+FFmpeg):</span> <strong>374 ms/câu</strong></div>
+      <div><span>Luồng song song:</span> <strong>x4</strong></div>
+      <div><span>Ước tính 7.587 câu:</span> <strong class="highlight">~14.4 phút</strong></div>
+    </div>
+    <div class="cmd-box"><code>pnpm voice:generate --engine=piper-vais1000 --concurrency=4</code></div>
+    <button class="seq-btn" data-seq-engine="piper-vais1000" type="button" >▶ Nghe trọn bộ 12 câu của giọng này</button>
+  </div>
+<div class="engine-card">
+    <div class="badge offline">100% Offline Siêu nhẹ · ~0.3s/câu</div>
+    <h3>Piper ONNX · 25Hours Single (Nhẹ)</h3>
+    <p class="desc">Mô hình VITS vi_VN-25hours_single-low dung lượng nhẹ chạy offline cực nhanh trên CPU.</p>
+    <div class="metrics">
+      <div><span>Synth TB:</span> <strong>136 ms/câu</strong></div>
+      <div><span>Tổng TB (+FFmpeg):</span> <strong>393 ms/câu</strong></div>
+      <div><span>Luồng song song:</span> <strong>x4</strong></div>
+      <div><span>Ước tính 7.587 câu:</span> <strong class="highlight">~15.2 phút</strong></div>
+    </div>
+    <div class="cmd-box"><code>pnpm voice:generate --engine=piper-25hours --concurrency=4</code></div>
+    <button class="seq-btn" data-seq-engine="piper-25hours" type="button" >▶ Nghe trọn bộ 12 câu của giọng này</button>
+  </div>
+    </section>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Mã & Nhóm</th>
+          <th>Câu mẫu chuẩn mầm non & Kịch bản phát âm</th>
+          <th>Bấm nghe & so sánh trực tiếp từng giọng đọc trên cùng câu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+        <td class="col-id">
+          <span class="sample-code">S01</span>
+          <span class="cat-pill">round_instruction</span>
+        </td>
+        <td class="col-text">
+          <div class="note">Câu dẫn đếm vật thật C1 (Koguma Jibutsu)</div>
+          <div class="raw-text">Bé hãy chạm đếm xem trên khay gỗ có mấy quả táo đỏ nhé!</div>
+          <div class="spoken-script"><span>Kịch bản đọc:</span> Bé hãy chạm đếm xem trên khay gỗ có mấy quả táo đỏ nhé!</div>
+        </td>
+        <td class="col-players">
+          <div class="player-row"><button class="play-btn" data-engine="edge-hoaimy" data-sample="S01" data-src="./edge-hoaimy/S01.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My (Chuẩn)</strong>
+              <small>3.5s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="edge-hoaimy-teacher" data-sample="S01" data-src="./edge-hoaimy-teacher/S01.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My Cô Giáo Mầm Non</strong>
+              <small>3.5s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-myduyen" data-sample="S01" data-src="./vieneu-myduyen/S01.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Mỹ Duyên (Đọc truyện Bắc)</strong>
+              <small>4.8s · 1583ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-trucly" data-sample="S01" data-src="./vieneu-trucly/S01.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Trúc Ly (Tự nhiên Bắc)</strong>
+              <small>3.9s · 1172ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-teacher-clone" data-sample="S01" data-src="./vieneu-teacher-clone/S01.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Clone Giọng Cô Giáo TiniMath</strong>
+              <small>5.0s · 1295ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-vais1000" data-sample="S01" data-src="./piper-vais1000/S01.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>VAIS-1000 (Phòng thu Bắc)</strong>
+              <small>3.4s · 522ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-25hours" data-sample="S01" data-src="./piper-25hours/S01.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>25Hours Single (Nhẹ)</strong>
+              <small>4.5s · 449ms</small>
+            </span>
+          </button></div>
+        </td>
+      </tr>
+<tr>
+        <td class="col-id">
+          <span class="sample-code">S02</span>
+          <span class="cat-pill">round_instruction</span>
+        </td>
+        <td class="col-text">
+          <div class="note">Chuyển đổi tỷ lệ tiến độ (2/5) &amp; chữ số sang lời đọc tự nhiên</div>
+          <div class="raw-text">Bé hãy xếp đủ 5 hạt gỗ vào rổ mây nhé! (2/5)</div>
+          <div class="spoken-script"><span>Kịch bản đọc:</span> Bé hãy xếp đủ năm hạt gỗ vào rổ mây nhé!, hai trên năm</div>
+        </td>
+        <td class="col-players">
+          <div class="player-row"><button class="play-btn" data-engine="edge-hoaimy" data-sample="S02" data-src="./edge-hoaimy/S02.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My (Chuẩn)</strong>
+              <small>3.8s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="edge-hoaimy-teacher" data-sample="S02" data-src="./edge-hoaimy-teacher/S02.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My Cô Giáo Mầm Non</strong>
+              <small>3.8s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-myduyen" data-sample="S02" data-src="./vieneu-myduyen/S02.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Mỹ Duyên (Đọc truyện Bắc)</strong>
+              <small>5.1s · 1276ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-trucly" data-sample="S02" data-src="./vieneu-trucly/S02.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Trúc Ly (Tự nhiên Bắc)</strong>
+              <small>3.8s · 1110ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-teacher-clone" data-sample="S02" data-src="./vieneu-teacher-clone/S02.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Clone Giọng Cô Giáo TiniMath</strong>
+              <small>4.9s · 1342ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-vais1000" data-sample="S02" data-src="./piper-vais1000/S02.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>VAIS-1000 (Phòng thu Bắc)</strong>
+              <small>3.2s · 466ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-25hours" data-sample="S02" data-src="./piper-25hours/S02.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>25Hours Single (Nhẹ)</strong>
+              <small>4.3s · 420ms</small>
+            </span>
+          </button></div>
+        </td>
+      </tr>
+<tr>
+        <td class="col-id">
+          <span class="sample-code">S03</span>
+          <span class="cat-pill">round_instruction</span>
+        </td>
+        <td class="col-text">
+          <div class="note">Đọc biểu thức toán học (+, =) sang tiếng Việt mầm non</div>
+          <div class="raw-text">Gộp hai giỏ lại: 3 + 2 = mấy nhỉ?</div>
+          <div class="spoken-script"><span>Kịch bản đọc:</span> Gộp hai giỏ lại: ba cộng hai bằng mấy nhỉ?</div>
+        </td>
+        <td class="col-players">
+          <div class="player-row"><button class="play-btn" data-engine="edge-hoaimy" data-sample="S03" data-src="./edge-hoaimy/S03.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My (Chuẩn)</strong>
+              <small>3.0s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="edge-hoaimy-teacher" data-sample="S03" data-src="./edge-hoaimy-teacher/S03.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My Cô Giáo Mầm Non</strong>
+              <small>2.9s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-myduyen" data-sample="S03" data-src="./vieneu-myduyen/S03.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Mỹ Duyên (Đọc truyện Bắc)</strong>
+              <small>3.6s · 1026ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-trucly" data-sample="S03" data-src="./vieneu-trucly/S03.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Trúc Ly (Tự nhiên Bắc)</strong>
+              <small>2.5s · 841ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-teacher-clone" data-sample="S03" data-src="./vieneu-teacher-clone/S03.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Clone Giọng Cô Giáo TiniMath</strong>
+              <small>3.5s · 1076ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-vais1000" data-sample="S03" data-src="./piper-vais1000/S03.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>VAIS-1000 (Phòng thu Bắc)</strong>
+              <small>2.4s · 315ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-25hours" data-sample="S03" data-src="./piper-25hours/S03.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>25Hours Single (Nhẹ)</strong>
+              <small>3.0s · 318ms</small>
+            </span>
+          </button></div>
+        </td>
+      </tr>
+<tr>
+        <td class="col-id">
+          <span class="sample-code">S04</span>
+          <span class="cat-pill">gt000_step</span>
+        </td>
+        <td class="col-text">
+          <div class="note">Bước tập nói GT-000 &amp; đọc chuẩn &#39;số 0&#39; thành &#39;số không&#39;</div>
+          <div class="raw-text">Bé nói theo cô nhé: Số 0</div>
+          <div class="spoken-script"><span>Kịch bản đọc:</span> Bé nói theo cô nhé, số không</div>
+        </td>
+        <td class="col-players">
+          <div class="player-row"><button class="play-btn" data-engine="edge-hoaimy" data-sample="S04" data-src="./edge-hoaimy/S04.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My (Chuẩn)</strong>
+              <small>2.2s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="edge-hoaimy-teacher" data-sample="S04" data-src="./edge-hoaimy-teacher/S04.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My Cô Giáo Mầm Non</strong>
+              <small>2.2s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-myduyen" data-sample="S04" data-src="./vieneu-myduyen/S04.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Mỹ Duyên (Đọc truyện Bắc)</strong>
+              <small>2.6s · 865ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-trucly" data-sample="S04" data-src="./vieneu-trucly/S04.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Trúc Ly (Tự nhiên Bắc)</strong>
+              <small>1.7s · 810ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-teacher-clone" data-sample="S04" data-src="./vieneu-teacher-clone/S04.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Clone Giọng Cô Giáo TiniMath</strong>
+              <small>2.4s · 886ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-vais1000" data-sample="S04" data-src="./piper-vais1000/S04.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>VAIS-1000 (Phòng thu Bắc)</strong>
+              <small>1.7s · 244ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-25hours" data-sample="S04" data-src="./piper-25hours/S04.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>25Hours Single (Nhẹ)</strong>
+              <small>1.9s · 231ms</small>
+            </span>
+          </button></div>
+        </td>
+      </tr>
+<tr>
+        <td class="col-id">
+          <span class="sample-code">S05</span>
+          <span class="cat-pill">gt000_step</span>
+        </td>
+        <td class="col-text">
+          <div class="note">Bước nhận diện hình học không gian C2</div>
+          <div class="raw-text">Bé hãy chỉ cho cô hình tam giác màu vàng nhé!</div>
+          <div class="spoken-script"><span>Kịch bản đọc:</span> Bé hãy chỉ cho cô hình tam giác màu vàng nhé!</div>
+        </td>
+        <td class="col-players">
+          <div class="player-row"><button class="play-btn" data-engine="edge-hoaimy" data-sample="S05" data-src="./edge-hoaimy/S05.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My (Chuẩn)</strong>
+              <small>2.7s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="edge-hoaimy-teacher" data-sample="S05" data-src="./edge-hoaimy-teacher/S05.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My Cô Giáo Mầm Non</strong>
+              <small>2.7s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-myduyen" data-sample="S05" data-src="./vieneu-myduyen/S05.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Mỹ Duyên (Đọc truyện Bắc)</strong>
+              <small>3.1s · 1100ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-trucly" data-sample="S05" data-src="./vieneu-trucly/S05.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Trúc Ly (Tự nhiên Bắc)</strong>
+              <small>2.8s · 888ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-teacher-clone" data-sample="S05" data-src="./vieneu-teacher-clone/S05.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Clone Giọng Cô Giáo TiniMath</strong>
+              <small>3.7s · 1284ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-vais1000" data-sample="S05" data-src="./piper-vais1000/S05.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>VAIS-1000 (Phòng thu Bắc)</strong>
+              <small>2.5s · 301ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-25hours" data-sample="S05" data-src="./piper-25hours/S05.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>25Hours Single (Nhẹ)</strong>
+              <small>3.5s · 396ms</small>
+            </span>
+          </button></div>
+        </td>
+      </tr>
+<tr>
+        <td class="col-id">
+          <span class="sample-code">S06</span>
+          <span class="cat-pill">skill_item</span>
+        </td>
+        <td class="col-text">
+          <div class="note">Nhãn khái niệm ngắn (kiểm tra ngắt âm cuối &amp; không nuốt chữ)</div>
+          <div class="raw-text">Số mười lăm</div>
+          <div class="spoken-script"><span>Kịch bản đọc:</span> Số mười lăm</div>
+        </td>
+        <td class="col-players">
+          <div class="player-row"><button class="play-btn" data-engine="edge-hoaimy" data-sample="S06" data-src="./edge-hoaimy/S06.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My (Chuẩn)</strong>
+              <small>0.9s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="edge-hoaimy-teacher" data-sample="S06" data-src="./edge-hoaimy-teacher/S06.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My Cô Giáo Mầm Non</strong>
+              <small>0.9s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-myduyen" data-sample="S06" data-src="./vieneu-myduyen/S06.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Mỹ Duyên (Đọc truyện Bắc)</strong>
+              <small>1.0s · 595ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-trucly" data-sample="S06" data-src="./vieneu-trucly/S06.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Trúc Ly (Tự nhiên Bắc)</strong>
+              <small>1.0s · 549ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-teacher-clone" data-sample="S06" data-src="./vieneu-teacher-clone/S06.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Clone Giọng Cô Giáo TiniMath</strong>
+              <small>1.3s · 625ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-vais1000" data-sample="S06" data-src="./piper-vais1000/S06.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>VAIS-1000 (Phòng thu Bắc)</strong>
+              <small>0.7s · 164ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-25hours" data-sample="S06" data-src="./piper-25hours/S06.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>25Hours Single (Nhẹ)</strong>
+              <small>0.7s · 177ms</small>
+            </span>
+          </button></div>
+        </td>
+      </tr>
+<tr>
+        <td class="col-id">
+          <span class="sample-code">S07</span>
+          <span class="cat-pill">skill_item</span>
+        </td>
+        <td class="col-text">
+          <div class="note">Nhãn văn hoá tuổi thơ Việt (thanh điệu sắc - huyền - ngã - nặng)</div>
+          <div class="raw-text">Cánh diều tuổi thơ</div>
+          <div class="spoken-script"><span>Kịch bản đọc:</span> Cánh diều tuổi thơ</div>
+        </td>
+        <td class="col-players">
+          <div class="player-row"><button class="play-btn" data-engine="edge-hoaimy" data-sample="S07" data-src="./edge-hoaimy/S07.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My (Chuẩn)</strong>
+              <small>1.2s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="edge-hoaimy-teacher" data-sample="S07" data-src="./edge-hoaimy-teacher/S07.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My Cô Giáo Mầm Non</strong>
+              <small>1.2s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-myduyen" data-sample="S07" data-src="./vieneu-myduyen/S07.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Mỹ Duyên (Đọc truyện Bắc)</strong>
+              <small>1.2s · 647ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-trucly" data-sample="S07" data-src="./vieneu-trucly/S07.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Trúc Ly (Tự nhiên Bắc)</strong>
+              <small>1.1s · 596ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-teacher-clone" data-sample="S07" data-src="./vieneu-teacher-clone/S07.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Clone Giọng Cô Giáo TiniMath</strong>
+              <small>1.4s · 771ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-vais1000" data-sample="S07" data-src="./piper-vais1000/S07.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>VAIS-1000 (Phòng thu Bắc)</strong>
+              <small>1.0s · 214ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-25hours" data-sample="S07" data-src="./piper-25hours/S07.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>25Hours Single (Nhẹ)</strong>
+              <small>1.3s · 212ms</small>
+            </span>
+          </button></div>
+        </td>
+      </tr>
+<tr>
+        <td class="col-id">
+          <span class="sample-code">S08</span>
+          <span class="cat-pill">encouragement</span>
+        </td>
+        <td class="col-text">
+          <div class="note">Câu đồng dao mừng hoàn thành màn chơi (nhịp vần 4 chữ)</div>
+          <div class="raw-text">Dung dăng dung dẻ, bé giỏi quá nè!</div>
+          <div class="spoken-script"><span>Kịch bản đọc:</span> Dung dăng dung dẻ, bé giỏi quá nè!</div>
+        </td>
+        <td class="col-players">
+          <div class="player-row"><button class="play-btn" data-engine="edge-hoaimy" data-sample="S08" data-src="./edge-hoaimy/S08.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My (Chuẩn)</strong>
+              <small>2.6s · 1420ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="edge-hoaimy-teacher" data-sample="S08" data-src="./edge-hoaimy-teacher/S08.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My Cô Giáo Mầm Non</strong>
+              <small>2.6s · 37240ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-myduyen" data-sample="S08" data-src="./vieneu-myduyen/S08.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Mỹ Duyên (Đọc truyện Bắc)</strong>
+              <small>3.2s · 1235ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-trucly" data-sample="S08" data-src="./vieneu-trucly/S08.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Trúc Ly (Tự nhiên Bắc)</strong>
+              <small>2.4s · 833ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-teacher-clone" data-sample="S08" data-src="./vieneu-teacher-clone/S08.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Clone Giọng Cô Giáo TiniMath</strong>
+              <small>3.2s · 1036ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-vais1000" data-sample="S08" data-src="./piper-vais1000/S08.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>VAIS-1000 (Phòng thu Bắc)</strong>
+              <small>2.2s · 275ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-25hours" data-sample="S08" data-src="./piper-25hours/S08.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>25Hours Single (Nhẹ)</strong>
+              <small>2.6s · 279ms</small>
+            </span>
+          </button></div>
+        </td>
+      </tr>
+<tr>
+        <td class="col-id">
+          <span class="sample-code">S09</span>
+          <span class="cat-pill">encouragement</span>
+        </td>
+        <td class="col-text">
+          <div class="note">Lời khích lệ dịu dàng khi trẻ làm chưa đúng (không phán xét)</div>
+          <div class="raw-text">Gần đúng rồi đó, mình ngắm lại chút nha!</div>
+          <div class="spoken-script"><span>Kịch bản đọc:</span> Gần đúng rồi đó, mình ngắm lại chút nha!</div>
+        </td>
+        <td class="col-players">
+          <div class="player-row"><button class="play-btn" data-engine="edge-hoaimy" data-sample="S09" data-src="./edge-hoaimy/S09.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My (Chuẩn)</strong>
+              <small>2.7s · 6044ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="edge-hoaimy-teacher" data-sample="S09" data-src="./edge-hoaimy-teacher/S09.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My Cô Giáo Mầm Non</strong>
+              <small>2.7s · 8868ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-myduyen" data-sample="S09" data-src="./vieneu-myduyen/S09.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Mỹ Duyên (Đọc truyện Bắc)</strong>
+              <small>3.3s · 967ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-trucly" data-sample="S09" data-src="./vieneu-trucly/S09.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Trúc Ly (Tự nhiên Bắc)</strong>
+              <small>2.4s · 812ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-teacher-clone" data-sample="S09" data-src="./vieneu-teacher-clone/S09.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Clone Giọng Cô Giáo TiniMath</strong>
+              <small>3.3s · 1119ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-vais1000" data-sample="S09" data-src="./piper-vais1000/S09.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>VAIS-1000 (Phòng thu Bắc)</strong>
+              <small>2.3s · 278ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-25hours" data-sample="S09" data-src="./piper-25hours/S09.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>25Hours Single (Nhẹ)</strong>
+              <small>2.3s · 260ms</small>
+            </span>
+          </button></div>
+        </td>
+      </tr>
+<tr>
+        <td class="col-id">
+          <span class="sample-code">S10</span>
+          <span class="cat-pill">koguma_guide</span>
+        </td>
+        <td class="col-text">
+          <div class="note">Câu dài Góc Ba Mẹ (Koguma Jibutsu &amp; Taiwa đối thoại)</div>
+          <div class="raw-text">Góc ba mẹ chơi cùng bé. Đồ vật quanh nhà: Đôi đũa tre và bát ăn cơm. Câu hỏi gợi mở: Đố bé ghép hai chiếc đũa thành mấy đôi nhỉ?</div>
+          <div class="spoken-script"><span>Kịch bản đọc:</span> Góc ba mẹ chơi cùng bé. Đồ vật quanh nhà: Đôi đũa tre và bát ăn cơm. Câu hỏi gợi mở: Đố bé ghép hai chiếc đũa thành mấy đôi nhỉ?</div>
+        </td>
+        <td class="col-players">
+          <div class="player-row"><button class="play-btn" data-engine="edge-hoaimy" data-sample="S10" data-src="./edge-hoaimy/S10.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My (Chuẩn)</strong>
+              <small>10.5s · 15456ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="edge-hoaimy-teacher" data-sample="S10" data-src="./edge-hoaimy-teacher/S10.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My Cô Giáo Mầm Non</strong>
+              <small>10.5s · 30921ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-myduyen" data-sample="S10" data-src="./vieneu-myduyen/S10.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Mỹ Duyên (Đọc truyện Bắc)</strong>
+              <small>10.8s · 2588ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-trucly" data-sample="S10" data-src="./vieneu-trucly/S10.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Trúc Ly (Tự nhiên Bắc)</strong>
+              <small>9.8s · 2414ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-teacher-clone" data-sample="S10" data-src="./vieneu-teacher-clone/S10.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Clone Giọng Cô Giáo TiniMath</strong>
+              <small>11.0s · 2729ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-vais1000" data-sample="S10" data-src="./piper-vais1000/S10.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>VAIS-1000 (Phòng thu Bắc)</strong>
+              <small>7.4s · 718ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-25hours" data-sample="S10" data-src="./piper-25hours/S10.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>25Hours Single (Nhẹ)</strong>
+              <small>10.2s · 874ms</small>
+            </span>
+          </button></div>
+        </td>
+      </tr>
+<tr>
+        <td class="col-id">
+          <span class="sample-code">S11</span>
+          <span class="cat-pill">kid_ui</span>
+        </td>
+        <td class="col-text">
+          <div class="note">Lời chào Gấu Con tại Phòng chơi Giấy Gỗ Mộc</div>
+          <div class="raw-text">Gấu Con chào bé! Chạm đập tay dạo vườn quê cùng mình nhé!</div>
+          <div class="spoken-script"><span>Kịch bản đọc:</span> Gấu Con chào bé! Chạm đập tay dạo vườn quê cùng mình nhé!</div>
+        </td>
+        <td class="col-players">
+          <div class="player-row"><button class="play-btn" data-engine="edge-hoaimy" data-sample="S11" data-src="./edge-hoaimy/S11.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My (Chuẩn)</strong>
+              <small>4.3s · 7484ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="edge-hoaimy-teacher" data-sample="S11" data-src="./edge-hoaimy-teacher/S11.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My Cô Giáo Mầm Non</strong>
+              <small>4.3s · 17359ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-myduyen" data-sample="S11" data-src="./vieneu-myduyen/S11.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Mỹ Duyên (Đọc truyện Bắc)</strong>
+              <small>4.7s · 1385ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-trucly" data-sample="S11" data-src="./vieneu-trucly/S11.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Trúc Ly (Tự nhiên Bắc)</strong>
+              <small>3.7s · 1172ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-teacher-clone" data-sample="S11" data-src="./vieneu-teacher-clone/S11.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Clone Giọng Cô Giáo TiniMath</strong>
+              <small>4.7s · 1423ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-vais1000" data-sample="S11" data-src="./piper-vais1000/S11.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>VAIS-1000 (Phòng thu Bắc)</strong>
+              <small>3.3s · 404ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-25hours" data-sample="S11" data-src="./piper-25hours/S11.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>25Hours Single (Nhẹ)</strong>
+              <small>4.8s · 456ms</small>
+            </span>
+          </button></div>
+        </td>
+      </tr>
+<tr>
+        <td class="col-id">
+          <span class="sample-code">S12</span>
+          <span class="cat-pill">kid_ui</span>
+        </td>
+        <td class="col-text">
+          <div class="note">Lời giới thiệu Khay Giáo Cụ Montessori tự do</div>
+          <div class="raw-text">Chào mừng bé đến bàn Cân Gỗ Bạn Thú! Hãy đặt các bạn lên hai đĩa cân xem bên nào nặng hơn nhé!</div>
+          <div class="spoken-script"><span>Kịch bản đọc:</span> Chào mừng bé đến bàn Cân Gỗ Bạn Thú! Hãy đặt các bạn lên hai đĩa cân xem bên nào nặng hơn nhé!</div>
+        </td>
+        <td class="col-players">
+          <div class="player-row"><button class="play-btn" data-engine="edge-hoaimy" data-sample="S12" data-src="./edge-hoaimy/S12.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My (Chuẩn)</strong>
+              <small>6.6s · 30051ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="edge-hoaimy-teacher" data-sample="S12" data-src="./edge-hoaimy-teacher/S12.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Hoài My Cô Giáo Mầm Non</strong>
+              <small>6.6s · 17464ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-myduyen" data-sample="S12" data-src="./vieneu-myduyen/S12.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Mỹ Duyên (Đọc truyện Bắc)</strong>
+              <small>7.5s · 1856ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-trucly" data-sample="S12" data-src="./vieneu-trucly/S12.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Trúc Ly (Tự nhiên Bắc)</strong>
+              <small>6.7s · 1743ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="vieneu-teacher-clone" data-sample="S12" data-src="./vieneu-teacher-clone/S12.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>Clone Giọng Cô Giáo TiniMath</strong>
+              <small>7.7s · 2008ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-vais1000" data-sample="S12" data-src="./piper-vais1000/S12.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>VAIS-1000 (Phòng thu Bắc)</strong>
+              <small>5.3s · 589ms</small>
+            </span>
+          </button>
+<button class="play-btn" data-engine="piper-25hours" data-sample="S12" data-src="./piper-25hours/S12.mp3" type="button" >
+            <span class="icon">▶</span>
+            <span class="btn-meta">
+              <strong>25Hours Single (Nhẹ)</strong>
+              <small>7.2s · 646ms</small>
+            </span>
+          </button></div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <audio id="shared-audio" preload="none"><track kind="captions"></audio>
+  <script>"use strict";
+    (() => {
+      const audio = document.getElementById("shared-audio");
+      let activeBtn = null;
+      let seqQueue = [];
+
+      function resetActive() {
+        if (activeBtn) {
+          activeBtn.classList.remove("playing");
+          const icon = activeBtn.querySelector(".icon");
+          if (icon) { icon.textContent = "▶"; }
+          activeBtn = null;
+        }
+      }
+
+      function playButton(btn, onDone) {
+        const src = btn.getAttribute("data-src");
+        if (!src) { return; }
+        if (activeBtn === btn && !audio.paused) {
+          seqQueue = [];
+          audio.pause();
+          audio.currentTime = 0;
+          resetActive();
+          return;
+        }
+        resetActive();
+        activeBtn = btn;
+        btn.classList.add("playing");
+        const icon = btn.querySelector(".icon");
+        if (icon) { icon.textContent = "⏸"; }
+        audio.src = src;
+        audio.onended = () => {
+          resetActive();
+          if (onDone) { onDone(); }
+        };
+        audio.onerror = () => {
+          resetActive();
+          if (onDone) { onDone(); }
+        };
+        audio.play().catch(() => {
+          resetActive();
+        });
+      }
+
+      for (const btn of document.querySelectorAll(".play-btn")) {
+        btn.addEventListener("click", () => {
+          seqQueue = [];
+          playButton(btn, null);
+        });
+      }
+
+      function playNextInQueue() {
+        if (seqQueue.length === 0) { return; }
+        const nextBtn = seqQueue.shift();
+        nextBtn.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        playButton(nextBtn, playNextInQueue);
+      }
+
+      for (const seqBtn of document.querySelectorAll(".seq-btn")) {
+        seqBtn.addEventListener("click", () => {
+          const engineId = seqBtn.getAttribute("data-seq-engine");
+          seqQueue = Array.from(
+            document.querySelectorAll(`.play-btn[data-engine="${engineId}"]`)
+          );
+          playNextInQueue();
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

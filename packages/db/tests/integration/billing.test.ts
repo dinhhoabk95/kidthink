@@ -1,6 +1,12 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "#src/index";
+import {
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
+  getOwnerDb,
+  PACKAGE_STATUS,
+  PAYMENT_ORDER_STATUS,
+} from "#src/index";
 import { entitlements, packages, paymentOrders } from "#src/schema/billing";
 import { users } from "#src/schema/identity";
 
@@ -17,13 +23,13 @@ describe("Billing Schema Integration Tests", () => {
       throw new Error("Failed to insert u");
     }
 
-    // Inserting entitlement with non-existent key must be rejected by Postgres FK
+    // Inserting entitlement with non-existent key must be rejected by FK
     await expect(
       db.insert(entitlements).values({
         userId: u.id,
         entitlementKey: "NON_EXISTENT_KEY",
-        source: "manual_grant",
-        status: "active",
+        source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+        status: ENTITLEMENT_STATUS.ACTIVE,
       })
     ).rejects.toThrow();
   });
@@ -49,7 +55,7 @@ describe("Billing Schema Integration Tests", () => {
         description: "Mô tả",
         isPublic: true,
         isFeatured: false,
-        status: "active",
+        status: PACKAGE_STATUS.ACTIVE,
         offers: [
           {
             offer_code: "yearly_standard",
@@ -69,7 +75,7 @@ describe("Billing Schema Integration Tests", () => {
           offerCode: "yearly_standard",
           amountVnd: 500_000,
           currency: "VND",
-          status: "pending_proof",
+          status: PAYMENT_ORDER_STATUS.PENDING_PROOF,
         })
         .returning();
       if (!order) {

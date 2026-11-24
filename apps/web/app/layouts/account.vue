@@ -57,6 +57,7 @@
     useUserAuthClient,
     useUserSession,
   } from "~/composables/use-auth-client";
+  import { clearOfflinePackClientData } from "~/composables/use-offline-pack";
 
   const authClient = useUserAuthClient();
   const { clear: clearUserSessionState } = useUserSession();
@@ -76,6 +77,7 @@
     try {
       await authClient.signOut();
       await clearUserSessionState();
+      await clearOfflinePackClientData({ reason: "logout" });
     } finally {
       isLoggingOut.value = false;
       if (router && typeof router.push === "function") {

@@ -1,13 +1,18 @@
 import { clearInMemoryBuckets } from "@mindkid/cache";
 import {
-  featureFlags,
   getOwnerDb,
+  MANAGER_ROLE,
   managers,
+  NOTIFICATION_CHANNEL,
+  NOTIFICATION_STATUS,
   notificationDeliveries,
   notifications,
+  RECIPIENT_TYPE,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
+import type { H3Event } from "h3";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import sesSnsWebhookHandler from "#server/api/guest/webhooks/ses-sns.post";
 import exportsHandler from "#server/api/managers/exports/[kind].get";
@@ -18,6 +23,7 @@ import notificationTemplatesPreviewHandler from "#server/api/managers/notificati
 import notificationTemplatesGetHandler from "#server/api/managers/notification-templates/index.get";
 import notificationResendHandler from "#server/api/managers/notifications/[id]/resend.post";
 import notificationsGetHandler from "#server/api/managers/notifications/index.get";
+import { updateFeatureFlag } from "#server/services/feature-flags";
 import { isEnabled } from "#server/services/index.js";
 
 const CSRF_TOKEN =
@@ -52,7 +58,7 @@ async function ensureTestEntities() {
         email: "p29-sa@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "P29 Super Admin",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
         isActive: true,
       })
       .returning({ id: managers.id });
@@ -73,7 +79,7 @@ async function ensureTestEntities() {
         email: "p29-cr@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "P29 Reviewer",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
         isActive: true,
       })
       .returning({ id: managers.id });
@@ -94,7 +100,7 @@ async function ensureTestEntities() {
         email: "p29-user@test.mindkid.vn",
         passwordHash: "hash",
         displayName: "P29 User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning({ id: users.id });
   }
@@ -114,7 +120,7 @@ async function ensureTestEntities() {
         email: "p29-deleted@test.mindkid.vn",
         passwordHash: "hash",
         displayName: "P29 Deleted User",
-        status: "deleted",
+        status: USER_STATUS.DELETED,
       })
       .returning({ id: users.id });
   }
@@ -127,9 +133,10 @@ function mockManagerEvent(
   role: "super_admin" | "content_reviewer",
   params: Record<string, string> = {},
   query: Record<string, string> = {},
-  body?: unknown,
-  method = body ? "POST" : "GET"
-) {
+  body?: Record<string, string | number | boolean | null | object>,
+  method = body ? "POST" : "GET",
+  reauthAt: Date | null = new Date()
+): H3Event {
   const managerId =
     role === "super_admin" ? testSuperAdminId : testContentReviewerId;
   const queryString = new URLSearchParams(query).toString();
@@ -161,6 +168,7 @@ function mockManagerEvent(
         display_name: `Manager ${role}`,
         session_id: "sess_p29_mgr",
         role,
+        ...(reauthAt ? { reauth_at: reauthAt } : {}),
       },
       params,
       query,
@@ -169,7 +177,7 @@ function mockManagerEvent(
     _query: query,
     _requestBody: body,
     _body: body,
-  } as any;
+  } as H3Event;
 }
 
 function mockWebhookEvent(body: unknown) {
@@ -225,6 +233,44 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
       expect(aiFlag.expires_at).toBeDefined();
     });
 
+    it("PATCH /api/managers/feature-flags/:key rejects missing or expired reauth_at (> 300s) with 428 REAUTH_REQUIRED", async () => {
+      const missingReauthEvent = mockManagerEvent(
+        "super_admin",
+        { key: "ai_content_pipeline" },
+        {},
+        {
+          enabled: true,
+          reason: "Bật thử nghiệm khi chưa reauth phiên làm việc",
+        },
+        "PATCH",
+        null
+      );
+      await expect(flagsPatchHandler(missingReauthEvent)).rejects.toMatchObject(
+        {
+          statusCode: 428,
+          code: "REAUTH_REQUIRED",
+        }
+      );
+
+      const expiredReauthEvent = mockManagerEvent(
+        "super_admin",
+        { key: "ai_content_pipeline" },
+        {},
+        {
+          enabled: true,
+          reason: "Bật thử nghiệm khi phiên reauth đã quá hạn",
+        },
+        "PATCH",
+        new Date(Date.now() - 301 * 1000)
+      );
+      await expect(flagsPatchHandler(expiredReauthEvent)).rejects.toMatchObject(
+        {
+          statusCode: 428,
+          code: "REAUTH_REQUIRED",
+        }
+      );
+    });
+
     it("PATCH /api/managers/feature-flags/:key rejects reason < 10 chars with 422 (BR-FFA-01, BR-FLG-04)", async () => {
       const event = mockManagerEvent(
         "super_admin",
@@ -266,16 +312,13 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
     });
 
     it("evaluates sticky percentage rollout deterministically (D-KO)", async () => {
-      const db = getOwnerDb();
-      // Set percentage scope in DB for guest_play
-      await db
-        .update(featureFlags)
-        .set({
-          enabled: true,
-          scope: "percentage",
-          scopeValue: { percentage: 50 },
-        })
-        .where(eq(featureFlags.key, "guest_play"));
+      await updateFeatureFlag("guest_play", {
+        enabled: true,
+        scope: "percentage",
+        scopeValue: { percentage: 50 },
+        reason: "Kiểm thử phân phối theo tỷ lệ phần trăm",
+        managerId: testSuperAdminId,
+      });
 
       // Same user ID 100 times produces deterministic identical result
       const resultsUser10 = await Promise.all(
@@ -451,7 +494,7 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
     it("super_admin can view notifications with search and masked tokens (BR-NTA-04)", async () => {
       const db = getOwnerDb();
       await db.insert(notifications).values({
-        recipientType: "user",
+        recipientType: RECIPIENT_TYPE.USER,
         recipientId: testUserId,
         templateCode: "password_reset",
         payload: { reset_token: "secret123456", code: "654321" },
@@ -473,7 +516,7 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
       const [n] = await db
         .insert(notifications)
         .values({
-          recipientType: "user",
+          recipientType: RECIPIENT_TYPE.USER,
           recipientId: testUserId,
           templateCode: "order_approved",
           payload: { order_code: "ORD-123" },
@@ -482,8 +525,8 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
 
       await db.insert(notificationDeliveries).values({
         notificationId: n.id,
-        channel: "email",
-        status: "failed",
+        channel: NOTIFICATION_CHANNEL.EMAIL,
+        status: NOTIFICATION_STATUS.FAILED,
         error: "SMTP connection timeout",
       });
 
@@ -506,7 +549,7 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
       const [n] = await db
         .insert(notifications)
         .values({
-          recipientType: "user",
+          recipientType: RECIPIENT_TYPE.USER,
           recipientId: testDeletedUserId,
           templateCode: "order_approved",
           payload: { order_code: "ORD-DEL" },
@@ -539,7 +582,7 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
       const [n] = await db
         .insert(notifications)
         .values({
-          recipientType: "user",
+          recipientType: RECIPIENT_TYPE.USER,
           recipientId: testUserId,
           templateCode: "welcome_user",
         })
@@ -547,8 +590,8 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
 
       await db.insert(notificationDeliveries).values({
         notificationId: n.id,
-        channel: "email",
-        status: "queued",
+        channel: NOTIFICATION_CHANNEL.EMAIL,
+        status: NOTIFICATION_STATUS.QUEUED,
         providerMessageId: messageId,
       });
 
@@ -566,7 +609,7 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
         .select()
         .from(notificationDeliveries)
         .where(eq(notificationDeliveries.providerMessageId, messageId));
-      expect(delivery.status).toBe("queued");
+      expect(delivery.status).toBe(NOTIFICATION_STATUS.QUEUED);
     });
   });
 

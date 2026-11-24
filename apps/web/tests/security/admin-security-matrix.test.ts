@@ -1,5 +1,5 @@
 import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
-import { getOwnerDb, managers } from "@mindkid/db";
+import { getOwnerDb, MANAGER_ROLE, managers } from "@mindkid/db";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   getManagerAuth,
@@ -64,7 +64,7 @@ describe("Admin Security Matrix & Surface Isolation (BR-ADA-02..06, D-EY, D-EZ)"
         email,
         passwordHash,
         displayName: "Admin User",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
         isActive: true,
       })
       .returning({ id: managers.id });

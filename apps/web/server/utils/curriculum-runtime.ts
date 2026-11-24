@@ -1,12 +1,10 @@
 import {
-  childProfiles,
-  curricula,
-  curriculumEnrollments,
-  curriculumItemProgress,
-  curriculumItems,
-  curriculumWeeks,
-  gameLevels,
-  getOwnerDb,
+  ACCESS_TIER_CODEC,
+  CHILD_STATUS,
+  type ChildProfileEntity,
+  CONTENT_ENTITY_TYPE,
+  CONTENT_ENTITY_TYPE_CODEC,
+  ENROLLMENT_STATUS_CODEC,
 } from "@mindkid/db";
 import { ChildNotFoundError } from "@mindkid/errors/child";
 import { CurriculumNotFoundError } from "@mindkid/errors/curriculum";
@@ -15,17 +13,18 @@ import {
   allowedTiers,
   type CurriculumPlayerItemRef,
   type CurriculumPlayerWeekGoal,
+  getEffectiveTier,
 } from "@mindkid/shared";
-import { and, desc, eq, inArray } from "drizzle-orm";
 import type { H3Event } from "h3";
-import { resolveUserActiveEntitlements } from "./entitlements-runtime.js";
+import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 export interface EnrolledChildCurriculumDetails {
   id: number;
   childId: number;
   curriculumId: number;
   enrolledAt: Date;
-  status: (typeof curriculumEnrollments.$inferSelect)["status"];
+  status: string;
   curriculum_code: string;
   curriculum_version: number;
   curriculum_title: string;
@@ -34,7 +33,7 @@ export interface EnrolledChildCurriculumDetails {
 }
 
 export interface ResolvedCurriculumData {
-  child: typeof childProfiles.$inferSelect;
+  child: ChildProfileEntity;
   enrollment: EnrolledChildCurriculumDetails;
   items: CurriculumPlayerItemRef[];
   weeks: CurriculumPlayerWeekGoal[];
@@ -43,7 +42,7 @@ export interface ResolvedCurriculumData {
 }
 
 export interface OptionalEnrollmentCurriculumData {
-  child: typeof childProfiles.$inferSelect;
+  child: ChildProfileEntity;
   enrollment: EnrolledChildCurriculumDetails | null;
   items: CurriculumPlayerItemRef[];
   weeks: CurriculumPlayerWeekGoal[];
@@ -72,53 +71,17 @@ export async function resolveEnrolledChildCurriculum(
     requireEnrollment: true,
   }
 ): Promise<ResolvedCurriculumData | OptionalEnrollmentCurriculumData> {
-  const db = getOwnerDb();
+  const { childProfiles, curricula, gameLevels } = useOwnerRepositories();
 
-  // 1. Verify child belongs to user (BR-ERR-05 / BR-ACT-03 -> 404)
-  const [child] = await db
-    .select()
-    .from(childProfiles)
-    .where(
-      and(
-        eq(childProfiles.uuid, childUuid),
-        eq(childProfiles.userId, userId),
-        eq(childProfiles.status, "active")
-      )
-    );
-
-  if (!child) {
+  const child = await childProfiles.findByUuidForUser(childUuid, userId);
+  if (child?.status !== CHILD_STATUS.ACTIVE) {
     throw new ChildNotFoundError(childUuid);
   }
 
-  // 2. Find enrollment (active or most recent)
-  const enrollmentQuery = db
-    .select({
-      id: curriculumEnrollments.id,
-      childId: curriculumEnrollments.childId,
-      curriculumId: curriculumEnrollments.curriculumId,
-      enrolledAt: curriculumEnrollments.enrolledAt,
-      status: curriculumEnrollments.status,
-      curriculum_code: curricula.code,
-      curriculum_title: curricula.title,
-      duration_weeks: curricula.durationWeeks,
-      sessions_per_week: curricula.sessionsPerWeek,
-    })
-    .from(curriculumEnrollments)
-    .innerJoin(curricula, eq(curricula.id, curriculumEnrollments.curriculumId))
-    .where(
-      options.requireActive
-        ? and(
-            eq(curriculumEnrollments.childId, child.id),
-            eq(curriculumEnrollments.status, "active")
-          )
-        : eq(curriculumEnrollments.childId, child.id)
-    )
-    .orderBy(
-      desc(curriculumEnrollments.enrolledAt),
-      desc(curriculumEnrollments.id)
-    );
-
-  const [rawEnrollment] = await enrollmentQuery;
+  const rawEnrollment = await curricula.findEnrollmentForChild(
+    child.id,
+    options.requireActive === true
+  );
 
   if (!rawEnrollment) {
     if (options.requireEnrollment === false) {
@@ -144,62 +107,40 @@ export async function resolveEnrolledChildCurriculum(
   }
 
   const enrollment: EnrolledChildCurriculumDetails = {
-    ...rawEnrollment,
+    id: rawEnrollment.id,
+    childId: rawEnrollment.childId,
+    curriculumId: rawEnrollment.curriculumId,
+    enrolledAt: rawEnrollment.enrolledAt,
+    status: ENROLLMENT_STATUS_CODEC.toLabel(rawEnrollment.status),
+    curriculum_code: rawEnrollment.curriculum.code,
+    curriculum_title: rawEnrollment.curriculum.title,
+    duration_weeks: rawEnrollment.curriculum.durationWeeks,
+    sessions_per_week: rawEnrollment.curriculum.sessionsPerWeek,
     curriculum_version: 1,
   };
 
-  // 3. Batch load curriculum items & weeks (D-MA: pinned curriculum_id)
-  const rawItems = await db
-    .select()
-    .from(curriculumItems)
-    .where(eq(curriculumItems.curriculumId, enrollment.curriculumId));
+  const [rawItems, rawWeeks, progressRows, activeKeys] = await Promise.all([
+    curricula.listItems(enrollment.curriculumId),
+    curricula.listWeeks(enrollment.curriculumId),
+    curricula.listCompletedProgress(enrollment.id),
+    resolveUserActiveEntitlements(userId),
+  ]);
 
-  const rawWeeks = await db
-    .select()
-    .from(curriculumWeeks)
-    .where(eq(curriculumWeeks.curriculumId, enrollment.curriculumId));
-
-  // 4. Batch resolve entities for items (D-MA & D-AE)
   const gameLevelEntityIds = rawItems
-    .filter((i) => i.entityType === "game_level")
+    .filter((i) => i.entityType === CONTENT_ENTITY_TYPE.GAME_LEVEL)
     .map((i) => i.entityId);
 
-  const gameLevelsMap = new Map<
-    number,
-    { code: string; title: string; access_tier: AccessTier }
-  >();
-  if (gameLevelEntityIds.length > 0) {
-    const glRows = await db
-      .select({
-        id: gameLevels.id,
-        code: gameLevels.code,
-        title: gameLevels.title,
-        accessTier: gameLevels.accessTier,
-      })
-      .from(gameLevels)
-      .where(inArray(gameLevels.id, gameLevelEntityIds));
-
-    for (const gl of glRows) {
-      gameLevelsMap.set(gl.id, {
-        code: gl.code,
-        title: gl.title,
-        access_tier: gl.accessTier as AccessTier,
-      });
-    }
-  }
+  const levelsById = await gameLevels.mapByIds(gameLevelEntityIds);
+  const curriculumTier = ACCESS_TIER_CODEC.toLabel(
+    rawEnrollment.curriculum.accessTier
+  );
 
   const items: CurriculumPlayerItemRef[] = rawItems.map((item) => {
-    let resolvedCode = `${item.entityType}_${item.entityId}`;
-    let resolvedTitle = "Trò chơi";
-    let resolvedTier: AccessTier = "free";
-
-    const gl = gameLevelsMap.get(item.entityId);
-    if (gl) {
-      resolvedCode = gl.code;
-      resolvedTitle = gl.title;
-      resolvedTier = gl.access_tier;
-    }
-
+    const gl =
+      item.entityType === CONTENT_ENTITY_TYPE.GAME_LEVEL
+        ? levelsById.get(item.entityId)
+        : undefined;
+    const levelTier = gl ? ACCESS_TIER_CODEC.toLabel(gl.accessTier) : "premium";
     return {
       id: item.id,
       curriculum_id: item.curriculumId,
@@ -208,10 +149,12 @@ export async function resolveEnrolledChildCurriculum(
       position: item.position,
       entity_type: "game_level",
       entity_id: item.entityId,
-      code: resolvedCode,
-      title: resolvedTitle,
+      code: gl
+        ? gl.code
+        : `${CONTENT_ENTITY_TYPE_CODEC.toLabel(item.entityType)}_${item.entityId}`,
+      title: gl ? gl.title : "Trò chơi",
       is_required: item.isRequired,
-      access_tier: resolvedTier,
+      access_tier: getEffectiveTier(levelTier, curriculumTier),
     };
   });
 
@@ -220,27 +163,10 @@ export async function resolveEnrolledChildCurriculum(
     goal: w.goal,
   }));
 
-  // 5. Load progress for this enrollment
-  const progressRows = await db
-    .select({
-      curriculumItemId: curriculumItemProgress.curriculumItemId,
-      status: curriculumItemProgress.status,
-      completedAt: curriculumItemProgress.completedAt,
-    })
-    .from(curriculumItemProgress)
-    .where(
-      and(
-        eq(curriculumItemProgress.enrollmentId, enrollment.id),
-        eq(curriculumItemProgress.status, "completed")
-      )
-    );
-
   const completedItemIds = new Set<number>(
     progressRows.map((p) => p.curriculumItemId)
   );
 
-  // 6. User allowed tiers in batch
-  const activeKeys = await resolveUserActiveEntitlements(userId);
   const userAllowedTiers = await allowedTiers(
     {
       kind: "user",

@@ -1,4 +1,10 @@
-import { gameLevels, getOwnerDb, playSessions } from "@mindkid/db";
+import {
+  ACCESS_TIER,
+  gameLevels,
+  getOwnerDb,
+  PLAY_COMPLETION_STATUS,
+  playSessions,
+} from "@mindkid/db";
 import { completePlaySession } from "@mindkid/play";
 import { describe, expect, it } from "vitest";
 
@@ -16,7 +22,7 @@ async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
         instruction: "Instruction",
         contentPack: {},
         difficultyParams: {},
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .onConflictDoNothing()
       .returning();
@@ -41,7 +47,7 @@ describe("Task P1.6 — Session Complete Route & Contracts (BR-PSL-01, BR-PSL-03
         gameLevelId: glId,
         templateCode,
         guestDeviceId: "device-complete-1",
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       })
       .returning();
 
@@ -69,7 +75,7 @@ describe("Task P1.6 — Session Complete Route & Contracts (BR-PSL-01, BR-PSL-03
         gameLevelId: glId,
         templateCode,
         guestDeviceId: "device-complete-2",
-        completionStatus: "completed",
+        completionStatus: PLAY_COMPLETION_STATUS.COMPLETED,
       })
       .returning();
 
@@ -96,7 +102,7 @@ describe("Task P1.6 — Session Complete Route & Contracts (BR-PSL-01, BR-PSL-03
         gameLevelId: glId,
         templateCode,
         guestDeviceId: "device-expired",
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
         startedAt: fiveHoursAgo,
       })
       .returning();

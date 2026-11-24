@@ -56,7 +56,7 @@ export const projectGT034: Projection<"GT-034"> = {
 
     return {
       content_pack: {
-        prompt: "Bé hãy hoàn thành chuỗi âm thanh lặp lại nhé!",
+        prompt: "Bé lắng nghe rồi gõ nối tiếp nhịp trống nhé!",
         instruments,
         target_pattern,
         tempo_bpm: tempoBpm,

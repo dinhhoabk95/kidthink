@@ -1,0 +1,12 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngựa gỗ vòng quay</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="cwhWhite" r="70%"><stop offset="0%" stop-color="#ffffff" /><stop offset="55%" stop-color="#f8fafc" /><stop offset="100%" stop-color="#e2e8f0" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.22" rx="34" ry="5" />
+    <path d="M60 14V104" stroke="#92400e" stroke-linecap="round" stroke-width="7" />
+    <path d="M60 14V104" stroke="#facc15" stroke-linecap="round" stroke-width="3" />
+    <path d="M30 42C36 30 46 32 48 46H78C88 46 92 56 88 66L96 82H84L76 70H46L34 86H24L34 64C26 58 26 48 30 42Z" fill="url(#cwhWhite)" stroke="#475569" stroke-linejoin="round" stroke-width="3.8" />
+    <rect fill="#ec4899" height="14" rx="4" stroke="#831843" stroke-width="3" width="22" x="49" y="46" />
+    <circle cx="35" cy="40" fill="#1c1917" r="2.2" />
+</svg>

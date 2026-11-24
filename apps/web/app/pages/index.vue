@@ -1,5 +1,5 @@
 <template>
-  <div class="public-page-wrapper">
+  <div class="public-page-wrapper dark:bg-surface-900 dark:text-surface-100">
     <PublicNavbar />
 
     <main id="main-content">
@@ -14,26 +14,28 @@
       >
         <div class="section-container">
           <div class="section-header">
-            <h2 class="section-title" id="comp-title">
+            <h2 class="section-title dark:text-surface-50" id="comp-title">
               6 Năng lực tư duy nền tảng
             </h2>
-            <p class="section-subtitle">
+            <p class="section-subtitle dark:text-surface-300">
               Chương trình chuẩn hoá toàn diện cho trẻ mầm non
             </p>
           </div>
           <div class="competencies-grid">
             <div
-              class="comp-card"
+              class="comp-card dark:bg-surface-800 dark:border-surface-700"
               v-for="comp in homeData.competencies"
               :key="comp.code"
             >
               <span aria-hidden="true" class="comp-emoji">
                 <BrandEmoji :emoji="comp.emoji" />
               </span>
-              <h3 class="comp-name">{{ comp.name }}</h3>
-              <p class="comp-desc">{{ comp.description }}</p>
+              <h3 class="comp-name dark:text-surface-50">{{ comp.name }}</h3>
+              <p class="comp-desc dark:text-surface-300">
+                {{ comp.description }}
+              </p>
               <NuxtLink
-                class="comp-link"
+                class="comp-link dark:text-brand-400"
                 :to="`/games?competency=${comp.code}`"
               >
                 Khám phá trò chơi
@@ -51,20 +53,24 @@
       <section aria-labelledby="hiw-title" class="how-it-works-section">
         <div class="section-container">
           <div class="section-header">
-            <h2 class="section-title" id="hiw-title">Cách thức hoạt động</h2>
-            <p class="section-subtitle">
+            <h2 class="section-title dark:text-surface-50" id="hiw-title">
+              Cách thức hoạt động
+            </h2>
+            <p class="section-subtitle dark:text-surface-300">
               Đơn giản, tự nhiên và tôn trọng nhịp độ của trẻ
             </p>
           </div>
           <div class="steps-grid">
             <div
-              class="step-card"
+              class="step-card dark:bg-surface-800 dark:border-surface-700"
               v-for="item in homeData.how_it_works"
               :key="item.step"
             >
               <div class="step-num">{{ item.step }}</div>
-              <h3 class="step-title">{{ item.title }}</h3>
-              <p class="step-desc">{{ item.description }}</p>
+              <h3 class="step-title dark:text-surface-50">{{ item.title }}</h3>
+              <p class="step-desc dark:text-surface-300">
+                {{ item.description }}
+              </p>
             </div>
           </div>
         </div>
@@ -74,32 +80,39 @@
       <section aria-labelledby="featured-title" class="featured-games-section">
         <div class="section-container">
           <div class="section-header">
-            <h2 class="section-title" id="featured-title">
+            <h2 class="section-title dark:text-surface-50" id="featured-title">
               Trò chơi nổi bật — Chơi thử ngay
             </h2>
-            <p class="section-subtitle">
+            <p class="section-subtitle dark:text-surface-300">
               {{ homeData.featured_levels.length }}
               trò chơi đại diện 6 năng lực cho bé trải nghiệm trực tiếp
             </p>
           </div>
           <div class="games-grid">
             <div
-              class="game-card"
+              class="game-card dark:bg-surface-800 dark:border-surface-700"
               v-for="game in homeData.featured_levels"
               :key="game.code"
             >
-              <div class="game-emoji-wrap">
+              <div class="game-emoji-wrap dark:bg-surface-900">
                 <span aria-hidden="true" class="game-emoji">
                   <BrandEmoji :emoji="game.emoji" />
                 </span>
                 <span class="badge-free">Miễn phí</span>
               </div>
-              <h3 class="game-title">{{ game.title }}</h3>
+              <h3 class="game-title dark:text-surface-50">{{ game.title }}</h3>
               <div class="game-meta">
-                <span class="badge-competency">{{
-                  findCompetency(game.competency)?.name || game.competency
-                }}</span>
-                <span class="badge-age">{{ game.age_band }} tuổi</span>
+                <span
+                  class="badge-competency dark:bg-surface-700 dark:text-surface-200"
+                  >{{
+                    findCompetency(game.competency)?.name || game.competency
+                  }}</span
+                >
+                <span
+                  class="badge-age dark:bg-surface-700 dark:text-surface-200"
+                  >{{ game.age_band }}
+                  tuổi</span
+                >
               </div>
               <NuxtLink class="btn-game-play" :to="`/play/${game.code}`">
                 Chơi ngay
@@ -109,7 +122,7 @@
         </div>
       </section>
 
-      <!-- Khối 5: Chương trình theo độ tuổi -->
+      <!-- Khối 5: Chương trình Tư duy Koguma-kai / Kuno 100 Học phần & Lộ trình theo độ tuổi -->
       <section
         aria-labelledby="programs-title"
         class="programs-section"
@@ -117,60 +130,109 @@
       >
         <div class="section-container">
           <div class="section-header">
-            <h2 class="section-title" id="programs-title">
-              Lộ trình thích ứng theo lứa tuổi
+            <h2 class="section-title dark:text-surface-50" id="programs-title">
+              Chương trình Tư duy Koguma-kai và Lộ trình Mầm · Chồi · Lá
             </h2>
-            <p class="section-subtitle">
-              Thiết kế tối ưu theo tâm lý phát triển mầm non
+            <p class="section-subtitle dark:text-surface-300">
+              100 học phần Kuno thực hành vật thật gắn với 10 chủ đề tuổi thơ
+              Việt Nam
             </p>
           </div>
+          <KogumaProgramBanner class="mb-8" compact show-explore-link />
           <div class="programs-grid">
             <div
-              class="program-card"
+              class="program-card dark:bg-surface-800 dark:border-surface-700"
               v-for="prog in homeData.programs"
               :key="prog.age_band"
             >
-              <span class="badge-age-large">{{ prog.age_band }} tuổi</span>
-              <h3 class="program-title">{{ prog.title }}</h3>
-              <p class="program-focus">{{ prog.focus }}</p>
-              <NuxtLink
-                class="program-link"
-                :to="`/games?age_band=${prog.age_band}`"
-              >
-                Xem {{ prog.levels_count }} trò chơi phù hợp
-                <UIcon
-                  class="w-4 h-4 ml-1 inline-block"
-                  name="i-lucide-arrow-right"
-                /></NuxtLink
-              >
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="badge-age-large">{{ prog.age_band }} tuổi</span>
+                <span
+                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-warning-100 dark:bg-warning-900/50 text-warning-900 dark:text-warning-200 text-sm font-bold"
+                >
+                  <UIcon class="w-3.5 h-3.5" name="i-lucide-sparkles" />
+                  <span>Koguma · Kuno</span>
+                </span>
+              </div>
+              <h3 class="program-title dark:text-surface-50">
+                {{ prog.title }}
+              </h3>
+              <p class="program-focus dark:text-surface-300">
+                {{ prog.focus }}
+              </p>
+              <div class="flex flex-col gap-1.5 pt-1">
+                <NuxtLink
+                  class="program-link dark:text-warning-300"
+                  :to="`/programs/RM-${prog.age_band}-koguma-year-01`"
+                >
+                  Koguma-kai Năm học 36 tuần (Chặng 1 và 2)
+                  <UIcon
+                    aria-hidden="true"
+                    class="w-4 h-4 ml-1 inline-block"
+                    name="i-lucide-arrow-right"
+                  />
+                </NuxtLink>
+                <NuxtLink
+                  class="program-link dark:text-brand-300"
+                  :to="`/programs/RM-${prog.age_band}-koguma-01`"
+                >
+                  Koguma-kai Học kỳ 12 tuần (HK1 và HK2)
+                  <UIcon
+                    aria-hidden="true"
+                    class="w-4 h-4 ml-1 inline-block"
+                    name="i-lucide-arrow-right"
+                  />
+                </NuxtLink>
+                <NuxtLink
+                  class="program-link dark:text-brand-400"
+                  :to="`/games?age_band=${prog.age_band}`"
+                >
+                  Xem {{ prog.levels_count }} trò chơi phù hợp
+                  <UIcon
+                    aria-hidden="true"
+                    class="w-4 h-4 ml-1 inline-block"
+                    name="i-lucide-arrow-right"
+                  />
+                </NuxtLink>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       <!-- Khối 6: Dùng ở nhà / dùng trên lớp -->
-      <LandingBenefits />
+      <LazyLandingBenefits hydrate-on-visible />
 
       <!-- Khối 7: Gói học & Bảng giá (BR-LND-05) -->
-      <LandingPricing :packages="homeData.packages" />
+      <LazyLandingPricing hydrate-on-visible :packages="homeData.packages" />
 
       <!-- Khối 8: Câu hỏi thường gặp (FAQ) -->
       <section aria-labelledby="faq-title" class="faq-section">
         <div class="section-container">
           <div class="section-header">
-            <h2 class="section-title" id="faq-title">Câu hỏi thường gặp</h2>
-            <p class="section-subtitle">
+            <h2 class="section-title dark:text-surface-50" id="faq-title">
+              Câu hỏi thường gặp
+            </h2>
+            <p class="section-subtitle dark:text-surface-300">
               Giải đáp thắc mắc của người lớn trước khi bắt đầu
             </p>
           </div>
           <div class="faq-accordion">
-            <div class="faq-card" v-for="faq in homeData.faq" :key="faq.id">
-              <h3 class="faq-question">{{ faq.question }}</h3>
-              <p class="faq-answer">{{ faq.answer }}</p>
+            <div
+              class="faq-card dark:bg-surface-800 dark:border-surface-700"
+              v-for="faq in homeData.faq"
+              :key="faq.id"
+            >
+              <h3 class="faq-question dark:text-surface-50">
+                {{ faq.question }}
+              </h3>
+              <p class="faq-answer dark:text-surface-300">{{ faq.answer }}</p>
             </div>
           </div>
           <div class="faq-footer-link">
-            <NuxtLink class="btn-more-faq" to="/faq"
+            <NuxtLink
+              class="btn-more-faq min-h-11 inline-flex items-center justify-center dark:text-brand-400"
+              to="/faq"
               >Xem toàn bộ câu hỏi thường gặp
               <UIcon
                 class="w-4 h-4 ml-1 inline-block"
@@ -183,10 +245,10 @@
     </main>
 
     <!-- Khối 9: Chân trang (PublicFooter with /child-privacy link) -->
-    <PublicFooter />
+    <LazyPublicFooter hydrate-on-visible />
 
     <!-- Cookie Notice Banner -->
-    <CookieNoticeBanner />
+    <LazyCookieNoticeBanner hydrate-on-idle />
   </div>
 </template>
 
@@ -200,11 +262,8 @@
   import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed } from "vue";
   import { useFetch, useHead, useSeoMeta } from "#imports";
-  import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
-  import LandingBenefits from "~/components/landing-benefits.vue";
+  import KogumaProgramBanner from "~/components/koguma-program-banner.vue";
   import LandingHero from "~/components/landing-hero.vue";
-  import LandingPricing from "~/components/landing-pricing.vue";
-  import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
@@ -339,6 +398,11 @@
     min-height: 100vh;
   }
 
+  :global(.dark) .public-page-wrapper {
+    background-color: var(--color-surface-900);
+    color: var(--color-surface-100);
+  }
+
   .section-container {
     max-width: 72rem;
     margin: 0 auto;
@@ -384,7 +448,7 @@
   }
 
   .comp-card {
-    background-color: white;
+    background-color: var(--color-surface-0, white);
     padding: 1.5rem;
     border-radius: 1.25rem;
     border: 2px solid var(--color-surface-200);
@@ -445,7 +509,7 @@
   }
 
   .step-card {
-    background-color: white;
+    background-color: var(--color-surface-0, white);
     padding: 2rem 1.5rem;
     border-radius: 1.25rem;
     border: 2px solid var(--color-surface-200);
@@ -459,7 +523,7 @@
     width: 2.75rem;
     height: 2.75rem;
     background-color: var(--color-brand-600);
-    color: white;
+    color: var(--color-surface-0, white);
     font-weight: 800;
     font-size: 1.25rem;
     border-radius: 9999px;
@@ -488,7 +552,7 @@
   }
 
   .game-card {
-    background-color: white;
+    background-color: var(--color-surface-0, white);
     padding: 1.25rem;
     border-radius: 1.25rem;
     border: 2px solid var(--color-surface-200);
@@ -506,6 +570,10 @@
     border-radius: 1rem;
   }
 
+  :global(.dark) .game-emoji-wrap {
+    background-color: var(--color-surface-900);
+  }
+
   .game-emoji {
     font-size: 2.5rem;
   }
@@ -513,10 +581,10 @@
   .badge-free {
     font-size: 0.75rem;
     font-weight: 700;
-    padding: 0.2rem 0.5rem;
-    border-radius: 0.5rem;
-    background-color: var(--color-success-100, lightgreen);
-    color: var(--color-success-800, darkgreen);
+    padding: 0.25rem 0.625rem;
+    border-radius: 0.75rem;
+    background-color: var(--color-success-100);
+    color: var(--color-success-800);
   }
 
   .game-title {
@@ -535,22 +603,28 @@
   .badge-age {
     font-size: 0.75rem;
     font-weight: 600;
-    padding: 0.2rem 0.5rem;
-    border-radius: 0.5rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 0.75rem;
     background-color: var(--color-surface-100);
     color: var(--color-surface-700);
+  }
+
+  :global(.dark) .badge-competency,
+  :global(.dark) .badge-age {
+    background-color: var(--color-surface-700);
+    color: var(--color-surface-200);
   }
 
   .btn-game-play {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 40px;
+    min-height: 44px;
     background-color: var(--color-brand-600);
-    color: white;
+    color: var(--color-surface-0, white);
     font-weight: 700;
-    font-size: 0.9rem;
-    border-radius: 0.75rem;
+    font-size: 0.95rem;
+    border-radius: 1rem;
     text-decoration: none;
     margin-top: 0.5rem;
     transition: background-color 0.15s;
@@ -574,9 +648,9 @@
   }
 
   .program-card {
-    background-color: white;
+    background-color: var(--color-surface-0, white);
     padding: 1.75rem;
-    border-radius: 1.25rem;
+    border-radius: 1.5rem;
     border: 2px solid var(--color-surface-200);
     display: flex;
     flex-direction: column;
@@ -591,7 +665,7 @@
     color: var(--color-brand-800);
     font-weight: 700;
     font-size: 0.85rem;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
   }
 
   .program-title {
@@ -629,10 +703,10 @@
   }
 
   .faq-card {
-    background-color: white;
+    background-color: var(--color-surface-0, white);
     padding: 1.5rem;
     border-radius: 1rem;
-    border: 1px solid var(--color-surface-200);
+    border: 2px solid var(--color-surface-200);
   }
 
   .faq-question {
@@ -659,5 +733,31 @@
     font-weight: 700;
     color: var(--color-brand-600);
     text-decoration: none;
+  }
+
+  :global(.dark) .section-title,
+  :global(.dark) .comp-name,
+  :global(.dark) .step-title,
+  :global(.dark) .game-title,
+  :global(.dark) .program-title,
+  :global(.dark) .faq-question {
+    color: var(--color-surface-50);
+  }
+
+  :global(.dark) .section-subtitle,
+  :global(.dark) .comp-desc,
+  :global(.dark) .step-desc,
+  :global(.dark) .program-focus,
+  :global(.dark) .faq-answer {
+    color: var(--color-surface-300);
+  }
+
+  :global(.dark) .comp-card,
+  :global(.dark) .step-card,
+  :global(.dark) .game-card,
+  :global(.dark) .program-card,
+  :global(.dark) .faq-card {
+    background-color: var(--color-surface-800);
+    border-color: var(--color-surface-700);
   }
 </style>

@@ -429,5 +429,14 @@ export const C3_DED_01_SEED: SkillSeed = {
       rounds: 3,
       montessori_ref: "WB14-D3",
     },
+    {
+      code: "GL-C3-DED-INTRO-6002",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 3,
+      theme: "nature",
+      rounds: 3,
+      sequence_no: 61,
+    },
   ],
 };

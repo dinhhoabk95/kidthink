@@ -7,16 +7,29 @@
  */
 
 import type { RetryEncouragementClip } from "./feedback-system";
-import { SFXEngine, type SFXType } from "./sfx-engine";
+import {
+  SFXEngine,
+  type SFXType,
+  TRUE_PEAK_CEILING_LINEAR,
+} from "./sfx-engine";
 import { SpeechSynthesisAdapter } from "./speech-synthesis-adapter";
+
+const PENTATONIC_NOTES: readonly SFXType[] = Object.freeze([
+  "marimba_1",
+  "marimba_2",
+  "marimba_3",
+  "marimba_4",
+  "marimba_5",
+]);
 
 export class AudioController {
   private enabled: boolean;
   private readonly sfxEngine: SFXEngine;
   private readonly speechAdapter: SpeechSynthesisAdapter;
   private readonly bufferCache: Map<string, AudioBuffer> = new Map();
-  private readonly masterVolume = 0.85; // Clamped to safe ceiling (BR-ENG-16)
+  private readonly masterVolume = TRUE_PEAK_CEILING_LINEAR; // <= -1 dBTP ceiling (BR-ENG-16)
   private currentAudio: HTMLAudioElement | null = null;
+  private pentatonicStep = 0;
 
   constructor(enabled = true) {
     this.enabled = enabled;
@@ -234,9 +247,15 @@ export class AudioController {
     this.play("pop_celebrate");
   }
 
-  /** Grand fanfare on level completion */
+  /** Grand fanfare + Đàn Tranh harmonic pluck on level completion */
   playLevelCelebrateSound(): void {
     this.play("level_celebrate");
+    this.playPluckedZither();
+  }
+
+  /** Warm T'rưng bamboo chime when completing an individual round */
+  playRoundCompleteSound(): void {
+    this.playFolkChime();
   }
 
   /** Tap sound on interaction */
@@ -244,14 +263,38 @@ export class AudioController {
     this.play("tap");
   }
 
-  /** Start chime sound on starting a round or session */
+  /** Start chime sound on starting a round or session (resets pentatonic progression) */
   playStartSound(): void {
+    this.pentatonicStep = 0;
     this.play("start_chime");
   }
 
-  /** Soft snap sound when item locks into place */
+  /** Tactile bamboo clack + ascending pentatonic marimba note when item locks into place */
   playSnapSound(): void {
     this.play("snap_item");
+    this.playBambooClack();
+    this.playMarimbaNote(this.pentatonicStep);
+    this.pentatonicStep = (this.pentatonicStep + 1) % PENTATONIC_NOTES.length;
+  }
+
+  /** Current step (0..4) in Vietnamese pentatonic progression (Hò-Xự-Xang-Xê-Cống) */
+  getPentatonicStep(): number {
+    return this.pentatonicStep;
+  }
+
+  /** Reset pentatonic progression to Hò (step 0) */
+  resetPentatonicStep(): void {
+    this.pentatonicStep = 0;
+  }
+
+  /** Tactile wooden pickup sound on drag start */
+  playWoodPickup(): void {
+    this.play("wood_pickup");
+  }
+
+  /** Tactile wooden clack on magnetic target hover */
+  playWoodClackSnap(): void {
+    this.play("wood_clack_snap");
   }
 
   /** Whoosh return sound when item floats back to origin */
@@ -264,22 +307,35 @@ export class AudioController {
     this.play("longpress_exit");
   }
 
-  /** Play ascending pentatonic marimba note (1..5) for counting & Montessori rods */
+  /** Play ascending Vietnamese pentatonic T'rưng / mộc cầm note (Hò-Xự-Xang-Xê-Cống, 0..4) */
   playMarimbaNote(stepIndex: number): void {
-    const notes: readonly SFXType[] = [
-      "marimba_1",
-      "marimba_2",
-      "marimba_3",
-      "marimba_4",
-      "marimba_5",
-    ];
     const safeIdx = Math.max(
       0,
-      Math.min(notes.length - 1, Math.floor(stepIndex))
+      Math.min(PENTATONIC_NOTES.length - 1, Math.floor(stepIndex))
     );
-    const cue = notes[safeIdx];
+    const cue = PENTATONIC_NOTES[safeIdx];
     if (cue) {
       this.play(cue);
     }
+  }
+
+  /** Play warm T'rưng bamboo chime arpeggio */
+  playFolkChime(): void {
+    this.play("trung_chime");
+  }
+
+  /** Play gentle plucked Đàn Tranh harmonic chime */
+  playPluckedZither(): void {
+    this.play("dan_tranh_pluck");
+  }
+
+  /** Play folk Trống Bỏi rattle drum cue */
+  playRattleDrum(): void {
+    this.play("trong_boi_rattle");
+  }
+
+  /** Play crisp Bamboo Clack (phách tre) rhythm cue */
+  playBambooClack(): void {
+    this.play("bamboo_clack");
   }
 }

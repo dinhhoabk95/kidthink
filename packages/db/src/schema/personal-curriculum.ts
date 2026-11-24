@@ -1,75 +1,76 @@
 import { sql } from "drizzle-orm";
 import {
-  bigint,
-  boolean,
   index,
   integer,
-  pgEnum,
-  pgTable,
-  smallint,
-  timestamp,
+  sqliteTable,
+  text,
   unique,
   uniqueIndex,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
-import { childProfiles } from "./child.ts";
-import { idPk, timestamps } from "./columns.ts";
+} from "drizzle-orm/sqlite-core";
 import {
-  curriculumProgressStatusEnum,
-  enrollmentStatusEnum,
-} from "./curriculum.ts";
+  type ContentEntityType,
+  CURRICULUM_PROGRESS_STATUS,
+  type CurriculumProgressStatus,
+  ENROLLMENT_STATUS,
+  type EnrollmentStatus,
+  PERSONAL_CURRICULUM_STATUS,
+  type PersonalCurriculumStatus,
+} from "#src/constants/learning-enums";
+import { childProfiles } from "./child.ts";
+import {
+  idPk,
+  nowTimestampMs,
+  timestampMs,
+  timestamps,
+  uuidCol,
+} from "./columns.ts";
 import { users } from "./identity.ts";
-import { contentEntityTypeEnum } from "./tagging.ts";
 
-export const personalCurriculumStatusEnum = pgEnum(
-  "personal_curriculum_status",
-  ["draft", "ready"]
-);
-
-export const personalCurricula = pgTable(
+export const personalCurricula = sqliteTable(
   "personal_curricula",
   {
     id: idPk(),
-    uuid: uuid("uuid").defaultRandom().notNull().unique(),
-    userId: bigint("user_id", { mode: "number" })
+    uuid: uuidCol("uuid").unique(),
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    title: varchar("title", { length: 200 }).notNull(),
-    ageMin: smallint("age_min"),
-    ageMax: smallint("age_max"),
-    durationWeeks: smallint("duration_weeks").notNull().default(8),
-    sessionsPerWeek: smallint("sessions_per_week").notNull().default(3),
-    status: personalCurriculumStatusEnum("status").notNull().default("draft"),
+    title: text("title").notNull(),
+    ageMin: integer("age_min"),
+    ageMax: integer("age_max"),
+    durationWeeks: integer("duration_weeks").notNull().default(8),
+    sessionsPerWeek: integer("sessions_per_week").notNull().default(3),
+    status: integer("status")
+      .$type<PersonalCurriculumStatus>()
+      .notNull()
+      .default(PERSONAL_CURRICULUM_STATUS.DRAFT),
     version: integer("version").notNull().default(1),
     ...timestamps(),
   },
   (table) => [index("idx_personal_curricula_user_id").on(table.userId)]
 );
 
-export const personalCurriculumItems = pgTable(
+export const personalCurriculumItems = sqliteTable(
   "personal_curriculum_items",
   {
     id: idPk(),
-    personalCurriculumId: bigint("personal_curriculum_id", { mode: "number" })
+    personalCurriculumId: integer("personal_curriculum_id")
       .notNull()
       .references(() => personalCurricula.id, { onDelete: "cascade" }),
-    weekNo: smallint("week_no").notNull(),
-    sessionNo: smallint("session_no").notNull(),
-    position: smallint("position").notNull(),
-    entityType: contentEntityTypeEnum("entity_type").notNull(),
-    entityId: bigint("entity_id", { mode: "number" }).notNull(),
-    isRequired: boolean("is_required").notNull().default(true),
+    weekNo: integer("week_no").notNull(),
+    sessionNo: integer("session_no").notNull(),
+    position: integer("position").notNull(),
+    entityType: integer("entity_type").$type<ContentEntityType>().notNull(),
+    entityId: integer("entity_id").notNull(),
+    isRequired: integer("is_required", { mode: "boolean" })
+      .notNull()
+      .default(true),
     ...timestamps(),
   },
   (table) => [
-    // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
     index("idx_personal_curriculum_items_entity").on(
       table.entityType,
       table.entityId
     ),
-    // UNIQUE (personal_curriculum_id, week_no, session_no, position) đã phủ
-    // tra cứu theo (personal_curriculum_id, week_no).
     unique("personal_curriculum_items_week_session_pos_unique").on(
       table.personalCurriculumId,
       table.weekNo,
@@ -79,26 +80,27 @@ export const personalCurriculumItems = pgTable(
   ]
 );
 
-export const personalCurriculumEnrollments = pgTable(
+export const personalCurriculumEnrollments = sqliteTable(
   "personal_curriculum_enrollments",
   {
     id: idPk(),
-    childId: bigint("child_id", { mode: "number" })
+    childId: integer("child_id")
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
-    personalCurriculumId: bigint("personal_curriculum_id", { mode: "number" })
+    personalCurriculumId: integer("personal_curriculum_id")
       .notNull()
       .references(() => personalCurricula.id, { onDelete: "cascade" }),
-    enrolledAt: timestamp("enrolled_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    status: enrollmentStatusEnum("status").notNull().default("active"),
+    enrolledAt: nowTimestampMs("enrolled_at"),
+    status: integer("status")
+      .$type<EnrollmentStatus>()
+      .notNull()
+      .default(ENROLLMENT_STATUS.ACTIVE),
     ...timestamps(),
   },
   (table) => [
     uniqueIndex("idx_personal_curriculum_enrollments_child_active_unique")
       .on(table.childId)
-      .where(sql`${table.status} = 'active'`),
+      .where(sql.raw(`"status" = ${ENROLLMENT_STATUS.ACTIVE}`)),
     index("idx_personal_curriculum_enrollments_child_status").on(
       table.childId,
       table.status
@@ -109,27 +111,26 @@ export const personalCurriculumEnrollments = pgTable(
   ]
 );
 
-export const personalCurriculumItemProgress = pgTable(
+export const personalCurriculumItemProgress = sqliteTable(
   "personal_curriculum_item_progress",
   {
     id: idPk(),
-    enrollmentId: bigint("enrollment_id", { mode: "number" })
+    enrollmentId: integer("enrollment_id")
       .notNull()
       .references(() => personalCurriculumEnrollments.id, {
         onDelete: "cascade",
       }),
-    childId: bigint("child_id", { mode: "number" })
+    childId: integer("child_id")
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
-    personalCurriculumItemId: bigint("personal_curriculum_item_id", {
-      mode: "number",
-    })
+    personalCurriculumItemId: integer("personal_curriculum_item_id")
       .notNull()
       .references(() => personalCurriculumItems.id, { onDelete: "cascade" }),
-    status: curriculumProgressStatusEnum("status")
+    status: integer("status")
+      .$type<CurriculumProgressStatus>()
       .notNull()
-      .default("not_started"),
-    completedAt: timestamp("completed_at", { withTimezone: true }),
+      .default(CURRICULUM_PROGRESS_STATUS.NOT_STARTED),
+    completedAt: timestampMs("completed_at"),
     ...timestamps(),
   },
   (table) => [

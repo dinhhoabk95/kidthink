@@ -1,5 +1,10 @@
 import {
+  CHILD_STATUS,
+  CUSTOM_GAME_STATUS,
   childProfiles,
+  ENTITLEMENT_GROUP,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
@@ -128,7 +133,7 @@ describe("P4.5 Custom Game API Endpoints (BR-CGB-01..10)", () => {
       .insert(entitlementKeys)
       .values({
         key: "create_custom_game",
-        group: "creator",
+        group: ENTITLEMENT_GROUP.CREATOR,
         label: "Tạo trò chơi tùy chỉnh",
         description: "Quyền tạo trò chơi tùy chỉnh từ mẫu",
         isMvp: false,
@@ -160,8 +165,8 @@ describe("P4.5 Custom Game API Endpoints (BR-CGB-01..10)", () => {
     await db.insert(entitlements).values({
       userId: userA.id,
       entitlementKey: "create_custom_game",
-      source: "manual_grant",
-      status: "active",
+      source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+      status: ENTITLEMENT_STATUS.ACTIVE,
     });
 
     invalidateUserEntitlementsCache(userA.id);
@@ -175,7 +180,7 @@ describe("P4.5 Custom Game API Endpoints (BR-CGB-01..10)", () => {
         displayName: "Bé Bông",
         birthYear: 2022,
         avatarId: "avatar_1",
-        status: "active",
+        status: CHILD_STATUS.ACTIVE,
       })
       .returning();
     childA = cA;
@@ -197,7 +202,7 @@ describe("P4.5 Custom Game API Endpoints (BR-CGB-01..10)", () => {
     );
     const response = (await createCustomGameHandler(event)) as any;
     expect(response.id).toBeDefined();
-    expect(response.status).toBe("ready");
+    expect(response.status).toBe(CUSTOM_GAME_STATUS.READY);
   });
 
   it("Scenario: list endpoint returns only caller's custom games", async () => {

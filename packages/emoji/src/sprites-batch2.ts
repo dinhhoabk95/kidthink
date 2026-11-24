@@ -3,45 +3,8 @@
  * Bao gồm 222 Vector Craft SVG + 8 Tier-3 Soft Clay Hero WebP mở rộng.
  */
 
-export type CustomSpriteTier = "vector_craft" | "hero_webp";
-
-export interface EmojiSpriteMeta {
-  readonly emoji: string;
-  readonly slug: string;
-  readonly nameVi: string;
-  readonly svgPath: string;
-  readonly heroWebpPath?: string;
-  readonly tier: CustomSpriteTier;
-}
-
-export function sprite(
-  emoji: string,
-  slug: string,
-  nameVi: string
-): EmojiSpriteMeta {
-  return {
-    emoji,
-    slug,
-    nameVi,
-    svgPath: `/sprites/emoji/${slug}.svg`,
-    tier: "vector_craft",
-  };
-}
-
-export function hero(
-  emoji: string,
-  slug: string,
-  nameVi: string
-): EmojiSpriteMeta {
-  return {
-    emoji,
-    slug,
-    nameVi,
-    svgPath: `/sprites/emoji/${slug}.svg`,
-    heroWebpPath: `/sprites/hero/${slug}.webp`,
-    tier: "hero_webp",
-  };
-}
+import { hero, sprite } from "#src/sprite-helpers";
+import type { EmojiSpriteMeta } from "#src/types";
 
 export const BATCH_2_SPRITES: readonly EmojiSpriteMeta[] = [
   // Đợt 2A — Đồ vật gia đình, Trường học, Thiên nhiên & Động vật gần gũi (77)

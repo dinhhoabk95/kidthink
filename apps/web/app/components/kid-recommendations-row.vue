@@ -5,29 +5,33 @@
   >
     <!-- Header -->
     <div class="flex items-center justify-between">
-      <h3 class="text-lg font-bold text-surface-900 font-heading">
-        Gợi ý cho bé
+      <h3
+        class="text-lg font-bold text-surface-900 font-heading leading-relaxed"
+      >
+        Gợi ý cho bé · Khay Gỗ Gấu Con
       </h3>
     </div>
 
     <!-- Primary Recommendation Card -->
     <div
-      class="primary-card rounded-3xl p-4 sm:p-5 bg-white border-[3px] border-brand-200 shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-between gap-4"
+      class="primary-card rounded-3xl p-4 sm:p-5 bg-surface-50 border-4 border-brand-300 shadow-[0_6px_0_var(--color-brand-200)] flex flex-wrap sm:flex-nowrap items-center justify-between gap-4"
       v-if="recommendations.primary"
     >
       <div class="flex items-center gap-4 min-w-0 flex-1">
         <div
-          class="emoji-box min-h-16 min-w-16 h-16 w-16 rounded-2xl bg-surface-100 flex items-center justify-center text-3xl select-none shrink-0"
+          class="emoji-box min-h-16 min-w-16 h-16 w-16 rounded-2xl bg-warning-50 border-2 border-warning-200 flex items-center justify-center text-3xl select-none shrink-0"
         >
           <BrandEmoji :emoji="recommendations.primary.thumbnail_emoji" />
         </div>
         <div class="flex flex-col gap-1 min-w-0">
           <h4
-            class="text-base font-bold text-surface-900 font-heading truncate"
+            class="text-base font-bold text-surface-900 font-heading truncate leading-relaxed"
           >
             {{ recommendations.primary.title }}
           </h4>
-          <span class="text-base font-semibold text-surface-500">
+          <span
+            class="text-base font-semibold text-surface-600 leading-relaxed"
+          >
             {{ recommendations.primary.reason }}
           </span>
         </div>

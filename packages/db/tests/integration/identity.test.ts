@@ -1,7 +1,16 @@
 import { hashPassword } from "@mindkid/auth";
 import { eq, getTableColumns } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { assertNoOAuthProviderTokens, getAppDb, getOwnerDb } from "#src/index";
+import {
+  AUTH_METHOD,
+  assertNoOAuthProviderTokens,
+  CONSENT_ACTION,
+  CONSENT_TYPE,
+  getAppDb,
+  getOwnerDb,
+  MANAGER_ROLE,
+  USER_STATUS,
+} from "#src/index";
 import {
   consentLogs,
   consentRequirements,
@@ -43,7 +52,7 @@ describe("Identity Schema Integration Tests", () => {
         email: `ba-m-${suffix}@example.com`,
         passwordHash: await hashPassword("xK9#mQ2$vL8!wP5@"),
         displayName: "BA Manager",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
       })
       .returning();
     if (!(u && m)) {
@@ -56,7 +65,7 @@ describe("Identity Schema Integration Tests", () => {
       .values({
         userId: u.id,
         token: `u-tok-${suffix}`,
-        authMethod: "password",
+        authMethod: AUTH_METHOD.PASSWORD,
         expiresAt,
       })
       .returning();
@@ -67,7 +76,7 @@ describe("Identity Schema Integration Tests", () => {
       .values({
         userId: m.id,
         token: `m-tok-${suffix}`,
-        authMethod: "password",
+        authMethod: AUTH_METHOD.PASSWORD,
         expiresAt,
       })
       .returning();
@@ -135,7 +144,7 @@ describe("Identity Schema Integration Tests", () => {
     await db
       .insert(consentRequirements)
       .values({
-        consentType: "terms",
+        consentType: CONSENT_TYPE.TERMS,
         reconsentRequiredAt: marker1,
         notice: "Cập nhật điều khoản sử dụng",
       })
@@ -150,9 +159,9 @@ describe("Identity Schema Integration Tests", () => {
     const [row] = await db
       .select()
       .from(consentRequirements)
-      .where(eq(consentRequirements.consentType, "terms"));
+      .where(eq(consentRequirements.consentType, CONSENT_TYPE.TERMS));
     expect(row).toBeDefined();
-    expect(row?.consentType).toBe("terms");
+    expect(row?.consentType).toBe(CONSENT_TYPE.TERMS);
     expect(
       (row?.reconsentRequiredAt?.getTime() ?? 0) >= marker1.getTime()
     ).toBe(true);
@@ -165,14 +174,14 @@ describe("Identity Schema Integration Tests", () => {
     await db.insert(users).values({
       email,
       displayName: "User One",
-      status: "active",
+      status: USER_STATUS.ACTIVE,
     });
 
     await expect(
       db.insert(users).values({
         email: email.toUpperCase(),
         displayName: "User Two",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
     ).rejects.toThrow();
   });
@@ -187,7 +196,7 @@ describe("Identity Schema Integration Tests", () => {
         email,
         displayName: "SNS User",
         passwordHash: null,
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!inserted) {
@@ -298,8 +307,8 @@ describe("Identity Schema Integration Tests", () => {
       .insert(consentLogs)
       .values({
         userId: u.id,
-        consentType: "terms",
-        action: "accepted",
+        consentType: CONSENT_TYPE.TERMS,
+        action: CONSENT_ACTION.ACCEPTED,
         ipAddress: "127.0.0.1",
         userAgent: "test-agent",
       })
@@ -313,7 +322,7 @@ describe("Identity Schema Integration Tests", () => {
     await expect(
       appDb
         .update(consentLogs)
-        .set({ action: "withdrawn" })
+        .set({ action: CONSENT_ACTION.WITHDRAWN })
         .where(eq(consentLogs.id, log.id))
     ).rejects.toThrow();
 
@@ -344,8 +353,8 @@ describe("Identity Schema Integration Tests", () => {
       .insert(consentLogs)
       .values({
         userId: u.id,
-        consentType: "child_data",
-        action: "accepted",
+        consentType: CONSENT_TYPE.CHILD_DATA,
+        action: CONSENT_ACTION.ACCEPTED,
         ipAddress: "127.0.0.1",
         userAgent: "test-agent",
       })
@@ -354,13 +363,13 @@ describe("Identity Schema Integration Tests", () => {
       throw new Error("Failed to insert c1");
     }
 
-    expect(c1.action).toBe("accepted");
-    expect(c1.consentType).toBe("child_data");
+    expect(c1.action).toBe(CONSENT_ACTION.ACCEPTED);
+    expect(c1.consentType).toBe(CONSENT_TYPE.CHILD_DATA);
 
     await ownerDb.insert(consentLogs).values({
       userId: u.id,
-      consentType: "child_data",
-      action: "withdrawn",
+      consentType: CONSENT_TYPE.CHILD_DATA,
+      action: CONSENT_ACTION.WITHDRAWN,
       ipAddress: "127.0.0.1",
       userAgent: "test-agent",
     });
@@ -372,7 +381,7 @@ describe("Identity Schema Integration Tests", () => {
       .orderBy(consentLogs.id);
 
     expect(allLogs.length).toBe(2);
-    expect(allLogs[0]?.action).toBe("accepted");
-    expect(allLogs[1]?.action).toBe("withdrawn");
+    expect(allLogs[0]?.action).toBe(CONSENT_ACTION.ACCEPTED);
+    expect(allLogs[1]?.action).toBe(CONSENT_ACTION.WITHDRAWN);
   });
 });

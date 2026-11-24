@@ -1,14 +1,14 @@
 import { getOwnerDb } from "@mindkid/db";
-import { loadContentDemandLedger } from "../gates/content-demand-file.js";
-import { seedContentTags } from "../seed-master/content-tags.js";
+import { runRoadmapBalanceGate } from "#src/cli/check-roadmap-balance";
+import { runDeriveDemand } from "#src/cli/derive-demand";
+import { runSeedContent } from "#src/cli/seed-content";
+import { loadContentDemandLedger } from "#src/gates/content-demand-file";
+import { seedContentTags } from "#src/seed-master/content-tags";
 import {
   seedCurriculumItems,
   seedRoadmapCurricula,
-} from "../seed-master/curricula.js";
-import { seedTaxonomyMasterData } from "../seed-master/taxonomy/index.js";
-import { runRoadmapBalanceGate } from "./check-roadmap-balance.js";
-import { runDeriveDemand } from "./derive-demand.js";
-import { runSeedContent } from "./seed-content.js";
+} from "#src/seed-master/curricula";
+import { seedTaxonomyMasterData } from "#src/seed-master/taxonomy/index";
 
 export async function seedAllContent(options?: { masterOnly?: boolean }) {
   if (runRoadmapBalanceGate() !== 0) {
@@ -54,7 +54,8 @@ export async function seedAllContent(options?: { masterOnly?: boolean }) {
     await runSeedContent(false, `SEED-${Date.now()}`, false);
 
     // 6. Seed curriculum items straight from the committed demand ledger
-    const itemStats = await seedCurriculumItems(db, loadContentDemandLedger());
+    const demandLedger = loadContentDemandLedger();
+    const itemStats = await seedCurriculumItems(db, demandLedger);
     console.log(
       `[content-build:seed] Curriculum items seeded from ledger: ${itemStats.itemsCount} items.`
     );

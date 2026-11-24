@@ -1,7 +1,10 @@
 import {
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
+  MANAGER_ROLE,
   managers,
   SEED_ENTITLEMENT_KEYS,
   users,
@@ -26,7 +29,7 @@ describe("Task 5 — report:manual-grants-monthly Suite (BR-EGR-09)", () => {
       .values({
         email: `superadmin-report-${Date.now()}@example.com`,
         displayName: "Super Admin Reviewer",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
         passwordHash: "mock-pwd-hash",
       })
       .returning();
@@ -53,8 +56,8 @@ describe("Task 5 — report:manual-grants-monthly Suite (BR-EGR-09)", () => {
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "play_standard_games",
-      source: "manual_grant",
-      status: "active",
+      source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+      status: ENTITLEMENT_STATUS.ACTIVE,
       grantedAt: grantDate,
       expiresAt: expiryDate,
       grantedByManagerId: manager.id,

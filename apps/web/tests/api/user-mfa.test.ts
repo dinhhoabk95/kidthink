@@ -1,11 +1,18 @@
 import { createHmac } from "node:crypto";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Socket } from "node:net";
-import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
+import {
+  InMemoryRedisClient,
+  setAuthRedisClient,
+  type UserTokenPayload,
+} from "@mindkid/auth";
 import {
   getOwnerDb,
+  MANAGER_ROLE,
+  MFA_RECOVERY_STATUS,
   managers,
   mfaRecoveryRequests,
+  USER_STATUS,
   userSessions,
   users,
   userTwoFactors,
@@ -17,6 +24,7 @@ import mfaRecoveryCancelHandler from "#server/api/managers/users/[uuid]/mfa-reco
 import mfaRecoveryCompleteHandler from "#server/api/managers/users/[uuid]/mfa-recovery-requests/[reqUuid]/complete.post";
 import mfaRecoveryListHandler from "#server/api/managers/users/[uuid]/mfa-recovery-requests/index.get";
 import mfaRecoveryCreateHandler from "#server/api/managers/users/[uuid]/mfa-recovery-requests/index.post";
+import userReauthHandler from "#server/api/users/auth/reauth.post";
 import {
   getUserAuth,
   resetBetterAuthInstancesForTests,
@@ -101,11 +109,13 @@ function collectCookie(res: Response): string {
 function postUserAuth(
   path: string,
   body: Record<string, string | boolean>,
-  cookie?: string
+  cookie?: string,
+  extraHeaders?: Record<string, string>
 ): Promise<Response> {
   const headers: Record<string, string> = {
     "content-type": "application/json",
     origin: "http://localhost:3000",
+    ...extraHeaders,
   };
   if (cookie) {
     headers.cookie = cookie;
@@ -117,6 +127,27 @@ function postUserAuth(
       body: JSON.stringify(body),
     })
   );
+}
+
+function buildUserH3Event(
+  user: UserTokenPayload,
+  body: Record<string, string>
+): H3Event {
+  const socket = new Socket();
+  Object.defineProperty(socket, "remoteAddress", { value: "127.0.0.1" });
+  const req = new IncomingMessage(socket);
+  req.method = "POST";
+  req.url = "/api/users/auth/reauth";
+  req.headers = {
+    host: "localhost:3000",
+    origin: "http://localhost:3000",
+    "sec-fetch-site": "same-origin",
+  };
+  const res = new ServerResponse(req);
+  const event = createEvent(req, res);
+  event.context.user = user;
+  event.context.body = body;
+  return event;
 }
 
 function buildManagerH3Event(
@@ -176,7 +207,7 @@ beforeAll(async () => {
       email: testUserEmail,
       passwordHash: pwd,
       displayName: "MFA Test User",
-      status: "active",
+      status: USER_STATUS.ACTIVE,
       emailVerified: true,
       emailVerifiedAt: new Date(),
     })
@@ -200,7 +231,7 @@ beforeAll(async () => {
       email: `admin-mfa-${unique}@mindkid.vn`,
       passwordHash: pwd,
       displayName: "Super Admin Test",
-      role: "super_admin",
+      role: MANAGER_ROLE.SUPER_ADMIN,
       isActive: true,
     })
     .returning({ id: managers.id });
@@ -352,22 +383,74 @@ describe("User Better Auth 2FA & Admin MFA Recovery Flow (BR-MFA-01..12)", () =>
     expect(replayBackup.status).toBeGreaterThanOrEqual(400);
   });
 
-  it("regenerates backup codes and disables 2FA via password confirmation (BR-MFA-03, BR-MFA-11)", async () => {
+  it("regenerates backup codes and disables 2FA via step-up reauth + TOTP confirmation (BR-MFA-03, BR-MFA-11)", async () => {
     const db = getOwnerDb();
-    const regenRes = await postUserAuth(
+
+    const getUriRes = await postUserAuth(
+      "/two-factor/get-totp-uri",
+      { password: USER_PASSWORD },
+      sessionCookie
+    );
+    expect(getUriRes.status).toBeGreaterThanOrEqual(400);
+
+    const activeSess = await getUserAuth().api.getSession({
+      headers: new Headers({ cookie: sessionCookie }),
+    });
+    expect(activeSess?.session?.id).toBeTruthy();
+
+    const reauthEvent = buildUserH3Event(
+      {
+        user_id: testUserId,
+        uuid: testUserUuid,
+        email: testUserEmail,
+        status: "active",
+        email_verified: true,
+        two_factor_enabled: true,
+        display_name: "MFA Test User",
+        session_id: String(activeSess?.session?.id ?? ""),
+        session_token: activeSess?.session?.token,
+        created_at: activeSess?.session?.createdAt
+          ? new Date(activeSess.session.createdAt)
+          : new Date(),
+      },
+      {
+        password: USER_PASSWORD,
+        totp: computeTotpCode(currentTotpSecret),
+      }
+    );
+    const reauthRes = await userReauthHandler(reauthEvent);
+    expect(reauthRes.ok).toBe(true);
+
+    const regenMissingTotp = await postUserAuth(
       "/two-factor/generate-backup-codes",
       { password: USER_PASSWORD },
       sessionCookie
+    );
+    expect([400, 401, 403]).toContain(regenMissingTotp.status);
+
+    const regenRes = await postUserAuth(
+      "/two-factor/generate-backup-codes",
+      { password: USER_PASSWORD },
+      sessionCookie,
+      { "x-mindkid-totp": computeTotpCode(currentTotpSecret) }
     );
     expect(regenRes.status).toBe(200);
     const regenJson = (await regenRes.json()) as BackupCodesResponse;
     expect(regenJson.backupCodes).toHaveLength(10);
     expect(regenJson.backupCodes[0]).not.toBe(storedBackupCodes[0]);
 
-    const disableRes = await postUserAuth(
+    const disableMissingTotp = await postUserAuth(
       "/two-factor/disable",
       { password: USER_PASSWORD },
       sessionCookie
+    );
+    expect([400, 401, 403]).toContain(disableMissingTotp.status);
+
+    const disableRes = await postUserAuth(
+      "/two-factor/disable",
+      { password: USER_PASSWORD },
+      sessionCookie,
+      { "x-mindkid-totp": computeTotpCode(currentTotpSecret) }
     );
     expect(disableRes.status).toBe(200);
 
@@ -451,7 +534,7 @@ describe("User Better Auth 2FA & Admin MFA Recovery Flow (BR-MFA-01..12)", () =>
       await db
         .update(mfaRecoveryRequests)
         .set({
-          status: "waiting",
+          status: MFA_RECOVERY_STATUS.WAITING,
           emailVerifiedAt: new Date(),
         })
         .where(eq(mfaRecoveryRequests.uuid, recoveryReqUuid));

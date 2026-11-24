@@ -1,0 +1,14 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ca sĩ biểu diễn</title>
+  <defs>
+    <linearGradient id="nw_popvocalist" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#c084fc" /><stop offset="100%" stop-color="#7e22ce" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#4c1d95" opacity="0.22" rx="34" ry="5" />
+    <path d="M28 98C28 74 42 64 60 64C78 64 92 74 92 98Z" fill="url(#nw_popvocalist)" stroke="#4c1d95" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M40 36C40 22 49 16 60 16C71 16 80 22 80 36Z" fill="#44403c" stroke="#1c1917" stroke-width="3.6" />
+    <circle cx="60" cy="44" fill="#fde68a" r="18" stroke="#78350f" stroke-width="3.8" />
+    <circle cx="53" cy="43" fill="#1c1917" r="2.6" /><circle cx="67" cy="43" fill="#1c1917" r="2.6" />
+    <path d="M54 51C57 54 63 54 66 51" stroke="#78350f" stroke-linecap="round" stroke-width="2.4" />
+    <circle cx="84" cy="64" fill="#334155" r="6" stroke="#1e293b" stroke-width="3" />
+    <path d="M84 70L80 90" stroke="#1e293b" stroke-linecap="round" stroke-width="4.5" />
+</svg>

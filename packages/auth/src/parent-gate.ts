@@ -5,6 +5,9 @@ import {
   ParentGateFailedError,
   ParentGateInvalidError,
 } from "@mindkid/errors/child";
+import { ServiceUnavailableError } from "@mindkid/errors/common";
+import { getAuthRedisClient } from "./redis-client.js";
+import type { MinimalRedisClient } from "./redis-secondary-storage.js";
 
 export interface ParentGateChallenge {
   challengeId: string;
@@ -17,31 +20,6 @@ export interface ParentGateTokenPayload {
   userId: number;
   issuedAt: number;
   expiresAt: number;
-}
-
-// A challenge is intentionally one-shot. This process-local replay guard is
-// supplementary to the HMAC; deployments with multiple Nitro instances must
-// back it with the shared cache used by the rest of auth throttling.
-export const MAX_CONSUMED_CHALLENGES = 10_000;
-const consumedChallenges = new Map<string, number>();
-
-function pruneConsumed(now: number): void {
-  for (const [id, expiry] of consumedChallenges) {
-    if (expiry <= now) {
-      consumedChallenges.delete(id);
-    }
-  }
-  if (consumedChallenges.size > MAX_CONSUMED_CHALLENGES) {
-    const excess = consumedChallenges.size - MAX_CONSUMED_CHALLENGES;
-    let removed = 0;
-    for (const id of consumedChallenges.keys()) {
-      consumedChallenges.delete(id);
-      removed++;
-      if (removed >= excess) {
-        break;
-      }
-    }
-  }
 }
 
 /**
@@ -107,14 +85,16 @@ function decodeChallenge(
 /**
  * Verifies single-digit multiplication answer and returns gate_token (5 min TTL) on success.
  */
-export function verifyParentGateChallenge(
+export async function verifyParentGateChallenge(
   challengePayload: string,
   answer: number,
   userId: number,
-  secret: string
-): { gateToken: string; expiresAt: number } {
-  const [dataB64, hmac] = challengePayload.split(".");
-  if (!(dataB64 && hmac)) {
+  secret: string,
+  store: MinimalRedisClient = getAuthRedisClient()
+): Promise<{ gateToken: string; expiresAt: number }> {
+  const parts = challengePayload.split(".");
+  const [dataB64, hmac] = parts;
+  if (parts.length !== 2 || !dataB64 || !hmac) {
     throw new ParentGateInvalidError();
   }
 
@@ -126,14 +106,28 @@ export function verifyParentGateChallenge(
       throw new ParentGateExpiredError();
     }
 
-    const consumedAt = consumedChallenges.get(payload.challengeId);
-    if (consumedAt && consumedAt > now) {
-      throw new ParentGateInvalidError();
+    const usedKey = `ba:v1:user:pg_used:${payload.challengeId}`;
+    const ttlSeconds = Math.max(1, Math.ceil((payload.expiresAt - now) / 1000));
+    let count: number;
+    try {
+      count = await store.incr(usedKey);
+      if (count === 1) {
+        if (typeof store.expire === "function") {
+          await store.expire(usedKey, ttlSeconds);
+        } else {
+          await store.set(usedKey, String(count), "EX", ttlSeconds);
+        }
+      }
+    } catch (err) {
+      if (isAppError(err)) {
+        throw err;
+      }
+      throw new ServiceUnavailableError();
     }
 
-    // Always mark challenge consumed on first verification attempt (single-use)
-    consumedChallenges.set(payload.challengeId, payload.expiresAt);
-    pruneConsumed(now);
+    if (count !== 1) {
+      throw new ParentGateInvalidError();
+    }
 
     if (Number(answer) !== payload.factorA * payload.factorB) {
       throw new ParentGateFailedError();

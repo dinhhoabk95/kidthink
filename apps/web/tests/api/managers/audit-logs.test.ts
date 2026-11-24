@@ -1,4 +1,4 @@
-import { auditLogs, getOwnerDb } from "@mindkid/db";
+import { ACTOR_TYPE, auditLogs, getOwnerDb } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 import handler from "#server/api/managers/audit-logs/index.get";
 
@@ -53,7 +53,7 @@ describe("Task 6 — GET /api/managers/audit-logs (BR-AUD-09)", () => {
 
     // Insert test row directly
     await db.insert(auditLogs).values({
-      actorType: "system",
+      actorType: ACTOR_TYPE.SYSTEM,
       actorId: null,
       action: "user_suspended",
       entityType: "user",

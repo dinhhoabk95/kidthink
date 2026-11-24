@@ -1,5 +1,14 @@
 import crypto from "node:crypto";
-import { childProfiles, gameLevels, getOwnerDb, users } from "@mindkid/db";
+import {
+  ACCESS_TIER,
+  CONSENT_ACTION,
+  CONSENT_TYPE,
+  childProfiles,
+  consentLogs,
+  gameLevels,
+  getOwnerDb,
+  users,
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import getRecommendationsHandler from "#server/api/users/play/recommendations.get";
@@ -78,6 +87,14 @@ describe("User Play Recommendations API (BR-REC-01..08, D-MQ..D-MV)", () => {
       })
       .returning();
 
+    await db.insert(consentLogs).values({
+      userId: u.id,
+      consentType: CONSENT_TYPE.CHILD_DATA,
+      action: CONSENT_ACTION.ACCEPTED,
+      ipAddress: "127.0.0.1",
+      userAgent: "vitest",
+    });
+
     const [child] = await db
       .insert(childProfiles)
       .values({
@@ -109,7 +126,7 @@ describe("User Play Recommendations API (BR-REC-01..08, D-MQ..D-MV)", () => {
       title: "Đếm hoa quả API",
       contentPack: {},
       difficultyParams: {},
-      accessTier: "free",
+      accessTier: ACCESS_TIER.FREE,
       ageMin: 3,
       ageMax: 5,
       difficulty: 1,

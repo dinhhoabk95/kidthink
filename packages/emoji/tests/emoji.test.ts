@@ -20,8 +20,8 @@ describe("@mindkid/emoji", () => {
   describe("Category size validation", () => {
     const categories = getAllCategories();
 
-    it("should have exactly 32 categories", () => {
-      expect(categories).toHaveLength(32);
+    it("should have exactly 36 categories", () => {
+      expect(categories).toHaveLength(36);
     });
 
     for (const category of ALL_CATEGORIES) {
@@ -192,12 +192,43 @@ describe("@mindkid/emoji", () => {
 
   // ── Total emoji count ──
   describe("Total emoji count", () => {
-    it("should have at least 750 total distinct emoji entries", () => {
-      expect(getTotalEmojiCount()).toBeGreaterThanOrEqual(750);
+    it("should have at least 950 total distinct emoji entries", () => {
+      expect(getTotalEmojiCount()).toBeGreaterThanOrEqual(950);
     });
 
     it("ALL_EMOJIS.length should match getTotalEmojiCount()", () => {
       expect(ALL_EMOJIS.length).toBe(getTotalEmojiCount());
+    });
+  });
+
+  // ── Expanded pedagogical categories (animal-prehistoric, vn-culture, science-lab, toy) ──
+  describe("Expanded pedagogical categories", () => {
+    it("returns rich prehistoric & dinosaur entries", () => {
+      const prehistoric = getEmojisByCategory("animal-prehistoric").map(
+        (e) => e.emoji
+      );
+      expect(prehistoric).toContain("🦖");
+      expect(prehistoric).toContain("🦕");
+      expect(prehistoric).toContain("🦣");
+    });
+
+    it("returns Vietnamese cultural & culinary entries", () => {
+      const vnCulture = getEmojisByCategory("vn-culture").map((e) => e.emoji);
+      expect(vnCulture).toContain("🇻🇳");
+      expect(vnCulture).toContain("🪷");
+      expect(vnCulture).toContain("🫔");
+      expect(vnCulture).toContain("🥖");
+    });
+
+    it("returns science-lab & toy entries", () => {
+      const science = getEmojisByCategory("science-lab").map((e) => e.emoji);
+      const toys = getEmojisByCategory("toy").map((e) => e.emoji);
+      expect(science).toContain("🔬");
+      expect(science).toContain("🧪");
+      expect(science).toContain("🧬");
+      expect(toys).toContain("🧸");
+      expect(toys).toContain("🪆");
+      expect(toys).toContain("🛝");
     });
   });
 
@@ -207,6 +238,8 @@ describe("@mindkid/emoji", () => {
       for (const entry of ALL_EMOJIS) {
         expect(entry.emoji).toBeTruthy();
         expect(entry.name).toBeTruthy();
+        expect(entry.slug).toBeTruthy();
+        expect(entry.svg_path).toBe(`/sprites/emoji/${entry.slug}.svg`);
         expect(entry.categories.length).toBeGreaterThanOrEqual(1);
         expect(entry.keywords.length).toBeGreaterThanOrEqual(2);
         expect(entry.curriculum_themes.length).toBeGreaterThanOrEqual(1);

@@ -1,7 +1,15 @@
 import { hashPassword } from "@mindkid/auth";
 import { getOwnerDb } from "#src/client";
+import {
+  CONSENT_TYPE_VALUES,
+  MANAGER_ROLE,
+} from "#src/constants/identity-enums";
 import { entitlementKeys, packages } from "#src/schema/billing";
-import { consentRequirements, managers } from "#src/schema/identity";
+import {
+  consentRequirements,
+  managerAccounts,
+  managers,
+} from "#src/schema/identity";
 import { seedInitialAccounts } from "#src/seed-accounts";
 import { SEED_ENTITLEMENT_KEYS, SEED_PACKAGES } from "#src/seed-catalog";
 
@@ -9,7 +17,6 @@ export async function seed() {
   const db = getOwnerDb();
   console.log("[db:seed] Seeding foundational non-content data...");
 
-  // 1. Seed entitlement_keys (16 keys derived from registry)
   for (const item of SEED_ENTITLEMENT_KEYS) {
     await db
       .insert(entitlementKeys)
@@ -20,7 +27,6 @@ export async function seed() {
       });
   }
 
-  // 2. Seed packages
   for (const item of SEED_PACKAGES) {
     await db
       .insert(packages)
@@ -40,13 +46,13 @@ export async function seed() {
       });
   }
 
-  // 3. Seed initial test accounts (Managers and Users)
-  const accountStats = await seedInitialAccounts(db);
-  console.log(
-    `[db:seed] Initial accounts seeded: ${accountStats.managerCount} managers, ${accountStats.userCount} users, ${accountStats.childProfileCount} children, ${accountStats.entitlementCount} entitlements.`
-  );
+  if (process.env.NODE_ENV !== "production") {
+    const accountStats = await seedInitialAccounts(db);
+    console.log(
+      `[db:seed] Initial accounts seeded: ${accountStats.managerCount} managers, ${accountStats.userCount} users, ${accountStats.childProfileCount} children, ${accountStats.entitlementCount} entitlements.`
+    );
+  }
 
-  // Optional: If custom initial admin is explicitly provided via env, ensure it exists
   const envAdminEmail = process.env.INITIAL_ADMIN_EMAIL;
   const envAdminPassword = process.env.INITIAL_ADMIN_PASSWORD;
   if (envAdminEmail && envAdminPassword) {
@@ -57,16 +63,32 @@ export async function seed() {
         email: envAdminEmail,
         passwordHash: envAdminHash,
         displayName: "Super Admin (Env)",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
         mfaEnabled: false,
         isActive: true,
       })
       .onConflictDoNothing({ target: managers.email });
+
+    const mgrRecord = await db.query.managers.findFirst({
+      columns: { id: true },
+      where: { email: envAdminEmail },
+    });
+    if (mgrRecord) {
+      await db
+        .insert(managerAccounts)
+        .values({
+          userId: mgrRecord.id,
+          accountId: String(mgrRecord.id),
+          providerId: "credential",
+          password: envAdminHash,
+        })
+        .onConflictDoNothing({
+          target: [managerAccounts.userId, managerAccounts.providerId],
+        });
+    }
   }
 
-  // 5. Seed consent_requirements 3 singleton rows (D-QW, D-QZ)
-  const CONSENT_TYPES = ["terms", "privacy", "child_data"] as const;
-  for (const consentType of CONSENT_TYPES) {
+  for (const consentType of CONSENT_TYPE_VALUES) {
     await db
       .insert(consentRequirements)
       .values({

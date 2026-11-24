@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const manifest = await generateOfflineCurriculumPackManifest(
-    { userId },
+    { userId, entitlements },
     uuid,
     weekNo
   );

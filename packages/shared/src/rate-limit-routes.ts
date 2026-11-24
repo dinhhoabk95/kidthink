@@ -19,13 +19,63 @@ export type RateLimitRouteResolution =
 const ORDER_PROOF_PATH = /^\/api\/users\/orders\/[^/]+\/proof$/;
 const PLAY_EVENTS_PATH =
   /^\/api\/(?:users|guest)\/play-sessions\/[^/]+\/events$/;
+const MULTIPLE_SLASHES = /\/{2,}/g;
 const TRAILING_SLASH = /\/+$/;
+const DECODE_TOKEN_RE = /(%(?:25|2[fF]))|((?:%(?!25|2[fF])[0-9a-fA-F]{2})+)/g;
+const SINGLE_HEX_RE = /%[0-9a-fA-F]{2}/g;
+
+function decodePercentSequence(seq: string): string {
+  try {
+    return decodeURIComponent(seq);
+  } catch {
+    return seq.replace(SINGLE_HEX_RE, (token) => {
+      try {
+        return decodeURIComponent(token);
+      } catch {
+        return token;
+      }
+    });
+  }
+}
+
+/** Giải mã path theo quy tắc `_decodePath` của h3/ufo: giữ nguyên `%25`, `%2f`, `%2F`. */
+function decodeUrlPath(rawPath: string): string {
+  return rawPath.replace(
+    DECODE_TOKEN_RE,
+    (
+      match: string,
+      preserved: string | undefined,
+      encodedSeq: string | undefined
+    ) => {
+      if (preserved) {
+        return preserved;
+      }
+      return encodedSeq ? decodePercentSequence(encodedSeq) : match;
+    }
+  );
+}
+
+/** Chuẩn hóa pathname request: bỏ query/hash, giải mã percent-encoding an toàn, gộp `//`, bỏ slash cuối. */
+export function canonicalizeRequestPath(pathname: string): string {
+  const qIndex = pathname.indexOf("?");
+  const hIndex = pathname.indexOf("#");
+  let cutIndex = pathname.length;
+  if (qIndex !== -1 && qIndex < cutIndex) {
+    cutIndex = qIndex;
+  }
+  if (hIndex !== -1 && hIndex < cutIndex) {
+    cutIndex = hIndex;
+  }
+  const withoutQueryOrHash = pathname.slice(0, cutIndex);
+  const decoded = decodeUrlPath(withoutQueryOrHash);
+  const collapsed = decoded.replace(MULTIPLE_SLASHES, "/");
+  const trimmed = collapsed.replace(TRAILING_SLASH, "");
+  return trimmed || "/";
+}
 
 /** Bỏ query và slash cuối để một path chỉ có đúng một dạng chuẩn. */
 export function normalizeRateLimitPath(rawPath: string): string {
-  const withoutQuery = rawPath.split("?")[0] ?? "";
-  const trimmed = withoutQuery.replace(TRAILING_SLASH, "");
-  return trimmed || "/";
+  return canonicalizeRequestPath(rawPath);
 }
 
 /**
@@ -50,6 +100,7 @@ const IN_ROUTE_CLASSES: Readonly<Record<string, RouteClassName>> = {
   "/api/guest/auth/users/social-login": "auth:social-login",
   "/api/guest/auth/managers/mfa": "auth:mfa",
   "/api/guest/auth/managers/mfa-setup": "auth:mfa",
+  "/api/users/account/delete/cancel": "auth:login",
   "/api/users/auth/resend-verification": "auth:forgot-password",
 };
 
@@ -60,6 +111,12 @@ const BETTER_AUTH_MFA_OR_PASSKEY_PATH =
   /^\/api\/auth\/(?:users|managers)\/(?:two-factor|passkey)(?:\/|$)/;
 const BETTER_AUTH_SESSION_OPS_PATH =
   /^\/api\/auth\/(?:users|managers)\/(?:get-session|list-sessions|sign-out|revoke-session|revoke-sessions|revoke-other-sessions)$/;
+const BETTER_AUTH_SIGN_IN_PATH =
+  /^\/api\/auth\/(?:users|managers)\/sign-in(?:\/|$)/;
+const BETTER_AUTH_SIGN_UP_PATH =
+  /^\/api\/auth\/(?:users|managers)\/sign-up(?:\/|$)/;
+const BETTER_AUTH_PASSWORD_RESET_PATH =
+  /^\/api\/auth\/(?:users|managers)\/(?:request-password-reset|forget-password|forgot-password|reset-password|verify-email|send-verification-email)(?:\/|$)/;
 
 export const GUEST_POST_ROUTE_MAP: Readonly<Record<string, string>> = {
   "/api/guest/auth/users/login": "auth_login",
@@ -118,6 +175,18 @@ function resolveGuestAuthRoute(path: string): RateLimitRouteResolution | null {
   if (BETTER_AUTH_SESSION_OPS_PATH.test(path)) {
     return { mode: "middleware", className: "auth:refresh" };
   }
+  if (BETTER_AUTH_SIGN_IN_PATH.test(path)) {
+    return { mode: "middleware", className: "auth:login" };
+  }
+  if (BETTER_AUTH_SIGN_UP_PATH.test(path)) {
+    return { mode: "middleware", className: "auth:register" };
+  }
+  if (BETTER_AUTH_PASSWORD_RESET_PATH.test(path)) {
+    return { mode: "middleware", className: "auth:forgot-password" };
+  }
+  if (path === "/api/auth" || path.startsWith("/api/auth/")) {
+    return { mode: "middleware", className: "auth:login" };
+  }
   return null;
 }
 
@@ -161,7 +230,6 @@ const USER_SENSITIVE_AUTH_POST_PATHS = new Set([
   "/api/users/password",
   "/api/users/email",
   "/api/users/account/delete",
-  "/api/users/account/delete/cancel",
 ]);
 
 function isUserSensitiveAuthRoute(path: string, method: string): boolean {
@@ -184,11 +252,21 @@ function resolveUserRoute(
   path: string,
   method: string
 ): RateLimitRouteResolution | null {
-  if (path === "/api/users/orders" && method === "POST") {
+  if (
+    (path === "/api/users/orders" ||
+      path === "/api/users/subscriptions/recurring/opt-in") &&
+    method === "POST"
+  ) {
     return { mode: "middleware", className: "payment:create" };
   }
   if (ORDER_PROOF_PATH.test(path) && method === "POST") {
     return { mode: "middleware", className: "payment:proof" };
+  }
+  if (path === "/api/users/offline/sync" && method === "POST") {
+    return { mode: "middleware", className: "play:events" };
+  }
+  if (path === "/api/users/notification-endpoints" && method === "POST") {
+    return { mode: "middleware", className: "search" };
   }
   if (isUserSensitiveAuthRoute(path, method)) {
     return { mode: "middleware", className: "auth:login" };
@@ -282,6 +360,8 @@ export const ROUTE_BODY_SIZE_LIMITS: Readonly<Record<string, number>> = {
 const BODY_SIZE_PATTERNS: ReadonlyArray<{ pattern: RegExp; limit: number }> = [
   { pattern: ORDER_PROOF_PATH, limit: ORDER_PROOF_BODY_LIMIT_BYTES },
   { pattern: PLAY_EVENTS_PATH, limit: 64 * 1024 },
+  { pattern: /^\/api\/users\/offline\/sync$/, limit: 64 * 1024 },
+  { pattern: /^\/api\/users\/notification-endpoints$/, limit: 8 * 1024 },
   { pattern: /^\/api\/users\/consents(?:\/withdraw)?$/, limit: 8 * 1024 },
   { pattern: /^\/api\/managers\/legal-consent-forces$/, limit: 8 * 1024 },
   { pattern: /^\/api\/users\/(?:password|email)$/, limit: 8 * 1024 },

@@ -33,8 +33,8 @@ Guest · User.
 
 ## 4. Main flow
 
-1. Danh sách chương trình, nhóm theo: **theo tuổi** · **theo năng lực** · **chuyên đề**.
-2. Mở một chương trình → tổng quan: đối tượng, thời lượng, mục tiêu, cấu trúc tuần.
+1. Danh sách chương trình, nhóm theo: **theo tuổi** · **theo năng lực** · **chuyên đề**, kèm bộ lọc nhanh trên bề mặt `/programs` theo độ tuổi (`3-4`, `4-5`, `5-6`) và dòng chương trình (**Toàn diện / Chuyên sâu**, **Chuẩn Koguma-kai 36 tuần**, **Khởi động Koguma-kai 12 tuần**, **Lộ trình Cơ bản**).
+2. Mở một chương trình → tổng quan: đối tượng, thời lượng, mục tiêu, cấu trúc tuần (với dòng Koguma-kai và Toàn diện / Chuyên sâu hiển thị khung chủ đề năm học GDMN kèm gợi ý đồ dùng thật ngoài màn hình).
 3. Xem **vài tuần đầu chi tiết**; phần còn lại tóm tắt.
 4. CTA: đăng ký hoặc nâng cấp tuỳ bậc.
 

@@ -1,62 +1,25 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Chú hươu sao</title>
   <defs>
-    <radialGradient cx="40%" cy="32%" id="drCoat" r="70%">
-      <stop offset="0%" stop-color="#fbbf24" />
-      <stop offset="55%" stop-color="#d97706" />
-      <stop offset="100%" stop-color="#92400e" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="g_deer" r="70%"><stop offset="0%" stop-color="#fdba74" /><stop offset="55%" stop-color="#d97706" /><stop offset="100%" stop-color="#92400e" /></radialGradient>
   </defs>
-  <ellipse cx="60" cy="105" fill="#5c3d2e" opacity="0.25" rx="32" ry="5" />
-  <path
-    d="M44 36L35 15M39 25L29 22M41 29L46 20M76 36L85 15M81 25L91 22M79 29L74 20"
-    stroke="#5c3d2e"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="4.2"
-  />
-  <ellipse
-    cx="26"
-    cy="48"
-    fill="url(#drCoat)"
-    rx="13"
-    ry="7"
-    stroke="#5c3d2e"
-    stroke-width="3.8"
-    transform="rotate(-22 26 48)"
-  />
-  <ellipse
-    cx="94"
-    cy="48"
-    fill="url(#drCoat)"
-    rx="13"
-    ry="7"
-    stroke="#5c3d2e"
-    stroke-width="3.8"
-    transform="rotate(22 94 48)"
-  />
-  <ellipse
-    cx="60"
-    cy="66"
-    fill="url(#drCoat)"
-    rx="32"
-    ry="31"
-    stroke="#5c3d2e"
-    stroke-width="4"
-  />
-  <circle cx="52" cy="46" fill="#fef3c7" r="3" />
-  <circle cx="60" cy="43" fill="#fef3c7" r="3.2" />
-  <circle cx="68" cy="46" fill="#fef3c7" r="3" />
-  <ellipse cx="60" cy="79" fill="#fef3c7" rx="16" ry="12" />
-  <circle cx="45" cy="63" fill="#1c1917" r="4.5" />
-  <circle cx="43.7" cy="61.5" fill="#ffffff" r="1.6" />
-  <circle cx="75" cy="63" fill="#1c1917" r="4.5" />
-  <circle cx="73.7" cy="61.5" fill="#ffffff" r="1.6" />
-  <ellipse cx="60" cy="75" fill="#451a03" rx="6" ry="4.2" />
-  <path
-    d="M54 84C57 87 63 87 66 84"
-    stroke="#5c3d2e"
-    stroke-linecap="round"
-    stroke-width="2.8"
-  />
+  <ellipse cx="62" cy="106" fill="#451a03" opacity="0.22" rx="40" ry="5.5" />
+    <path d="M90 60L96 53L95 65Z" fill="#fffbeb" stroke="#451a03" stroke-linejoin="round" stroke-width="3.2" /><path d="M30 29L25 14M27 21L20 18M35 29L41 14M38 21L45 18" stroke="#78350f" stroke-linecap="round" stroke-width="3.4" />
+    <!-- Far legs -->
+    <path d="M47 74L44 102H51L53 74ZM81 74L79 102H86L88 74Z" fill="#92400e" stroke="#451a03" stroke-linejoin="round" stroke-width="3.4" />
+    <path d="M44 98H51V103H44ZM79 98H86V103H79Z" fill="#451a03" />
+    <!-- Torso & Neck -->
+    <path d="M36 45C42 54 38 52 64 52C90 52 94 62 90 72C86 80 44 80 40 70C36 62 32 55 36 45Z" fill="url(#g_deer)" stroke="#451a03" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M46 75C56 81 74 81 84 75" fill="#fffbeb" opacity="0.85" />
+    <circle cx="56" cy="62" fill="#fffbeb" r="2.3" /><circle cx="66" cy="59" fill="#fffbeb" r="2.5" /><circle cx="75" cy="63" fill="#fffbeb" r="2.3" /><circle cx="62" cy="67" fill="#fffbeb" r="2" /><circle cx="71" cy="68" fill="#fffbeb" r="2" />
+    <!-- Near legs -->
+    <path d="M39 72L36 104H44L47 72ZM73 72L71 104H79L81 72Z" fill="url(#g_deer)" stroke="#451a03" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M36 99H44V104H36ZM71 99H79V104H71Z" fill="#451a03" stroke="#451a03" stroke-linejoin="round" stroke-width="2.2" />
+    <!-- Head -->
+    <ellipse cx="30" cy="39" fill="url(#g_deer)" rx="12" ry="10" stroke="#451a03" stroke-width="3.8" />
+    <ellipse cx="22" cy="43" fill="#fef3c7" rx="7.5" ry="6" stroke="#451a03" stroke-width="3.2" />
+    <circle cx="20" cy="42" fill="#451a03" r="1.8" />
+    <path d="M20 46C23 48 26 47 27 45" stroke="#451a03" stroke-linecap="round" stroke-width="2.2" />
+    <circle cx="28" cy="36" fill="#1c1917" r="2.7" /><circle cx="27.2" cy="35.2" fill="#ffffff" r="1" />
+    <ellipse cx="40" cy="36" fill="#d97706" rx="5.5" ry="2.8" stroke="#451a03" stroke-width="2.8" transform="rotate(-20 40 36)" />
 </svg>

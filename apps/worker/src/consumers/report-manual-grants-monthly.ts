@@ -1,5 +1,5 @@
-import { entitlements, getDb, managers, users } from "@mindkid/db";
-import { and, eq, gte, lt } from "drizzle-orm";
+import { getDb, MANAGER_ROLE } from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import { logJobDone } from "#src/log";
 import type { Consumer } from "./types.js";
 
@@ -34,7 +34,7 @@ export async function runManualGrantReportJob(
   _jobId: string,
   input?: ManualGrantReportJobInput
 ): Promise<ManualGrantReportJobResult> {
-  const db = getDb();
+  const repos = createRepositories(getDb());
   const now = new Date();
 
   // Determine target month window
@@ -69,48 +69,25 @@ export async function runManualGrantReportJob(
   }
 
   // 1. Query manual grants in target month
-  const grantQuery = db
-    .select({
-      id: entitlements.id,
-      key: entitlements.entitlementKey,
-      source: entitlements.source,
-      grantedAt: entitlements.grantedAt,
-      expiresAt: entitlements.expiresAt,
-      grantReason: entitlements.grantReason,
-      userId: entitlements.userId,
-      userEmail: users.email,
-      managerId: entitlements.grantedByManagerId,
-      managerEmail: managers.email,
-      managerName: managers.displayName,
-    })
-    .from(entitlements)
-    .innerJoin(users, eq(entitlements.userId, users.id))
-    .leftJoin(managers, eq(entitlements.grantedByManagerId, managers.id))
-    .where(
-      and(
-        eq(entitlements.source, "manual_grant"),
-        gte(entitlements.grantedAt, startOfMonth),
-        lt(entitlements.grantedAt, endOfMonth)
-      )
-    );
-
-  const grantRows = await grantQuery.limit(1000);
+  const [grantRows, allManagers] = await Promise.all([
+    repos.entitlements.listManualGrantsInWindow(startOfMonth, endOfMonth, 1000),
+    repos.managers.listAll(),
+  ]);
 
   // 2. Find super_admin recipient email (closed Q1: single super_admin email at MVP)
-  const [superAdmin] = await db
-    .select({ email: managers.email })
-    .from(managers)
-    .where(eq(managers.role, "super_admin"))
-    .limit(1);
-
+  const superAdmin = allManagers.find(
+    (m) => m.role === MANAGER_ROLE.SUPER_ADMIN
+  );
   const recipientEmail = superAdmin?.email || "admin@tinimath.vn";
 
   const items: ManualGrantReportItem[] = grantRows.map((r) => ({
     entitlement_id: r.id,
-    entitlement_key: r.key,
-    user_email: r.userEmail,
+    entitlement_key: r.entitlementKey,
+    user_email: r.user.email,
     granted_by:
-      r.managerName || r.managerEmail || `Manager #${r.managerId || "N/A"}`,
+      r.grantedByManager?.displayName ||
+      r.grantedByManager?.email ||
+      `Manager #${r.grantedByManagerId || "N/A"}`,
     grant_reason: r.grantReason || "Không ghi chú",
     granted_at: new Date(r.grantedAt).toISOString(),
     expires_at: r.expiresAt ? new Date(r.expiresAt).toISOString() : null,

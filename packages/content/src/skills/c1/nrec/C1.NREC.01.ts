@@ -428,7 +428,7 @@ export const C1_NREC_01_SEED: SkillSeed = {
       theme: "school",
       rounds: 1,
       dataset: CHANG_01_INTRO_DATASET,
-      sequence_no: 1,
+      sequence_no: 2,
       skill_codes: ["C1.NREC.01", "C1.NREC.02"],
       montessori_ref: "WB01-D1",
     },
@@ -440,7 +440,7 @@ export const C1_NREC_01_SEED: SkillSeed = {
       theme: "farm",
       rounds: 1,
       dataset: TOPIC_NUMBER_0_5_DATASET,
-      sequence_no: 1,
+      sequence_no: 3,
       skill_codes: ["C1.NREC.01", "C1.NREC.02"],
     },
     {

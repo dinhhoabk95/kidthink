@@ -2,10 +2,12 @@ import crypto from "node:crypto";
 import {
   auditLogs,
   getOwnerDb,
+  PAYMENT_ORDER_STATUS,
   packages,
   paymentOrders,
   paymentTransactions,
   SEED_PACKAGES,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
@@ -103,7 +105,7 @@ describe("Automated Payment Routes (Task #305 S4 — BR-APM-03, BR-APM-06)", () 
       .values({
         email: `chk_user_a_${crypto.randomUUID()}@example.com`,
         displayName: "Checkout User A",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -112,7 +114,7 @@ describe("Automated Payment Routes (Task #305 S4 — BR-APM-03, BR-APM-06)", () 
       .values({
         email: `chk_user_b_${crypto.randomUUID()}@example.com`,
         displayName: "Checkout User B",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -123,7 +125,7 @@ describe("Automated Payment Routes (Task #305 S4 — BR-APM-03, BR-APM-06)", () 
         packageCode: "PKG-standard",
         offerCode: "annual",
         amountVnd: 299_000,
-        status: "pending",
+        status: PAYMENT_ORDER_STATUS.PENDING,
       })
       .returning();
 
@@ -134,7 +136,7 @@ describe("Automated Payment Routes (Task #305 S4 — BR-APM-03, BR-APM-06)", () 
         packageCode: "PKG-standard",
         offerCode: "annual",
         amountVnd: 299_000,
-        status: "approved",
+        status: PAYMENT_ORDER_STATUS.APPROVED,
       })
       .returning();
 
@@ -210,7 +212,7 @@ describe("Automated Payment Routes (Task #305 S4 — BR-APM-03, BR-APM-06)", () 
       .values({
         email: `recon_route_${crypto.randomUUID()}@example.com`,
         displayName: "Recon Route User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -221,7 +223,7 @@ describe("Automated Payment Routes (Task #305 S4 — BR-APM-03, BR-APM-06)", () 
         packageCode: "PKG-standard",
         offerCode: "annual",
         amountVnd: 299_000,
-        status: "approved",
+        status: PAYMENT_ORDER_STATUS.APPROVED,
       })
       .returning();
 

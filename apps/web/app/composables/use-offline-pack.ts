@@ -1,6 +1,7 @@
 import { isApiError } from "@mindkid/errors/client";
 import { createIndexedDbBufferStorage } from "@mindkid/game-engine";
 import { OFFLINE_PACK_CACHE_NAME } from "@mindkid/shared/client";
+import { resetInMemoryTelemetryBuffer } from "~/composables/play/use-play-telemetry";
 
 export const SESSION_ASSETS_CACHE_NAME = "session-assets-v1";
 export const OFFLINE_PACK_DB_NAME = "mindkid_offline_play";
@@ -106,6 +107,43 @@ function notifyServiceWorkerPurge(
   }
 }
 
+const SENSITIVE_STORAGE_PREFIXES = [
+  "mindkid_parent_gate_",
+  "pg_client_",
+  "pg_server_",
+] as const;
+
+function purgeStoragePrefixEntries(storage: Storage | undefined): void {
+  if (!storage) {
+    return;
+  }
+  try {
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < storage.length; i += 1) {
+      const key = storage.key(i);
+      if (
+        key &&
+        SENSITIVE_STORAGE_PREFIXES.some((prefix) => key.startsWith(prefix))
+      ) {
+        keysToRemove.push(key);
+      }
+    }
+    for (const key of keysToRemove) {
+      storage.removeItem(key);
+    }
+  } catch {
+    // Non-blocking storage purge error
+  }
+}
+
+function clearSensitiveWebStorage(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  purgeStoragePrefixEntries(window.sessionStorage);
+  purgeStoragePrefixEntries(window.localStorage);
+}
+
 /**
  * BR-OCP-05: Xoá toàn bộ dữ liệu gói học ngoại tuyến trên thiết bị
  * khi người dùng đăng xuất hoặc bị thu hồi quyền lợi (entitlement revoked).
@@ -114,6 +152,8 @@ export async function clearOfflinePackClientData(
   options: ClearOfflinePackOptions = {}
 ): Promise<ClearOfflinePackResult> {
   const reason: OfflinePackPurgeReason = options.reason ?? "logout";
+  resetInMemoryTelemetryBuffer();
+  clearSensitiveWebStorage();
   const cacheDeleted = await deleteOfflinePackCaches(options.cachesApi);
   const indexedDbCleared = await clearOfflinePackIndexedDb(
     options.indexedDbStorage

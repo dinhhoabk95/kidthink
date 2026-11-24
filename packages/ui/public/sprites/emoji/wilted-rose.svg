@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Hoa hồng rũ cánh</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="wrPetal" r="70%"><stop offset="0%" stop-color="#fb7185" /><stop offset="55%" stop-color="#e11d48" /><stop offset="100%" stop-color="#881337" /></radialGradient>
+  </defs>
+  <ellipse cx="58" cy="106" fill="#14532d" opacity="0.22" rx="26" ry="4.5" />
+    <path d="M52 103C51 76 55 50 69 42C78 37 85 42 82 51" fill="none" stroke="#15803d" stroke-linecap="round" stroke-width="5" />
+    <path d="M53 80C41 75 34 79 33 87C42 90 49 86 53 80Z" fill="#4ade80" stroke="#14532d" stroke-linejoin="round" stroke-width="3.4" />
+    <path d="M72 48C64 48 59 58 65 69C72 78 86 76 90 64C93 53 83 48 72 48Z" fill="url(#wrPetal)" stroke="#881337" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M76 96C81 94 87 96 86 101C81 103 75 101 76 96Z" fill="#e11d48" stroke="#881337" stroke-width="2.8" />
+</svg>

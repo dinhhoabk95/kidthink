@@ -1,30 +1,50 @@
 import { createHash, createHmac } from "node:crypto";
 import { writeAudit } from "@mindkid/audit";
 import {
-  childProfiles,
-  curricula,
-  curriculumItems,
-  gameLevels,
-  getDb,
-  getOwnerDb,
-  personalCurricula,
-  personalCurriculumItems,
-  playSessions,
-  telemetryEvents,
+  ACCESS_TIER_CODEC,
+  CHILD_STATUS,
+  CONTENT_ENTITY_TYPE_CODEC,
+  type CreateTelemetryEventInput,
+  type JsonRecord,
+  PLAY_COMPLETION_STATUS,
+  type PlaySessionEntity,
 } from "@mindkid/db";
-import { PersonalCurriculumNotFoundError } from "@mindkid/errors/curriculum";
+import type { MindKidRepositories } from "@mindkid/db/repositories";
 import {
+  EntitlementRequiredError,
+  TierLockedError,
+} from "@mindkid/errors/billing";
+import { PersonalCurriculumNotFoundError } from "@mindkid/errors/curriculum";
+import { UnknownEventNameError } from "@mindkid/errors/play";
+import {
+  ALLOWED_EVENT_NAMES,
+  cleanEventPayload,
+  type EventPayload,
+  validateSequenceNumbers,
+  validateTelemetryEventRecord,
+} from "@mindkid/play";
+import {
+  type AccessTier,
+  allowedTiers,
+  type EntitlementKey,
+  getEffectiveTier,
   OFFLINE_PACK_MAX_LEASE_DAYS,
   type OfflineAssetItem,
   type OfflineCurriculumPackManifest,
   type OfflineSyncEventItem,
   type OfflineSyncResponse,
   redactPii,
+  TIER_ENTITLEMENT,
 } from "@mindkid/shared";
-import { and, eq, inArray } from "drizzle-orm";
+import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
+import {
+  useOwnerRepositories,
+  useRepositories,
+} from "#server/utils/repositories";
 
 export interface OfflinePackCallerContext {
   userId: number;
+  entitlements?: readonly EntitlementKey[];
   ip?: string;
   userAgent?: string;
 }
@@ -55,47 +75,42 @@ function generateDeterministicLeaseToken(
 }
 
 interface ResolvedCurriculumData {
+  kind: "system" | "personal";
   curriculumCode: string;
+  curriculumTier: AccessTier | null;
   contentVersion: number;
   rawItems: Array<{ entityType: string; entityId: number }>;
 }
 
 async function resolveSystemCurriculum(
-  db: ReturnType<typeof getDb>,
+  repos: MindKidRepositories,
   code: string,
   weekNo: number
 ): Promise<ResolvedCurriculumData | null> {
-  const [systemCurriculum] = await db
-    .select()
-    .from(curricula)
-    .where(eq(curricula.code, code));
-
+  const systemCurriculum = await repos.curricula.findByCode(code);
   if (!systemCurriculum) {
     return null;
   }
 
-  const sysItems = await db
-    .select({
-      entityType: curriculumItems.entityType,
-      entityId: curriculumItems.entityId,
-    })
-    .from(curriculumItems)
-    .where(
-      and(
-        eq(curriculumItems.curriculumId, systemCurriculum.id),
-        eq(curriculumItems.weekNo, weekNo)
-      )
-    );
+  const sysItems = await repos.curricula.listItems(
+    [systemCurriculum.id],
+    weekNo
+  );
 
   return {
+    kind: "system",
     curriculumCode: systemCurriculum.code,
+    curriculumTier: ACCESS_TIER_CODEC.toLabel(systemCurriculum.accessTier),
     contentVersion: 1,
-    rawItems: sysItems,
+    rawItems: sysItems.map((item) => ({
+      entityType: CONTENT_ENTITY_TYPE_CODEC.toLabel(item.entityType),
+      entityId: item.entityId,
+    })),
   };
 }
 
 async function resolvePersonalCurriculum(
-  db: ReturnType<typeof getDb>,
+  repos: MindKidRepositories,
   uuid: string,
   userId: number,
   weekNo: number
@@ -104,45 +119,69 @@ async function resolvePersonalCurriculum(
     return null;
   }
 
-  const [personalCurr] = await db
-    .select()
-    .from(personalCurricula)
-    .where(
-      and(
-        eq(personalCurricula.uuid, uuid),
-        eq(personalCurricula.userId, userId)
-      )
-    );
-
+  const personalCurr = await repos.personalCurricula.findByUuidForUser(
+    uuid,
+    userId
+  );
   if (!personalCurr) {
     return null;
   }
 
-  const persItems = await db
-    .select({
-      entityType: personalCurriculumItems.entityType,
-      entityId: personalCurriculumItems.entityId,
-    })
-    .from(personalCurriculumItems)
-    .where(
-      and(
-        eq(personalCurriculumItems.personalCurriculumId, personalCurr.id),
-        eq(personalCurriculumItems.weekNo, weekNo)
-      )
-    );
+  const persItems = await repos.personalCurricula.listItems(
+    personalCurr.id,
+    weekNo
+  );
 
   return {
+    kind: "personal",
     curriculumCode: `CUR-P${String(personalCurr.id).padStart(3, "0")}`,
+    curriculumTier: null,
     contentVersion: personalCurr.version,
-    rawItems: persItems,
+    rawItems: persItems.map((item) => ({
+      entityType: CONTENT_ENTITY_TYPE_CODEC.toLabel(item.entityType),
+      entityId: item.entityId,
+    })),
   };
 }
 
+function assertOfflineTierAllowed(params: {
+  levelTier: AccessTier;
+  curriculumTier: AccessTier | null;
+  userAllowedTiers: readonly AccessTier[];
+  entitlements: readonly EntitlementKey[];
+}): void {
+  const effectiveTier = getEffectiveTier(
+    params.levelTier,
+    params.curriculumTier
+  );
+  const canAccessViaPremiumCurr =
+    params.curriculumTier === "premium" &&
+    params.entitlements.includes("access_premium_curriculum") &&
+    params.userAllowedTiers.includes(params.levelTier);
+
+  if (
+    !(
+      params.userAllowedTiers.includes(effectiveTier) || canAccessViaPremiumCurr
+    )
+  ) {
+    throw new TierLockedError({
+      access_tier: effectiveTier,
+      required_entitlement: TIER_ENTITLEMENT[effectiveTier],
+    });
+  }
+}
+
 async function buildOfflineAssets(
-  db: ReturnType<typeof getDb>,
+  repos: MindKidRepositories,
   rawItems: Array<{ entityType: string; entityId: number }>,
-  curriculumCode: string,
-  weekNo: number
+  options: {
+    kind: "system" | "personal";
+    curriculumCode: string;
+    curriculumTier: AccessTier | null;
+    weekNo: number;
+    userAllowedTiers: readonly AccessTier[];
+    entitlements: readonly EntitlementKey[];
+  }
 ): Promise<OfflineAssetItem[]> {
   const assets: OfflineAssetItem[] = [];
   const gameLevelIds = rawItems
@@ -150,15 +189,38 @@ async function buildOfflineAssets(
     .map((i) => i.entityId);
 
   if (gameLevelIds.length > 0) {
-    const glRows = await db
-      .select()
-      .from(gameLevels)
-      .where(inArray(gameLevels.id, gameLevelIds));
+    const levelMap = await repos.gameLevels.mapByIds(gameLevelIds);
+    const seenIds = new Set<number>();
 
-    for (const gl of glRows) {
+    for (const item of rawItems) {
+      if (item.entityType !== "game_level" || seenIds.has(item.entityId)) {
+        continue;
+      }
+      seenIds.add(item.entityId);
+      const gl = levelMap.get(item.entityId);
+      if (!gl) {
+        if (options.kind === "system") {
+          assertOfflineTierAllowed({
+            levelTier: "premium",
+            curriculumTier: options.curriculumTier,
+            userAllowedTiers: options.userAllowedTiers,
+            entitlements: options.entitlements,
+          });
+        }
+        continue;
+      }
+
+      const glTier = ACCESS_TIER_CODEC.toLabel(gl.accessTier);
+      assertOfflineTierAllowed({
+        levelTier: glTier,
+        curriculumTier: options.curriculumTier,
+        userAllowedTiers: options.userAllowedTiers,
+        entitlements: options.entitlements,
+      });
+
       const configContent = JSON.stringify(gl.contentPack || {});
       assets.push({
-        path: `/api/guest/game-levels/${gl.code}/config`,
+        path: `/api/guest/levels/${gl.code}/config`,
         size_bytes: Buffer.byteLength(configContent, "utf-8") || 4096,
         sha256: calculateSha256(configContent),
       });
@@ -172,9 +234,11 @@ async function buildOfflineAssets(
 
   if (assets.length === 0) {
     assets.push({
-      path: `/curricula/${curriculumCode}/week-${weekNo}.json`,
+      path: `/curricula/${options.curriculumCode}/week-${options.weekNo}.json`,
       size_bytes: 1024,
-      sha256: calculateSha256(`empty_week_${curriculumCode}_${weekNo}`),
+      sha256: calculateSha256(
+        `empty_week_${options.curriculumCode}_${options.weekNo}`
+      ),
     });
   }
 
@@ -186,23 +250,62 @@ export async function generateOfflineCurriculumPackManifest(
   curriculumIdOrCode: string,
   weekNo: number
 ): Promise<OfflineCurriculumPackManifest> {
-  const db = getDb();
+  const repos = useRepositories();
+  const entitlements = context.entitlements
+    ? [...context.entitlements]
+    : await resolveUserActiveEntitlements(context.userId);
+  const userAllowedTiers = await allowedTiers(
+    { kind: "user", user_id: String(context.userId) },
+    entitlements
+  );
 
   const resolved =
-    (await resolveSystemCurriculum(db, curriculumIdOrCode, weekNo)) ||
+    (await resolveSystemCurriculum(repos, curriculumIdOrCode, weekNo)) ||
     (await resolvePersonalCurriculum(
-      db,
+      repos,
       curriculumIdOrCode,
       context.userId,
       weekNo
     ));
 
-  if (!resolved || resolved.rawItems.length === 0) {
+  if (!resolved) {
     throw new PersonalCurriculumNotFoundError(curriculumIdOrCode);
   }
 
-  const { curriculumCode, contentVersion, rawItems } = resolved;
-  const assets = await buildOfflineAssets(db, rawItems, curriculumCode, weekNo);
+  if (resolved.kind === "personal") {
+    if (!entitlements.includes("create_custom_curriculum")) {
+      throw new EntitlementRequiredError({
+        required_entitlement: "create_custom_curriculum",
+        message:
+          "Tính năng tải ngoại tuyến lộ trình cá nhân yêu cầu gói bổ trợ Add-on Curriculum.",
+      });
+    }
+  } else if (resolved.curriculumTier) {
+    const canAccessSystemCurriculum =
+      userAllowedTiers.includes(resolved.curriculumTier) ||
+      (resolved.curriculumTier === "premium" &&
+        entitlements.includes("access_premium_curriculum"));
+    if (!canAccessSystemCurriculum) {
+      throw new TierLockedError({
+        access_tier: resolved.curriculumTier,
+        required_entitlement: TIER_ENTITLEMENT[resolved.curriculumTier],
+      });
+    }
+  }
+
+  if (resolved.rawItems.length === 0) {
+    throw new PersonalCurriculumNotFoundError(curriculumIdOrCode);
+  }
+
+  const { curriculumCode, curriculumTier, contentVersion, rawItems } = resolved;
+  const assets = await buildOfflineAssets(repos, rawItems, {
+    kind: resolved.kind,
+    curriculumCode,
+    curriculumTier,
+    weekNo,
+    userAllowedTiers,
+    entitlements,
+  });
 
   const totalSizeBytes = assets.reduce((sum, a) => sum + a.size_bytes, 0);
   const now = new Date();
@@ -233,8 +336,8 @@ export async function generateOfflineCurriculumPackManifest(
     manifest_checksum_sha256: manifestChecksumSha256,
   };
 
-  const ownerDb = getOwnerDb();
-  await ownerDb.transaction(async (tx) => {
+  const ownerRepos = useOwnerRepositories();
+  await ownerRepos.playSessions.transaction(async (tx) => {
     await writeAudit(tx, {
       actor_type: "user",
       actor_id: context.userId,
@@ -273,70 +376,131 @@ function normalizeSyncOccurredAtMs(
   return ms < 0 ? 0 : ms;
 }
 
+function toTelemetryJsonObject(input: object): JsonRecord {
+  const out: Record<string, JsonRecord[string]> = {};
+  for (const [k, v] of Object.entries(input)) {
+    if (
+      v === null ||
+      typeof v === "string" ||
+      typeof v === "number" ||
+      typeof v === "boolean"
+    ) {
+      out[k] = v;
+    } else if (Array.isArray(v)) {
+      out[k] = v.map((item) => {
+        if (
+          item === null ||
+          typeof item === "string" ||
+          typeof item === "number" ||
+          typeof item === "boolean"
+        ) {
+          return item;
+        }
+        if (typeof item === "object") {
+          return toTelemetryJsonObject(item);
+        }
+        return String(item);
+      });
+    } else if (typeof v === "object") {
+      out[k] = toTelemetryJsonObject(v);
+    }
+  }
+  return out;
+}
+
 async function syncSingleSessionEvents(
-  db: ReturnType<typeof getOwnerDb>,
-  session: typeof playSessions.$inferSelect,
+  repos: MindKidRepositories,
+  session: PlaySessionEntity,
+  childUuid: string,
   events: OfflineSyncEventItem[]
 ): Promise<{ synced: number; skipped: number }> {
   if (events.length === 0) {
     return { synced: 0, skipped: 0 };
   }
 
-  const rows = events.map((ev) => {
+  if (
+    session.completionStatus === PLAY_COMPLETION_STATUS.COMPLETED ||
+    session.completionStatus === PLAY_COMPLETION_STATUS.ABANDONED
+  ) {
+    return { synced: 0, skipped: events.length };
+  }
+
+  const existingSeqList = await repos.telemetry.listSeqsBySession(
+    session.sessionUuid
+  );
+  const existingSeqs = new Set<number>(existingSeqList);
+  const currentMaxSeq = existingSeqList[0] ?? 0;
+
+  validateSequenceNumbers(events, currentMaxSeq, existingSeqs);
+
+  const seenBatchSeqs = new Set<number>();
+  const rows: CreateTelemetryEventInput[] = [];
+  let skipped = 0;
+
+  for (const ev of events) {
+    if (existingSeqs.has(ev.seq) || seenBatchSeqs.has(ev.seq)) {
+      skipped++;
+      continue;
+    }
+    seenBatchSeqs.add(ev.seq);
+
     const occurredAtMs = normalizeSyncOccurredAtMs(
       ev.occurred_at_ms,
       session.startedAt
     );
-    return {
+    const clientTimestamp = ev.client_timestamp
+      ? new Date(ev.client_timestamp)
+      : new Date();
+    const redacted: EventPayload = redactPii(ev.payload ?? {});
+    const cleanedPayload = cleanEventPayload(ev.event_name, redacted);
+
+    validateTelemetryEventRecord({
+      session_uuid: session.sessionUuid,
+      seq: ev.seq,
+      event_name: ev.event_name,
+      occurred_at_ms: occurredAtMs,
+      payload: cleanedPayload,
+      client_timestamp: clientTimestamp,
+    });
+
+    rows.push({
       sessionUuid: session.sessionUuid,
       seq: ev.seq,
-      childUuid: null,
+      childUuid,
       gameLevelId: session.gameLevelId,
       templateCode: session.templateCode,
       eventName: ev.event_name,
       occurredAtMs,
-      payload: redactPii(ev.payload || {}),
-      clientTimestamp: ev.client_timestamp
-        ? new Date(ev.client_timestamp)
-        : new Date(),
-    };
-  });
-
-  try {
-    const inserted = await db
-      .insert(telemetryEvents)
-      .values(rows)
-      .onConflictDoNothing()
-      .returning({ seq: telemetryEvents.seq });
-
-    const synced = inserted.length;
-    const skipped = events.length - synced;
-    return { synced, skipped };
-  } catch {
-    return { synced: 0, skipped: events.length };
+      payload: toTelemetryJsonObject(cleanedPayload),
+      clientTimestamp,
+    });
   }
+
+  if (rows.length === 0) {
+    return { synced: 0, skipped };
+  }
+
+  const insertedSeqs = await repos.telemetry.insertBatchReturningSeqs(rows);
+  const synced = insertedSeqs.length;
+  skipped += rows.length - synced;
+  return { synced, skipped };
 }
 
-async function loadAuthorizedChildIds(
-  db: ReturnType<typeof getOwnerDb>,
+async function loadAuthorizedActiveChildMap(
+  repos: MindKidRepositories,
   childProfileIds: number[],
   userId: number
-): Promise<Set<number>> {
-  const authorized = new Set<number>();
+): Promise<Map<number, string>> {
+  const authorized = new Map<number, string>();
   if (childProfileIds.length === 0) {
     return authorized;
   }
-  const userChildren = await db
-    .select({ id: childProfiles.id })
-    .from(childProfiles)
-    .where(
-      and(
-        inArray(childProfiles.id, childProfileIds),
-        eq(childProfiles.userId, userId)
-      )
-    );
+  const requestedSet = new Set(childProfileIds);
+  const userChildren = await repos.childProfiles.listActiveByUser(userId);
   for (const c of userChildren) {
-    authorized.add(c.id);
+    if (c.status === CHILD_STATUS.ACTIVE && requestedSet.has(c.id)) {
+      authorized.set(c.id, c.uuid);
+    }
   }
   return authorized;
 }
@@ -345,7 +509,13 @@ export async function syncOfflinePlayEvents(
   context: OfflinePackCallerContext,
   events: OfflineSyncEventItem[]
 ): Promise<OfflineSyncResponse> {
-  const db = getOwnerDb();
+  for (const ev of events) {
+    if (!ALLOWED_EVENT_NAMES.has(ev.event_name)) {
+      throw new UnknownEventNameError();
+    }
+  }
+
+  const ownerRepos = useOwnerRepositories();
   let syncedCount = 0;
   let duplicatesSkipped = 0;
 
@@ -361,12 +531,9 @@ export async function syncOfflinePlayEvents(
     return { synced_count: 0, duplicates_skipped: 0 };
   }
 
-  const sessionList = await db
-    .select()
-    .from(playSessions)
-    .where(inArray(playSessions.sessionUuid, sessionUuids));
+  const sessionList = await ownerRepos.playSessions.findByUuids(sessionUuids);
 
-  const sessionMap = new Map<string, typeof playSessions.$inferSelect>();
+  const sessionMap = new Map<string, PlaySessionEntity>();
   const childProfileIds: number[] = [];
   for (const s of sessionList) {
     sessionMap.set(s.sessionUuid, s);
@@ -375,8 +542,8 @@ export async function syncOfflinePlayEvents(
     }
   }
 
-  const authorizedChildIds = await loadAuthorizedChildIds(
-    db,
+  const authorizedChildMap = await loadAuthorizedActiveChildMap(
+    ownerRepos,
     childProfileIds,
     context.userId
   );
@@ -388,20 +555,25 @@ export async function syncOfflinePlayEvents(
       continue;
     }
 
-    const isAuthorized = session.childProfileId
-      ? authorizedChildIds.has(Number(session.childProfileId))
-      : false;
-    if (!isAuthorized) {
+    const childUuid = session.childProfileId
+      ? authorizedChildMap.get(Number(session.childProfileId))
+      : undefined;
+    if (!childUuid) {
       duplicatesSkipped += sessionEvents.length;
       continue;
     }
 
-    const result = await syncSingleSessionEvents(db, session, sessionEvents);
+    const result = await syncSingleSessionEvents(
+      ownerRepos,
+      session,
+      childUuid,
+      sessionEvents
+    );
     syncedCount += result.synced;
     duplicatesSkipped += result.skipped;
   }
 
-  await db.transaction(async (tx) => {
+  await ownerRepos.playSessions.transaction(async (tx) => {
     await writeAudit(tx, {
       actor_type: "user",
       actor_id: context.userId,

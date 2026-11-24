@@ -1,7 +1,6 @@
-import { getOwnerDb } from "@mindkid/db";
 import { allowedTiers } from "@mindkid/shared";
 import { z } from "zod";
-import { getUserLibrary } from "#server/services/library.js";
+import { getUserLibrary } from "#server/services/index.js";
 import { defineApiRoute } from "#server/utils/define-api-route";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
@@ -33,7 +32,6 @@ export default defineApiRoute({
   query: LibraryQuerySchema,
   async handler({ auth, query }) {
     const userId = Number(auth.user_id);
-    const db = getOwnerDb();
 
     const activeKeys = await resolveUserActiveEntitlements(userId);
     const userAllowedTiers = await allowedTiers(
@@ -42,7 +40,7 @@ export default defineApiRoute({
     );
     const activeTier = resolveActiveTier(userAllowedTiers);
 
-    return await getUserLibrary(db, {
+    return await getUserLibrary({
       userId,
       entityType: query.entity_type,
       collectionId: query.collection_id,

@@ -9,30 +9,26 @@ export interface CleanupResult {
 
 const RETENTION_DELETE_BATCH_SIZE = 10_000;
 
-/**
- * BR-TLM-09: Retains raw events for 90 days, after which raw events are purged
- * while keeping aggregate rollup tables intact.
- * Idempotent and executed in batch/checkpoint logic.
- */
 export async function runRawEventRetentionCleanup(
   retentionDays = 90
 ): Promise<CleanupResult> {
   const db = getOwnerDb();
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+  const cutoffMs = cutoffDate.getTime();
 
   let deletedCount = 0;
 
   while (true) {
-    const deletedBatch = await db.delete(telemetryEvents).where(
-      sql`ctid IN (
-        SELECT ctid FROM ${telemetryEvents}
-        WHERE ${telemetryEvents.createdAt} < ${cutoffDate.toISOString()}
+    const res = await db.delete(telemetryEvents).where(
+      sql`rowid IN (
+        SELECT rowid FROM ${telemetryEvents}
+        WHERE ${telemetryEvents.createdAt} < ${cutoffMs}
         LIMIT ${RETENTION_DELETE_BATCH_SIZE}
       )`
     );
 
-    const batchCount = Number(deletedBatch.count ?? 0);
+    const batchCount = res.changes;
     deletedCount += batchCount;
     if (batchCount < RETENTION_DELETE_BATCH_SIZE) {
       break;

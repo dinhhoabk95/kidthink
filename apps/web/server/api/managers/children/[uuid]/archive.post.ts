@@ -1,14 +1,10 @@
-import { writeAudit } from "@mindkid/audit";
-import { childProfiles, getOwnerDb } from "@mindkid/db";
 import { AdminNoteRequiredError } from "@mindkid/errors/account";
-import { ChildPendingDeletionError } from "@mindkid/errors/child";
 import { NotFoundError } from "@mindkid/errors/common";
-import { eq } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
+import { archiveChildProfileByManager } from "#server/services/child-service";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
-import { executeArchiveChildProfile } from "#server/utils/child-archive-runtime";
 
 const archiveBodySchema = z.object({
   reason: z.string().min(10),
@@ -22,59 +18,19 @@ export default defineEventHandler(async (event) => {
   }
 
   const rawBody =
-    event.context?.body ?? (await readBody(event).catch(() => ({}))) ?? {};
+    Reflect.get(event.context, "body") ??
+    (await readBody(event).catch(() => ({}))) ??
+    {};
   const parsed = archiveBodySchema.safeParse(rawBody);
-
-  // BR-CPA-07 & Task 5: reason is required (>= 10 chars per ADMIN_NOTE_REQUIRED)
   if (!parsed.success) {
     throw new AdminNoteRequiredError();
   }
-  const reason = parsed.data.reason.trim();
 
-  const db = getOwnerDb();
-  const [targetChild] = await db
-    .select()
-    .from(childProfiles)
-    .where(eq(childProfiles.uuid, childUuid))
-    .limit(1);
-
-  if (!targetChild) {
-    throw new NotFoundError();
-  }
-
-  if (targetChild.status === "pending_deletion") {
-    throw new ChildPendingDeletionError();
-  }
-
-  // Reuse canonical archive execution (D-IG, P1.9)
-  const result = await executeArchiveChildProfile({
-    childId: targetChild.id,
-    userId: targetChild.userId,
-    reason,
+  return await archiveChildProfileByManager({
+    managerId: session.manager_id,
+    childUuid,
+    reason: parsed.data.reason,
+    ipAddress: getVerifiedRemoteIp(event),
+    userAgent: getHeader(event, "user-agent") ?? "unknown",
   });
-
-  const ipAddress = getVerifiedRemoteIp(event);
-  const userAgent = getHeader(event, "user-agent") ?? "unknown";
-
-  // Record audit log via writeAudit (BR-AUD-02, BR-AUD-05: no child PII)
-  await db.transaction(async (tx) => {
-    await writeAudit(tx, {
-      actor_type: "manager",
-      actor_id: session.manager_id,
-      action: "child_profile_archived",
-      entity_type: "child_profile",
-      entity_id: targetChild.uuid,
-      before_data: { child_uuid: targetChild.uuid, status: targetChild.status },
-      after_data: { child_uuid: targetChild.uuid, status: result.status },
-      reason,
-      ip_address: ipAddress,
-      user_agent: userAgent,
-    });
-  });
-
-  return {
-    success: true,
-    status: result.status,
-    uuid: result.uuid,
-  };
 });

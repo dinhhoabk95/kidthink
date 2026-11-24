@@ -212,6 +212,16 @@ export const C5_TON_04_SEED: SkillSeed = {
   dataset: C5_TON_04_DATASET,
   levels: [
     {
+      code: "GL-C5-TON-INTRO-7004",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "homeland",
+      rounds: 1,
+      sequence_no: 1,
+    },
+    {
       code: "GL-C5-TON-TAP-0007",
       template: "GT-001",
       band: "5-6",

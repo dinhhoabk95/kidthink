@@ -1,0 +1,53 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "mindkid-worker",
+  "main": "src/cloudflare-entry.ts",
+  "compatibility_date": "2026-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "vars": {
+    "MINDKID_RUNTIME": "cloudflare",
+    "STORAGE_DRIVER": "d1-blobs",
+    "QUEUE_DRIVER": "cloudflare-do",
+    "AUTH_STORE_DRIVER": "do"
+  },
+  "triggers": {
+    "crons": ["*/15 * * * *"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB_CORE",
+      "database_name": "mindkid-core",
+      "database_id": "REPLACE_VIA_SYNC_WRANGLER_IDS"
+    },
+    {
+      "binding": "DB_LOGS",
+      "database_name": "mindkid-logs",
+      "database_id": "REPLACE_VIA_SYNC_WRANGLER_IDS"
+    },
+    {
+      "binding": "DB_BLOBS",
+      "database_name": "mindkid-blobs",
+      "database_id": "REPLACE_VIA_SYNC_WRANGLER_IDS"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "JOB_QUEUE_DO",
+        "class_name": "JobQueueDO"
+      },
+      {
+        "name": "AUTH_COORDINATOR",
+        "class_name": "AuthCoordinatorDO",
+        "script_name": "mindkid-web"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1-sqlite-queue",
+      "new_sqlite_classes": ["JobQueueDO"]
+    }
+  ]
+}

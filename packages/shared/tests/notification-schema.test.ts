@@ -1,13 +1,15 @@
 import {
+  NOTIFICATION_STATUS,
+  NOTIFICATION_STATUS_CODEC,
   notificationDeliveries,
-  notificationStatusEnum,
   notifications,
 } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 
 describe("Notification Schema & Invariants (Task 1 / BR-NOT-01..08)", () => {
-  it("notificationStatusEnum contains 'suppressed'", () => {
-    expect(notificationStatusEnum.enumValues).toContain("suppressed");
+  it("NOTIFICATION_STATUS includes 'suppressed'", () => {
+    expect(NOTIFICATION_STATUS_CODEC.labels).toContain("suppressed");
+    expect(NOTIFICATION_STATUS.SUPPRESSED).toBe(4);
   });
 
   it("notifications schema includes uuid, notificationDeliveries includes suppressedReason and providerMessageId", () => {

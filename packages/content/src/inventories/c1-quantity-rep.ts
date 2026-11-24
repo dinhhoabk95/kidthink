@@ -18,6 +18,7 @@ export interface QuantityRepInventoryItem {
   readonly min_value: number;
   readonly max_value: number;
   readonly group: string;
+  readonly vn_manipulative_cue?: string;
 }
 
 export const C1_QUANTITY_REP_INVENTORY: readonly QuantityRepInventoryItem[] = [
@@ -29,6 +30,7 @@ export const C1_QUANTITY_REP_INVENTORY: readonly QuantityRepInventoryItem[] = [
     min_value: 1,
     max_value: 10,
     group: "C1.CNT",
+    vn_manipulative_cue: "Hạt đậu, sỏi suối, quả xoài chín đặt trong rổ mây",
   },
   {
     id: "rep_finger",
@@ -38,6 +40,7 @@ export const C1_QUANTITY_REP_INVENTORY: readonly QuantityRepInventoryItem[] = [
     min_value: 1,
     max_value: 10,
     group: "C1.CNT",
+    vn_manipulative_cue: "Bàn tay xinh xòe ngón đếm một đối một",
   },
   {
     id: "rep_number_rod",
@@ -47,6 +50,7 @@ export const C1_QUANTITY_REP_INVENTORY: readonly QuantityRepInventoryItem[] = [
     min_value: 1,
     max_value: 10,
     group: "C1.CNT",
+    vn_manipulative_cue: "Thanh gỗ và đốt tre nối dài cảm nhận độ lớn",
   },
   {
     id: "rep_rekenrek",
@@ -56,6 +60,7 @@ export const C1_QUANTITY_REP_INVENTORY: readonly QuantityRepInventoryItem[] = [
     min_value: 1,
     max_value: 20,
     group: "C1.CNT",
+    vn_manipulative_cue: "Khung hạt gỗ hai màu tách nhóm 5 và 10",
   },
   {
     id: "rep_ten_frame",
@@ -65,6 +70,7 @@ export const C1_QUANTITY_REP_INVENTORY: readonly QuantityRepInventoryItem[] = [
     min_value: 1,
     max_value: 20,
     group: "C1.CNT",
+    vn_manipulative_cue: "Khay tre mười ô xếp hạt sen tròn trịa",
   },
   {
     id: "rep_dot_pattern",
@@ -74,6 +80,7 @@ export const C1_QUANTITY_REP_INVENTORY: readonly QuantityRepInventoryItem[] = [
     min_value: 1,
     max_value: 6,
     group: "C1.CNT",
+    vn_manipulative_cue: "Mặt chấm xúc xắc nhìn thoáng nhận ngay lượng",
   },
   {
     id: "rep_tally",
@@ -83,6 +90,7 @@ export const C1_QUANTITY_REP_INVENTORY: readonly QuantityRepInventoryItem[] = [
     min_value: 1,
     max_value: 20,
     group: "C1.DAT",
+    vn_manipulative_cue: "Que tính tre bó thành từng chùm năm que",
   },
   {
     id: "rep_number_line",
@@ -92,5 +100,6 @@ export const C1_QUANTITY_REP_INVENTORY: readonly QuantityRepInventoryItem[] = [
     min_value: 0,
     max_value: 20,
     group: "C1.CNT",
+    vn_manipulative_cue: "Hàng gạch sân trường bước nhảy tiến lùi đều nhau",
   },
 ] as const;

@@ -186,6 +186,24 @@
           />
         </div>
 
+        <div>
+          <label
+            class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1.5"
+            for="flag-reauth-password"
+          >
+            Mật khẩu xác thực lại *
+          </label>
+          <input
+            autocomplete="current-password"
+            class="w-full min-h-11 px-3.5 py-2.5 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+            id="flag-reauth-password"
+            placeholder="Nhập mật khẩu quản trị viên..."
+            required
+            type="password"
+            v-model="reauthPassword"
+          >
+        </div>
+
         <p
           class="text-sm text-danger-600 dark:text-danger-400 font-semibold"
           role="alert"
@@ -205,7 +223,7 @@
           <button
             class="min-h-11 min-w-11 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-semibold text-sm transition-colors inline-flex items-center justify-center focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
             type="button"
-            :disabled="changeReason.trim().length < 10 || isSubmitting"
+            :disabled="changeReason.trim().length < 10 || !reauthPassword.trim() || isSubmitting"
             @click="confirmToggle"
           >
             {{ isSubmitting ? "Đang lưu..." : "Xác nhận đổi" }}
@@ -220,6 +238,7 @@
   import { normalizeApiError } from "@mindkid/errors/client";
   import { onMounted, ref } from "vue";
   import { definePageMeta, useHead } from "#imports";
+  import { useAdminAuth } from "~/composables/use-admin-auth";
   import { apiFetch } from "~/composables/use-api-client";
 
   definePageMeta({
@@ -251,12 +270,15 @@
     update_reason: string | null;
   }
 
+  const { reauth } = useAdminAuth();
+
   const flags = ref<FlagItem[]>([]);
   const isLoading = ref(true);
   const loadError = ref("");
   const isModalOpen = ref(false);
   const activeFlag = ref<FlagItem | null>(null);
   const changeReason = ref("");
+  const reauthPassword = ref("");
   const isSubmitting = ref(false);
   const errorMessage = ref("");
 
@@ -284,18 +306,24 @@
   function openToggleModal(flag: FlagItem) {
     activeFlag.value = flag;
     changeReason.value = "";
+    reauthPassword.value = "";
     errorMessage.value = "";
     isModalOpen.value = true;
   }
 
   async function confirmToggle() {
-    if (!activeFlag.value || changeReason.value.trim().length < 10) {
+    if (
+      !activeFlag.value ||
+      changeReason.value.trim().length < 10 ||
+      !reauthPassword.value.trim()
+    ) {
       return;
     }
 
     isSubmitting.value = true;
     errorMessage.value = "";
     try {
+      await reauth(reauthPassword.value);
       await apiFetch(`/api/managers/feature-flags/${activeFlag.value.key}`, {
         method: "PATCH",
         body: {
@@ -306,6 +334,7 @@
         },
       });
       isModalOpen.value = false;
+      reauthPassword.value = "";
       await fetchFlags();
     } catch (err) {
       const apiErr = normalizeApiError(err);

@@ -284,9 +284,15 @@
                     <span class="text-sm font-mono font-bold text-surface-500"
                       >#{{ idx + 1 }}</span
                     >
+                    <span
+                      aria-hidden="true"
+                      class="w-11 h-11 rounded-xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 flex items-center justify-center text-2xl shrink-0"
+                    >
+                      <BrandEmoji decorative :emoji="opt.asset.ref || '⭐'" />
+                    </span>
                     <input
                       class="min-w-0 flex-1 px-3 py-2 rounded-xl bg-white dark:bg-surface-800 border border-surface-300 dark:border-surface-700 text-base font-mono min-h-11"
-                      placeholder="Emoji (VD: 🍎)"
+                      placeholder="Nhập ký tự hoặc chọn bên phải"
                       type="text"
                       v-model="opt.asset.ref"
                       :aria-label="`Emoji lựa chọn ${idx + 1}`"

@@ -1,21 +1,26 @@
-import { writeAudit } from "@mindkid/audit";
-import { featureFlags, getOwnerDb } from "@mindkid/db";
 import { AdminNoteRequiredError } from "@mindkid/errors/account";
-import { InsufficientRoleError } from "@mindkid/errors/auth";
-import { InternalError, NotFoundError } from "@mindkid/errors/common";
-import { CODE_FEATURE_FLAGS } from "@mindkid/shared";
-import { eq } from "drizzle-orm";
+import { NotFoundError } from "@mindkid/errors/common";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
-import { invalidateFlagCache } from "#server/services/index.js";
-import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { updateFeatureFlag } from "#server/services/feature-flags";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
+import { requireReauth } from "#server/utils/reauth-runtime";
+
+const scopeExtraValueSchema = z.union([
+  z.string(),
+  z.number(),
+  z.boolean(),
+  z.array(z.number()),
+  z.array(z.string()),
+  z.null(),
+]);
 
 const scopeValueSchema = z
   .object({
     user_ids: z.array(z.number().int()).optional(),
     percentage: z.number().min(0).max(100).optional(),
   })
-  .passthrough();
+  .catchall(scopeExtraValueSchema);
 
 const patchFlagSchema = z.object({
   reason: z.string().min(10),
@@ -28,14 +33,8 @@ const patchFlagSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const manager = await requireManagerSession(event);
-
-  // BR-FFA-03, BR-FLG-07: super_admin only
-  if (manager.role !== "super_admin") {
-    throw new InsufficientRoleError(
-      "Chỉ super_admin mới có quyền thay đổi cờ tính năng (BR-FFA-03)"
-    );
-  }
+  const manager = requireSuperAdminSession(event);
+  requireReauth(event);
 
   const key = getRouterParam(event, "key");
   if (!key) {
@@ -43,7 +42,6 @@ export default defineEventHandler(async (event) => {
   }
 
   const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
-
   const parsedResult = patchFlagSchema.safeParse(raw);
   if (!parsedResult.success) {
     throw new AdminNoteRequiredError(
@@ -53,76 +51,11 @@ export default defineEventHandler(async (event) => {
 
   const { reason, enabled, scope, scope_value: scopeValue } = parsedResult.data;
 
-  const codeDef = CODE_FEATURE_FLAGS[key];
-  const defaultValue = codeDef ? codeDef.defaultValue : false;
-  const expiresAt = codeDef
-    ? new Date(codeDef.expiresAt)
-    : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
-
-  const db = getOwnerDb();
-  const [existing] = await db
-    .select()
-    .from(featureFlags)
-    .where(eq(featureFlags.key, key));
-
-  const managerId = manager.manager_id;
-
-  let updatedRecord: typeof featureFlags.$inferSelect;
-  if (existing) {
-    const [upd] = await db
-      .update(featureFlags)
-      .set({
-        enabled,
-        scope,
-        scopeValue,
-        updatedByManagerId: managerId,
-        updateReason: reason,
-        updatedAt: new Date(),
-      })
-      .where(eq(featureFlags.id, existing.id))
-      .returning();
-    if (!upd) {
-      throw new InternalError("FLAG_UPDATE_FAILED");
-    }
-    updatedRecord = upd;
-  } else {
-    const [ins] = await db
-      .insert(featureFlags)
-      .values({
-        key,
-        enabled,
-        scope,
-        scopeValue,
-        defaultValue,
-        expiresAt,
-        updatedByManagerId: managerId,
-        updateReason: reason,
-      })
-      .returning();
-    if (!ins) {
-      throw new InternalError("FLAG_INSERT_FAILED");
-    }
-    updatedRecord = ins;
-  }
-
-  // Invalidate local in-memory cache
-  invalidateFlagCache(key);
-
-  // BR-FFA-01, BR-FLG-04: Write audit_logs
-  await db.transaction(async (tx) => {
-    await writeAudit(tx, {
-      actor_type: "manager",
-      actor_id: managerId,
-      action: "feature_flag_changed",
-      reason,
-      entity_type: "feature_flag",
-      entity_id: key,
-      before_data: existing
-        ? { enabled: existing.enabled, scope: existing.scope }
-        : { enabled: defaultValue },
-      after_data: { enabled, scope, scope_value: scopeValue },
-    });
+  return await updateFeatureFlag(key, {
+    reason,
+    enabled,
+    scope,
+    scopeValue,
+    managerId: manager.manager_id,
   });
-
-  return updatedRecord;
 });

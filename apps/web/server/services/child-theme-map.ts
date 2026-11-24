@@ -6,18 +6,16 @@
  */
 
 import {
-  curricula,
-  curriculumEnrollments,
-  curriculumItems,
-  curriculumWeeks,
-  gameLevels,
-  type getOwnerDb,
-  playSessions,
+  CONTENT_ENTITY_TYPE,
+  type DbExecutor,
+  PLAY_COMPLETION_STATUS,
 } from "@mindkid/db";
+import {
+  createRepositories,
+  type MindKidRepositories,
+} from "@mindkid/db/repositories";
 import { deriveAgeBand } from "@mindkid/shared";
-import { and, asc, eq } from "drizzle-orm";
-
-type Db = ReturnType<typeof getOwnerDb>;
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 const FALLBACK_LEVEL_EMOJI = "🎯";
 
@@ -101,6 +99,21 @@ const THEME_EMOJI_MAP: Record<string, string> = {
   "Hành trang vào lớp Một — Chinh phục đỉnh cao": "🎓",
 };
 
+function isRepositories(
+  target: DbExecutor | MindKidRepositories
+): target is MindKidRepositories {
+  return "curricula" in target;
+}
+
+function toRepositories(
+  target?: DbExecutor | MindKidRepositories
+): MindKidRepositories {
+  if (!target) {
+    return useOwnerRepositories();
+  }
+  return isRepositories(target) ? target : createRepositories(target);
+}
+
 export function resolveThemeEmoji(themeTitle: string): string {
   for (const [key, emoji] of Object.entries(THEME_EMOJI_MAP)) {
     if (themeTitle.includes(key) || key.includes(themeTitle)) {
@@ -137,40 +150,32 @@ export function resolveTargetCurriculumCode(
 }
 
 async function fetchChildLevelStatuses(
-  db: Db,
+  repos: MindKidRepositories,
   childId: number
 ): Promise<Map<string, "not_started" | "in_progress" | "completed">> {
-  const playRows = await db
-    .select({
-      levelCode: gameLevels.code,
-      status: playSessions.completionStatus,
-    })
-    .from(playSessions)
-    .innerJoin(gameLevels, eq(gameLevels.id, playSessions.gameLevelId))
-    .where(
-      and(
-        eq(playSessions.childProfileId, childId),
-        eq(playSessions.isPreview, false)
-      )
-    );
+  const playRows = await repos.playSessions.listLevelStatusesForChild(childId);
 
   const statusByLevelCode = new Map<
     string,
     "not_started" | "in_progress" | "completed"
   >();
   for (const row of playRows) {
-    const current = statusByLevelCode.get(row.levelCode);
-    if (row.status === "completed") {
-      statusByLevelCode.set(row.levelCode, "completed");
-    } else if (row.status === "in_progress" && current !== "completed") {
-      statusByLevelCode.set(row.levelCode, "in_progress");
+    const levelCode = row.gameLevel.code;
+    const current = statusByLevelCode.get(levelCode);
+    if (row.completionStatus === PLAY_COMPLETION_STATUS.COMPLETED) {
+      statusByLevelCode.set(levelCode, "completed");
+    } else if (
+      row.completionStatus === PLAY_COMPLETION_STATUS.IN_PROGRESS &&
+      current !== "completed"
+    ) {
+      statusByLevelCode.set(levelCode, "in_progress");
     }
   }
   return statusByLevelCode;
 }
 
 async function fetchCurriculumWeeksAndItems(
-  db: Db,
+  repos: MindKidRepositories,
   currId: number | null
 ): Promise<{ weekGoalsMap: Map<number, string>; itemsList: RawLevelItem[] }> {
   const weekGoalsMap = new Map<number, string>();
@@ -179,55 +184,43 @@ async function fetchCurriculumWeeksAndItems(
   }
 
   const [rawWeeks, rawItems] = await Promise.all([
-    db
-      .select({
-        weekNo: curriculumWeeks.weekNo,
-        goal: curriculumWeeks.goal,
-      })
-      .from(curriculumWeeks)
-      .where(eq(curriculumWeeks.curriculumId, currId))
-      .orderBy(asc(curriculumWeeks.weekNo)),
-    db
-      .select({
-        weekNo: curriculumItems.weekNo,
-        levelId: gameLevels.id,
-        code: gameLevels.code,
-        title: gameLevels.title,
-        thumbnailEmoji: gameLevels.thumbnailEmoji,
-      })
-      .from(curriculumItems)
-      .innerJoin(gameLevels, eq(curriculumItems.entityId, gameLevels.id))
-      .where(
-        and(
-          eq(curriculumItems.curriculumId, currId),
-          eq(curriculumItems.entityType, "game_level")
-        )
-      )
-      .orderBy(
-        asc(curriculumItems.weekNo),
-        asc(curriculumItems.sessionNo),
-        asc(curriculumItems.position)
-      ),
+    repos.curricula.listWeeks(currId),
+    repos.curricula.listItems([currId]),
   ]);
 
   for (const w of rawWeeks) {
     weekGoalsMap.set(w.weekNo, w.goal);
   }
 
-  return { weekGoalsMap, itemsList: rawItems };
+  const gameLevelItems = rawItems.filter(
+    (item) => item.entityType === CONTENT_ENTITY_TYPE.GAME_LEVEL
+  );
+  const levelMap = await repos.gameLevels.mapByIds(
+    gameLevelItems.map((item) => item.entityId)
+  );
+
+  const itemsList: RawLevelItem[] = [];
+  for (const item of gameLevelItems) {
+    const lvl = levelMap.get(item.entityId);
+    if (!lvl) {
+      continue;
+    }
+    itemsList.push({
+      weekNo: item.weekNo,
+      levelId: lvl.id,
+      code: lvl.code,
+      title: lvl.title,
+      thumbnailEmoji: lvl.thumbnailEmoji,
+    });
+  }
+
+  return { weekGoalsMap, itemsList };
 }
 
-async function fetchFallbackLevelItems(db: Db): Promise<RawLevelItem[]> {
-  const published = await db
-    .select({
-      id: gameLevels.id,
-      code: gameLevels.code,
-      title: gameLevels.title,
-      thumbnailEmoji: gameLevels.thumbnailEmoji,
-    })
-    .from(gameLevels)
-    .orderBy(asc(gameLevels.code))
-    .limit(36);
+async function fetchFallbackLevelItems(
+  repos: MindKidRepositories
+): Promise<RawLevelItem[]> {
+  const published = await repos.gameLevels.listAllOrdered(36);
 
   return published.map((lvl, index) => ({
     weekNo: Math.floor(index / 2) + 1,
@@ -374,59 +367,56 @@ function buildWeeksStructure(params: {
 }
 
 export async function getChildThemeMap(
-  db: Db,
   input: GetChildThemeMapInput
+): Promise<ChildThemeMapResponse>;
+export async function getChildThemeMap(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  input: GetChildThemeMapInput
+): Promise<ChildThemeMapResponse>;
+export async function getChildThemeMap(
+  first: DbExecutor | MindKidRepositories | GetChildThemeMapInput,
+  maybeInput?: GetChildThemeMapInput
 ): Promise<ChildThemeMapResponse> {
+  const isLegacyCall = maybeInput !== undefined;
+  const repos = isLegacyCall
+    ? toRepositories(first as DbExecutor | MindKidRepositories)
+    : useOwnerRepositories();
+  const input = isLegacyCall ? maybeInput : (first as GetChildThemeMapInput);
+
   const currentYear = (input.now ?? new Date()).getFullYear();
   const ageBand = deriveAgeBand(input.birthYear, currentYear);
 
-  // 1. Kiểm tra enrollment đang active của trẻ
-  const [activeEnrollment] = await db
-    .select({
-      curriculumId: curriculumEnrollments.curriculumId,
-      curriculumCode: curricula.code,
-      curriculumTitle: curricula.title,
-    })
-    .from(curriculumEnrollments)
-    .innerJoin(curricula, eq(curricula.id, curriculumEnrollments.curriculumId))
-    .where(
-      and(
-        eq(curriculumEnrollments.childId, input.childId),
-        eq(curriculumEnrollments.status, "active")
-      )
-    )
-    .limit(1);
-
-  // 2. Lộ trình theo enrollment hoặc band tuổi (BR-WTM-01)
-  const targetCurriculumCode = resolveTargetCurriculumCode(
-    ageBand,
-    activeEnrollment?.curriculumCode
+  const activeEnrollment = await repos.curricula.findEnrollmentForChild(
+    input.childId,
+    true
   );
 
-  const [curriculumRow] = await db
-    .select()
-    .from(curricula)
-    .where(eq(curricula.code, targetCurriculumCode))
-    .limit(1);
+  const targetCurriculumCode = resolveTargetCurriculumCode(
+    ageBand,
+    activeEnrollment?.curriculum.code
+  );
+
+  const curriculumRow = await repos.curricula.findByCode(targetCurriculumCode);
 
   const currId = curriculumRow?.id ?? activeEnrollment?.curriculumId ?? null;
   const roadmapTitle =
     curriculumRow?.title ??
-    activeEnrollment?.curriculumTitle ??
+    activeEnrollment?.curriculum.title ??
     `Chương trình phát triển tư duy ${ageBand} tuổi`;
 
-  // 3. Lấy toàn bộ phiên chơi của trẻ để suy trạng thái trạm (BR-WTM-02)
-  const statusByLessonCode = await fetchChildLevelStatuses(db, input.childId);
+  const statusByLessonCode = await fetchChildLevelStatuses(
+    repos,
+    input.childId
+  );
 
-  // 4. Lấy các tuần và màn chơi từ DB nếu có curriculum
   const { weekGoalsMap, itemsList: rawItemsList } =
-    await fetchCurriculumWeeksAndItems(db, currId);
+    await fetchCurriculumWeeksAndItems(repos, currId);
 
-  // 5. Dự phòng nếu DB chưa liên kết curriculumItems
   const itemsList =
-    rawItemsList.length > 0 ? rawItemsList : await fetchFallbackLevelItems(db);
+    rawItemsList.length > 0
+      ? rawItemsList
+      : await fetchFallbackLevelItems(repos);
 
-  // Gom theo tuần
   const itemsByWeek = new Map<number, RawLevelItem[]>();
   for (const item of itemsList) {
     const existing = itemsByWeek.get(item.weekNo) ?? [];

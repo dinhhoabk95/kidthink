@@ -1,0 +1,10 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Sổ tay bìa hoa</title>
+  <defs>
+    <linearGradient id="fcnPink" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#f9a8d4" /><stop offset="100%" stop-color="#ec4899" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#831843" opacity="0.22" rx="32" ry="5" />
+    <rect fill="url(#fcnPink)" height="78" rx="8" stroke="#831843" stroke-width="3.8" width="60" x="30" y="20" />
+    <rect fill="#9d174d" height="78" rx="4" width="12" x="30" y="20" />
+    <circle cx="64" cy="56" fill="#fef08a" r="10" stroke="#78350f" stroke-width="2.8" />
+</svg>

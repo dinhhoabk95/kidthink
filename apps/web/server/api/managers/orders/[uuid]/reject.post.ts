@@ -1,19 +1,13 @@
-import { writeAudit } from "@mindkid/audit";
 import { MIN_ADMIN_NOTE_LENGTH } from "@mindkid/config";
-import { entitlements, getDb, notifications, paymentOrders } from "@mindkid/db";
 import { AdminNoteRequiredError } from "@mindkid/errors/account";
-import { OrderAlreadyProcessedError } from "@mindkid/errors/billing";
-import { NotFoundError, ValidationError } from "@mindkid/errors/common";
-import {
-  assertPaymentOrderTransition,
-  type PaymentOrderStatus,
-} from "@mindkid/shared";
-import { and, eq } from "drizzle-orm";
-import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
+import { ValidationError } from "@mindkid/errors/common";
+import { defineEventHandler, getHeader, getRouterParam } from "h3";
 import { z } from "zod";
+import { rejectManagerOrder } from "#server/services/order-review-service";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
-import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
+import { requireReauth } from "#server/utils/reauth-runtime";
+import { readRequestBody } from "#server/utils/request-body";
 
 const rejectOrderSchema = z.object({
   admin_note: z
@@ -29,19 +23,13 @@ const rejectOrderSchema = z.object({
 
 export default defineEventHandler(async (event) => {
   const session = requireSuperAdminSession(event);
+  requireReauth(event);
   const orderUuid = getRouterParam(event, "uuid");
   if (!orderUuid) {
     throw new ValidationError("Order UUID is required");
   }
 
-  const customEvent = event as unknown as {
-    _body?: unknown;
-    context?: { body?: unknown };
-  };
-  const rawBody =
-    (await readBody(event).catch(() => undefined)) ??
-    customEvent._body ??
-    customEvent.context?.body;
+  const rawBody = await readRequestBody(event);
   const parsed = rejectOrderSchema.safeParse(rawBody);
   if (!parsed.success) {
     const fieldErrors = parsed.error.flatten().fieldErrors;
@@ -53,108 +41,11 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const { admin_note } = parsed.data;
-  const db = getDb();
-  const now = new Date();
-
-  let orderUserId = 0;
-  const revokedKeys: string[] = [];
-
-  // Atomic transaction with row lock (D-JH, BR-PAP-02, BR-PAP-03)
-  await db.transaction(async (tx) => {
-    // Step 1 in transaction: SELECT ... FOR UPDATE (D-JH)
-    const [order] = await tx
-      .select()
-      .from(paymentOrders)
-      .where(eq(paymentOrders.uuid, orderUuid))
-      .for("update");
-
-    if (!order) {
-      throw new NotFoundError();
-    }
-
-    const currentStatus = order.status as PaymentOrderStatus;
-    if (currentStatus !== "submitted" && currentStatus !== "under_review") {
-      throw new OrderAlreadyProcessedError({
-        current_status: currentStatus,
-        reason:
-          "Đơn hàng đã được xử lý hoặc không ở trạng thái có thể từ chối.",
-      });
-    }
-
-    assertPaymentOrderTransition(currentStatus, "rejected");
-    orderUserId = order.userId;
-
-    // Update payment order status to rejected
-    await tx
-      .update(paymentOrders)
-      .set({
-        status: "rejected",
-        reviewedAt: now,
-        reviewedByManagerId: session.manager_id,
-        adminNote: admin_note,
-        updatedAt: now,
-      })
-      .where(eq(paymentOrders.id, order.id));
-
-    // Revoke soft_unlock entitlements associated with this order immediately (BR-PAY-04, BR-PAP-03)
-    const revokedRows = await tx
-      .update(entitlements)
-      .set({
-        status: "cancelled",
-        updatedAt: now,
-      })
-      .where(
-        and(
-          eq(entitlements.userId, order.userId),
-          eq(entitlements.sourceRef, order.uuid)
-        )
-      )
-      .returning({ key: entitlements.entitlementKey });
-
-    for (const r of revokedRows) {
-      revokedKeys.push(r.key);
-    }
-
-    // Record audit log (BR-AUD-01, BR-AUD-02)
-    await writeAudit(tx, {
-      actor_type: "manager",
-      actor_id: session.manager_id,
-      action: "order_rejected",
-      entity_type: "payment_order",
-      entity_id: order.uuid,
-      before_data: { status: currentStatus },
-      after_data: {
-        status: "rejected",
-        revoked_entitlements_count: revokedKeys.length,
-      },
-      reason: admin_note,
-      ip_address: getVerifiedRemoteIp(event),
-      user_agent: getHeader(event, "user-agent") || null,
-    });
-
-    // Enqueue notification for user
-    await tx.insert(notifications).values({
-      recipientType: "user",
-      recipientId: order.userId,
-      templateCode: "order_rejected",
-      payload: {
-        order_uuid: order.uuid,
-        package_code: order.packageCode,
-        offer_code: order.offerCode,
-        polite_reason:
-          "Thông tin chứng từ hoặc mã giao dịch chưa khớp với sao kê ngân hàng. Vui lòng kiểm tra lại hoặc liên hệ hỗ trợ.",
-      },
-    });
+  return await rejectManagerOrder({
+    managerId: session.manager_id,
+    orderUuid,
+    adminNote: parsed.data.admin_note,
+    ipAddress: getVerifiedRemoteIp(event),
+    userAgent: getHeader(event, "user-agent") || null,
   });
-
-  // Invalidate user entitlements cache immediately in the same request (D-JI)
-  if (orderUserId > 0) {
-    await invalidateUserEntitlementsCache(orderUserId);
-  }
-
-  return {
-    status: "rejected",
-    revoked_entitlements: revokedKeys,
-  };
 });

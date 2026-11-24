@@ -39,6 +39,73 @@ module.exports = {
       },
     },
     {
+      name: "no-bypass-db-driver",
+      comment:
+        "BR-MPA-01: apps/* và các packages/* ngoài @mindkid/db NEVER import trực tiếp " +
+        "postgres, node:sqlite, drizzle-orm/postgres-js, drizzle-orm/d1, hoặc " +
+        "drizzle-orm/pg-proxy — mọi kết nối DB bắt buộc đi qua Driver Manager của @mindkid/db.",
+      severity: "error",
+      from: {
+        path: "^(apps|packages)/",
+        pathNot:
+          "^(packages/db/|packages/(auth|queue)/tests/|apps/worker/src/(backup/restore|consumers/backup-verify))",
+      },
+      to: {
+        path: "(^(node:)?sqlite$|(^|/)node_modules/(postgres|drizzle-orm/(postgres-js|d1|pg-proxy))(/|\\.m?js$|$))",
+      },
+    },
+    {
+      name: "no-router-direct-db-or-repo",
+      comment:
+        "DAL Global Lock: Router (apps/web/server/api/**) NEVER imports Repository, " +
+        "DatabaseManager, @mindkid/db, hoặc drizzle-orm trực tiếp — 100% route phải đi qua Service layer.",
+      severity: "error",
+      from: { path: "^apps/web/server/api/" },
+      to: {
+        path: "(^apps/web/server/utils/repositories\\.ts$|^#server/utils/repositories|^packages/db/|^@mindkid/db(/|$)|(^|/)node_modules/drizzle-orm(/|$))",
+      },
+    },
+    {
+      name: "no-service-raw-drizzle",
+      comment:
+        "DAL Global Lock: Web Services (apps/web/server/services/**) NEVER import drizzle-orm trực tiếp — " +
+        "mọi truy vấn đi qua Repositories trong @mindkid/db.",
+      severity: "error",
+      from: { path: "^apps/web/server/services/" },
+      to: { path: "(^|/)node_modules/drizzle-orm(/|$)" },
+    },
+    {
+      name: "no-web-util-raw-drizzle",
+      comment:
+        "DAL Global Lock: Web Utils (apps/web/server/utils/**, trừ better-auth.ts adapter) NEVER import drizzle-orm trực tiếp.",
+      severity: "error",
+      from: {
+        path: "^apps/web/server/utils/",
+        pathNot: "^apps/web/server/utils/better-auth\\.ts$",
+      },
+      to: { path: "(^|/)node_modules/drizzle-orm(/|$)" },
+    },
+    {
+      name: "no-worker-raw-drizzle",
+      comment:
+        "DAL Global Lock: Worker runtime (apps/worker/src/**, trừ allowlist backup PG restore/verify) NEVER import drizzle-orm trực tiếp.",
+      severity: "error",
+      from: {
+        path: "^apps/worker/src/",
+        pathNot:
+          "(\\.test\\.ts$|^apps/worker/src/(backup/(restore|verify-gate)|consumers/backup-verify)\\.ts$)",
+      },
+      to: { path: "(^|/)node_modules/drizzle-orm(/|$)" },
+    },
+    {
+      name: "no-runtime-pkg-raw-drizzle",
+      comment:
+        "DAL Global Lock: Runtime domain packages (play, export, notification, audit) NEVER import drizzle-orm trực tiếp.",
+      severity: "error",
+      from: { path: "^packages/(play|export|notification|audit)/src/" },
+      to: { path: "(^|/)node_modules/drizzle-orm(/|$)" },
+    },
+    {
       name: "no-obsolete-auth-provider",
       comment:
         "auth-tokens-sessions.md §1 (Task #319): hệ thống chuẩn hoá trên Better Auth " +

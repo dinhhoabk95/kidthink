@@ -4,14 +4,22 @@ import { SKILL_IDENTITIES } from "@mindkid/content";
 import {
   competencies,
   type getOwnerDb,
+  type JsonObject,
+  type JsonValue,
   learningObjectives,
+  SKILL_TIER_CODEC,
   skillDatasets,
   skillPrerequisites,
   skills,
   strands,
 } from "@mindkid/db";
 import type {
+  DatasetAxis,
+  DatasetItem,
+  DatasetRelation,
+  DifficultyRung,
   SkillDataset,
+  SkillPhrasing,
   SkillProgressionTier,
   ThinkingProcess,
 } from "@mindkid/shared";
@@ -531,7 +539,7 @@ async function seedSkillsStep(
         ageMax: sk.age_max,
         difficulty: sk.difficulty,
         thinkingProcesses: sk.thinking_processes,
-        tier: sk.tier,
+        tier: SKILL_TIER_CODEC.toCode(sk.tier),
         position: idx + 1,
       };
     })
@@ -666,6 +674,85 @@ export async function seedSkillDatasetsStep(
       );
     }
   }
+  const serializePrimitiveRecord = (
+    record: Readonly<Record<string, string | number | boolean>>
+  ): JsonObject => {
+    const out: Record<string, JsonValue> = {};
+    for (const [k, v] of Object.entries(record)) {
+      out[k] = v;
+    }
+    return out;
+  };
+
+  const serializeDatasetItem = (item: DatasetItem): JsonObject => {
+    let imageJson: JsonObject | undefined;
+    if (item.image) {
+      if (item.image.kind === "emoji") {
+        imageJson = { kind: item.image.kind, ref: item.image.ref };
+      } else if (item.image.kind === "image") {
+        imageJson = { kind: item.image.kind, path: item.image.path };
+      } else {
+        imageJson = { kind: item.image.kind, text: item.image.text };
+      }
+    }
+    return {
+      id: item.id,
+      label: item.label,
+      spokenLabel: item.spokenLabel,
+      glyph: item.glyph,
+      image: imageJson,
+      value: item.value,
+      ordering: item.ordering,
+      category: item.category
+        ? serializePrimitiveRecord(item.category)
+        : undefined,
+      audio_path: item.audio_path,
+      contrast_group: item.contrast_group,
+      metadata: item.metadata
+        ? serializePrimitiveRecord(item.metadata)
+        : undefined,
+    };
+  };
+
+  const serializeDifficultyRung = (rung: DifficultyRung): JsonObject => ({
+    rung: rung.rung,
+    dimension: rung.dimension,
+    description: rung.description,
+    representation: rung.representation,
+  });
+
+  const serializePhrasing = (phrasing: SkillPhrasing): JsonObject => ({
+    prompt_template: phrasing.prompt_template,
+    narration_template: phrasing.narration_template,
+  });
+
+  const serializeRelation = (rel: DatasetRelation): JsonObject => ({
+    type: rel.type,
+    source_id: rel.source_id,
+    target_id: rel.target_id,
+    explanation: rel.explanation,
+    metadata: rel.metadata ? serializePrimitiveRecord(rel.metadata) : undefined,
+  });
+
+  const isDatasetAxisObject = (
+    axis: DatasetAxis
+  ): axis is {
+    readonly values: readonly string[];
+    readonly ordered?: boolean;
+  } => typeof axis === "object" && !Array.isArray(axis);
+
+  const serializeAxes = (
+    axes: Readonly<Record<string, DatasetAxis>>
+  ): JsonObject => {
+    const out: Record<string, JsonValue> = {};
+    for (const [k, axis] of Object.entries(axes)) {
+      out[k] = isDatasetAxisObject(axis)
+        ? { values: [...axis.values], ordered: axis.ordered }
+        : [...axis];
+    }
+    return out;
+  };
+
   const values: (typeof skillDatasets.$inferInsert)[] = [];
 
   for (const [code, dataset] of Object.entries(datasets)) {
@@ -677,12 +764,14 @@ export async function seedSkillDatasetsStep(
       skillId,
       code: dataset.skill_code,
       conceptLabel: dataset.concept_label,
-      items: dataset.items,
-      ladder: dataset.ladder,
-      phrasing: dataset.phrasing,
-      relations: dataset.relations ?? null,
-      ordering: dataset.ordering ?? null,
-      axes: dataset.axes ?? null,
+      items: dataset.items.map(serializeDatasetItem),
+      ladder: dataset.ladder.map(serializeDifficultyRung),
+      phrasing: serializePhrasing(dataset.phrasing),
+      relations: dataset.relations
+        ? dataset.relations.map(serializeRelation)
+        : null,
+      ordering: dataset.ordering ? [...dataset.ordering] : null,
+      axes: dataset.axes ? serializeAxes(dataset.axes) : null,
       extendsSkillCode: dataset.extends ?? null,
     });
   }
@@ -705,7 +794,7 @@ export async function seedSkillDatasetsStep(
             ordering: sql`excluded.ordering`,
             axes: sql`excluded.axes`,
             extendsSkillCode: sql`excluded.extends_skill_code`,
-            updatedAt: sql`now()`,
+            updatedAt: new Date(),
           },
         });
     }

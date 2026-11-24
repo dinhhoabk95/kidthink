@@ -3,6 +3,8 @@ import type { EmojiEntry } from "#src/types";
 export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   {
     emoji: "👋",
+    slug: "waving-hand",
+    svg_path: "/sprites/emoji/waving-hand.svg",
     name: "Vẫy tay",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -11,6 +13,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "✋",
+    slug: "raised-hand",
+    svg_path: "/sprites/emoji/raised-hand.svg",
     name: "Giơ tay",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -19,6 +23,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🖐️",
+    slug: "hand-splayed",
+    svg_path: "/sprites/emoji/hand-splayed.svg",
     name: "Bàn tay mở",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -27,6 +33,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👍",
+    slug: "thumbs-up",
+    svg_path: "/sprites/emoji/thumbs-up.svg",
     name: "Thích",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -35,6 +43,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👎",
+    slug: "thumbs-down",
+    svg_path: "/sprites/emoji/thumbs-down.svg",
     name: "Không thích",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -43,6 +53,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👏",
+    slug: "clapping-hands",
+    svg_path: "/sprites/emoji/clapping-hands.svg",
     name: "Vỗ tay",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -51,6 +63,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤝",
+    slug: "handshake",
+    svg_path: "/sprites/emoji/handshake.svg",
     name: "Bắt tay",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -59,6 +73,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "✌️",
+    slug: "victory-hand",
+    svg_path: "/sprites/emoji/victory-hand.svg",
     name: "Dấu V",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -67,6 +83,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤞",
+    slug: "crossed-fingers",
+    svg_path: "/sprites/emoji/crossed-fingers.svg",
     name: "Bắt chéo ngón",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -75,6 +93,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤟",
+    slug: "love-hand",
+    svg_path: "/sprites/emoji/love-hand.svg",
     name: "Yêu thương",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -83,6 +103,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "☝️",
+    slug: "index-up-hand",
+    svg_path: "/sprites/emoji/index-up-hand.svg",
     name: "Chỉ lên",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -91,6 +113,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👆",
+    slug: "point-up-backhand",
+    svg_path: "/sprites/emoji/point-up-backhand.svg",
     name: "Chỉ lên trên",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -99,6 +123,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👇",
+    slug: "point-down-hand",
+    svg_path: "/sprites/emoji/point-down-hand.svg",
     name: "Chỉ xuống",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -107,6 +133,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👈",
+    slug: "point-left-hand",
+    svg_path: "/sprites/emoji/point-left-hand.svg",
     name: "Chỉ trái",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -115,6 +143,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👉",
+    slug: "point-right-hand",
+    svg_path: "/sprites/emoji/point-right-hand.svg",
     name: "Chỉ phải",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -123,6 +153,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤌",
+    slug: "gathered-fingers",
+    svg_path: "/sprites/emoji/gathered-fingers.svg",
     name: "Nhúm tay",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -131,6 +163,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤏",
+    slug: "pinching-fingers",
+    svg_path: "/sprites/emoji/pinching-fingers.svg",
     name: "Nhón tay",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -139,6 +173,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "✊",
+    slug: "raised-fist",
+    svg_path: "/sprites/emoji/raised-fist.svg",
     name: "Nắm đấm",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -147,6 +183,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👊",
+    slug: "fist-bump",
+    svg_path: "/sprites/emoji/fist-bump.svg",
     name: "Đấm",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -155,6 +193,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🖕",
+    slug: "counting-finger",
+    svg_path: "/sprites/emoji/counting-finger.svg",
     name: "Ngón giữa",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -163,6 +203,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫰",
+    slug: "finger-heart",
+    svg_path: "/sprites/emoji/finger-heart.svg",
     name: "Tay tim",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -176,6 +218,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤙",
+    slug: "call-me-hand",
+    svg_path: "/sprites/emoji/call-me-hand.svg",
     name: "Gọi điện",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -184,6 +228,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫶",
+    slug: "heart-hands",
+    svg_path: "/sprites/emoji/heart-hands.svg",
     name: "Tim tay",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than", "gia_dinh"],
@@ -192,6 +238,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🙏",
+    slug: "thankful-hands",
+    svg_path: "/sprites/emoji/thankful-hands.svg",
     name: "Cảm ơn",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -207,6 +255,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫳",
+    slug: "palm-down-hand",
+    svg_path: "/sprites/emoji/palm-down-hand.svg",
     name: "Tay úp xuống",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],
@@ -215,6 +265,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🙋",
+    slug: "hand-up-kid",
+    svg_path: "/sprites/emoji/hand-up-kid.svg",
     name: "Bạn nhỏ giơ tay",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than", "truong_mam_non"],
@@ -223,6 +275,8 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🙇",
+    slug: "polite-bow",
+    svg_path: "/sprites/emoji/polite-bow.svg",
     name: "Bạn nhỏ cúi chào",
     categories: ["hand-gesture"],
     curriculum_themes: ["ban_than"],

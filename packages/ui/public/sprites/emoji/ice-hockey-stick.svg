@@ -1,0 +1,7 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khúc côn cầu trên băng</title>
+  <ellipse cx="60" cy="105" fill="#1e293b" opacity="0.22" rx="34" ry="5" />
+    <path d="M88 18L54 88H24" fill="none" stroke="#b45309" stroke-linecap="round" stroke-linejoin="round" stroke-width="8" />
+    <path d="M88 18L54 88H24" fill="none" stroke="#451a03" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.6" />
+    <ellipse cx="80" cy="90" fill="#1e293b" rx="13" ry="6" stroke="#475569" stroke-width="3" />
+</svg>

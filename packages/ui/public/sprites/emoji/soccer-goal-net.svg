@@ -1,0 +1,7 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khung thành bóng đá</title>
+  <rect fill="#4ade80" height="16" rx="6" stroke="#14532d" stroke-width="3.4" width="96" x="12" y="84" />
+    <polygon fill="#f1f5f9" points="22,32 98,32 90,84 30,84" stroke="#64748b" stroke-width="2.6" />
+    <path d="M38 32V84M54 32V84M70 32V84M86 32V84M25 48H95M28 66H92" stroke="#94a3b8" stroke-width="2" />
+    <path d="M22 86V32H98V86" fill="none" stroke="#1e293b" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" />
+</svg>

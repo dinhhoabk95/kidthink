@@ -322,5 +322,23 @@ export const C3_ALG_05_SEED: SkillSeed = {
       theme: "space",
       rounds: 3,
     },
+    {
+      code: "GL-C3-ALG-INTRO-6005",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 4,
+      theme: "job",
+      rounds: 3,
+      sequence_no: 61,
+    },
+    {
+      code: "GL-C3-ALG-BEAT-6005",
+      template: "GT-034",
+      band: "5-6",
+      difficulty: 5,
+      theme: "farm",
+      rounds: 3,
+      sequence_no: 63,
+    },
   ],
 };

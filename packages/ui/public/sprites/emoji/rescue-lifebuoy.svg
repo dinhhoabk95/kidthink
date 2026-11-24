@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Phao cứu sinh tròn</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="lfbWhite" r="70%"><stop offset="0%" stop-color="#ffffff" /><stop offset="55%" stop-color="#f8fafc" /><stop offset="100%" stop-color="#e2e8f0" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e3a8a" opacity="0.22" rx="34" ry="5" />
+    <path d="M60 18C83 18 102 37 102 60C102 83 83 102 60 102C37 102 18 83 18 60C18 37 37 18 60 18ZM60 40C49 40 40 49 40 60C40 71 49 80 60 80C71 80 80 71 80 60C80 49 71 40 60 40Z" fill="url(#lfbWhite)" fill-rule="evenodd" stroke="#1e293b" stroke-width="3.8" />
+    <path d="M50 20H70V41H50ZM50 79H70V100H50ZM20 50H41V70H20ZM79 50H100V70H79Z" fill="#ef4444" stroke="#7f1d1d" stroke-width="3.2" />
+</svg>

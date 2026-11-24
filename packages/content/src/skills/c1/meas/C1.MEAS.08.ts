@@ -221,6 +221,16 @@ export const C1_MEAS_08_SEED: SkillSeed = {
   dataset: C1_MEAS_08_DATASET,
   levels: [
     {
+      code: "GL-C1-MEAS-INTRO-7008",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "nature",
+      rounds: 1,
+      sequence_no: 1,
+    },
+    {
       code: "GL-C1-MEAS-UNIT-0001",
       template: "GT-030",
       band: "5-6",

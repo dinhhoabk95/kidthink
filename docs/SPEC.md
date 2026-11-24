@@ -87,17 +87,13 @@ canonical scope và viết spec trước.
 
 ### 1.1 Vision
 
-Nền tảng **khai phá tư duy qua trò chơi** cho trẻ 3–6 tuổi, web-first, tablet-first.
+Nền tảng **khai phá tư duy qua trò chơi** cho trẻ mầm non Việt Nam 3–6 tuổi, web-first, tablet-first.
 
-Không dạy phép tính trước tuổi. Phát triển sáu năng lực tư duy nền tảng qua trò chơi
-tương tác, chương trình biên soạn sẵn, và báo cáo tiến bộ cho người lớn.
+Không dạy phép tính cơ học trước tuổi. Phát triển sáu năng lực tư duy nền tảng (`C1`–`C6`) qua trò chơi tương tác thao tác vật cụ thể, chương trình biên soạn sẵn, hoạt động đồ vật thật ngoài màn hình cùng cha mẹ, và báo cáo tiến bộ cho người lớn.
 
-Tham khảo Kogumakai (xương sống tư duy toán), Montessori, Dienes, Singapore Early Math,
-Froebel, Tools of the Mind, Visible Thinking. Không sao chép nguyên bản chương trình nào.
+Xương sống chương trình chuyển thể có cấu trúc **100 học phần tư duy gốc Koguma-kai / Kuno Method (Nhật Bản)** theo triết lý *Jibutsu Kyoiku* (sự vật thật trước ký hiệu) và *Taiwa Kyoiku* (đối thoại khơi gợi tư duy) trên 5 trụ cột Kuno (Vị trí–Không gian, Số lượng, Hình học, Ngôn ngữ tư duy, Logic–Phân loại–Quan sát & Điều hành), kết hợp chọn lọc Montessori, Dienes, Singapore Early Math (CPA), Froebel và Tools of the Mind. Toàn bộ học phần được bản địa hoá sâu vào **10 chủ đề Giáo dục Mầm non Việt Nam** cùng bản sắc giao diện **"Tuổi thơ Việt × Giấy Gỗ Mộc"** (tre ngà, chiếu cói, quạt nan, rối nước, âm sắc mộc cầm ngũ cung, lời khích lệ đồng dao ấm áp).
 
-**Không phải** website AI sinh bài học. **Mà là** thư viện được người biên soạn và kiểm
-duyệt. Lợi thế cạnh tranh nằm ở dữ liệu đã cấu trúc và khả năng tái tổ hợp nó thành nhiều
-lộ trình mà không phải làm lại nội dung.
+**Không phải** website AI sinh bài học tự động trong runtime. **Mà là** thư viện được biên soạn theo chuẩn học thuật và kiểm duyệt qua cổng tự động cùng PR review. Lợi thế cạnh tranh nằm ở dữ liệu kỹ năng bất biến đã cấu trúc và khả năng tái tổ hợp thành nhiều lộ trình (12 tuần cốt lõi, 36 tuần năm học mầm non) mà không phải làm lại kho nội dung.
 
 ### 1.2 Giá trị cốt lõi theo tác nhân
 
@@ -224,8 +220,12 @@ KPI chi phí. Công cụ tạo nội dung có chi phí hỗ trợ và kiểm duy
 Đủ để một trẻ quay lại trong **4–8 tuần** — tiêu chí MVP thành công. Cột "Sau MVP" là mốc
 quy mô sản phẩm mục tiêu sau khi MVP đạt, không phải cam kết phase.
 
-Hiện trạng đo 2026-10-18 (đã vượt sàn MVP ở ba lớp): **76** strand, **443** skill, **38** khuôn
-`GT-000`…`GT-037` (danh sách: [`specs/01-platform/engines/index.md`](specs/01-platform/engines/index.md)).
+Hiện trạng đo 2026-11-15 (đã vượt sàn MVP ở bốn lớp): **76** strand, **443** skill, **38** khuôn
+`GT-000`…`GT-037` (danh sách: [`specs/01-platform/engines/index.md`](specs/01-platform/engines/index.md)),
+và **15** lộ trình `RoadmapSeed` theo độ tuổi — gồm 9 lộ trình nền và bộ **6 lộ trình Koguma-VN**
+(12 tuần cốt lõi & 36 tuần năm học trên **100 học phần Koguma-kai / Kuno Method**, xem
+[`taxonomy/koguma-100-alignment.md`](taxonomy/koguma-100-alignment.md) và
+[`specs/05-content/koguma-curriculum-program.md`](specs/05-content/koguma-curriculum-program.md)).
 
 ---
 
@@ -376,7 +376,11 @@ Không curriculum nào bắt buộc có đủ mọi tầng; DB hỗ trợ đủ.
 spatial_focus, custom}`.
 
 Cùng một thư viện `game_levels` sinh ra lộ trình 36–42 tuần, Fast Track, Logic Track, School
-Readiness — **không biên soạn lại nội dung**.
+Readiness và **chương trình 100 học phần Koguma-VN** (`RM-{3-4,4-5,5-6}-koguma-01` 12 tuần và
+`RM-{3-4,4-5,5-6}-koguma-year-01` 36 tuần gắn với 10 chủ đề Giáo dục Mầm non Việt Nam — contract
+tại [`specs/05-content/koguma-curriculum-program.md`](specs/05-content/koguma-curriculum-program.md),
+bảng đối chiếu 100 đơn vị tại [`taxonomy/koguma-100-alignment.md`](taxonomy/koguma-100-alignment.md))
+— **không biên soạn lại mã kỹ năng hay khuôn chơi**.
 
 **Adaptive ≠ Curriculum.** Adaptive điều chỉnh _trong_ phạm vi bước hiện tại (chọn biến
 thể, đổi `difficulty_params`). Cấm — **NEVER cho adaptive nhảy bước curriculum** — nó không có
@@ -395,7 +399,7 @@ Toàn bộ nội dung (`game_levels`, `curricula`, `skill_datasets`) được g�
 | Thuộc tính | **Emoji** |
 | ---------- | --------- |
 | Lớp        | Code-owned, cố định |
-| Nguồn      | `packages/emoji` — 32 nhóm phân theo chủ đề học |
+| Nguồn      | `packages/emoji` — 36 nhóm phân theo chủ đề học + bộ SVG thực tế |
 | Sở hữu     | Hệ thống |
 | Tái dùng   | Vô hạn |
 
@@ -654,8 +658,8 @@ cấp entitlement · export dữ liệu · đổi chính sách · đổi cấu h
 | Validation           | **Zod** trên mọi biên + **`@t3-oss/env-nuxt` `^0.13`** cho biến môi trường Nuxt (đồng bộ với `ENV_REGISTRY` trong `@mindkid/config`)                                                                                                                                                                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | Lint/format          | **Biome 2** (`^2.5.7`, CLI chạy thật) — `ultracite` `~6.5.1` chỉ làm **preset**                                                                                                                                                                                                                                                                                                                                                                                                             | `ultracite ≥7` đã bỏ Biome sang oxlint; CLI `ultracite check` nuốt lỗi lint (exit 0 sai) — xem [`repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) §7.1                                                                                                                                                                                                                                                                 |
 | Test                 | **Vitest 4** · **Playwright** · `fast-check` · k6 · `@axe-core/playwright`                                                                                                                                                                                                                                                                                                                                                                                                                  |                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| Storage              | S3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| Deploy               | Docker (PG 17 + **Valkey 9**) · PM2 · Nginx · EC2                                                                                                                                                                                                                                                                                                                                                                                                                                           |                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Storage              | Pluggable `ObjectStorageDriver`: **D1 Blobs + Workers Static Assets** (Giai đoạn 1 `< 1.000 DAU`) ↔ **Self-hosted S3 (`Garage HQ` SigV4)** (Giai đoạn 2 `≥ 1.000 DAU`)                                                                                                                                                                                                                                   | Đổi qua biến `STORAGE_DRIVER = "d1-blobs" \| "s3"`                                                                                                                                                                                                                                                                                                                                                                               |
+| Deploy               | **Kiến trúc Pluggable 2 Giai đoạn (`MINDKID_RUNTIME = "cloudflare" \| "vps"`)**:<br>- **Giai đoạn 1 (`< 1.000 DAU`, \$0):** Cloudflare Workers (`cloudflare_module`) + 3x D1 (`core`, `logs`, `blobs`) + Durable Objects SQLite (`AuthCoordinatorDO`, `JobQueueDO` > 50k jobs/ngày) + Terraform v5 + GitHub Actions<br>- **Giai đoạn 2 (`≥ 1.000 DAU`):** Hybrid Cloudflare Free (DNS, 5 WAF Rules, CDN, `cloudflared` Tunnel, Admin SPA) + VPS Tự Build (Docker PG 18 + Valkey 9 + Garage S3 + PM2) | Chuyển mạch không viết lại code nghiệp vụ qua `scripts/cutover/cf-to-vps.ts` (downtime < 5 phút)                                                                                                                                                                                                                                                                                                                                 |
 
 Boring tech để ổn định — nhưng "boring" nghĩa là **thư viện được cộng đồng kiểm chứng**, không
 phải "tự viết cho quen". Baseline package core được rà lại ngày 2026-08-13; version patch mới
@@ -727,7 +731,7 @@ mindkid/
 │   ├── storage/      S3 operation, ảnh WebP pipeline
 │   ├── queue/        BullMQ job definition + producer (consumer ở apps/worker)
 │   ├── taxonomy/     Cây 5 tầng, DAG validation, traversal — pure TS
-│   ├── emoji/        32 nhóm emoji data + tìm tiếng Việt
+│   ├── emoji/        36 nhóm emoji data + SVG sprite registry + tìm tiếng Việt
 │   ├── game-engine/  Canvas 2D thuần TS, template + Session
 │   ├── adaptive/     BKT mastery + ZPD selector — pure TS, KHÔNG ghi DB
 │   ├── errors/       AppError + lớp exception domain (H3Error hạng nhất), registry mã lỗi
@@ -910,10 +914,16 @@ không dựa vào padding một mình.
 - Chữ không bao giờ mang chỉ dẫn một mình — mọi chỉ dẫn cho trẻ được đọc thành tiếng;
   không có audio thì chuyển sang trình diễn (ghost hand).
 - Body ≥ 16px. Tiếng Việt: `leading` ≥ 1.4, Cấm — NEVER `uppercase` (mất dấu về thị giác).
+- **Bản sắc bề mặt trẻ ("Tuổi thơ Việt × Giấy Gỗ Mộc"):** không gian `/play/**` và thế giới 10
+  chủ đề mầm non Việt Nam dùng chất liệu giấy dó, chiếu cói, nan tre, gỗ mộc và giọng cô giáo
+  mầm non / nhịp đồng dao ấm áp (câu dẫn nhiệm vụ ≤ 12 từ) theo
+  [`design-system/vn-preschool-identity.md`](design-system/vn-preschool-identity.md).
 
 ### 9.2 Game engine — bất biến
 
-- **Token only.** Mọi màu và font từ `systems/designTokens.ts`. Cấm hex literal, Cấm `ctx.font` inline.
+- **Token only.** Mọi màu và font từ `systems/designTokens.ts` (bao gồm hệ token gỗ mộc, tre ngà,
+  chiếu cói, lá sen). Cấm hex literal, Cấm `ctx.font` inline. Cảnh nền văn hoá Việt trên Canvas 2D
+  bắt buộc đi qua cờ giảm cấp `ambient_motion_enabled` để giữ cứng 60 fps.
 - **Sàn touch theo band tuổi** qua một hàm duy nhất — band 3–4: 96px; band 5–6: 76px; sàn
   tuyệt đối 64px. Cấm — NEVER sàn tự viết kiểu `Math.max(20, …)`.
 - **Drag phải khoan dung** — hit band nới rộng, hoàn thành được không cần chính xác từng
@@ -928,7 +938,8 @@ không dựa vào padding một mình.
 - Cấm pinch, không xoay bằng cử chỉ, không thao tác hai ngón, không drag tính giờ.
 - Cấm `setInterval`/`setTimeout` làm game loop — chỉ `requestAnimationFrame`.
 - Cấm Cấp phát object mỗi frame · DOM mutation mỗi frame · network call lúc chơi.
-- Audio: master ceiling cưỡng chế, mục tiêu −16 LUFS, true peak ≤ −1 dBTP, ramp vào ≥ 20ms.
+- Audio: thang âm ngũ cung Việt Nam (*Hò – Xự – Xang – Xê – Cống*) trên âm sắc mộc cầm / tre mộc;
+  master ceiling cưỡng chế, mục tiêu −16 LUFS, true peak ≤ −1 dBTP, ramp vào ≥ 20ms, ra ≥ 40ms.
 
 ---
 
@@ -1156,7 +1167,7 @@ hình báo cáo mang câu này.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 
-**166 spec module** cộng 38 phiếu engine. Bản đồ đầy đủ, bảng đếm theo khu
+**171 spec module** cộng 38 phiếu engine. Bản đồ đầy đủ, bảng đếm theo khu
 vực và cột task còn mở: [`docs/specs/index.md`](specs/index.md).
 
 ```
@@ -1170,8 +1181,8 @@ docs/
     │   └── engines/    38     phiếu engine GT-000…GT-037 + TEMPLATE.md + index.md (sinh tự động)
     ├── 02-public/       9     khách chưa đăng nhập
     ├── 03-account/     23     User đã đăng nhập (hồ sơ trẻ, báo cáo, gói offline)
-    ├── 04-play/        20     bề mặt trẻ — core business
-    ├── 05-content/     19     mô hình nội dung và ràng buộc biên tập
+    ├── 04-play/        24     bề mặt trẻ — core business
+    ├── 05-content/     20     mô hình nội dung và ràng buộc biên tập
     ├── 06-admin/       19     Manager (quản trị người dùng, duyệt thanh toán, vận hành, huỷ gói)
     ├── 07-addon/        5     spec đủ, KHÔNG bán ở MVP
     └── 08-quality/     11     test · bảo mật · a11y · hiệu năng · design · phủ tư duy · an toàn kiểu · cổng runtime
@@ -1210,7 +1221,7 @@ xé ra 5 file và không file nào trả lời được câu hỏi ở §14.1.
 
 | Registry                                                     | Nội dung                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [`business-rules.md`](specs/00-foundation/business-rules.md) | 240 prefix → spec; **danh sách rule không bao giờ được nới** |
+| [`business-rules.md`](specs/00-foundation/business-rules.md) | 241 prefix → spec; **danh sách rule không bao giờ được nới** |
 | [`error-codes.md`](specs/00-foundation/error-codes.md)       | Mọi mã lỗi nghiệp vụ → HTTP status                           |
 | [`event-catalog.md`](specs/00-foundation/event-catalog.md)   | Tên event + schema payload                                   |
 | [`glossary.md`](specs/00-foundation/glossary.md)             | Từ vựng chuẩn + từ bị cấm                                    |

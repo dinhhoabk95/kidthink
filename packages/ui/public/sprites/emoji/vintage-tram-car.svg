@@ -1,0 +1,13 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Toa tàu điện leng keng</title>
+  <defs>
+    <linearGradient id="vtcRed" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#f87171" /><stop offset="100%" stop-color="#b91c1c" /></linearGradient>
+  </defs>
+  <path d="M14 100H106" stroke="#451a03" stroke-linecap="round" stroke-width="4.5" />
+    <rect fill="#fde68a" height="8" rx="4" stroke="#78350f" stroke-width="3.4" width="66" x="27" y="30" />
+    <rect fill="url(#vtcRed)" height="52" rx="8" stroke="#7f1d1d" stroke-width="3.8" width="78" x="21" y="38" />
+    <rect fill="#fef9c3" height="20" rx="3" stroke="#78350f" stroke-width="3" width="18" x="28" y="46" />
+    <rect fill="#fef9c3" height="20" rx="3" stroke="#78350f" stroke-width="3" width="18" x="51" y="46" />
+    <rect fill="#fef9c3" height="20" rx="3" stroke="#78350f" stroke-width="3" width="18" x="74" y="46" />
+    <circle cx="38" cy="94" fill="#292524" r="6" /><circle cx="82" cy="94" fill="#292524" r="6" />
+</svg>

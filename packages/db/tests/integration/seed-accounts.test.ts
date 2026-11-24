@@ -2,6 +2,7 @@ import { verifyPassword } from "@mindkid/auth";
 import { eq } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
 import { getOwnerDb } from "#src/client";
+import { USER_STATUS } from "#src/constants/identity-enums";
 import { entitlementKeys, entitlements, packages } from "#src/schema/billing";
 import { childProfiles } from "#src/schema/child";
 import {
@@ -17,6 +18,9 @@ import {
   seedInitialAccounts,
 } from "#src/seed-accounts";
 import { SEED_ENTITLEMENT_KEYS, SEED_PACKAGES } from "#src/seed-catalog";
+
+const PRODUCTION_SEED_REFUSAL_REGEX =
+  /Refusing to seed default test accounts in production/;
 
 describe("Seed Initial Accounts Integration Tests", () => {
   beforeAll(async () => {
@@ -82,7 +86,7 @@ describe("Seed Initial Accounts Integration Tests", () => {
         throw new Error(`User ${usr.email} not found`);
       }
 
-      expect(record.status).toBe("active");
+      expect(record.status).toBe(USER_STATUS.ACTIVE);
       expect(record.emailVerifiedAt).not.toBeNull();
 
       const userPasswordHash = record.passwordHash;
@@ -132,5 +136,23 @@ describe("Seed Initial Accounts Integration Tests", () => {
     const secondRunStats = await seedInitialAccounts(db);
     expect(secondRunStats.managerCount).toBe(1);
     expect(secondRunStats.userCount).toBe(3);
+  });
+
+  it("refuses to seed default test accounts when NODE_ENV === 'production' (fail-closed)", async () => {
+    const db = getOwnerDb();
+    const prevNodeEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "production";
+
+    try {
+      await expect(seedInitialAccounts(db)).rejects.toThrow(
+        PRODUCTION_SEED_REFUSAL_REGEX
+      );
+    } finally {
+      if (prevNodeEnv === undefined) {
+        Reflect.deleteProperty(process.env, "NODE_ENV");
+      } else {
+        process.env.NODE_ENV = prevNodeEnv;
+      }
+    }
   });
 });

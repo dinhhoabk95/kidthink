@@ -6,16 +6,39 @@ import type {
 } from "./types.js";
 
 const DEFAULT_MAX_CHARS = 500;
+const INVISIBLE_FORMAT_RE = /(?:\p{Cf}|\u034F|[\uFE00-\uFE0F])/gu;
+const CURLY_QUOTES_RE = /[“”‘’«»„‟‹›]/g;
+const INTRA_WORD_PUNCT_RE =
+  /(?<=\p{L})[.,/#!$%^&*;:{}=\-_`~()?"'<>|\\+]+(?=\p{L})/gu;
+const WORD_SPLIT_PUNCT_RE = /[.,/#!$%^&*;:{}=\-_`~()?"'<>|\\+]/g;
 
-/**
- * Normalizes input text for moderation checking.
- */
-function normalizeText(input: string): string {
+function canonicalizeUnicode(input: string): string {
   return input
+    .normalize("NFKC")
+    .replace(INVISIBLE_FORMAT_RE, "")
     .toLowerCase()
     .normalize("NFC")
-    .replace(/[\u200B-\u200D\uFEFF]/g, "") // remove zero-width spaces
-    .replace(/[.,/#!$%^&*;:{}=\-_`~()?"'<>]/g, " ") // replace punctuation with spaces
+    .replace(CURLY_QUOTES_RE, " ");
+}
+
+/**
+ * Normalizes input text for moderation checking, collapsing punctuation inserted
+ * between letters of the same word without merging space-separated words.
+ */
+function normalizeText(input: string): string {
+  return canonicalizeUnicode(input)
+    .replace(INTRA_WORD_PUNCT_RE, "")
+    .replace(WORD_SPLIT_PUNCT_RE, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * Normalizes punctuation as word separators so hyphenated/dotted phrases still match.
+ */
+function normalizeSpacedText(input: string): string {
+  return canonicalizeUnicode(input)
+    .replace(WORD_SPLIT_PUNCT_RE, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -64,6 +87,7 @@ export function moderateText(
   }
 
   const normalized = normalizeText(input);
+  const normalizedSpaced = normalizeSpacedText(input);
   const issues: ModerationIssue[] = [];
   const flaggedTerms: string[] = [];
 
@@ -76,7 +100,11 @@ export function moderateText(
       continue;
     }
 
-    if (containsTerm(normalized, entry.term)) {
+    if (
+      containsTerm(normalized, entry.term) ||
+      (normalizedSpaced !== normalized &&
+        containsTerm(normalizedSpaced, entry.term))
+    ) {
       flaggedTerms.push(entry.term);
       issues.push({
         category: entry.category,

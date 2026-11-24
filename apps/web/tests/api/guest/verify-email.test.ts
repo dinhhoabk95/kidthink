@@ -1,19 +1,35 @@
 import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
 import {
+  CONSENT_TYPE,
   consentRequirements,
   getOwnerDb,
+  NOTIFICATION_STATUS,
   notificationDeliveries,
   notifications,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
 import { renderEmailTemplate } from "@mindkid/notification";
-import { getQueue } from "@mindkid/queue";
+import { disconnectQueue, getQueue } from "@mindkid/queue";
 import { desc, eq, inArray } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
+
 import {
   getUserAuth,
   resetBetterAuthInstancesForTests,
 } from "#server/utils/better-auth";
+
+vi.hoisted(() => {
+  process.env.VALKEY_QUEUE_PREFIX ??= `test-${process.pid}-${process.env.VITEST_POOL_ID ?? "0"}`;
+});
 
 interface VerifyEmailResponsePayload {
   status?: boolean;
@@ -27,6 +43,7 @@ interface VerifyEmailResponsePayload {
 interface EmailJobPayload {
   token?: string;
   verify_url?: string;
+  reset_url?: string;
   url?: string;
 }
 
@@ -38,7 +55,12 @@ async function readConsentMarkers(): Promise<{
   const rows = await db
     .select()
     .from(consentRequirements)
-    .where(inArray(consentRequirements.consentType, ["terms", "privacy"]));
+    .where(
+      inArray(consentRequirements.consentType, [
+        CONSENT_TYPE.TERMS,
+        CONSENT_TYPE.PRIVACY,
+      ])
+    );
 
   let termsRequirementAt: string | null = null;
   let privacyRequirementAt: string | null = null;
@@ -46,9 +68,9 @@ async function readConsentMarkers(): Promise<{
     const iso = row.reconsentRequiredAt
       ? row.reconsentRequiredAt.toISOString()
       : null;
-    if (row.consentType === "terms") {
+    if (row.consentType === CONSENT_TYPE.TERMS) {
       termsRequirementAt = iso;
-    } else if (row.consentType === "privacy") {
+    } else if (row.consentType === CONSENT_TYPE.PRIVACY) {
       privacyRequirementAt = iso;
     }
   }
@@ -96,9 +118,13 @@ async function registerPendingUser(tag: string) {
   }
 
   const job = await getQueue().getJob(`email:send:${notif.id}`);
-  const jobPayload = (notif.payload ?? job?.data.payload) as
-    | EmailJobPayload
-    | undefined;
+  const notifPayload = notif.payload as EmailJobPayload | undefined;
+  expect(notifPayload?.token).toBeUndefined();
+  expect(notifPayload?.verify_url).toBeUndefined();
+  expect(notifPayload?.reset_url).toBeUndefined();
+  expect(notifPayload?.url).toBeUndefined();
+
+  const jobPayload = job?.data.payload as EmailJobPayload | undefined;
   const token = jobPayload?.token ?? "";
   const verifyUrl = jobPayload?.verify_url ?? jobPayload?.url ?? "";
 
@@ -118,6 +144,19 @@ function callVerifyEmail(token: string): Promise<Response> {
 }
 
 describe("Task 2 — Better Auth Email Verification (BR-EVF-01..08)", () => {
+  beforeAll(async () => {
+    if (getQueue().name !== "mindkid-jobs") {
+      await getQueue().obliterate({ force: true });
+    }
+  });
+
+  afterAll(async () => {
+    if (getQueue().name !== "mindkid-jobs") {
+      await getQueue().obliterate({ force: true });
+    }
+    await disconnectQueue();
+  });
+
   beforeEach(() => {
     setAuthRedisClient(new InMemoryRedisClient());
     resetBetterAuthInstancesForTests();
@@ -137,7 +176,7 @@ describe("Task 2 — Better Auth Email Verification (BR-EVF-01..08)", () => {
       .select()
       .from(users)
       .where(eq(users.id, user.id));
-    expect(updatedUser?.status).toBe("active");
+    expect(updatedUser?.status).toBe(USER_STATUS.ACTIVE);
     expect(updatedUser?.emailVerified).toBe(true);
     expect(updatedUser?.emailVerifiedAt).not.toBeNull();
   });
@@ -159,7 +198,7 @@ describe("Task 2 — Better Auth Email Verification (BR-EVF-01..08)", () => {
       .select()
       .from(users)
       .where(eq(users.id, user.id));
-    expect(stillActive?.status).toBe("active");
+    expect(stillActive?.status).toBe(USER_STATUS.ACTIVE);
   });
 
   it("enqueues verification email via send-verification-email and rejects tampered tokens (BR-EVF-01, BR-EVF-03, BR-EVF-07)", async () => {
@@ -198,13 +237,17 @@ describe("Task 2 — Better Auth Email Verification (BR-EVF-01..08)", () => {
       .from(notificationDeliveries)
       .where(eq(notificationDeliveries.notificationId, latestNotif?.id ?? 0));
     expect(deliveries).toHaveLength(1);
-    expect(deliveries[0]?.status).toBe("queued");
+    expect(deliveries[0]?.status).toBe(NOTIFICATION_STATUS.QUEUED);
 
     const job = await getQueue().getJob(`email:send:${latestNotif?.id ?? 0}`);
     expect(job).toBeDefined();
-    const jobPayload = (latestNotif?.payload ?? job?.data.payload) as
-      | EmailJobPayload
-      | undefined;
+    const notifPayload = latestNotif?.payload as EmailJobPayload | undefined;
+    expect(notifPayload?.token).toBeUndefined();
+    expect(notifPayload?.verify_url).toBeUndefined();
+    expect(notifPayload?.reset_url).toBeUndefined();
+    expect(notifPayload?.url).toBeUndefined();
+
+    const jobPayload = job?.data.payload as EmailJobPayload | undefined;
     const targetUrl = jobPayload?.verify_url ?? jobPayload?.url ?? "";
     expect(targetUrl).toContain("/verify-email?token=");
     expect(jobPayload?.token).toBeTruthy();
@@ -224,7 +267,7 @@ describe("Task 2 — Better Auth Email Verification (BR-EVF-01..08)", () => {
 
     await db
       .update(users)
-      .set({ status: "suspended" })
+      .set({ status: USER_STATUS.SUSPENDED })
       .where(eq(users.id, user.id));
 
     await callVerifyEmail(token);
@@ -233,7 +276,7 @@ describe("Task 2 — Better Auth Email Verification (BR-EVF-01..08)", () => {
       .select()
       .from(users)
       .where(eq(users.id, user.id));
-    expect(stillSuspended?.status).toBe("suspended");
+    expect(stillSuspended?.status).toBe(USER_STATUS.SUSPENDED);
 
     const loginRes = await getUserAuth().handler(
       new Request("http://localhost:3000/api/auth/users/sign-in/email", {

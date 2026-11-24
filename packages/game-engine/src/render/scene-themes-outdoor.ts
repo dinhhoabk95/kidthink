@@ -12,6 +12,12 @@ import {
   drawScenicFlowerDots,
   drawScenicStars,
 } from "./scene-decor.js";
+import {
+  drawBambooGrove,
+  drawFolkLantern,
+  drawLotusBlossom,
+  drawPaperKite,
+} from "./vn-folk-motifs.js";
 
 const NATURE_WILDFLOWER_DOTS: readonly [number, number, string][] = [
   [80, 495, alpha(designTokens.colors.semantic.warning[300], 0.5)],
@@ -93,7 +99,10 @@ export function drawNatureScene(
   ctx.closePath();
   ctx.fill();
 
-  // Wildflower dots
+  // Wildflower dots, luỹ tre làng & hoa sen ven đầm
+  drawBambooGrove(ctx, 38, 496, 114, 0.82, timeMs);
+  drawLotusBlossom(ctx, w - 72, 502, 0.9, timeMs);
+  drawPaperKite(ctx, w - 108, 66, 0.76, timeMs);
   drawScenicFlowerDots(ctx, NATURE_WILDFLOWER_DOTS, timeMs);
 }
 
@@ -148,18 +157,20 @@ export function drawFarmScene(
   ctx.closePath();
   ctx.fill();
 
-  // Rustic wooden fence rails & pickets along bottom
-  ctx.strokeStyle = alpha(designTokens.colors.scene.wood.light, 0.25);
+  // Rustic bamboo-wood fence rails, luỹ tre & cánh diều đồng quê
+  ctx.strokeStyle = alpha(designTokens.colors.vnMaterials.bamboo.joint, 0.34);
   ctx.lineWidth = 4;
   ctx.beginPath();
   ctx.moveTo(0, 495);
   ctx.lineTo(w, 495);
   ctx.stroke();
 
-  ctx.fillStyle = alpha(designTokens.colors.scene.wood.light, 0.22);
+  ctx.fillStyle = alpha(designTokens.colors.vnMaterials.bamboo.stalk, 0.44);
   for (let x = 60; x < w; x += 130) {
     ctx.fillRect(x, 480, 8, 32);
   }
+  drawBambooGrove(ctx, 36, 484, 106, 0.8, timeMs);
+  drawPaperKite(ctx, 132, 68, 0.78, timeMs);
 }
 
 export function drawOceanScene(
@@ -240,6 +251,7 @@ export function drawOceanScene(
   drawScenicBubble(ctx, 450, 120 + bob(2.2), 10);
   drawScenicBubble(ctx, 660, 280 + bob(3.3), 14);
   drawScenicBubble(ctx, 840, 160 + bob(4.4), 18);
+  drawPaperKite(ctx, w - 76, 58, 0.7, timeMs);
 }
 
 export function drawSpaceScene(
@@ -292,8 +304,9 @@ export function drawSpaceScene(
   ctx.ellipse(820, 80, 38, 10, -0.3, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Stars
+  // Stars & Mid-Autumn sky lantern
   drawScenicStars(ctx, SPACE_STARS, timeMs);
+  drawFolkLantern(ctx, 56, 12, 0.82, "amber", timeMs);
 
   // Cosmic horizon crest
   ctx.fillStyle = alpha(designTokens.colors.scene.sky[400], 0.45);
@@ -310,7 +323,8 @@ export function drawAnimalScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let grad = getCachedGradient(
     ctx,
@@ -350,7 +364,7 @@ export function drawAnimalScene(
   ctx.closePath();
   ctx.fill();
 
-  // Tropical leaves in corners
+  // Tropical leaves & bamboo grove at corners
   ctx.fillStyle = alpha(designTokens.colors.semantic.success[500], 0.18);
   ctx.beginPath();
   ctx.arc(0, 0, 90, 0, Math.PI / 2);
@@ -358,6 +372,9 @@ export function drawAnimalScene(
   ctx.beginPath();
   ctx.arc(w, 0, 90, Math.PI / 2, Math.PI);
   ctx.fill();
+
+  drawBambooGrove(ctx, 38, 478, 104, 0.78, timeMs);
+  drawLotusBlossom(ctx, w - 68, 496, 0.84, timeMs);
 }
 
 export function drawVehicleScene(
@@ -405,7 +422,7 @@ export function drawVehicleScene(
   ctx.closePath();
   ctx.fill();
 
-  // Road dash line
+  // Road dash line & village bamboo roadside
   ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.45);
   ctx.lineWidth = 3;
   ctx.setLineDash(VEHICLE_DASH_PATTERN);
@@ -414,6 +431,9 @@ export function drawVehicleScene(
   ctx.bezierCurveTo(340, 490, 620, 540, w, 505);
   ctx.stroke();
   ctx.setLineDash(EMPTY_LINE_DASH);
+
+  drawBambooGrove(ctx, 34, 482, 100, 0.76, timeMs);
+  drawPaperKite(ctx, w - 82, 62, 0.74, timeMs);
 }
 
 export function drawWeatherScene(
@@ -468,9 +488,10 @@ export function drawWeatherScene(
   ctx.arc(120, 70, 34, 0, Math.PI * 2);
   ctx.fill();
 
-  // Puffy clouds
+  // Puffy clouds & paper kite riding the breeze
   const cloudDrift =
     timeMs > 0 ? Math.sin((timeMs / 9200) * Math.PI * 2) * 15 : 0;
   drawScenicCloud(ctx, 160 + cloudDrift, 80, 0.9);
   drawScenicCloud(ctx, 780 - cloudDrift * 0.7, 85, 0.95);
+  drawPaperKite(ctx, w - 86, 66, 0.75, timeMs);
 }

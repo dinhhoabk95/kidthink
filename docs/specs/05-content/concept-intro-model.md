@@ -108,14 +108,15 @@ Không có.
 **Đọc:** `strands` · `skills` · `emoji_registry` · `game_templates` (`GT-000`).
 **Ghi:** `game_levels` · `game_level_rounds` · `content_skill_map` — không bảng mới.
 
-### 7.1 Input format chung — ba khối
+### 7.1 Input format chung — ba khối bắt buộc và khung truyện tuỳ chọn
 
-`content_pack` của `GT-000` có đúng ba khối: **chủ đề** (`concept`, hình dạng đầy đủ ở
+`content_pack` của `GT-000` có ba khối bắt buộc: **chủ đề** (`concept`, hình dạng đầy đủ ở
 [`concept-topic-model.md`](concept-topic-model.md) mục 7.2), **kho chất liệu**
-(`assets`) của cả bài, và **các phân đoạn** (`segments`). Kho khai *cái gì được dạy*; mỗi
-phân đoạn khai *lát nào được dạy trong một lần ngồi, theo trình tự nào*. Ba loại chất
-liệu đi qua cùng một hình dạng asset, và mọi step trỏ chất liệu bằng `asset_id`
-(`BR-CIM-15`).
+(`assets`) của cả bài, và **các phân đoạn** (`segments`), cộng khối bối cảnh truyện tuỳ chọn
+`story_context` (vắng mặt thì dùng mặc định của engine để 100% bài hiện hữu tương thích ngược).
+Kho khai *cái gì được dạy*; mỗi phân đoạn khai *lát nào được dạy trong một lần ngồi, theo trình
+tự nào*. Ba loại chất liệu đi qua cùng một hình dạng asset, và mọi step trỏ chất liệu khái niệm
+bằng `asset_id` (`BR-CIM-15`).
 
 | Field | Kiểu | Ràng buộc |
 |---|---|---|
@@ -123,12 +124,15 @@ liệu đi qua cùng một hình dạng asset, và mọi step trỏ chất liệ
 | `concept.label` | `string` | Tên chủ đề nói được, ví dụ `"số 0 đến 10"` |
 | `concept.teaches[]` | `array` | Mã mọi kỹ năng chơi chủ đề dạy; khớp `skill_codes` của level — `BR-CTM-04` |
 | `concept.sequence_no` | `integer?` | Thứ tự tiết trong chủ đề; bắt buộc khi chủ đề có hơn một tiết — `BR-CIM-20` |
-| `assets[]` | `array` | Kho chất liệu của cả bài, 2–21 phần tử — `BR-CIM-03` |
+| `story_context` | `object?` | Tuỳ chọn: `{ theme_code, guide_character, hook_line?, resolution_line? }`. `theme_code` thuộc danh mục chủ đề nội dung; `guide_character` mặc định `"co_cu"`; Cấm — **NEVER** khai trường đường dẫn file âm cho lời đề trùng với `instruction_audio_path` (`BR-ETS-04` — một nguồn lời đọc duy nhất) |
+| `assets[]` | `array` | Kho chất liệu **thuần khái niệm** của cả bài, 2–21 phần tử — `BR-CIM-03`, `BR-CIM-14`. Cấm — **NEVER** đẩy đạo cụ bối cảnh tĩnh (bàn gỗ, rổ, cân) hay phương án nhiễu chưa giới thiệu vào `assets[]` làm tràn trần 21 giá trị của chủ đề số `0–20` |
 | `segments[]` | `array` | 1–8 phân đoạn, có thứ tự — `BR-CIM-03` |
 | `segments[].segment_id` | `string` | Duy nhất trong bài; là mốc trẻ quay lại được — `BR-CIM-06` |
 | `segments[].asset_ids[]` | `array` | 2–6 mã chất liệu của phân đoạn (2–3 cho phân đoạn dạy) — `BR-CIM-03` |
 | `segments[].steps[]` | `array` | 2–12 phần tử, có thứ tự — `BR-CIM-03` |
 | `segments[].is_review` | `boolean` | Mặc định `false`. Phân đoạn cuối BẮT BUỘC `true` — `BR-CIM-18` |
+| `segments[].scene_cue` | `string?` | Tuỳ chọn: câu mở cảnh gợi tò mò ở đầu phân đoạn (đọc trước `narration_line` bước đầu phân đoạn) |
+| `segments[].milestone_line` | `string?` | Tuỳ chọn: câu đúc kết ngắn ở mốc kết thúc phân đoạn |
 | `narration` | `object` | Mẫu câu mặc định cho từng hành động, mục 7.3 |
 | `requires_reintro` | `boolean` | Mặc định `false`. `true` thì lần publish này bắt trẻ chạy lại |
 
@@ -141,24 +145,46 @@ liệu đi qua cùng một hình dạng asset, và mọi step trỏ chất liệ
 | `label` | `string` | Tiếng Việt, đọc lên được — `BR-CIM-04` |
 | `audio_path` | `string?` | Thiếu thì runner dùng TTS `vi-VN` |
 | `contrast_group` | `string` | Chất liệu cùng nhóm chỉ khác nhau một chiều — `BR-CIM-05` |
-| `glyph` | `string?` | Bắt buộc khi `kind = 'glyph'`. Ký tự, chữ số, hoặc dấu |
-| `text` | `string?` | Bắt buộc khi `kind = 'word'`. Mặt chữ của từ |
-| `syllables` | `string[]?` | Chỉ với `kind = 'word'`. Tách âm tiết để runner đọc chậm từng tiếng |
-| `image` | `{ kind, ref }?` | Bắt buộc khi `kind = 'image'`. `kind ∈ emoji \| image \| shape`; emoji phải trong registry — `BR-CIM-12` |
+| `glyph` | `string?` | Ký tự, chữ số, hoặc dấu (mỗi asset BẮT BUỘC có `glyph` hoặc `image_ref` theo `BR-E000-02` ở [`engines/GT-000.md`](../01-platform/engines/GT-000.md)) |
+| `text` | `string?` | Mặt chữ của từ khi `kind = 'word'` |
+| `value` | `number?` | Giá trị lượng số đi kèm chất liệu toán (nếu có) |
+| `syllables` | `string[]?` | Tuỳ chọn, 1–6 phần tử. Tách âm tiết/tiếng để runner đọc chậm từng tiếng (`BR-CIR-16`) và tô sáng tuần tự hộp âm vần tiếng Việt |
+| `image_ref` | `{ kind, ref \| path \| text }?` | Tham chiếu hình minh hoạ chuẩn theo `assetSchema()`; emoji phải nằm trong [`emoji-registry.md`](../01-platform/emoji-registry.md) — `BR-CIM-12` |
+| `representation` | `{ kind, count, max? }?` | Tuỳ chọn: bậc biểu diễn lượng CPA theo [`numeracy-representation-ladder.md`](numeracy-representation-ladder.md) (`BR-NRL-01` — bậc biểu diễn số học). `kind` thuộc `discrete-object \| finger \| number-rod \| dot-pattern \| ten-frame \| rekenrek \| tally \| number-line \| numeral`; `count` nguyên `0..20` |
 
-### 7.3 Năm hành động — workflow chung
+### 7.3 Năm hành động — workflow chung và bảng trực quan `scene_board`
 
 | `action` | Trẻ làm gì | Field riêng | Sai được không |
 |---|---|---|---|
-| `present` | Nghe và nhìn một chất liệu, chạm để đi tiếp | — | Không có đáp án để sai |
-| `echo` | Nghe mẫu rồi **nói theo thành tiếng**, chạm để đi tiếp | `repeat_count` — 1–3, mặc định 1 | Không có đáp án để sai. Máy Cấm — **NEVER** nghe — `BR-CIM-10`. Lời mời "nói theo" là tuỳ theo bài (`difficulty_params.speak_along`, `BR-E000-11` ở `engines/GT-000.md`) — step vẫn luôn tồn tại trong content bất kể cờ này |
-| `recognise` | Chạm đúng chất liệu trong 2–4 lựa chọn | `distractor_asset_ids[]` — cùng `contrast_group` (`BR-CIM-05`) | Sai thì nhắc lại `present` của chính target rồi hỏi lại |
-| `link` | Ghép hai chất liệu khác loại: ký tự ↔ hình, từ ↔ hình | `source_asset_id` | Như `recognise` |
-| `recall` | Nghe tên, chạm tên đúng | `option_asset_ids[]` — 2–4 mã chất liệu | Sai vẫn đi tiếp; kết quả là tín hiệu, không phải cửa |
+| `present` | Nghe và nhìn chất liệu trên trang Sách Giấy Dó, chạm vào giáo cụ để nghe lại / chạm khám phá đếm một–một, bấm nút Tiếp tục để đi tiếp | `interaction_hint?` (`"tap_to_explore" \| "tap_to_count" \| "tap_to_split"`), `scene_board?` | Không có đáp án để sai |
+| `echo` | Nghe mẫu rồi **nói theo thành tiếng**, chạm nút để đi tiếp | `repeat_count` — 1–3, mặc định 1; `scene_board?` | Không có đáp án để sai. Máy Cấm — **NEVER** nghe — `BR-CIM-10`. Lời mời "nói theo" là tuỳ theo bài (`difficulty_params.speak_along`, `BR-E000-11` ở `engines/GT-000.md`) — step vẫn luôn tồn tại trong content bất kể cờ này |
+| `recognise` | Chạm đúng chất liệu trong 2–4 lựa chọn | `distractor_asset_ids[]` — cùng `contrast_group` (`BR-CIM-05`); `scene_board?` | Sai thì nhắc lại `present` của chính target rồi hỏi lại |
+| `link` | Ghép hai chất liệu liên quan: ký tự–hình, từ–hình, lượng–số, nguyên nhân–kết quả | `source_asset_id`; `scene_board?` | Như `recognise` |
+| `recall` | Nghe câu hỏi gợi nhớ cuối phân đoạn, chạm phương án đúng | `option_asset_ids[]` — 2–4 mã chất liệu; `scene_board?` | Sai vẫn đi tiếp; kết quả là tín hiệu, không phải cửa |
 
-Mọi step dùng chung hai field: `action` và `target_asset_id`. Tên trường ở đây là tên **trong
-mã nguồn** `template.ts`, không phải tên rút gọn — corpus và spec dùng chung một bộ tên thì
-không có chỗ cho drift.
+Mọi step dùng chung hai field bắt buộc `action` và `target_asset_id`, cộng field tuỳ chọn
+`scene_board` (`BR-E000-17` ở [`engines/GT-000.md`](../01-platform/engines/GT-000.md)). Khi
+`scene_board` vắng mặt, runtime tự hiểu là `{ mode: "single_card" }` thông qua hàm đọc dự phòng
+tường minh (không phụ thuộc `.default()` của Zod vì runtime nhận dữ liệu thô). Tên trường ở đây là
+tên **trong mã nguồn** `template.ts` và `scene-board-schema.ts`, không phải tên rút gọn — corpus
+và spec dùng chung một bộ tên thì không có chỗ cho drift.
+
+#### 7.3a Chín chế độ bảng trực quan sư phạm (`scene_board`)
+
+`scene_board` là discriminated union theo khoá `mode` gồm đúng **chín chế độ đóng** để tải trọn sáu
+miền `C1`–`C6` mà không thêm `action` thứ sáu hay nhồi đạo cụ tĩnh vào `assets[]`:
+
+| `mode` | Miền sư phạm mục tiêu | Các trường cấu hình chính |
+|---|---|---|
+| `single_card` | Mặc định tương thích ngược cho mọi bài hiện hữu | Không có trường phụ |
+| `cpa_bridge` | `C1.CNT`, `C1.NREC` — nối Vật thật sang Mô hình lượng và Chữ số | `count` (`0..20`), `rep_kind` (`discrete-object \| finger \| number-rod \| dot-pattern \| ten-frame \| rekenrek \| tally \| number-line`), `concrete_glyph?`, `interactive_count?` (`boolean`, bật chạm đếm một–một phát nốt ngũ cung) |
+| `part_whole` | `C1.NCOMP`, `C1.ADD`, `C1.SUB`, `C1.PROB` — Tách–Gộp–Bớt–Chia đều | `whole_count`, `part_a_count`, `part_b_count`, `item_glyph`, `operation` (`split \| combine \| take_away \| equal_share`) |
+| `spatial_stage` | `C2.ORI/DIR/SOL/MIR/ROT`, `C1.CMP/MEAS` — Quan hệ vị trí, hình khối và đo lường trên vật mốc | `anchor_prop` (`wood_table \| bamboo_box \| sedge_fence \| balance_scale \| measure_baseline \| mirror_axis \| slope_ramp`), `relation` (`on \| under \| inside \| outside \| left_of \| right_of \| in_front \| behind \| between \| taller_than \| longer_than \| heavier_than \| mirror_x \| rotate_90 \| rolls_vs_stands`) |
+| `sequence_strip` | `C1.PAT`, `C1.ORD`, `C3.SEQ/RULE`, `C5.STO` — Dãy quy luật và trình tự | `strip_asset_ids[]` (`3..6` mã chất liệu), `focus_slot_index` (`0..5`), `rhythm_labels[]?` (nhịp đồng dao đi kèm) |
+| `sorting_baskets` | `C3.CLS`, `C3.SET`, `C4` phân loại — Hai rổ tiêu chí mang huy hiệu hình học phi-màu | `baskets[]` (độ dài `2`): mỗi rổ gồm `{ basket_id, label, shape_badge: "circle" \| "square" \| "triangle" \| "diamond", sample_asset_ids[] }` |
+| `cause_effect` | `C4.CAU`, `C4.EXP`, `C3.INF/DED` — Biến đổi Trước -> Tác động -> Sau | `before_asset_id`, `trigger_glyph?`, `after_asset_id` |
+| `word_phonics_box` | `C5.PHO`, `C5.TON`, `C5.RIM`, `C5.LET`, `C5.WRD` — Hình neo nghĩa ghép khay âm–vần–thanh điệu tiếng Việt | `meaning_asset_id?` (hình neo nghĩa), `parts[]` (`1..6` tiếng/bộ phận vần sáng tuần tự), `tone_mark?` (`ngang \| huyen \| sac \| hoi \| nga \| nang`) |
+| `rule_memory_stage` | `C6.WM`, `C6.INH`, `C6.FLX` — Ú oà trí nhớ làm việc và Tín hiệu luật điều hành | `variant` (`peekaboo_cover \| rule_signal`), `rule_badge_glyph?`, `rule_label?` (dùng token ấm, Cấm — **NEVER** dùng màu `danger`) |
 
 Lời dẫn của một step lấy theo thứ tự: `narration_line` (với `present`) hoặc `prompt_line`
 (với ba hành động còn lại) nếu người soạn khai riêng; không khai thì lấy mẫu câu tương ứng

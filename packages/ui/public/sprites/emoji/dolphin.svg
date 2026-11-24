@@ -1,51 +1,12 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Cá heo</title>
   <defs>
-    <radialGradient cx="38%" cy="30%" id="dolphBlue" r="72%">
-      <stop offset="0%" stop-color="#bae6fd" />
-      <stop offset="50%" stop-color="#38bdf8" />
-      <stop offset="100%" stop-color="#0284c7" />
-    </radialGradient>
+    <linearGradient id="dlpBlue" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#bae6fd" /><stop offset="100%" stop-color="#0284c7" /></linearGradient>
   </defs>
-  <ellipse cx="60" cy="102" fill="#1e3a8a" opacity="0.22" rx="36" ry="6" />
-  <path
-    d="M55 34C61 17 76 18 74 36Z"
-    fill="url(#dolphBlue)"
-    stroke="#1e3a8a"
-    stroke-linejoin="round"
-    stroke-width="3.8"
-  />
-  <path
-    d="M16 64C12 60 19 54 25 53C31 35 51 26 72 31C92 36 102 54 96 78L109 86L95 92L88 104L82 86C82 69 72 58 56 58C43 58 34 65 25 67C19 68 18 66 16 64Z"
-    fill="url(#dolphBlue)"
-    stroke="#1e3a8a"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <path d="M27 64C38 56 56 53 73 62C61 57 44 59 31 65Z" fill="#f0f9ff" />
-  <path
-    d="M49 58L39 74L57 66Z"
-    fill="#38bdf8"
-    stroke="#1e3a8a"
-    stroke-linejoin="round"
-    stroke-width="3.6"
-  />
-  <circle cx="36" cy="49" fill="#1c1917" r="4.3" />
-  <circle cx="34.7" cy="47.5" fill="#ffffff" r="1.7" />
-  <circle cx="42" cy="56" fill="#fb7185" fill-opacity="0.48" r="4" />
-  <path
-    d="M20 61C24 63 28 62 31 59"
-    stroke="#1e3a8a"
-    stroke-linecap="round"
-    stroke-width="2.6"
-  />
-  <ellipse
-    cx="55"
-    cy="39"
-    fill="#ffffff"
-    fill-opacity="0.55"
-    rx="9"
-    ry="3.2"
-    transform="rotate(-10 55 39)"
-  />
+  <ellipse cx="60" cy="103" fill="#0c4a6e" opacity="0.22" rx="38" ry="5" />
+    <!-- Arcing bottlenose dolphin with rostrum, dorsal fin, flipper & flukes -->
+    <path d="M14 62C18 57 25 56 29 53C38 35 58 28 76 34L82 21C86 26 86 34 84 40C95 48 102 62 98 78L110 84L96 87L89 97L88 83C84 66 72 56 56 56C44 56 35 61 27 66C20 68 14 66 14 62Z" fill="url(#dlpBlue)" stroke="#0c4a6e" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M26 64C38 56 58 53 76 62C64 59 44 60 26 64Z" fill="#f0f9ff" />
+    <path d="M48 56L41 72L55 62Z" fill="#38bdf8" stroke="#0c4a6e" stroke-linejoin="round" stroke-width="3" />
+    <circle cx="33" cy="50" fill="#1c1917" r="2.5" /><circle cx="32.3" cy="49.3" fill="#ffffff" r="0.9" />
 </svg>

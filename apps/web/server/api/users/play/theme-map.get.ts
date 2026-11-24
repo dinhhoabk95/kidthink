@@ -1,26 +1,22 @@
-import { getOwnerDb } from "@mindkid/db";
-import { getChildThemeMap } from "#server/services/index.js";
-import { requireOwnedActiveChild } from "#server/utils/active-child-runtime";
+import { NoActiveChildError } from "@mindkid/errors/child";
+import { deleteCookie, getCookie } from "h3";
+import { getChildThemeMapExperience } from "#server/services/play-experience-service";
 import { defineApiRoute } from "#server/utils/define-api-route";
 
-/**
- * Bản đồ chủ đề tuần cho trẻ tự học — `child-theme-map.md`, `BR-WTM-01..08`.
- */
 export default defineApiRoute({
   auth: "user",
   async handler({ event, auth }) {
-    const db = getOwnerDb();
-    const child = await requireOwnedActiveChild(
-      event,
-      db,
-      Number(auth.user_id)
-    );
-
-    return await getChildThemeMap(db, {
-      childId: child.id,
-      childUuid: child.uuid,
-      displayName: child.displayName,
-      birthYear: child.birthYear,
-    });
+    const candidateUuid = getCookie(event, "active_child_id");
+    try {
+      return await getChildThemeMapExperience(
+        Number(auth.user_id),
+        candidateUuid
+      );
+    } catch (err) {
+      if (err instanceof NoActiveChildError && candidateUuid) {
+        deleteCookie(event, "active_child_id", { path: "/" });
+      }
+      throw err;
+    }
   },
 });

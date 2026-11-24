@@ -1,61 +1,21 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Con ếch</title>
   <defs>
-    <radialGradient cx="38%" cy="35%" id="frogBody" r="68%">
-      <stop offset="0%" stop-color="#bbf7d0" />
-      <stop offset="48%" stop-color="#4ade80" />
-      <stop offset="100%" stop-color="#16a34a" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="frgSkin" r="70%"><stop offset="0%" stop-color="#bef264" /><stop offset="55%" stop-color="#4ade80" /><stop offset="100%" stop-color="#16a34a" /></radialGradient>
   </defs>
-  <!-- 2.5D base shadow -->
-  <ellipse cx="60" cy="76" fill="#14532d" opacity="0.32" rx="42" ry="29" />
-  <!-- Main head -->
-  <ellipse
-    cx="60"
-    cy="71"
-    fill="url(#frogBody)"
-    rx="42"
-    ry="29"
-    stroke="#14532d"
-    stroke-width="4"
-  />
-  <!-- Pale cream belly/chin -->
-  <ellipse cx="60" cy="83" fill="#ecfdf5" opacity="0.88" rx="28" ry="13" />
-  <!-- Pop-up eyes -->
-  <circle
-    cx="40"
-    cy="40"
-    fill="url(#frogBody)"
-    r="14"
-    stroke="#14532d"
-    stroke-width="4"
-  />
-  <circle
-    cx="80"
-    cy="40"
-    fill="url(#frogBody)"
-    r="14"
-    stroke="#14532d"
-    stroke-width="4"
-  />
-  <circle cx="40" cy="40" fill="#ffffff" r="8.5" />
-  <circle cx="80" cy="40" fill="#ffffff" r="8.5" />
-  <circle cx="40" cy="40" fill="#1c1917" r="5" />
-  <circle cx="38.5" cy="38" fill="#ffffff" r="2" />
-  <circle cx="80" cy="40" fill="#1c1917" r="5" />
-  <circle cx="78.5" cy="38" fill="#ffffff" r="2" />
-  <!-- Cheeks -->
-  <circle cx="31" cy="70" fill="#fb7185" fill-opacity="0.45" r="5.5" />
-  <circle cx="89" cy="70" fill="#fb7185" fill-opacity="0.45" r="5.5" />
-  <!-- Nostrils & wide smile -->
-  <circle cx="54" cy="60" fill="#14532d" r="2" />
-  <circle cx="66" cy="60" fill="#14532d" r="2" />
-  <path
-    d="M42 71C50 81 70 81 78 71"
-    stroke="#14532d"
-    stroke-linecap="round"
-    stroke-width="3.5"
-  />
-  <!-- Specular -->
-  <ellipse cx="52" cy="52" fill="#ffffff" fill-opacity="0.48" rx="7" ry="3" />
+  <ellipse cx="60" cy="104" fill="#14532d" opacity="0.22" rx="38" ry="5.5" />
+    <!-- Folded muscular hind legs & webbed toes -->
+    <path d="M38 74C22 72 16 86 27 96L18 99H40L44 88ZM82 74C98 72 104 86 93 96L102 99H80L76 88Z" fill="#22c55e" stroke="#14532d" stroke-linejoin="round" stroke-width="3.6" />
+    <!-- Crouching amphibian body & golden vocal belly -->
+    <ellipse cx="60" cy="70" fill="url(#frgSkin)" rx="26" ry="22" stroke="#14532d" stroke-width="3.8" />
+    <ellipse cx="60" cy="76" fill="#fef9c3" rx="17" ry="13" />
+    <!-- Forelegs -->
+    <path d="M46 82L41 99M74 82L79 99" stroke="#14532d" stroke-linecap="round" stroke-width="5" />
+    <!-- Raised golden eyes -->
+    <circle cx="45" cy="46" fill="#4ade80" r="9.5" stroke="#14532d" stroke-width="3.6" />
+    <circle cx="75" cy="46" fill="#4ade80" r="9.5" stroke="#14532d" stroke-width="3.6" />
+    <circle cx="45" cy="46" fill="#fef08a" r="5.5" />
+    <circle cx="75" cy="46" fill="#fef08a" r="5.5" />
+    <circle cx="45" cy="46" fill="#1c1917" r="3" /><circle cx="44.2" cy="45.1" fill="#ffffff" r="1.1" /><circle cx="75" cy="46" fill="#1c1917" r="3" /><circle cx="74.2" cy="45.1" fill="#ffffff" r="1.1" />
+    <path d="M46 62C54 67 66 67 74 62" stroke="#14532d" stroke-linecap="round" stroke-width="2.8" />
 </svg>

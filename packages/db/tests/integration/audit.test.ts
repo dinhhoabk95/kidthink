@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "#src/index";
+import { ACTOR_TYPE, getOwnerDb } from "#src/index";
 import { auditLogs } from "#src/schema/ops";
 
 describe("Task 1 — Migration audit_logs (D-ET)", () => {
@@ -9,7 +9,7 @@ describe("Task 1 — Migration audit_logs (D-ET)", () => {
     const [log] = await db
       .insert(auditLogs)
       .values({
-        actorType: "system",
+        actorType: ACTOR_TYPE.SYSTEM,
         actorId: null,
         action: "user_suspended",
         entityType: "user",

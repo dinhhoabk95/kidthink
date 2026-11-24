@@ -1,14 +1,17 @@
 import {
   defineEventHandler,
   getRequestHeader,
-  getRequestIP,
   getRouterParam,
   readBody,
 } from "h3";
 import { z } from "zod";
 import { completeChildPersonalCurriculumItem } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import {
+  getVerifiedRemoteIp,
+  requireWebUserSession,
+} from "#server/utils/auth-runtime";
+import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
 const completeItemSchema = z.object({
   personal_curriculum_item_id: z.number().int().positive(),
@@ -20,18 +23,19 @@ export default defineEventHandler(async (event) => {
   const childUuid = getRouterParam(event, "uuid") || "";
 
   const eventBody =
-    (event.context as { body?: Record<string, unknown> })?.body ||
-    (event as { _body?: Record<string, unknown> })._body;
+    Reflect.get(event.context, "body") || Reflect.get(event, "_body");
   const body = eventBody || (await readBody(event)) || {};
   const parsed = completeItemSchema.safeParse(body);
   if (!parsed.success) {
     throwValidationError(parsed.error);
   }
 
+  const entitlements = await resolveUserActiveEntitlements(userId);
   const result = await completeChildPersonalCurriculumItem(
     {
       userId,
-      ip: getRequestIP(event),
+      entitlements,
+      ip: getVerifiedRemoteIp(event),
       userAgent: getRequestHeader(event, "user-agent"),
     },
     childUuid,

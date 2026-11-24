@@ -72,12 +72,19 @@ export const COMPLIMENTS = [
   "Bé làm được rồi!",
   "Tuyệt vời!",
   "Bé thật chăm chỉ!",
+  "Khéo tay quá nha!",
+  "Mắt tinh quá ta!",
+  "Hay quá bé ơi!",
+  "Hoan hô bé ngoan!",
 ] as const;
 
 export const RETRY_ENCOURAGEMENTS = [
   "Thử lại nhé!",
   "Gần đúng rồi!",
   "Bé thử chỗ khác xem?",
+  "Chậm rãi thử lại nha!",
+  "Bình tĩnh nhìn kỹ nhé!",
+  "Cố lên nào bé ơi!",
 ] as const;
 
 /**
@@ -90,6 +97,9 @@ export const RETRY_ENCOURAGEMENT_AUDIO = [
   "/audio/voice/common/feedback/retry-thu-lai-nhe.mp3",
   "/audio/voice/common/feedback/retry-gan-dung-roi.mp3",
   "/audio/voice/common/feedback/retry-be-thu-cho-khac.mp3",
+  "/audio/voice/common/feedback/retry-cham-rai-thu-lai-nha.mp3",
+  "/audio/voice/common/feedback/retry-binh-tinh-nhin-ky-nhe.mp3",
+  "/audio/voice/common/feedback/retry-co-len-nao-be-oi.mp3",
 ] as const;
 
 export interface RetryEncouragementClip {

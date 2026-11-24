@@ -1,102 +1,131 @@
 export interface ThemeSubjectNoun {
   readonly pluralNoun: string;
   readonly contextLabel: string;
+  readonly vnChildhoodSetting?: string;
 }
 
 export const THEME_SUBJECT_NOUNS: Readonly<Record<string, ThemeSubjectNoun>> = {
   farm: {
     pluralNoun: "con vật nông trại",
     contextLabel: "Nông trại",
+    vnChildhoodSetting: "Sân rơm nông trại",
   },
   food: {
     pluralNoun: "các loại quả",
     contextLabel: "Hoa quả",
+    vnChildhoodSetting: "Vườn quả quê em",
   },
   vehicle: {
     pluralNoun: "phương tiện giao thông",
     contextLabel: "Giao thông",
+    vnChildhoodSetting: "Chuyến tàu tuổi thơ",
   },
   school: {
     pluralNoun: "đồ dùng học tập",
     contextLabel: "Trường học",
+    vnChildhoodSetting: "Lớp mầm non tre xanh",
   },
   home: {
     pluralNoun: "đồ dùng gia đình",
     contextLabel: "Gia đình",
+    vnChildhoodSetting: "Góc bếp ấm áp",
   },
   family: {
     pluralNoun: "đồ dùng gia đình",
     contextLabel: "Gia đình",
+    vnChildhoodSetting: "Mái ấm sum vầy",
   },
   animal: {
     pluralNoun: "các loài động vật",
     contextLabel: "Động vật",
+    vnChildhoodSetting: "Bạn nhỏ quanh vườn",
   },
   ocean: {
     pluralNoun: "sinh vật biển",
     contextLabel: "Đại dương",
+    vnChildhoodSetting: "Biển xanh rì rào",
   },
   nature: {
     pluralNoun: "hoa lá thiên nhiên",
     contextLabel: "Thiên nhiên",
+    vnChildhoodSetting: "Khu vườn bốn mùa",
   },
   garden: {
     pluralNoun: "côn trùng và hoa lá",
     contextLabel: "Vườn cây",
+    vnChildhoodSetting: "Vườn hoa nắng sớm",
   },
   market: {
     pluralNoun: "hàng hóa đi chợ",
     contextLabel: "Đi chợ",
+    vnChildhoodSetting: "Phiên chợ quê vui",
   },
   body: {
     pluralNoun: "bộ phận cơ thể",
     contextLabel: "Bản thân",
+    vnChildhoodSetting: "Đôi bàn tay xinh",
   },
   weather: {
     pluralNoun: "hiện tượng thời tiết",
     contextLabel: "Thời tiết & Mùa",
+    vnChildhoodSetting: "Nắng ấm mưa rào",
   },
   festival: {
     pluralNoun: "đồ vật lễ hội",
     contextLabel: "Lễ hội & Tết",
+    vnChildhoodSetting: "Đêm hội trăng rằm",
   },
   job: {
     pluralNoun: "dụng cụ nghề nghiệp",
     contextLabel: "Nghề nghiệp",
+    vnChildhoodSetting: "Góc nghề quanh bé",
   },
   homeland: {
     pluralNoun: "hình ảnh quê hương",
     contextLabel: "Quê hương",
+    vnChildhoodSetting: "Cánh diều quê hương",
   },
   art: {
     pluralNoun: "sắc màu nghệ thuật",
     contextLabel: "Nghệ thuật",
+    vnChildhoodSetting: "Góc khéo tay hay làm",
   },
   fairytale: {
     pluralNoun: "nhân vật cổ tích",
     contextLabel: "Thế giới cổ tích",
+    vnChildhoodSetting: "Vườn cổ tích Việt",
   },
   space: {
     pluralNoun: "hành tinh vũ trụ",
     contextLabel: "Vũ trụ",
+    vnChildhoodSetting: "Bầu trời đêm sao",
   },
   sport: {
     pluralNoun: "dụng cụ thể thao",
     contextLabel: "Thể thao",
+    vnChildhoodSetting: "Sân chơi vận động",
   },
   music: {
     pluralNoun: "nhạc cụ và âm thanh",
     contextLabel: "Âm nhạc",
+    vnChildhoodSetting: "Nhịp trống đồng dao",
   },
   railway: {
     pluralNoun: "toa tàu và đường ray",
     contextLabel: "Đường ray",
+    vnChildhoodSetting: "Đoàn tàu xình xịch",
   },
   town: {
     pluralNoun: "công trình phố xá",
     contextLabel: "Phố xá",
+    vnChildhoodSetting: "Phố phường nhộn nhịp",
   },
 };
+
+export function resolveThemeChildhoodSetting(themeCode: string): string {
+  const info = THEME_SUBJECT_NOUNS[themeCode];
+  return info?.vnChildhoodSetting ?? info?.contextLabel ?? "Góc chơi của bé";
+}
 
 const SIMPLE_COMPARISON_SKILLS = new Set<string>([
   "Lớn hơn",

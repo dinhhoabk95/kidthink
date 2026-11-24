@@ -1,4 +1,3 @@
-import { spawn } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -6,9 +5,12 @@ import { pipeline } from "node:stream/promises";
 import { createGzip } from "node:zlib";
 import { requireEnv } from "@mindkid/config";
 import { BACKUP_DIR, backupFilename } from "@mindkid/config/backup";
-import { backupLog, getOwnerDb } from "@mindkid/db";
+import { DB } from "@mindkid/db";
 import { alert } from "@mindkid/queue";
-import { eq } from "drizzle-orm";
+import {
+  createLocalBackupLog,
+  updateLocalBackupLog,
+} from "#src/backup/backup-log-store";
 import { uploadBackup } from "#src/backup/offsite";
 import { selectExpired } from "#src/backup/retention";
 import { logJobDone } from "#src/log";
@@ -18,6 +20,8 @@ import type { Consumer } from "./types.js";
 export const RETENTION_DAYS_POSTGRES = 30;
 
 const ENCRYPTION_KEY_BYTES = 32;
+
+export type SqliteSnapshotCreator = (snapshotPath: string) => Promise<void>;
 
 function sha256File(filePath: string): Promise<string> {
   // The hash of the file exactly as it sits on disk — IV, ciphertext and auth
@@ -32,20 +36,21 @@ function sha256File(filePath: string): Promise<string> {
   });
 }
 
+async function createSqliteVacuumSnapshot(snapshotPath: string): Promise<void> {
+  const rawDb = DB.getSqliteDriver().getRawDatabase();
+  rawDb.prepare("VACUUM INTO ?").run(snapshotPath);
+  await Promise.resolve();
+}
+
 async function writeEncryptedDump(
   storagePath: string,
-  encryptionKey: string
+  encryptionKey: string,
+  createSnapshot: SqliteSnapshotCreator
 ): Promise<void> {
-  const dbUrl = requireEnv("DATABASE_URL");
-  const dumpProcess = spawn("pg_dump", [dbUrl], {
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-
-  let stderr = "";
-  dumpProcess.stderr.on("data", (data) => {
-    stderr += data.toString();
-  });
-
+  const snapshotPath = path.join(
+    path.dirname(storagePath),
+    `.snapshot-${crypto.randomUUID()}.sqlite`
+  );
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv(
     "aes-256-gcm",
@@ -53,30 +58,23 @@ async function writeEncryptedDump(
     iv
   );
 
-  const outStream = fs.createWriteStream(storagePath);
-  outStream.write(iv);
+  try {
+    await createSnapshot(snapshotPath);
 
-  const dumpPromise = new Promise<void>((resolve, reject) => {
-    dumpProcess.on("close", (code) => {
-      if (code === 0) {
-        resolve();
-        return;
-      }
-      // The message names the binary because the most common cause on a fresh
-      // host is that it is not installed at all.
-      reject(new Error(`pg_dump failed: ${stderr}`));
-    });
-    dumpProcess.on("error", (error) =>
-      reject(new Error(`pg_dump could not start: ${error.message}`))
+    const outStream = fs.createWriteStream(storagePath);
+    outStream.write(iv);
+
+    await pipeline(
+      fs.createReadStream(snapshotPath),
+      createGzip(),
+      cipher,
+      outStream
     );
-  });
 
-  await Promise.all([
-    pipeline(dumpProcess.stdout, createGzip(), cipher, outStream),
-    dumpPromise,
-  ]);
-
-  fs.appendFileSync(storagePath, cipher.getAuthTag());
+    fs.appendFileSync(storagePath, cipher.getAuthTag());
+  } finally {
+    fs.rmSync(snapshotPath, { force: true });
+  }
 }
 
 /** Local pruning only. Bucket-side expiry is the bucket's lifecycle policy. */
@@ -89,13 +87,14 @@ function pruneLocalDumps(directory: string): number {
 }
 
 /**
- * Seams for the tests, not for configuration: the directory and the uploader
- * are injected rather than read from the environment, so no deployment can
- * accidentally point production dumps somewhere else.
+ * Seams for the tests, not for configuration: the directory, snapshotter, and
+ * uploader are injected rather than read from the environment, so no deployment
+ * can accidentally point production dumps somewhere else.
  */
 export interface BackupOptions {
   directory?: string;
   upload?: typeof uploadBackup;
+  createSnapshot?: SqliteSnapshotCreator;
 }
 
 export async function runPostgresBackup(
@@ -104,6 +103,7 @@ export async function runPostgresBackup(
 ) {
   const directory = options.directory ?? BACKUP_DIR;
   const upload = options.upload ?? uploadBackup;
+  const createSnapshot = options.createSnapshot ?? createSqliteVacuumSnapshot;
   const encryptionKey = requireEnv("BACKUP_ENCRYPTION_KEY");
   if (encryptionKey.length !== ENCRYPTION_KEY_BYTES) {
     throw new Error(
@@ -111,20 +111,11 @@ export async function runPostgresBackup(
     );
   }
 
-  const [log] = await getOwnerDb()
-    .insert(backupLog)
-    .values({
-      // Enum `backup_type` chỉ có dump|verify|drill — "database" không tồn tại
-      // nên INSERT sẽ vỡ ngay ở Postgres.
-      backupType: "dump",
-      status: "started",
-      startedAt: new Date(),
-    })
-    .returning();
-
-  if (!log) {
-    throw new Error("Failed to create backup log");
-  }
+  const log = createLocalBackupLog(directory, {
+    backupType: "dump",
+    status: "started",
+    startedAt: new Date(),
+  });
 
   const startedAt = new Date();
   const filename = backupFilename(startedAt);
@@ -135,7 +126,7 @@ export async function runPostgresBackup(
   const storagePath = path.join(directory, filename);
 
   try {
-    await writeEncryptedDump(storagePath, encryptionKey);
+    await writeEncryptedDump(storagePath, encryptionKey, createSnapshot);
 
     const checksum = await sha256File(storagePath);
     const { size } = fs.statSync(storagePath);
@@ -150,16 +141,13 @@ export async function runPostgresBackup(
       now: startedAt,
     });
 
-    await getOwnerDb()
-      .update(backupLog)
-      .set({
-        status: "success",
-        sizeBytes: size,
-        storagePath: uploaded.key,
-        checksum,
-        finishedAt: new Date(),
-      })
-      .where(eq(backupLog.id, log.id));
+    updateLocalBackupLog(directory, log.id, {
+      status: "success",
+      sizeBytes: size,
+      storagePath: uploaded.key,
+      checksum,
+      finishedAt: new Date(),
+    });
 
     pruneLocalDumps(directory);
   } catch (error) {
@@ -169,21 +157,18 @@ export async function runPostgresBackup(
       "$1[REDACTED]@"
     );
 
-    await getOwnerDb()
-      .update(backupLog)
-      .set({
-        status: "failed",
-        errorMessage: message,
-        finishedAt: new Date(),
-      })
-      .where(eq(backupLog.id, log.id));
+    updateLocalBackupLog(directory, log.id, {
+      status: "failed",
+      errorMessage: message,
+      finishedAt: new Date(),
+    });
 
     // BR-BAK-04: a backup that failed and said nothing is how v1 ended up with
     // an empty backup_log nobody questioned. The local file is deliberately
     // left in place — if only the upload failed, it is still a usable dump.
     await alert(
       "critical",
-      "PostgreSQL backup failed",
+      "SQLite backup failed",
       { filename, reason: message },
       "https://docs.tinimath.vn/runbooks/backup-failed"
     );

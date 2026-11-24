@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi ván trượt tuyết</title>
+  <defs>
+    <linearGradient id="skiBlue" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#38bdf8" /><stop offset="100%" stop-color="#1d4ed8" /></linearGradient>
+  </defs>
+  <rect fill="url(#skiBlue)" height="92" rx="7" stroke="#1e3a8a" stroke-width="3.6" transform="rotate(-18 50 60)" width="14" x="43" y="14" />
+    <rect fill="#ef4444" height="92" rx="7" stroke="#7f1d1d" stroke-width="3.6" transform="rotate(18 70 60)" width="14" x="63" y="14" />
+    <path d="M24 28L96 92M96 28L24 92" stroke="#334155" stroke-linecap="round" stroke-width="3.4" />
+</svg>

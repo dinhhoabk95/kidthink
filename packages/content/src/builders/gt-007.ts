@@ -7,6 +7,7 @@ import type {
 } from "@mindkid/shared";
 import {
   createRng,
+  pickAgeBandPrompt,
   resolveItemAsset,
   safeGetItem,
   shuffleDeterministic,
@@ -85,9 +86,19 @@ export const projectGT007: Projection<"GT-007"> = {
       repValue = "discrete-object";
     }
 
+    const prompt = pickAgeBandPrompt(
+      opts.band,
+      {
+        mam: `Có ${wholeVal} vật, chia ${part1Val} thì giỏ kia mấy nhỉ?`,
+        choi: `Đố bé ${wholeVal} vật tách làm ${part1Val} với mấy nhỉ?`,
+        la: `Từ ${wholeVal} tách ra ${part1Val}, phần còn lại là mấy?`,
+      },
+      `Đố bé ${wholeVal} tách làm ${part1Val} với mấy nhỉ?`
+    );
+
     return {
       content_pack: {
-        prompt: `Số ${wholeVal} tách thành ${part1Val} và mấy nhé?`,
+        prompt,
         whole: {
           id: "whole_1",
           value: wholeVal,

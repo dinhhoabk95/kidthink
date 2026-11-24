@@ -158,11 +158,18 @@
         </button>
       </div>
     </form>
+
+    <ParentGateModal
+      trigger="activate_child"
+      v-if="pendingActivationChildUuid"
+      @cancel="handleActivationGateCancel"
+      @verified="handleActivationGateVerified"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { normalizeApiError } from "@mindkid/errors/client";
+  import { isApiError, normalizeApiError } from "@mindkid/errors/client";
   import {
     deriveAgeBand,
     sanitizeRedirectTarget,
@@ -172,6 +179,7 @@
   import { useRoute, useRouter } from "vue-router";
 
   import { definePageMeta } from "#imports";
+  import ParentGateModal from "~/components/parent-gate-modal.vue";
   import { useApi } from "~/composables/use-api";
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
   import { AVATAR_PRESETS } from "~/utils/child-avatar";
@@ -210,6 +218,7 @@
   const relationship = ref<RelationshipKind>("child");
   const isSaving = ref(false);
   const errorMessage = ref<string | null>(null);
+  const pendingActivationChildUuid = ref<string | null>(null);
 
   const derivedAgeBand = computed((): string =>
     deriveAgeBand(birthYear.value, currentYear)
@@ -231,6 +240,43 @@
       return false;
     }
     return ACTIVE_CHILD_COOKIE_REGEX.test(document.cookie);
+  }
+
+  async function activateCreatedChild(
+    childUuid: string,
+    gateToken?: string
+  ): Promise<void> {
+    await api(`/api/users/children/${childUuid}/activate`, {
+      method: "POST",
+      headers: csrfHeaders(),
+      credentials: "include",
+      body: gateToken ? { gate_token: gateToken } : {},
+    });
+  }
+
+  async function handleActivationGateVerified(gateToken: string): Promise<void> {
+    const childUuid = pendingActivationChildUuid.value;
+    pendingActivationChildUuid.value = null;
+    if (!childUuid) {
+      return;
+    }
+    isSaving.value = true;
+    errorMessage.value = null;
+    try {
+      await activateCreatedChild(childUuid, gateToken);
+      await router.push(destination.value);
+    } catch (err) {
+      errorMessage.value =
+        normalizeApiError(err).message ||
+        "Chưa kích hoạt được hồ sơ bé. Vui lòng thử lại.";
+    } finally {
+      isSaving.value = false;
+    }
+  }
+
+  async function handleActivationGateCancel(): Promise<void> {
+    pendingActivationChildUuid.value = null;
+    await router.push(destination.value);
   }
 
   async function submit(): Promise<void> {
@@ -255,12 +301,15 @@
       });
 
       if (!hasActiveChildCookie()) {
-        await api(`/api/users/children/${created.uuid}/activate`, {
-          method: "POST",
-          headers: csrfHeaders(),
-          credentials: "include",
-          body: {},
-        });
+        try {
+          await activateCreatedChild(created.uuid);
+        } catch (activateErr) {
+          if (isApiError(activateErr, "PARENT_GATE_REQUIRED")) {
+            pendingActivationChildUuid.value = created.uuid;
+            return;
+          }
+          throw activateErr;
+        }
       }
 
       await router.push(destination.value);

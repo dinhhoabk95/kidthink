@@ -3,15 +3,19 @@ import { type GameSession, TemplateGameSession } from "@mindkid/game-engine";
 /**
  * Lời dẫn mà shell phải vẽ ở `zones.prompt`, hoặc `undefined` khi shell không vẽ.
  *
- * Chỉ session khai `usesPromptZone` mới được shell vẽ lời dẫn (`BR-PSZ-08..10`,
- * Task #283 N0). Engine chưa dời tự vẽ `drawPromptText`; shell vẽ thêm là lời
- * dẫn hiện hai lần.
+ * Chỉ session khai `usesPromptZone` mới được shell vẽ lời dẫn (`BR-PSZ-08..10`).
+ * Ưu tiên `getView().activePrompt` để session dạy theo từng bước (`GT-000`)
+ * hiển thị đúng câu dẫn động của bước hiện tại thay vì kẹt ở `content.prompt` tĩnh.
  */
 export function resolveZonePromptText(
   session: GameSession | null | undefined
 ): string | undefined {
   if (!(session instanceof TemplateGameSession && session.usesPromptZone)) {
     return undefined;
+  }
+  const activePrompt = session.getView?.().activePrompt;
+  if (typeof activePrompt === "string" && activePrompt.length > 0) {
+    return activePrompt;
   }
   const content = session.content;
   if (typeof content === "object" && content !== null && "prompt" in content) {
@@ -20,5 +24,5 @@ export function resolveZonePromptText(
       return prompt;
     }
   }
-  return session.getView?.().activePrompt || undefined;
+  return undefined;
 }

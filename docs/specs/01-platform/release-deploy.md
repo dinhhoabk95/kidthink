@@ -48,7 +48,9 @@ dev **không có phương tiện** để đi lên.
 | `pnpm deploy init --host <tên> --remote <url>` | Người vận hành | Dựng máy trắng: người dùng hệ thống, cây thư mục, bản sao kho |
 | `pnpm deploy --host <tên> --ref <tham chiếu>` | Người vận hành | Thẻ hoặc mã commit                                   |
 | `pnpm deploy --host <tên> --dry-run`          | Người vận hành | In kế hoạch, không đổi gì trên máy chủ               |
-| `mindkid.sh release --ref <tham chiếu>`       |                | Nội dung thật, chạy trên máy chủ tại `/opt/mindkid/bin/` |
+| `mindkid.sh release --ref <tham chiếu>`       |                | Nội dung thật cho đích `vps`, chạy trên máy chủ tại `/opt/mindkid/bin/` |
+| `.github/workflows/deploy-cloudflare.yml`     | GitHub Actions | Pipeline tự động Giai đoạn 1 (`cloudflare`): `pnpm check` → `test` → `verify-cf-budget` → `terraform apply` → D1 migration + Hash-Gated Seed → `wrangler deploy` → smoke `/api/guest/health` |
+| `pnpm cutover:cf-to-vps`                      | Người vận hành | Quy trình 6 bước di trú dữ liệu D1/Blobs sang PostgreSQL 18 + Garage S3 trên VPS và chuyển mạch Terraform `backend_mode=vps` ở mốc `1.000 DAU` |
 | `/var/log/mindkid/deploy.log`                 | Người vận hành | Bản ghi mọi lần chạy                                 |
 
 ## 4. Main flow

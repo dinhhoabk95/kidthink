@@ -3,6 +3,8 @@ import type { EmojiEntry } from "#src/types";
 export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   {
     emoji: "😀",
+    slug: "big-grin-face",
+    svg_path: "/sprites/emoji/big-grin-face.svg",
     name: "Mặt cười",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -11,6 +13,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😃",
+    slug: "open-smile-face",
+    svg_path: "/sprites/emoji/open-smile-face.svg",
     name: "Cười tươi",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -19,6 +23,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😄",
+    slug: "happy-grin",
+    svg_path: "/sprites/emoji/happy-grin.svg",
     name: "Cười mắt híp",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -27,6 +33,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😁",
+    slug: "beaming-smile",
+    svg_path: "/sprites/emoji/beaming-smile.svg",
     name: "Cười toe",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -35,6 +43,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😆",
+    slug: "squint-laugh-face",
+    svg_path: "/sprites/emoji/squint-laugh-face.svg",
     name: "Cười nghiêng",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -43,6 +53,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😂",
+    slug: "joy-tears-face",
+    svg_path: "/sprites/emoji/joy-tears-face.svg",
     name: "Cười chảy nước mắt",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -51,6 +63,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤣",
+    slug: "rolling-laugh-face",
+    svg_path: "/sprites/emoji/rolling-laugh-face.svg",
     name: "Cười lăn",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -59,6 +73,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😊",
+    slug: "warm-smile",
+    svg_path: "/sprites/emoji/warm-smile.svg",
     name: "Cười dịu dàng",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -67,6 +83,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😇",
+    slug: "halo-smile-face",
+    svg_path: "/sprites/emoji/halo-smile-face.svg",
     name: "Thiên thần",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -75,6 +93,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥰",
+    slug: "loving-hearts-face",
+    svg_path: "/sprites/emoji/loving-hearts-face.svg",
     name: "Yêu thương",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than", "gia_dinh"],
@@ -83,6 +103,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😍",
+    slug: "heart-eyes-face",
+    svg_path: "/sprites/emoji/heart-eyes-face.svg",
     name: "Mắt trái tim",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -91,6 +113,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤩",
+    slug: "star-eyes-face",
+    svg_path: "/sprites/emoji/star-eyes-face.svg",
     name: "Ngạc nhiên thích",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -99,6 +123,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😘",
+    slug: "blowing-kiss-face",
+    svg_path: "/sprites/emoji/blowing-kiss-face.svg",
     name: "Hôn",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than", "gia_dinh"],
@@ -107,6 +133,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😋",
+    slug: "yummy-face",
+    svg_path: "/sprites/emoji/yummy-face.svg",
     name: "Ngon",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than", "dinh_duong_suc_khoe"],
@@ -115,6 +143,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😜",
+    slug: "playful-wink-face",
+    svg_path: "/sprites/emoji/playful-wink-face.svg",
     name: "Nháy mắt lè lưỡi",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -123,6 +153,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤔",
+    slug: "thinking-face",
+    svg_path: "/sprites/emoji/thinking-face.svg",
     name: "Suy nghĩ",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -131,6 +163,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤗",
+    slug: "hugging-hands-face",
+    svg_path: "/sprites/emoji/hugging-hands-face.svg",
     name: "Ôm",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than", "gia_dinh"],
@@ -139,6 +173,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😢",
+    slug: "single-tear-face",
+    svg_path: "/sprites/emoji/single-tear-face.svg",
     name: "Khóc",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -147,6 +183,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😭",
+    slug: "big-cry-face",
+    svg_path: "/sprites/emoji/big-cry-face.svg",
     name: "Khóc lớn",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -155,6 +193,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😤",
+    slug: "puff-steam-face",
+    svg_path: "/sprites/emoji/puff-steam-face.svg",
     name: "Giận",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -163,6 +203,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😡",
+    slug: "pouting-face",
+    svg_path: "/sprites/emoji/pouting-face.svg",
     name: "Giận dữ",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -171,6 +213,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😱",
+    slug: "shocked-face",
+    svg_path: "/sprites/emoji/shocked-face.svg",
     name: "Sợ hãi",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -179,6 +223,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😰",
+    slug: "worried-sweat-face",
+    svg_path: "/sprites/emoji/worried-sweat-face.svg",
     name: "Lo lắng",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -187,6 +233,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😴",
+    slug: "sleeping-face",
+    svg_path: "/sprites/emoji/sleeping-face.svg",
     name: "Ngủ",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -195,6 +243,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤒",
+    slug: "thermometer-face",
+    svg_path: "/sprites/emoji/thermometer-face.svg",
     name: "Ốm",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than", "dinh_duong_suc_khoe"],
@@ -203,6 +253,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥳",
+    slug: "party-hat-face",
+    svg_path: "/sprites/emoji/party-hat-face.svg",
     name: "Ăn mừng",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -211,6 +263,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😎",
+    slug: "cool-shades-face",
+    svg_path: "/sprites/emoji/cool-shades-face.svg",
     name: "Cool",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -219,6 +273,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥺",
+    slug: "puppy-eyes-face",
+    svg_path: "/sprites/emoji/puppy-eyes-face.svg",
     name: "Van xin",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -227,6 +283,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤭",
+    slug: "giggle-hand-face",
+    svg_path: "/sprites/emoji/giggle-hand-face.svg",
     name: "Che miệng",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -235,6 +293,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😲",
+    slug: "surprised-face",
+    svg_path: "/sprites/emoji/surprised-face.svg",
     name: "Ngạc nhiên",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -243,6 +303,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥱",
+    slug: "sleepy-yawn-face",
+    svg_path: "/sprites/emoji/sleepy-yawn-face.svg",
     name: "Ngáp",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -251,6 +313,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😷",
+    slug: "face-mask-kid",
+    svg_path: "/sprites/emoji/face-mask-kid.svg",
     name: "Đeo khẩu trang",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than", "dinh_duong_suc_khoe"],
@@ -259,6 +323,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤢",
+    slug: "queasy-face",
+    svg_path: "/sprites/emoji/queasy-face.svg",
     name: "Buồn nôn",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than", "dinh_duong_suc_khoe"],
@@ -267,6 +333,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤕",
+    slug: "bandaged-head-face",
+    svg_path: "/sprites/emoji/bandaged-head-face.svg",
     name: "Bị thương",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than", "dinh_duong_suc_khoe"],
@@ -275,6 +343,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥶",
+    slug: "chilly-cold-face",
+    svg_path: "/sprites/emoji/chilly-cold-face.svg",
     name: "Lạnh",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than", "thoi_tiet_mua"],
@@ -283,6 +353,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥵",
+    slug: "sunny-hot-face",
+    svg_path: "/sprites/emoji/sunny-hot-face.svg",
     name: "Nóng",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than", "thoi_tiet_mua"],
@@ -291,6 +363,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😶",
+    slug: "quiet-no-mouth",
+    svg_path: "/sprites/emoji/quiet-no-mouth.svg",
     name: "Im lặng",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -299,6 +373,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫣",
+    slug: "peeking-face",
+    svg_path: "/sprites/emoji/peeking-face.svg",
     name: "Nhìn lén",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -307,6 +383,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😵",
+    slug: "swirly-dizzy-face",
+    svg_path: "/sprites/emoji/swirly-dizzy-face.svg",
     name: "Chóng mặt",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -315,6 +393,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤓",
+    slug: "glasses-studious-face",
+    svg_path: "/sprites/emoji/glasses-studious-face.svg",
     name: "Học giỏi",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than", "truong_mam_non"],
@@ -323,6 +403,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😌",
+    slug: "peaceful-smile-face",
+    svg_path: "/sprites/emoji/peaceful-smile-face.svg",
     name: "Thư giãn",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -331,6 +413,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😪",
+    slug: "sleepy-drop-face",
+    svg_path: "/sprites/emoji/sleepy-drop-face.svg",
     name: "Buồn ngủ",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -339,6 +423,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤤",
+    slug: "hungry-drool-face",
+    svg_path: "/sprites/emoji/hungry-drool-face.svg",
     name: "Chảy nước miếng",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than", "dinh_duong_suc_khoe"],
@@ -347,6 +433,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😝",
+    slug: "silly-tongue-face",
+    svg_path: "/sprites/emoji/silly-tongue-face.svg",
     name: "Lè lưỡi nhắm mắt",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -355,6 +443,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "😏",
+    slug: "clever-smirk-face",
+    svg_path: "/sprites/emoji/clever-smirk-face.svg",
     name: "Ranh mãnh",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -363,6 +453,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫡",
+    slug: "polite-salute-face",
+    svg_path: "/sprites/emoji/polite-salute-face.svg",
     name: "Chào kiểu lính",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -371,6 +463,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤑",
+    slug: "coin-smile-face",
+    svg_path: "/sprites/emoji/coin-smile-face.svg",
     name: "Mắt tiền",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -379,6 +473,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥴",
+    slug: "wobbly-face",
+    svg_path: "/sprites/emoji/wobbly-face.svg",
     name: "Say xỉn",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -387,6 +483,8 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫠",
+    slug: "melting-smile-face",
+    svg_path: "/sprites/emoji/melting-smile-face.svg",
     name: "Tan chảy",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],
@@ -394,15 +492,9 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
     age_min: 4,
   },
   {
-    emoji: "💖",
-    name: "Trái tim lấp lánh",
-    categories: ["shape-color", "face-emotion"],
-    curriculum_themes: ["gia_dinh"],
-    keywords: ["sparkling heart", "heart", "trái tim", "tim", "yêu thương"],
-    age_min: 3,
-  },
-  {
     emoji: "💭",
+    slug: "thought-cloud",
+    svg_path: "/sprites/emoji/thought-cloud.svg",
     name: "Bong bóng suy nghĩ",
     categories: ["face-emotion"],
     curriculum_themes: ["ban_than"],

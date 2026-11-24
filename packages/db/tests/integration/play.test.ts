@@ -1,10 +1,18 @@
 import { eq, sql } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { assertPlaySessionInvariants, getOwnerDb } from "#src/index";
+import {
+  ACCESS_TIER,
+  assertPlaySessionInvariants,
+  DB,
+  getOwnerDb,
+  PLAY_COMPLETION_STATUS,
+} from "#src/index";
 import { childProfiles } from "#src/schema/child";
 import { gameLevels } from "#src/schema/game";
 import { users } from "#src/schema/identity";
 import { playSessions, telemetryEvents } from "#src/schema/play";
+
+const SQL_CHECK_REGEX = /\bCHECK\s*\(/i;
 
 describe("Play Schema Integration Tests", () => {
   it("BR-SPT-03: duplicate (session_uuid, seq) in telemetry_events is rejected by composite PK", async () => {
@@ -29,16 +37,18 @@ describe("Play Schema Integration Tests", () => {
     ).rejects.toThrow();
   });
 
-  it("BR-SPT-06 & BR-DM-14: play_sessions enforces child_profile_id OR guest_device_id via domain validator with zero DB CHECK constraints", async () => {
-    const db = getOwnerDb();
-    const checkRows = await db.execute<{ constraint_name: string }>(sql`
-      SELECT constraint_name
-      FROM information_schema.table_constraints
-      WHERE table_schema = 'public'
-        AND constraint_type = 'CHECK'
-        AND constraint_name NOT LIKE '%_not_null'
-    `);
-    expect(Array.from(checkRows)).toEqual([]);
+  it("BR-SPT-06 & BR-DM-14: play_sessions enforces child_profile_id OR guest_device_id via domain validator with zero DB CHECK constraints", () => {
+    getOwnerDb();
+    const rawDb = DB.getSqliteDriver().getRawDatabase();
+    const tableRows = rawDb
+      .prepare(
+        "SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';"
+      )
+      .all() as Array<{ name: string; sql: string | null }>;
+    const tablesWithCheck = tableRows
+      .filter((row) => row.sql !== null && SQL_CHECK_REGEX.test(row.sql))
+      .map((row) => row.name);
+    expect(tablesWithCheck).toEqual([]);
 
     expect(() =>
       assertPlaySessionInvariants({
@@ -102,7 +112,7 @@ describe("Play Schema Integration Tests", () => {
         title: "Level Play Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .onConflictDoNothing()
       .returning();
@@ -127,7 +137,7 @@ describe("Play Schema Integration Tests", () => {
         childProfileId: child.id,
         gameLevelId: gl.id,
         templateCode: gtCode,
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       })
       .returning();
     if (!ps) {
@@ -146,7 +156,7 @@ describe("Play Schema Integration Tests", () => {
     // 5. Complete session
     await db
       .update(playSessions)
-      .set({ completionStatus: "completed" })
+      .set({ completionStatus: PLAY_COMPLETION_STATUS.COMPLETED })
       .where(eq(playSessions.id, ps.id));
 
     // 6. UPDATE after completed -> REJECTED by trigger BR-SPT-07
@@ -161,17 +171,14 @@ describe("Play Schema Integration Tests", () => {
     );
   });
 
-  it("BR-CDC-05 & §7.3: telemetry_events columns match allow-list strictly", async () => {
-    const db = getOwnerDb();
+  it("BR-CDC-05 & §7.3: telemetry_events columns match allow-list strictly", () => {
+    getOwnerDb();
+    const rawDb = DB.getSqliteDriver().getRawDatabase();
+    const cols = rawDb
+      .prepare("PRAGMA table_info('telemetry_events');")
+      .all() as Array<{ name: string }>;
 
-    const cols = await db.execute<{ column_name: string }>(sql`
-      SELECT column_name, data_type 
-      FROM information_schema.columns 
-      WHERE table_name = 'telemetry_events'
-      ORDER BY ordinal_position
-    `);
-
-    const colNames = Array.from(cols).map((r) => String(r.column_name));
+    const colNames = cols.map((r) => r.name);
 
     // Bất biến: bảng telemetry_events CẤM chứa PII hoặc foreign key
     expect(colNames).not.toContain("child_id");
@@ -199,7 +206,7 @@ describe("Play Schema Integration Tests", () => {
     });
 
     const [before] = await db
-      .select({ count: sql<number>`count(*)::int` })
+      .select({ count: sql<number>`COUNT(*)` })
       .from(telemetryEvents)
       .where(eq(telemetryEvents.sessionUuid, sessionUuid));
 
@@ -219,19 +226,22 @@ describe("Play Schema Integration Tests", () => {
     expect(after?.childUuid).toBeNull();
   });
 
-  it("D-Z: schema has no foreign key pointing to telemetry_events table", async () => {
-    const db = getOwnerDb();
-
-    const result = await db.execute<{ constraint_name: string }>(sql`
-      SELECT constraint_name 
-      FROM information_schema.referential_constraints 
-      WHERE constraint_schema = 'public'
-    `);
+  it("D-Z: schema has no foreign key pointing to telemetry_events table", () => {
+    getOwnerDb();
+    const rawDb = DB.getSqliteDriver().getRawDatabase();
+    const tables = rawDb
+      .prepare(
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';"
+      )
+      .all() as Array<{ name: string }>;
 
     // Verify telemetry_events is not target of any FK constraint
-    const fkNames = Array.from(result).map((r) => String(r.constraint_name));
-    for (const fk of fkNames) {
-      expect(fk).not.toContain("telemetry_events");
-    }
+    const fkTargets = tables.flatMap((t) => {
+      const fks = rawDb
+        .prepare(`PRAGMA foreign_key_list("${t.name}");`)
+        .all() as Array<{ table: string }>;
+      return fks.map((fk) => fk.table);
+    });
+    expect(fkTargets).not.toContain("telemetry_events");
   });
 });

@@ -3,8 +3,10 @@ import type { EmojiEntry } from "#src/types";
 export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   {
     emoji: "🎋",
+    slug: "bamboo-branch",
+    svg_path: "/sprites/emoji/bamboo-branch.svg",
     name: "Tre",
-    categories: ["festival", "flower-tree"],
+    categories: ["festival", "flower-tree", "vn-culture"],
     curriculum_themes: ["que_huong_dat_nuoc", "thuc_vat"],
     keywords: [
       "tanabata tree",
@@ -20,6 +22,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🎄",
+    slug: "christmas-tree",
+    svg_path: "/sprites/emoji/christmas-tree.svg",
     name: "Cây Noel",
     categories: ["festival", "flower-tree"],
     curriculum_themes: ["que_huong_dat_nuoc", "thuc_vat"],
@@ -30,13 +34,16 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
       "cây thông",
       "cây Noel",
       "thông",
+      "cây noel",
     ],
     age_min: 3,
   },
   {
     emoji: "🎍",
+    slug: "new-year-bamboo",
+    svg_path: "/sprites/emoji/new-year-bamboo.svg",
     name: "Tre chúc tết",
-    categories: ["festival", "flower-tree"],
+    categories: ["festival", "flower-tree", "vn-culture"],
     curriculum_themes: ["que_huong_dat_nuoc", "thuc_vat"],
     keywords: [
       "pine decoration",
@@ -45,11 +52,15 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
       "tre",
       "bamboo",
       "chúc mừng",
+      "tre chúc tết",
     ],
     age_min: 3,
   },
   {
     emoji: "🌸",
+    slug: "cherry-blossom",
+    svg_path: "/sprites/emoji/cherry-blossom.svg",
+    hero_webp_path: "/sprites/hero/cherry-blossom.webp",
     name: "Hoa anh đào",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat", "thoi_tiet_mua"],
@@ -58,6 +69,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌹",
+    slug: "rose",
+    svg_path: "/sprites/emoji/rose.svg",
     name: "Hoa hồng",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
@@ -66,6 +79,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌺",
+    slug: "hibiscus",
+    svg_path: "/sprites/emoji/hibiscus.svg",
     name: "Hoa dâm bụt",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
@@ -74,6 +89,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌻",
+    slug: "sunflower",
+    svg_path: "/sprites/emoji/sunflower.svg",
     name: "Hoa hướng dương",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
@@ -82,6 +99,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌼",
+    slug: "daisy-blossom",
+    svg_path: "/sprites/emoji/daisy-blossom.svg",
     name: "Hoa cúc",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
@@ -90,6 +109,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌷",
+    slug: "tulip",
+    svg_path: "/sprites/emoji/tulip.svg",
     name: "Hoa tulip",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
@@ -98,8 +119,10 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌿",
+    slug: "herb",
+    svg_path: "/sprites/emoji/herb.svg",
     name: "Lá xanh",
-    categories: ["flower-tree", "nature-landscape"],
+    categories: ["flower-tree", "nature-landscape", "animal-prehistoric"],
     curriculum_themes: ["thuc_vat", "nuoc_hien_tuong_tu_nhien"],
     keywords: [
       "herb",
@@ -116,6 +139,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍀",
+    slug: "four-leaf-clover",
+    svg_path: "/sprites/emoji/four-leaf-clover.svg",
     name: "Cỏ bốn lá",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
@@ -124,6 +149,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍁",
+    slug: "maple-leaf",
+    svg_path: "/sprites/emoji/maple-leaf.svg",
     name: "Lá phong",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat", "thoi_tiet_mua"],
@@ -132,6 +159,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍂",
+    slug: "fallen-leaf",
+    svg_path: "/sprites/emoji/fallen-leaf.svg",
     name: "Lá rụng",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat", "thoi_tiet_mua"],
@@ -140,6 +169,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍃",
+    slug: "fluttering-leaf",
+    svg_path: "/sprites/emoji/fluttering-leaf.svg",
     name: "Lá bay",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat", "thoi_tiet_mua"],
@@ -148,6 +179,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌲",
+    slug: "pine-tree",
+    svg_path: "/sprites/emoji/pine-tree.svg",
     name: "Cây thông",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
@@ -156,6 +189,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌳",
+    slug: "tree",
+    svg_path: "/sprites/emoji/tree.svg",
     name: "Cây xanh",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
@@ -164,6 +199,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌴",
+    slug: "palm-tree",
+    svg_path: "/sprites/emoji/palm-tree.svg",
     name: "Cây dừa",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat", "que_huong_dat_nuoc"],
@@ -172,6 +209,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌵",
+    slug: "cactus",
+    svg_path: "/sprites/emoji/cactus.svg",
     name: "Xương rồng",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
@@ -180,8 +219,10 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌾",
+    slug: "rice-sheaf",
+    svg_path: "/sprites/emoji/rice-sheaf.svg",
     name: "Lúa",
-    categories: ["flower-tree", "nature-landscape"],
+    categories: ["flower-tree", "nature-landscape", "vn-culture"],
     curriculum_themes: [
       "thuc_vat",
       "que_huong_dat_nuoc",
@@ -202,6 +243,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌱",
+    slug: "seedling",
+    svg_path: "/sprites/emoji/seedling.svg",
     name: "Mầm cây",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
@@ -210,6 +253,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "💐",
+    slug: "flower-bouquet",
+    svg_path: "/sprites/emoji/flower-bouquet.svg",
     name: "Bó hoa",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
@@ -218,14 +263,19 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🪷",
+    slug: "lotus",
+    svg_path: "/sprites/emoji/lotus.svg",
+    hero_webp_path: "/sprites/hero/lotus.webp",
     name: "Hoa sen",
-    categories: ["flower-tree"],
+    categories: ["flower-tree", "vn-culture"],
     curriculum_themes: ["thuc_vat", "que_huong_dat_nuoc"],
     keywords: ["lotus", "hoa sen", "sen", "Việt Nam"],
     age_min: 3,
   },
   {
     emoji: "🏵️",
+    slug: "flower-rosette",
+    svg_path: "/sprites/emoji/flower-rosette.svg",
     name: "Hoa huân chương",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
@@ -234,6 +284,8 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "☘️",
+    slug: "three-leaf-clover",
+    svg_path: "/sprites/emoji/three-leaf-clover.svg",
     name: "Cỏ ba lá",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
@@ -242,10 +294,38 @@ export const FLOWER_TREE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🪻",
+    slug: "lavender-sprig",
+    svg_path: "/sprites/emoji/lavender-sprig.svg",
     name: "Hoa oải hương",
     categories: ["flower-tree"],
     curriculum_themes: ["thuc_vat"],
     keywords: ["hyacinth", "lavender", "oải hương", "tím"],
     age_min: 4,
+  },
+  {
+    emoji: "🥀",
+    slug: "wilted-rose",
+    svg_path: "/sprites/emoji/wilted-rose.svg",
+    name: "Hoa hồng rũ cánh",
+    categories: ["flower-tree"],
+    curriculum_themes: ["thuc_vat", "thoi_tiet_mua"],
+    keywords: [
+      "wilted flower",
+      "drooping rose",
+      "hoa héo",
+      "hoa rụng cánh",
+      "cần tưới nước",
+    ],
+    age_min: 4,
+  },
+  {
+    emoji: "🪵",
+    slug: "wood-log",
+    svg_path: "/sprites/emoji/wood-log.svg",
+    name: "Khúc gỗ tự nhiên",
+    categories: ["flower-tree", "nature-landscape", "tool"],
+    curriculum_themes: ["thuc_vat", "nuoc_hien_tuong_tu_nhien"],
+    keywords: ["wood", "log", "timber", "khúc gỗ", "thân gỗ", "vân gỗ"],
+    age_min: 3,
   },
 ];

@@ -246,5 +246,20 @@ export const C1_MEAS_15_SEED: SkillSeed = {
       theme: "art",
       rounds: 3,
     },
+    {
+      code: "GL-C1-MEAS-INTRO-6015",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 2,
+      theme: "family",
+    },
+    {
+      code: "GL-C1-MEAS-TAP-6016",
+      template: "GT-001",
+      band: "4-5",
+      difficulty: 2,
+      theme: "weather",
+      rounds: 3,
+    },
   ],
 };

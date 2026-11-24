@@ -1,79 +1,19 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Khỉ đột lớn</title>
   <defs>
-    <radialGradient cx="38%" cy="28%" id="ggCoat" r="70%">
-      <stop offset="0%" stop-color="#78716c" />
-      <stop offset="55%" stop-color="#44403c" />
-      <stop offset="100%" stop-color="#292524" />
-    </radialGradient>
-    <linearGradient id="ggChest" x1="0%" x2="0%" y1="0%" y2="100%">
-      <stop offset="0%" stop-color="#d6d3d1" />
-      <stop offset="100%" stop-color="#a8a29e" />
-    </linearGradient>
+    <radialGradient cx="38%" cy="30%" id="gorCoat" r="70%"><stop offset="0%" stop-color="#78716c" /><stop offset="55%" stop-color="#44403c" /><stop offset="100%" stop-color="#292524" /></radialGradient>
   </defs>
-  <ellipse cx="60" cy="104" fill="#1c1917" opacity="0.26" rx="42" ry="6" />
-  <path
-    d="M22 92C20 66 36 52 60 52C84 52 100 66 98 92C88 100 32 100 22 92Z"
-    fill="url(#ggCoat)"
-    stroke="#1c1917"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <ellipse
-    cx="60"
-    cy="80"
-    fill="url(#ggChest)"
-    rx="20"
-    ry="15"
-    stroke="#292524"
-    stroke-width="3.6"
-  />
-  <circle
-    cx="36"
-    cy="40"
-    fill="#44403c"
-    r="8"
-    stroke="#1c1917"
-    stroke-width="3.8"
-  />
-  <circle
-    cx="84"
-    cy="40"
-    fill="#44403c"
-    r="8"
-    stroke="#1c1917"
-    stroke-width="3.8"
-  />
-  <path
-    d="M38 40C38 22 48 16 60 16C72 16 82 22 82 40C82 56 72 64 60 64C48 64 38 56 38 40Z"
-    fill="url(#ggCoat)"
-    stroke="#1c1917"
-    stroke-width="4"
-  />
-  <ellipse
-    cx="60"
-    cy="46"
-    fill="#a8a29e"
-    rx="16"
-    ry="13"
-    stroke="#292524"
-    stroke-width="3.4"
-  />
-  <path
-    d="M46 36C52 33 68 33 74 36"
-    stroke="#1c1917"
-    stroke-linecap="round"
-    stroke-width="3.8"
-  />
-  <circle cx="52" cy="41" fill="#1c1917" r="2.6" />
-  <circle cx="68" cy="41" fill="#1c1917" r="2.6" />
-  <circle cx="51.2" cy="40.2" fill="#ffffff" r="1" />
-  <circle cx="67.2" cy="40.2" fill="#ffffff" r="1" />
-  <ellipse cx="60" cy="48" fill="#44403c" rx="6" ry="3.5" />
-  <path
-    d="M53 54C57 57 63 57 67 54"
-    stroke="#292524"
-    stroke-linecap="round"
-    stroke-width="2.6"
-  />
+  <ellipse cx="60" cy="106" fill="#1c1917" opacity="0.22" rx="44" ry="6" />
+    <!-- Knuckle-walking silverback posture -->
+    <path d="M58 68L54 99H66L69 72ZM82 62L80 99H92L95 66Z" fill="#292524" stroke="#1c1917" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M32 42C44 34 72 36 88 50C97 58 98 72 88 80C74 84 52 82 40 72Z" fill="url(#gorCoat)" stroke="#1c1917" stroke-linejoin="round" stroke-width="4" />
+    <!-- Silverback saddle -->
+    <path d="M54 40C68 40 82 46 87 56C76 62 60 60 50 52Z" fill="#d6d3d1" opacity="0.72" />
+    <!-- Powerful forelimb knuckle-walking -->
+    <path d="M36 56L26 102H39L47 64Z" fill="url(#gorCoat)" stroke="#1c1917" stroke-linejoin="round" stroke-width="3.8" />
+    <!-- Sagittal crest head -->
+    <path d="M31 20C41 20 47 29 46 42C45 53 37 58 27 58C18 58 14 50 15 39C16 27 22 20 31 20Z" fill="url(#gorCoat)" stroke="#1c1917" stroke-linejoin="round" stroke-width="3.8" />
+    <ellipse cx="26" cy="45" fill="#78716c" rx="9" ry="7.5" stroke="#1c1917" stroke-width="3" />
+    <path d="M19 36H34" stroke="#1c1917" stroke-linecap="round" stroke-width="3.8" />
+    <circle cx="24" cy="39" fill="#1c1917" r="2.2" /><circle cx="23.4" cy="38.3" fill="#ffffff" r="0.9" /><circle cx="32" cy="39" fill="#1c1917" r="2.2" /><circle cx="31.4" cy="38.3" fill="#ffffff" r="0.9" />
 </svg>

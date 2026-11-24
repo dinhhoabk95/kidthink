@@ -147,11 +147,116 @@
         </form>
       </div>
     </div>
+
+    <!-- STEP-UP REAUTH MODAL FOR PASSKEY MUTATIONS -->
+    <div
+      aria-labelledby="passkey-reauth-modal-title"
+      aria-modal="true"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-950/50"
+      data-testid="passkey-reauth-modal"
+      role="dialog"
+      v-if="reauthModal.isOpen"
+    >
+      <div
+        class="bg-white rounded-3xl border-4 border-surface-300 p-6 max-w-md w-full space-y-4 shadow-2xl"
+      >
+        <div
+          class="flex items-center justify-between border-b border-surface-100 pb-3"
+        >
+          <h3
+            class="text-lg font-bold font-heading text-surface-900"
+            id="passkey-reauth-modal-title"
+          >
+            Xác thực lại để cập nhật Passkey
+          </h3>
+          <button
+            aria-label="Đóng hộp thoại xác thực"
+            class="text-surface-400 hover:text-surface-600 min-h-11 min-w-11 flex items-center justify-center rounded-xl"
+            type="button"
+            @click="closePasskeyReauthModal"
+          >
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
+          </button>
+        </div>
+
+        <p class="text-sm text-surface-600">
+          Vui lòng xác thực lại mật khẩu (và mã TOTP nếu tài khoản đang bật xác
+          thực hai lớp) để tiếp tục thao tác Passkey.
+        </p>
+
+        <form class="space-y-4" @submit.prevent="submitPasskeyReauth">
+          <div>
+            <label
+              class="block text-sm font-bold text-surface-700 mb-1"
+              for="passkeyReauthPassword"
+            >
+              Mật khẩu hiện tại *
+            </label>
+            <input
+              autocomplete="current-password"
+              class="w-full min-h-11 px-4 py-2.5 rounded-2xl border-2 border-surface-300 focus:border-brand-600 focus:outline-none text-base text-surface-900"
+              data-testid="passkey-reauth-password-input"
+              id="passkeyReauthPassword"
+              required
+              type="password"
+              v-model="reauthModal.password"
+            >
+          </div>
+
+          <div>
+            <label
+              class="block text-sm font-bold text-surface-700 mb-1"
+              for="passkeyReauthTotp"
+            >
+              Mã xác thực hai lớp (TOTP — bắt buộc nếu đã bật MFA)
+            </label>
+            <input
+              autocomplete="one-time-code"
+              class="w-full min-h-11 px-4 py-2.5 rounded-2xl border-2 border-surface-300 focus:border-brand-600 focus:outline-none text-base font-mono tracking-widest text-surface-900"
+              data-testid="passkey-reauth-totp-input"
+              id="passkeyReauthTotp"
+              inputmode="numeric"
+              maxlength="6"
+              placeholder="123456"
+              type="text"
+              v-model.trim="reauthModal.totp"
+            >
+          </div>
+
+          <p
+            class="rounded-xl border border-amber-200 bg-amber-50 p-3 font-medium text-amber-900 text-sm"
+            v-if="reauthModal.error"
+          >
+            {{ reauthModal.error }}
+          </p>
+
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              class="min-h-11 px-4 py-2 rounded-2xl border-2 border-surface-200 text-sm font-bold text-surface-600 hover:bg-surface-50"
+              type="button"
+              @click="closePasskeyReauthModal"
+            >
+              Huỷ
+            </button>
+            <button
+              class="min-h-11 px-5 py-2 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-bold font-heading"
+              data-testid="confirm-passkey-reauth-btn"
+              type="submit"
+              :disabled="!reauthModal.password.trim() || isSubmitting"
+            >
+              {{ isSubmitting ? "Đang xác thực..." : "Xác nhận & Tiếp tục" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { ref } from "vue";
+  import { normalizeApiError } from "@mindkid/errors/client";
+  import { reactive, ref } from "vue";
+  import { useApi } from "~/composables/use-api";
   import { useUserAuthClient } from "~/composables/use-auth-client";
 
   export interface PasskeyListItem {
@@ -172,11 +277,45 @@
     success: [message: string];
   }>();
 
+  const api = useApi();
   const authClient = useUserAuthClient();
   const isAddModalOpen = ref(false);
   const passkeyName = ref("");
   const isSubmitting = ref(false);
   const deletingId = ref<string | null>(null);
+
+  const reauthModal = reactive<{
+    isOpen: boolean;
+    password: string;
+    totp: string;
+    error: string;
+    pendingAction:
+      | { readonly type: "add"; readonly name: string }
+      | { readonly type: "delete"; readonly id: string }
+      | null;
+  }>({
+    isOpen: false,
+    password: "",
+    totp: "",
+    error: "",
+    pendingAction: null,
+  });
+
+  function isReauthErrorPayload(
+    err: { code?: string; status?: number } | null | undefined
+  ): boolean {
+    return Boolean(
+      err && (err.code === "REAUTH_REQUIRED" || err.status === 428)
+    );
+  }
+
+  function closePasskeyReauthModal(): void {
+    reauthModal.isOpen = false;
+    reauthModal.password = "";
+    reauthModal.totp = "";
+    reauthModal.error = "";
+    reauthModal.pendingAction = null;
+  }
 
   function formatDate(iso: string): string {
     try {
@@ -207,17 +346,20 @@
     isAddModalOpen.value = true;
   }
 
-  async function handleCreatePasskey(): Promise<void> {
-    if (!passkeyName.value) {
-      return;
-    }
+  async function executeAddPasskey(name: string): Promise<void> {
     isSubmitting.value = true;
     emit("error", "");
     try {
-      const res = await authClient.passkey.addPasskey({
-        name: passkeyName.value,
-      });
+      const res = await authClient.passkey.addPasskey({ name });
       if (res.error) {
+        if (isReauthErrorPayload(res.error)) {
+          reauthModal.password = "";
+          reauthModal.totp = "";
+          reauthModal.error = "";
+          reauthModal.pendingAction = { type: "add", name };
+          reauthModal.isOpen = true;
+          return;
+        }
         emit(
           "error",
           res.error.message ||
@@ -238,12 +380,27 @@
     }
   }
 
+  async function handleCreatePasskey(): Promise<void> {
+    if (!passkeyName.value) {
+      return;
+    }
+    await executeAddPasskey(passkeyName.value);
+  }
+
   async function handleDeletePasskey(id: string): Promise<void> {
     deletingId.value = id;
     emit("error", "");
     try {
       const res = await authClient.passkey.deletePasskey({ id });
       if (res.error) {
+        if (isReauthErrorPayload(res.error)) {
+          reauthModal.password = "";
+          reauthModal.totp = "";
+          reauthModal.error = "";
+          reauthModal.pendingAction = { type: "delete", id };
+          reauthModal.isOpen = true;
+          return;
+        }
         emit("error", res.error.message || "Không thể xoá Passkey này.");
         return;
       }
@@ -253,6 +410,36 @@
       emit("error", "Không thể xoá Passkey lúc này.");
     } finally {
       deletingId.value = null;
+    }
+  }
+
+  async function submitPasskeyReauth(): Promise<void> {
+    if (!(reauthModal.password.trim() && reauthModal.pendingAction)) {
+      return;
+    }
+    isSubmitting.value = true;
+    reauthModal.error = "";
+    const pending = reauthModal.pendingAction;
+    try {
+      const trimmedTotp = reauthModal.totp.trim();
+      await api("/api/users/auth/reauth", {
+        method: "POST",
+        body: trimmedTotp
+          ? { password: reauthModal.password, totp: trimmedTotp }
+          : { password: reauthModal.password },
+      });
+      closePasskeyReauthModal();
+      if (pending.type === "add") {
+        await executeAddPasskey(pending.name);
+      } else {
+        await handleDeletePasskey(pending.id);
+      }
+    } catch (err) {
+      reauthModal.error =
+        normalizeApiError(err).message ||
+        "Xác thực lại thất bại. Vui lòng kiểm tra mật khẩu hoặc mã TOTP.";
+    } finally {
+      isSubmitting.value = false;
     }
   }
 </script>

@@ -1,590 +1,43 @@
 import {
-  ADVANCED_REPORT_THRESHOLDS,
-  determineTrendDirection,
-  masteryLabel,
-  type SectionStatus,
-  type TrendDirection,
-  trendDirectionDescription,
-} from "@mindkid/adaptive";
-import {
-  childProfiles,
-  competencies,
-  contentSkillMap,
-  gameLevels,
-  getOwnerDb,
-  masteryState,
-  playSessions,
-  skillPrerequisites,
-  skills,
-  strands,
+  CONTENT_ENTITY_TYPE,
+  type CompetencyEntity,
+  type ContentSkillMapEntity,
+  type GameLevelEntity,
+  type MasteryStateEntity,
+  type PlaySessionEntity,
+  type SkillEntity,
+  type SkillPrerequisiteEntity,
+  type StrandEntity,
 } from "@mindkid/db";
-import { and, asc, eq, gte } from "drizzle-orm";
+import {
+  type AdvancedReportResult,
+  type AggregatedTaxonomyData,
+  buildCompetencyItems,
+  buildIndependenceSection,
+  buildReadyForNextSection,
+  buildReinforcementSection,
+  buildSkillItems,
+  buildStrandItems,
+  buildWeeklyTrend,
+  type SkillActionSuggestionRecord,
+  type VersionChangeMarker,
+} from "#server/services/advanced-report-narratives";
+import { useOwnerRepositories } from "#server/utils/repositories";
 
-export interface SkillActionSuggestionRecord {
-  id?: number;
-  skillId: number;
-  kind: "in_app" | "home_activity";
-  text: string;
-  refEntityId?: number | null;
-  orderNo?: number;
-}
-
-export interface CompetencyReportItem {
-  code: string;
-  name: string;
-  status: SectionStatus;
-  mastery_label: string;
-  sessions_have: number;
-  sessions_needed: number;
-  alt_text: string;
-}
-
-export interface StrandReportItem {
-  code: string;
-  name: string;
-  competency_code: string;
-  status: SectionStatus;
-  mastery_label: string;
-  sessions_have: number;
-  sessions_needed: number;
-  alt_text: string;
-}
-
-export interface SkillReportItem {
-  code: string;
-  name: string;
-  strand_code: string;
-  competency_code: string;
-  status: SectionStatus;
-  mastery_label: string;
-  sessions_have: number;
-  sessions_needed: number;
-  attempts_total: number;
-  exposure_only: boolean;
-  alt_text: string;
-}
-
-export interface WeeklyTrendWeekData {
-  week_label: string;
-  sessions_count: number;
-  completions_count: number;
-  completion_rate: number;
-}
-
-export interface WeeklyTrendSection {
-  status: SectionStatus;
-  weeks_have: number;
-  weeks_needed: number;
-  direction?: TrendDirection;
-  direction_text?: string;
-  weeks_data: WeeklyTrendWeekData[];
-  alt_text: string;
-}
-
-export interface IndependenceSection {
-  status: SectionStatus;
-  sessions_have: number;
-  sessions_needed: number;
-  independent_sessions_count: number;
-  total_completed_sessions: number;
-  independent_completion_rate?: number;
-  alt_text: string;
-}
-
-export interface ReinforcementAction {
-  kind: "home_activity" | "in_app";
-  text: string;
-  ref_entity_id?: number;
-}
-
-export interface ReinforcementSkillItem {
-  skill_code: string;
-  name: string;
-  mastery_label: string;
-  actions: ReinforcementAction[];
-  alt_text: string;
-}
-
-export interface ReadyForNextSkillItem {
-  skill_code: string;
-  name: string;
-  mastery_label: string;
-  next_skill_code: string;
-  next_skill_name: string;
-  alt_text: string;
-}
-
-export interface VersionChangeMarker {
-  level_code: string;
-  played_versions: number[];
-  note: string;
-}
-
-export interface AdvancedReportResult {
-  child: {
-    uuid: string;
-    display_name: string;
-    birth_year: number;
-    avatar_id: string;
-  };
-  period: "30d" | "90d";
-  from_date: string;
-  to_date: string;
-  sections: {
-    competencies: CompetencyReportItem[];
-    strands: StrandReportItem[];
-    skills: SkillReportItem[];
-    weekly_trend: WeeklyTrendSection;
-    independence_level: IndependenceSection;
-    needs_reinforcement: ReinforcementSkillItem[];
-    ready_for_next: ReadyForNextSkillItem[];
-  };
-  version_markers: VersionChangeMarker[];
-}
-
-interface AggregatedTaxonomyData {
-  allCompetencies: (typeof competencies.$inferSelect)[];
-  allStrands: (typeof strands.$inferSelect)[];
-  allSkills: (typeof skills.$inferSelect)[];
-  competencyById: Map<number, typeof competencies.$inferSelect>;
-  strandById: Map<number, typeof strands.$inferSelect>;
-  skillsByCompetencyId: Map<number, (typeof skills.$inferSelect)[]>;
-  skillsByStrandId: Map<number, (typeof skills.$inferSelect)[]>;
-  sessionIdsBySkillId: Map<number, Set<number>>;
-  sessionIdsByStrandId: Map<number, Set<number>>;
-  sessionIdsByCompetencyId: Map<number, Set<number>>;
-  masteryMap: Map<number, typeof masteryState.$inferSelect>;
-}
-
-function calculateAverageMastery(
-  skillList: (typeof skills.$inferSelect)[],
-  masteryMap: Map<number, typeof masteryState.$inferSelect>
-): number {
-  let sumMastery = 0;
-  let count = 0;
-  for (const sk of skillList) {
-    const ms = masteryMap.get(Number(sk.id));
-    if (ms) {
-      sumMastery += Number(ms.pLearn);
-      count++;
-    }
-  }
-  return count > 0 ? sumMastery / count : 0.2;
-}
-
-function buildCompetencyItems(
-  data: AggregatedTaxonomyData
-): CompetencyReportItem[] {
-  const {
-    allCompetencies,
-    sessionIdsByCompetencyId,
-    skillsByCompetencyId,
-    masteryMap,
-  } = data;
-
-  return allCompetencies.map((comp) => {
-    const cId = Number(comp.id);
-    const touchedSessions = sessionIdsByCompetencyId.get(cId)?.size ?? 0;
-    const isReady =
-      touchedSessions >= ADVANCED_REPORT_THRESHOLDS.MIN_COMPETENCY_SESSIONS;
-    const needed = Math.max(
-      0,
-      ADVANCED_REPORT_THRESHOLDS.MIN_COMPETENCY_SESSIONS - touchedSessions
-    );
-
-    if (!isReady) {
-      return {
-        code: comp.code,
-        name: comp.name,
-        status: "insufficient_data",
-        mastery_label: "Chưa có đủ dữ liệu",
-        sessions_have: touchedSessions,
-        sessions_needed: needed,
-        alt_text: `Năng lực ${comp.name} (${comp.code}): Chưa có đủ dữ liệu (cần thêm ${needed} phiên hoạt động).`,
-      };
-    }
-
-    const compSkills = skillsByCompetencyId.get(cId) ?? [];
-    const avgPLearn = calculateAverageMastery(compSkills, masteryMap);
-    const label = masteryLabel({
-      p_learn: avgPLearn,
-      attempts_total: touchedSessions,
-    });
-
-    return {
-      code: comp.code,
-      name: comp.name,
-      status: "ready",
-      mastery_label: label,
-      sessions_have: touchedSessions,
-      sessions_needed: 0,
-      alt_text: `Năng lực ${comp.name} (${comp.code}): Đánh giá mức ${label} dựa trên ${touchedSessions} phiên hoạt động.`,
-    };
-  });
-}
-
-function buildStrandItems(data: AggregatedTaxonomyData): StrandReportItem[] {
-  const {
-    allStrands,
-    sessionIdsByStrandId,
-    competencyById,
-    skillsByStrandId,
-    masteryMap,
-  } = data;
-  const strandItems: StrandReportItem[] = [];
-
-  for (const st of allStrands) {
-    const stId = Number(st.id);
-    const touchedSessions = sessionIdsByStrandId.get(stId)?.size ?? 0;
-    if (touchedSessions === 0) {
-      continue;
-    }
-
-    const comp = competencyById.get(Number(st.competencyId));
-    const compCode = comp?.code ?? "";
-    const isReady =
-      touchedSessions >= ADVANCED_REPORT_THRESHOLDS.MIN_STRAND_SESSIONS;
-    const needed = Math.max(
-      0,
-      ADVANCED_REPORT_THRESHOLDS.MIN_STRAND_SESSIONS - touchedSessions
-    );
-
-    if (!isReady) {
-      strandItems.push({
-        code: st.code,
-        name: st.name,
-        competency_code: compCode,
-        status: "insufficient_data",
-        mastery_label: "Chưa có đủ dữ liệu",
-        sessions_have: touchedSessions,
-        sessions_needed: needed,
-        alt_text: `Nhánh ${st.name} (${st.code}): Chưa có đủ dữ liệu (cần thêm ${needed} phiên).`,
-      });
-      continue;
-    }
-
-    const stSkills = skillsByStrandId.get(stId) ?? [];
-    const avgPLearn = calculateAverageMastery(stSkills, masteryMap);
-    const label = masteryLabel({
-      p_learn: avgPLearn,
-      attempts_total: touchedSessions,
-    });
-
-    strandItems.push({
-      code: st.code,
-      name: st.name,
-      competency_code: compCode,
-      status: "ready",
-      mastery_label: label,
-      sessions_have: touchedSessions,
-      sessions_needed: 0,
-      alt_text: `Nhánh ${st.name} (${st.code}): Mức ${label} qua ${touchedSessions} phiên.`,
-    });
-  }
-
-  return strandItems;
-}
-
-function createSingleSkillReportItem(
-  sk: typeof skills.$inferSelect,
-  touchedSessions: number,
-  strandCode: string,
-  compCode: string,
-  ms?: typeof masteryState.$inferSelect
-): SkillReportItem {
-  const pLearn = ms ? Number(ms.pLearn) : 0.1;
-  const attemptsTotal = ms?.attemptsTotal ?? touchedSessions;
-  const isExposureOnly = touchedSessions === 1;
-  const isReady =
-    touchedSessions >= ADVANCED_REPORT_THRESHOLDS.MIN_SKILL_SESSIONS;
-  const needed = Math.max(
-    0,
-    ADVANCED_REPORT_THRESHOLDS.MIN_SKILL_SESSIONS - touchedSessions
-  );
-  const label = isReady
-    ? masteryLabel({ p_learn: pLearn, attempts_total: attemptsTotal })
-    : "Chưa có đủ dữ liệu";
-
-  let altText = `Kỹ năng ${sk.name}: Chưa có đủ dữ liệu (cần thêm ${needed} phiên).`;
-  if (isExposureOnly) {
-    altText = `Kỹ năng ${sk.name}: Đã tiếp xúc (1 lần chơi).`;
-  } else if (isReady) {
-    altText = `Kỹ năng ${sk.name}: ${label} qua ${touchedSessions} phiên.`;
-  }
-
-  return {
-    code: sk.code,
-    name: sk.name,
-    strand_code: strandCode,
-    competency_code: compCode,
-    status: isReady ? "ready" : "insufficient_data",
-    mastery_label: label,
-    sessions_have: touchedSessions,
-    sessions_needed: needed,
-    attempts_total: attemptsTotal,
-    exposure_only: isExposureOnly,
-    alt_text: altText,
-  };
-}
-
-function buildSkillItems(data: AggregatedTaxonomyData): SkillReportItem[] {
-  const {
-    allSkills,
-    sessionIdsBySkillId,
-    strandById,
-    competencyById,
-    masteryMap,
-  } = data;
-  const skillItems: SkillReportItem[] = [];
-
-  for (const sk of allSkills) {
-    const skId = Number(sk.id);
-    const touchedSessions = sessionIdsBySkillId.get(skId)?.size ?? 0;
-    if (touchedSessions === 0) {
-      continue;
-    }
-
-    const st = strandById.get(Number(sk.strandId));
-    const comp = st ? competencyById.get(Number(st.competencyId)) : undefined;
-    const strandCode = st?.code ?? "";
-    const compCode = comp?.code ?? "";
-    const ms = masteryMap.get(skId);
-
-    skillItems.push(
-      createSingleSkillReportItem(sk, touchedSessions, strandCode, compCode, ms)
-    );
-  }
-
-  return skillItems;
-}
-
-function buildWeeklyTrend(
-  recentSessions: (typeof playSessions.$inferSelect)[],
-  startDate: Date
-): WeeklyTrendSection {
-  const weekBuckets = new Map<number, { count: number; completed: number }>();
-  const MS_PER_WEEK = 7 * 86_400_000;
-
-  for (const s of recentSessions) {
-    const sessionTime = new Date(s.startedAt).getTime();
-    const diff = sessionTime - startDate.getTime();
-    if (diff < 0) {
-      continue;
-    }
-    const weekIndex = Math.floor(diff / MS_PER_WEEK);
-    const current = weekBuckets.get(weekIndex) ?? { count: 0, completed: 0 };
-    current.count += 1;
-    if (s.completionStatus === "completed") {
-      current.completed += 1;
-    }
-    weekBuckets.set(weekIndex, current);
-  }
-
-  const sortedWeekIndices = Array.from(weekBuckets.keys()).sort(
-    (a, b) => a - b
-  );
-  const weeksHave = sortedWeekIndices.length;
-  const isTrendReady = weeksHave >= ADVANCED_REPORT_THRESHOLDS.MIN_WEEKS_DATA;
-  const weeksNeeded = Math.max(
-    0,
-    ADVANCED_REPORT_THRESHOLDS.MIN_WEEKS_DATA - weeksHave
-  );
-
-  const weeksData: WeeklyTrendWeekData[] = sortedWeekIndices.map((idx, i) => {
-    const b = weekBuckets.get(idx) ?? { count: 0, completed: 0 };
-    const rate =
-      b.count > 0 ? Math.round((b.completed / b.count) * 100) / 100 : 0;
-    return {
-      week_label: `Tuần ${i + 1}`,
-      sessions_count: b.count,
-      completions_count: b.completed,
-      completion_rate: rate,
-    };
-  });
-
-  if (!isTrendReady) {
-    return {
-      status: "insufficient_data",
-      weeks_have: weeksHave,
-      weeks_needed: weeksNeeded,
-      weeks_data: weeksData,
-      alt_text: `Xu hướng theo tuần: Chưa có đủ dữ liệu (đã có ${weeksHave}/3 tuần hoạt động, cần thêm ${weeksNeeded} tuần).`,
-    };
-  }
-
-  const firstHalf = weeksData.slice(0, Math.floor(weeksData.length / 2));
-  const secondHalf = weeksData.slice(Math.floor(weeksData.length / 2));
-  const avgFirst =
-    firstHalf.reduce((acc, w) => acc + w.completion_rate, 0) /
-    (firstHalf.length || 1);
-  const avgSecond =
-    secondHalf.reduce((acc, w) => acc + w.completion_rate, 0) /
-    (secondHalf.length || 1);
-  const delta = avgSecond - avgFirst;
-
-  const direction = determineTrendDirection(delta);
-  const directionText = trendDirectionDescription(direction);
-
-  return {
-    status: "ready",
-    weeks_have: weeksHave,
-    weeks_needed: 0,
-    direction,
-    direction_text: directionText,
-    weeks_data: weeksData,
-    alt_text: `Xu hướng theo tuần: ${directionText} (ghi nhận qua ${weeksHave} tuần hoạt động).`,
-  };
-}
-
-function buildIndependenceSection(
-  recentSessions: (typeof playSessions.$inferSelect)[],
-  childMasteryList: (typeof masteryState.$inferSelect)[]
-): IndependenceSection {
-  const completedSessions = recentSessions.filter(
-    (s) => s.completionStatus === "completed"
-  );
-  const totalCompleted = completedSessions.length;
-  const isIndependenceReady =
-    totalCompleted >= ADVANCED_REPORT_THRESHOLDS.MIN_INDEPENDENCE_SESSIONS;
-  const indepNeeded = Math.max(
-    0,
-    ADVANCED_REPORT_THRESHOLDS.MIN_INDEPENDENCE_SESSIONS - totalCompleted
-  );
-
-  let totalHintRate = 0;
-  for (const m of childMasteryList) {
-    totalHintRate += Number(m.hintRate);
-  }
-  const avgHintRate =
-    childMasteryList.length > 0 ? totalHintRate / childMasteryList.length : 0;
-  const independentRate = Math.round(Math.max(0, 1 - avgHintRate) * 100) / 100;
-  const independentSessionsCount = Math.round(totalCompleted * independentRate);
-
-  if (!isIndependenceReady) {
-    return {
-      status: "insufficient_data",
-      sessions_have: totalCompleted,
-      sessions_needed: indepNeeded,
-      independent_sessions_count: independentSessionsCount,
-      total_completed_sessions: totalCompleted,
-      alt_text: `Mức độ độc lập: Chưa có đủ dữ liệu (đã hoàn thành ${totalCompleted}/10 phiên, cần thêm ${indepNeeded} phiên).`,
-    };
-  }
-
-  return {
-    status: "ready",
-    sessions_have: totalCompleted,
-    sessions_needed: 0,
-    independent_sessions_count: independentSessionsCount,
-    total_completed_sessions: totalCompleted,
-    independent_completion_rate: independentRate,
-    alt_text: `Mức độ độc lập: Bé tự hoàn thành không cần trợ giúp ${independentSessionsCount}/${totalCompleted} phiên (${Math.round(independentRate * 100)}%).`,
-  };
-}
-
-function buildReinforcementSection(
-  data: AggregatedTaxonomyData,
-  actionsBySkillId: Map<number, SkillActionSuggestionRecord[]>
-): ReinforcementSkillItem[] {
-  const { allSkills, sessionIdsBySkillId, masteryMap } = data;
-  const items: ReinforcementSkillItem[] = [];
-
-  for (const sk of allSkills) {
-    const skId = Number(sk.id);
-    const touchedSessions = sessionIdsBySkillId.get(skId)?.size ?? 0;
-    if (touchedSessions < ADVANCED_REPORT_THRESHOLDS.MIN_REINFORCE_SESSIONS) {
-      continue;
-    }
-
-    const ms = masteryMap.get(skId);
-    if (!ms) {
-      continue;
-    }
-    const pLearn = Number(ms.pLearn);
-    if (pLearn >= ADVANCED_REPORT_THRESHOLDS.REINFORCE_P_LEARN_CEILING) {
-      continue;
-    }
-
-    const skillActions = actionsBySkillId.get(skId) ?? [];
-    const formattedActions: ReinforcementAction[] =
-      skillActions.length > 0
-        ? skillActions.map((a) => ({
-            kind: a.kind,
-            text: a.text,
-            ref_entity_id: a.refEntityId ?? undefined,
-          }))
-        : [
-            {
-              kind: "home_activity",
-              text: `Cùng bé thực hành hoạt động nhận biết và trải nghiệm kỹ năng ${sk.name} trong sinh hoạt hằng ngày.`,
-            },
-          ];
-
-    const label = masteryLabel({
-      p_learn: pLearn,
-      attempts_total: ms.attemptsTotal ?? touchedSessions,
-    });
-    items.push({
-      skill_code: sk.code,
-      name: sk.name,
-      mastery_label: label,
-      actions: formattedActions,
-      alt_text: `Kỹ năng ${sk.name} (${sk.code}): Đang ở mức ${label}. Gợi ý hỗ trợ: ${formattedActions[0]?.text ?? ""}`,
-    });
-  }
-
-  return items;
-}
-
-function buildReadyForNextSection(
-  data: AggregatedTaxonomyData,
-  prereqSuccessorsBySkillId: Map<number, (typeof skills.$inferSelect)[]>
-): ReadyForNextSkillItem[] {
-  const { allSkills, sessionIdsBySkillId, masteryMap } = data;
-  const items: ReadyForNextSkillItem[] = [];
-
-  for (const sk of allSkills) {
-    const skId = Number(sk.id);
-    const touchedSessions = sessionIdsBySkillId.get(skId)?.size ?? 0;
-    if (touchedSessions < ADVANCED_REPORT_THRESHOLDS.MIN_READY_SESSIONS) {
-      continue;
-    }
-
-    const ms = masteryMap.get(skId);
-    if (!ms) {
-      continue;
-    }
-    const pLearn = Number(ms.pLearn);
-    if (pLearn < ADVANCED_REPORT_THRESHOLDS.READY_P_LEARN_FLOOR) {
-      continue;
-    }
-
-    const successors = prereqSuccessorsBySkillId.get(skId) ?? [];
-    if (successors.length === 0) {
-      continue;
-    }
-
-    const nextSkill = successors[0];
-    if (!nextSkill) {
-      continue;
-    }
-    const label = masteryLabel({
-      p_learn: pLearn,
-      attempts_total: ms.attemptsTotal ?? touchedSessions,
-    });
-
-    items.push({
-      skill_code: sk.code,
-      name: sk.name,
-      mastery_label: label,
-      next_skill_code: nextSkill.code,
-      next_skill_name: nextSkill.name,
-      alt_text: `Kỹ năng ${sk.name} (${sk.code}) đã đạt mức ${label}. Sẵn sàng bước tiếp sang kỹ năng ${nextSkill.name} (${nextSkill.code}).`,
-    });
-  }
-
-  return items;
-}
+export type {
+  AdvancedReportResult,
+  CompetencyReportItem,
+  IndependenceSection,
+  ReadyForNextSkillItem,
+  ReinforcementAction,
+  ReinforcementSkillItem,
+  SkillActionSuggestionRecord,
+  SkillReportItem,
+  StrandReportItem,
+  VersionChangeMarker,
+  WeeklyTrendSection,
+  WeeklyTrendWeekData,
+} from "#server/services/advanced-report-narratives";
 
 /**
  * Gộp theo MÃ level, không theo `game_levels.id`: nâng content_version archive
@@ -595,7 +48,7 @@ export function buildVersionMarkers(
     gameLevelId: number | null;
     contentVersion?: number | null;
   }>,
-  levelById: Map<number, Pick<typeof gameLevels.$inferSelect, "code">>
+  levelById: Map<number, Pick<GameLevelEntity, "code">>
 ): VersionChangeMarker[] {
   const versionsByCode = new Map<string, Set<number>>();
   for (const s of recentSessions) {
@@ -625,15 +78,12 @@ export function buildVersionMarkers(
 }
 
 function indexSkillsAndTaxonomy(
-  allSkills: (typeof skills.$inferSelect)[],
-  strandById: Map<number, typeof strands.$inferSelect>
+  allSkills: SkillEntity[],
+  strandById: Map<number, StrandEntity>
 ) {
-  const skillById = new Map<number, typeof skills.$inferSelect>();
-  const skillsByCompetencyId = new Map<
-    number,
-    (typeof skills.$inferSelect)[]
-  >();
-  const skillsByStrandId = new Map<number, (typeof skills.$inferSelect)[]>();
+  const skillById = new Map<number, SkillEntity>();
+  const skillsByCompetencyId = new Map<number, SkillEntity[]>();
+  const skillsByStrandId = new Map<number, SkillEntity[]>();
 
   for (const sk of allSkills) {
     const sId = Number(sk.id);
@@ -657,10 +107,10 @@ function indexSkillsAndTaxonomy(
 }
 
 function indexSessionTouches(
-  recentSessions: (typeof playSessions.$inferSelect)[],
+  recentSessions: PlaySessionEntity[],
   skillsByLevelId: Map<number, number[]>,
-  skillById: Map<number, typeof skills.$inferSelect>,
-  strandById: Map<number, typeof strands.$inferSelect>
+  skillById: Map<number, SkillEntity>,
+  strandById: Map<number, StrandEntity>
 ) {
   const sessionIdsBySkillId = new Map<number, Set<number>>();
   const sessionIdsByStrandId = new Map<number, Set<number>>();
@@ -702,27 +152,24 @@ function indexSessionTouches(
   };
 }
 
-type AdvancedReportLevelRow = Pick<
-  typeof gameLevels.$inferSelect,
-  "id" | "code"
->;
+type AdvancedReportLevelRow = Pick<GameLevelEntity, "id" | "code">;
 
 function buildReportLookupMaps(params: {
-  allCompetencies: (typeof competencies.$inferSelect)[];
-  allStrands: (typeof strands.$inferSelect)[];
+  allCompetencies: CompetencyEntity[];
+  allStrands: StrandEntity[];
   allLevels: AdvancedReportLevelRow[];
-  allMappings: (typeof contentSkillMap.$inferSelect)[];
-  childMasteryList: (typeof masteryState.$inferSelect)[];
+  allMappings: ContentSkillMapEntity[];
+  childMasteryList: MasteryStateEntity[];
   actionSuggestionsList: SkillActionSuggestionRecord[];
-  allPrereqs: (typeof skillPrerequisites.$inferSelect)[];
-  skillById: Map<number, typeof skills.$inferSelect>;
+  allPrereqs: SkillPrerequisiteEntity[];
+  skillById: Map<number, SkillEntity>;
 }) {
-  const competencyById = new Map<number, typeof competencies.$inferSelect>();
+  const competencyById = new Map<number, CompetencyEntity>();
   for (const c of params.allCompetencies) {
     competencyById.set(Number(c.id), c);
   }
 
-  const strandById = new Map<number, typeof strands.$inferSelect>();
+  const strandById = new Map<number, StrandEntity>();
   for (const s of params.allStrands) {
     strandById.set(Number(s.id), s);
   }
@@ -741,7 +188,7 @@ function buildReportLookupMaps(params: {
     skillsByLevelId.set(lId, list);
   }
 
-  const masteryMap = new Map<number, typeof masteryState.$inferSelect>();
+  const masteryMap = new Map<number, MasteryStateEntity>();
   for (const ms of params.childMasteryList) {
     masteryMap.set(Number(ms.skillId), ms);
   }
@@ -754,10 +201,7 @@ function buildReportLookupMaps(params: {
     actionsBySkillId.set(skId, list);
   }
 
-  const prereqSuccessorsBySkillId = new Map<
-    number,
-    (typeof skills.$inferSelect)[]
-  >();
+  const prereqSuccessorsBySkillId = new Map<number, SkillEntity[]>();
   for (const pr of params.allPrereqs) {
     const reqSkillId = Number(pr.prerequisiteId);
     const targetSkill = params.skillById.get(Number(pr.skillId));
@@ -783,14 +227,10 @@ export async function buildAdvancedReport(params: {
   childId: number;
   period: "30d" | "90d";
 }): Promise<AdvancedReportResult> {
-  const db = getOwnerDb();
   const { childId, period } = params;
+  const repos = useOwnerRepositories();
 
-  const [child] = await db
-    .select()
-    .from(childProfiles)
-    .where(eq(childProfiles.id, childId));
-
+  const child = await repos.childProfiles.findById(childId);
   if (!child) {
     throw new Error(`Child profile #${childId} not found`);
   }
@@ -809,37 +249,17 @@ export async function buildAdvancedReport(params: {
     childMasteryList,
     allPrereqs,
   ] = await Promise.all([
-    db.select().from(competencies).orderBy(asc(competencies.position)),
-    db.select().from(strands).orderBy(asc(strands.position)),
-    db.select().from(skills).orderBy(asc(skills.position)),
-    db
-      .select()
-      .from(contentSkillMap)
-      .where(eq(contentSkillMap.entityType, "game_level")),
-    db
-      .select({
-        id: gameLevels.id,
-        code: gameLevels.code,
-      })
-      .from(gameLevels),
-    db
-      .select()
-      .from(playSessions)
-      .where(
-        and(
-          eq(playSessions.childProfileId, childId),
-          gte(playSessions.startedAt, startDate)
-        )
-      )
-      .orderBy(asc(playSessions.startedAt)),
-    db
-      .select()
-      .from(masteryState)
-      .where(eq(masteryState.childProfileId, childId)),
-    db.select().from(skillPrerequisites),
+    repos.taxonomy.listCompetencies(),
+    repos.taxonomy.listStrands(),
+    repos.taxonomy.listSkills(),
+    repos.tagging.listSkillMaps(CONTENT_ENTITY_TYPE.GAME_LEVEL),
+    repos.gameLevels.listAllOrdered(2000),
+    repos.playSessions.listByChildSince(childId, startDate),
+    repos.mastery.listForChild(childId),
+    repos.taxonomy.listPrerequisites(),
   ]);
 
-  const rawStrandById = new Map<number, typeof strands.$inferSelect>();
+  const rawStrandById = new Map<number, StrandEntity>();
   for (const s of allStrands) {
     rawStrandById.set(Number(s.id), s);
   }
@@ -891,24 +311,6 @@ export async function buildAdvancedReport(params: {
     masteryMap,
   };
 
-  const competencyItems = buildCompetencyItems(aggregatedData);
-  const strandItems = buildStrandItems(aggregatedData);
-  const skillItems = buildSkillItems(aggregatedData);
-  const weeklyTrend = buildWeeklyTrend(recentSessions, startDate);
-  const independenceLevel = buildIndependenceSection(
-    recentSessions,
-    childMasteryList
-  );
-  const needsReinforcement = buildReinforcementSection(
-    aggregatedData,
-    actionsBySkillId
-  );
-  const readyForNext = buildReadyForNextSection(
-    aggregatedData,
-    prereqSuccessorsBySkillId
-  );
-  const versionMarkers = buildVersionMarkers(recentSessions, levelById);
-
   return {
     child: {
       uuid: child.uuid,
@@ -920,14 +322,23 @@ export async function buildAdvancedReport(params: {
     from_date: startDate.toISOString().split("T")[0] ?? "",
     to_date: now.toISOString().split("T")[0] ?? "",
     sections: {
-      competencies: competencyItems,
-      strands: strandItems,
-      skills: skillItems,
-      weekly_trend: weeklyTrend,
-      independence_level: independenceLevel,
-      needs_reinforcement: needsReinforcement,
-      ready_for_next: readyForNext,
+      competencies: buildCompetencyItems(aggregatedData),
+      strands: buildStrandItems(aggregatedData),
+      skills: buildSkillItems(aggregatedData),
+      weekly_trend: buildWeeklyTrend(recentSessions, startDate),
+      independence_level: buildIndependenceSection(
+        recentSessions,
+        childMasteryList
+      ),
+      needs_reinforcement: buildReinforcementSection(
+        aggregatedData,
+        actionsBySkillId
+      ),
+      ready_for_next: buildReadyForNextSection(
+        aggregatedData,
+        prereqSuccessorsBySkillId
+      ),
     },
-    version_markers: versionMarkers,
+    version_markers: buildVersionMarkers(recentSessions, levelById),
   };
 }

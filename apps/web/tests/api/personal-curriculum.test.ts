@@ -1,7 +1,12 @@
 import {
+  ACCESS_TIER,
+  CONTENT_ENTITY_TYPE,
   childProfiles,
   curricula,
   curriculumItems,
+  ENTITLEMENT_GROUP,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   gameLevels,
@@ -106,12 +111,12 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
       .values([
         {
           key: "create_custom_curriculum",
-          group: "creator",
+          group: ENTITLEMENT_GROUP.CREATOR,
           label: "Tạo lộ trình cá nhân",
         },
         {
           key: "play_standard_games",
-          group: "content",
+          group: ENTITLEMENT_GROUP.CONTENT,
           label: "Chơi game chuẩn",
         },
       ])
@@ -121,14 +126,14 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
       {
         userId: userAId,
         entitlementKey: "create_custom_curriculum",
-        source: "manual_grant",
-        status: "active",
+        source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+        status: ENTITLEMENT_STATUS.ACTIVE,
       },
       {
         userId: userAId,
         entitlementKey: "play_standard_games",
-        source: "manual_grant",
-        status: "active",
+        source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+        status: ENTITLEMENT_STATUS.ACTIVE,
       },
     ]);
 
@@ -179,7 +184,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
         templateCode: "GT-001",
         difficulty: 1,
         title: "Đếm số mẫu",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         contentPack: {},
         difficultyParams: {},
       })
@@ -208,7 +213,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
         templateCode: "GT-001",
         difficulty: 1,
         title: "Trò chơi hình khối",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         contentPack: {},
         difficultyParams: {},
       })
@@ -226,7 +231,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
       .values({
         code: systemCurriculumCode,
         title: "Chương trình mẫu hệ thống",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })
@@ -238,7 +243,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: standardGameLevelId,
         isRequired: true,
       },

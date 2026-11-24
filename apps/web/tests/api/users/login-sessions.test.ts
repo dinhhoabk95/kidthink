@@ -1,5 +1,11 @@
 import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
-import { getOwnerDb, userSessions, users } from "@mindkid/db";
+import {
+  AUTH_METHOD,
+  getOwnerDb,
+  USER_STATUS_CODEC,
+  userSessions,
+  users,
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
@@ -40,7 +46,7 @@ async function seedUserWithPassword(
       email,
       passwordHash,
       displayName: `Login User ${tag}`,
-      status,
+      status: USER_STATUS_CODEC.toCode(status),
       emailVerified: true,
       emailVerifiedAt: new Date(),
     })
@@ -101,7 +107,7 @@ describe("Task 3 — Better Auth Login & Session Management (BR-LGN-01..12)", ()
       .from(userSessions)
       .where(eq(userSessions.userId, user.id));
     expect(session).toBeDefined();
-    expect(session?.authMethod).toBe("password");
+    expect(session?.authMethod).toBe(AUTH_METHOD.PASSWORD);
     expect(session?.reauthAt).toBeInstanceOf(Date);
   });
 

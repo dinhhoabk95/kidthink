@@ -1,76 +1,25 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Gấu túi</title>
   <defs>
-    <radialGradient cx="38%" cy="32%" id="koalaFur" r="70%">
-      <stop offset="0%" stop-color="#f1f5f9" />
-      <stop offset="52%" stop-color="#cbd5e1" />
-      <stop offset="100%" stop-color="#94a3b8" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="koaGrey" r="70%"><stop offset="0%" stop-color="#e2e8f0" /><stop offset="55%" stop-color="#94a3b8" /><stop offset="100%" stop-color="#64748b" /></radialGradient>
   </defs>
-  <ellipse cx="60" cy="73" fill="#475569" opacity="0.28" rx="37" ry="33" />
-  <circle
-    cx="25"
-    cy="51"
-    fill="url(#koalaFur)"
-    r="19"
-    stroke="#57534e"
-    stroke-width="4"
-  />
-  <circle cx="25" cy="51" fill="#fbcfe8" fill-opacity="0.7" r="10" />
-  <circle
-    cx="95"
-    cy="51"
-    fill="url(#koalaFur)"
-    r="19"
-    stroke="#57534e"
-    stroke-width="4"
-  />
-  <circle cx="95" cy="51" fill="#fbcfe8" fill-opacity="0.7" r="10" />
-  <ellipse
-    cx="60"
-    cy="67"
-    fill="url(#koalaFur)"
-    rx="36"
-    ry="33"
-    stroke="#57534e"
-    stroke-width="4"
-  />
-  <circle cx="43" cy="60" fill="#1c1917" r="4.8" />
-  <circle cx="41.5" cy="58.2" fill="#ffffff" r="1.9" />
-  <circle cx="77" cy="60" fill="#1c1917" r="4.8" />
-  <circle cx="75.5" cy="58.2" fill="#ffffff" r="1.9" />
-  <circle cx="35" cy="73" fill="#fb7185" fill-opacity="0.45" r="5.5" />
-  <circle cx="85" cy="73" fill="#fb7185" fill-opacity="0.45" r="5.5" />
-  <ellipse
-    cx="60"
-    cy="68"
-    fill="#334155"
-    rx="8.5"
-    ry="12"
-    stroke="#1e293b"
-    stroke-width="2.8"
-  />
-  <ellipse
-    cx="57.5"
-    cy="63"
-    fill="#ffffff"
-    fill-opacity="0.45"
-    rx="2.5"
-    ry="4"
-  />
-  <path
-    d="M53 84C56 87 64 87 67 84"
-    stroke="#475569"
-    stroke-linecap="round"
-    stroke-width="2.8"
-  />
-  <ellipse
-    cx="47"
-    cy="44"
-    fill="#ffffff"
-    fill-opacity="0.65"
-    rx="8"
-    ry="3.8"
-    transform="rotate(-20 47 44)"
-  />
+  <ellipse cx="60" cy="107" fill="#334155" opacity="0.22" rx="34" ry="5" />
+    <!-- Angled eucalyptus tree trunk & leaves -->
+    <path d="M28 104L46 16H58L42 104Z" fill="#a16207" stroke="#5c2d16" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M53 28C64 20 75 21 80 28C71 34 60 33 53 28Z" fill="#22c55e" stroke="#14532d" stroke-linejoin="round" stroke-width="3" />
+    <!-- Fluffy ears -->
+    <circle cx="48" cy="38" fill="url(#koaGrey)" r="10" stroke="#334155" stroke-width="3.6" />
+    <circle cx="48" cy="38" fill="#f8fafc" r="5" />
+    <circle cx="84" cy="42" fill="url(#koaGrey)" r="10" stroke="#334155" stroke-width="3.6" />
+    <circle cx="84" cy="42" fill="#f8fafc" r="5" />
+    <!-- Full clinging body, arms & hind legs -->
+    <ellipse cx="68" cy="74" fill="url(#koaGrey)" rx="20" ry="23" stroke="#334155" stroke-width="3.8" />
+    <ellipse cx="62" cy="76" fill="#f8fafc" rx="10" ry="14" />
+    <!-- Bamboo stalk & arms -->
+    <path d="M56 62L41 58M56 86L39 84" stroke="#334155" stroke-linecap="round" stroke-width="8" />
+    <path d="M56 62L41 58M56 86L39 84" stroke="#94a3b8" stroke-linecap="round" stroke-opacity="0.92" stroke-width="4" />
+    <!-- Head & iconic oval nose -->
+    <ellipse cx="66" cy="46" fill="url(#koaGrey)" rx="18" ry="15" stroke="#334155" stroke-width="3.8" />
+    <ellipse cx="64" cy="49" fill="#27272a" rx="4.5" ry="6.5" />
+    <circle cx="56" cy="44" fill="#1c1917" r="2.5" /><circle cx="55.3" cy="43.3" fill="#ffffff" r="0.9" /><circle cx="73" cy="45" fill="#1c1917" r="2.5" /><circle cx="72.3" cy="44.3" fill="#ffffff" r="0.9" />
 </svg>

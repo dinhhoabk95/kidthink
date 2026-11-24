@@ -1,14 +1,19 @@
-import {
-  getOwnerDb,
-  notificationDeliveries,
-  notifications,
-  users,
-} from "@mindkid/db";
 import { InsufficientRoleError } from "@mindkid/errors/auth";
-import { and, desc, eq, gte, ilike, lte, or, type SQL } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
+import {
+  listManagerNotifications,
+  type NotificationPayloadObject,
+  sanitizeNotificationPayload as sanitizePayload,
+} from "#server/services/notification-service";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+
+export function sanitizeNotificationPayload(
+  payload: NotificationPayloadObject | null,
+  templateCode: string
+): NotificationPayloadObject | null {
+  return sanitizePayload(payload, templateCode);
+}
 
 const ManagerNotificationsQuerySchema = z.object({
   code: z.string().optional(),
@@ -19,184 +24,6 @@ const ManagerNotificationsQuerySchema = z.object({
   to: z.string().optional(),
   limit: z.string().optional(),
 });
-
-type NotificationPayloadScalar = string | number | boolean | null | undefined;
-
-type NotificationPayloadObject = Record<
-  string,
-  NotificationPayloadScalar | readonly NotificationPayloadScalar[]
->;
-
-type DeliveryStatus = (typeof notificationDeliveries.$inferSelect)["status"];
-type DeliveryChannel = (typeof notificationDeliveries.$inferSelect)["channel"];
-
-const VALID_DELIVERY_STATUSES: readonly DeliveryStatus[] = [
-  "queued",
-  "dispatched",
-  "failed",
-  "suppressed",
-];
-
-const VALID_DELIVERY_CHANNELS: readonly DeliveryChannel[] = [
-  "email",
-  "in_app",
-  "fcm_web",
-];
-
-function isDeliveryStatus(val: string): val is DeliveryStatus {
-  return VALID_DELIVERY_STATUSES.some((s) => s === val);
-}
-
-function isDeliveryChannel(val: string): val is DeliveryChannel {
-  return VALID_DELIVERY_CHANNELS.some((c) => c === val);
-}
-
-interface NotificationSearchQuery {
-  code?: string;
-  status?: string;
-  channel?: string;
-  recipient?: string;
-  from?: string;
-  to?: string;
-  limit?: string;
-}
-
-const SENSITIVE_KEY_PATTERN =
-  /(^|_)(otp|code|token|secret|password|pin|hash)($|_)/i;
-
-/**
- * Mask email for privacy (BR-NTA-06, BR-LOG-04): j***@example.com
- */
-function redactEmail(email: string): string {
-  const parts = email.split("@");
-  const name = parts[0];
-  const domain = parts[1];
-  if (!(name && domain) || parts.length !== 2) {
-    return email;
-  }
-  const firstChar = name.charAt(0) || "u";
-  return `${firstChar}***@${domain}`;
-}
-
-/**
- * Strips raw OTP / token / secret fields from payload display (BR-NTA-04)
- */
-export function sanitizeNotificationPayload(
-  payload: NotificationPayloadObject | null,
-  templateCode: string
-): NotificationPayloadObject | null {
-  if (!payload || typeof payload !== "object") {
-    return null;
-  }
-  const clean: NotificationPayloadObject = { ...payload };
-
-  for (const key of Object.keys(clean)) {
-    if (
-      key === "order_code" ||
-      key === "orderCode" ||
-      key === "entity_code" ||
-      key === "package_code"
-    ) {
-      continue;
-    }
-    if (SENSITIVE_KEY_PATTERN.test(key)) {
-      clean[key] = "******";
-    }
-  }
-
-  if (
-    (templateCode.includes("otp") || templateCode.includes("verify")) &&
-    "password" in clean
-  ) {
-    clean.password = undefined;
-  }
-
-  return clean;
-}
-
-function parseRecipientCondition(recipient?: string): SQL | undefined {
-  if (typeof recipient !== "string" || !recipient.trim()) {
-    return undefined;
-  }
-  const term = recipient.trim();
-  const num = Number(term);
-  if (!Number.isNaN(num) && num > 0) {
-    return or(
-      eq(notifications.recipientId, num),
-      ilike(users.email, `%${term}%`)
-    );
-  }
-  return ilike(users.email, `%${term}%`);
-}
-
-const DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/;
-
-function parseDateCondition(
-  field: typeof notificationDeliveries.createdAt,
-  value: string | undefined,
-  operator: "gte" | "lte"
-): SQL | undefined {
-  if (typeof value !== "string" || !value.trim()) {
-    return undefined;
-  }
-  const trimmed = value.trim();
-  const isoStr =
-    operator === "lte" && DATE_ONLY_REGEX.test(trimmed)
-      ? `${trimmed}T23:59:59.999Z`
-      : trimmed;
-  const d = new Date(isoStr);
-  if (Number.isNaN(d.getTime())) {
-    return undefined;
-  }
-  return operator === "gte" ? gte(field, d) : lte(field, d);
-}
-
-function buildQueryConditions(query: NotificationSearchQuery): SQL[] {
-  const conditions: SQL[] = [];
-
-  if (typeof query.code === "string" && query.code.trim()) {
-    conditions.push(eq(notifications.templateCode, query.code.trim()));
-  }
-
-  if (typeof query.status === "string" && query.status.trim()) {
-    const trimmedStatus = query.status.trim();
-    if (isDeliveryStatus(trimmedStatus)) {
-      conditions.push(eq(notificationDeliveries.status, trimmedStatus));
-    }
-  }
-
-  if (typeof query.channel === "string" && query.channel.trim()) {
-    const trimmedChannel = query.channel.trim();
-    if (isDeliveryChannel(trimmedChannel)) {
-      conditions.push(eq(notificationDeliveries.channel, trimmedChannel));
-    }
-  }
-
-  const fromCond = parseDateCondition(
-    notificationDeliveries.createdAt,
-    query.from,
-    "gte"
-  );
-  if (fromCond) {
-    conditions.push(fromCond);
-  }
-
-  const toCond = parseDateCondition(
-    notificationDeliveries.createdAt,
-    query.to,
-    "lte"
-  );
-  if (toCond) {
-    conditions.push(toCond);
-  }
-
-  const recipientCond = parseRecipientCondition(query.recipient);
-  if (recipientCond) {
-    conditions.push(recipientCond);
-  }
-
-  return conditions;
-}
 
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
@@ -211,61 +38,7 @@ export default defineEventHandler(async (event) => {
   const parsedQuery = ManagerNotificationsQuerySchema.safeParse(
     getQuery(event)
   );
-  const query: NotificationSearchQuery = parsedQuery.success
-    ? parsedQuery.data
-    : {};
-  const limit = Math.min(Number(query.limit) || 50, 100);
-  const conditions = buildQueryConditions(query);
+  const query = parsedQuery.success ? parsedQuery.data : {};
 
-  const db = getOwnerDb();
-  let queryBuilder = db
-    .select({
-      id: notificationDeliveries.id,
-      uuid: notificationDeliveries.uuid,
-      notificationId: notificationDeliveries.notificationId,
-      channel: notificationDeliveries.channel,
-      status: notificationDeliveries.status,
-      providerMessageId: notificationDeliveries.providerMessageId,
-      error: notificationDeliveries.error,
-      suppressedReason: notificationDeliveries.suppressedReason,
-      dispatchedAt: notificationDeliveries.dispatchedAt,
-      createdAt: notificationDeliveries.createdAt,
-      templateCode: notifications.templateCode,
-      recipientType: notifications.recipientType,
-      recipientId: notifications.recipientId,
-      payload: notifications.payload,
-      recipientEmail: users.email,
-    })
-    .from(notificationDeliveries)
-    .innerJoin(
-      notifications,
-      eq(notificationDeliveries.notificationId, notifications.id)
-    )
-    .leftJoin(users, eq(notifications.recipientId, users.id))
-    .orderBy(desc(notificationDeliveries.createdAt))
-    .limit(limit);
-
-  if (conditions.length > 0) {
-    queryBuilder = queryBuilder.where(
-      and(...conditions)
-    ) as typeof queryBuilder;
-  }
-
-  const rows = await queryBuilder;
-
-  const sanitizedRows = rows.map((r) => ({
-    ...r,
-    recipientEmailMasked: r.recipientEmail
-      ? redactEmail(r.recipientEmail)
-      : null,
-    payload: sanitizeNotificationPayload(
-      r.payload as NotificationPayloadObject | null,
-      r.templateCode
-    ),
-  }));
-
-  return {
-    items: sanitizedRows,
-    total: sanitizedRows.length,
-  };
+  return await listManagerNotifications(query);
 });

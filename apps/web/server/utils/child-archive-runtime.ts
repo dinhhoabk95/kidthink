@@ -1,5 +1,5 @@
-import { childProfiles, getOwnerDb } from "@mindkid/db";
-import { eq } from "drizzle-orm";
+import { CHILD_STATUS_CODEC } from "@mindkid/db";
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 export interface ArchiveChildProfileInput {
   readonly childId: number;
@@ -11,23 +11,17 @@ export interface ArchiveChildProfileInput {
 /**
  * D-IG: Canonical single code path for archiving child profiles.
  * Used by child profile archive endpoint (P1.9) and consent withdrawal (P1.14).
- * Ensures consistency so re-consenting or restoring operates on uniform status & timestamp state.
  */
 export async function executeArchiveChildProfile(
   input: ArchiveChildProfileInput
 ): Promise<{ uuid: string; status: string; purgeAt: Date | null }> {
-  const db = getOwnerDb();
-  const now = new Date();
-
-  const [updated] = await db
-    .update(childProfiles)
-    .set({
-      status: "archived",
-      purgeAt: input.purgeAt ?? null,
-      updatedAt: now,
-    })
-    .where(eq(childProfiles.id, input.childId))
-    .returning();
+  const { childProfiles } = useOwnerRepositories();
+  const updated = await childProfiles.archive(
+    input.childId,
+    input.userId,
+    new Date(),
+    input.purgeAt ?? null
+  );
 
   if (!updated) {
     throw new Error("ARCHIVE_FAILED");
@@ -35,7 +29,7 @@ export async function executeArchiveChildProfile(
 
   return {
     uuid: updated.uuid,
-    status: updated.status,
+    status: CHILD_STATUS_CODEC.toLabel(updated.status),
     purgeAt: updated.purgeAt,
   };
 }

@@ -250,6 +250,16 @@ export const C6_FLX_01_SEED: SkillSeed = {
   dataset: C6_FLX_01_DATASET,
   levels: [
     {
+      code: "GL-C6-FLX-INTRO-7001",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "festival",
+      rounds: 1,
+      sequence_no: 1,
+    },
+    {
       code: "GL-C6-FLX-SWT-0033",
       template: "GT-027",
       band: "5-6",

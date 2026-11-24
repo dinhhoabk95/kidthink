@@ -3,6 +3,8 @@ import type { EmojiEntry } from "#src/types";
 export const VEHICLE_RAIL_EMOJIS: EmojiEntry[] = [
   {
     emoji: "🚂",
+    slug: "locomotive",
+    svg_path: "/sprites/emoji/locomotive.svg",
     name: "Đầu tàu",
     categories: ["vehicle-rail"],
     curriculum_themes: ["phuong_tien"],
@@ -11,6 +13,8 @@ export const VEHICLE_RAIL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🚃",
+    slug: "train-car",
+    svg_path: "/sprites/emoji/train-car.svg",
     name: "Toa tàu",
     categories: ["vehicle-rail"],
     curriculum_themes: ["phuong_tien"],
@@ -19,6 +23,8 @@ export const VEHICLE_RAIL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🚄",
+    slug: "bullet-train",
+    svg_path: "/sprites/emoji/bullet-train.svg",
     name: "Tàu cao tốc",
     categories: ["vehicle-rail"],
     curriculum_themes: ["phuong_tien"],
@@ -33,6 +39,8 @@ export const VEHICLE_RAIL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🚅",
+    slug: "nose-bullet-train",
+    svg_path: "/sprites/emoji/nose-bullet-train.svg",
     name: "Tàu siêu tốc",
     categories: ["vehicle-rail"],
     curriculum_themes: ["phuong_tien"],
@@ -41,6 +49,8 @@ export const VEHICLE_RAIL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🚆",
+    slug: "commuter-train",
+    svg_path: "/sprites/emoji/commuter-train.svg",
     name: "Tàu hỏa",
     categories: ["vehicle-rail"],
     curriculum_themes: ["phuong_tien"],
@@ -49,6 +59,8 @@ export const VEHICLE_RAIL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🚇",
+    slug: "metro-train",
+    svg_path: "/sprites/emoji/metro-train.svg",
     name: "Tàu điện ngầm",
     categories: ["vehicle-rail"],
     curriculum_themes: ["phuong_tien"],
@@ -57,6 +69,8 @@ export const VEHICLE_RAIL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🚈",
+    slug: "light-rail",
+    svg_path: "/sprites/emoji/light-rail.svg",
     name: "Tàu nhẹ",
     categories: ["vehicle-rail"],
     curriculum_themes: ["phuong_tien"],
@@ -65,6 +79,8 @@ export const VEHICLE_RAIL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🚉",
+    slug: "train-station",
+    svg_path: "/sprites/emoji/train-station.svg",
     name: "Ga tàu",
     categories: ["vehicle-rail"],
     curriculum_themes: ["phuong_tien"],
@@ -73,6 +89,8 @@ export const VEHICLE_RAIL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🚝",
+    slug: "monorail",
+    svg_path: "/sprites/emoji/monorail.svg",
     name: "Tàu monorail",
     categories: ["vehicle-rail"],
     curriculum_themes: ["phuong_tien"],
@@ -81,10 +99,48 @@ export const VEHICLE_RAIL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🚞",
+    slug: "mountain-train",
+    svg_path: "/sprites/emoji/mountain-train.svg",
     name: "Tàu leo núi",
     categories: ["vehicle-rail"],
     curriculum_themes: ["phuong_tien"],
     keywords: ["mountain railway", "tàu leo núi", "núi", "cáp treo"],
     age_min: 5,
+  },
+  {
+    emoji: "🚊",
+    slug: "city-tram",
+    svg_path: "/sprites/emoji/city-tram.svg",
+    name: "Tàu điện thành phố",
+    categories: ["vehicle-rail"],
+    curriculum_themes: ["phuong_tien"],
+    keywords: ["tram", "streetcar", "tàu điện", "tàu điện mặt đất"],
+    age_min: 3,
+  },
+  {
+    emoji: "🚋",
+    slug: "vintage-tram-car",
+    svg_path: "/sprites/emoji/vintage-tram-car.svg",
+    name: "Toa tàu điện leng keng",
+    categories: ["vehicle-rail", "vn-culture"],
+    curriculum_themes: ["phuong_tien", "que_huong_dat_nuoc"],
+    keywords: ["tram car", "trolley car", "toa tàu điện", "tàu điện cổ"],
+    age_min: 3,
+  },
+  {
+    emoji: "🛤️",
+    slug: "train-track",
+    svg_path: "/sprites/emoji/train-track.svg",
+    name: "Đường ray tàu hoả",
+    categories: ["vehicle-rail"],
+    curriculum_themes: ["phuong_tien"],
+    keywords: [
+      "railway track",
+      "train rails",
+      "đường ray",
+      "tàu lửa",
+      "tà vẹt gỗ",
+    ],
+    age_min: 3,
   },
 ];

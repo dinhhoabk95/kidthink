@@ -1,21 +1,40 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { hashPassword } from "@mindkid/auth";
-import {
-  defineRelations,
-  getTableColumns,
-  getTableName,
-  is,
-} from "drizzle-orm";
+import { getTableColumns, getTableName, is } from "drizzle-orm";
 import {
   getTableConfig,
-  PgTable,
-  pgTable,
+  integer,
+  SQLiteTable,
+  sqliteTable,
   text,
-  timestamp,
-} from "drizzle-orm/pg-core";
-import { drizzle } from "drizzle-orm/postgres-js";
+} from "drizzle-orm/sqlite-core";
 import { describe, expect, it } from "vitest";
+import { NOTIFICATION_ENDPOINT_PROVIDER } from "#src/constants/billing-ops-enums";
+import {
+  CHILD_RELATIONSHIP_CODEC,
+  CHILD_RELATIONSHIP_VALUES,
+  CONSENT_ACTION_CODEC,
+  CONSENT_ACTION_VALUES,
+  CONSENT_TYPE_CODEC,
+  CONSENT_TYPE_VALUES,
+  MANAGER_ROLE,
+  MANAGER_ROLE_CODEC,
+  MANAGER_ROLE_VALUES,
+  USER_STATUS,
+} from "#src/constants/identity-enums";
+import {
+  ACCESS_TIER_CODEC,
+  ACCESS_TIER_VALUES,
+  CONTENT_ENTITY_TYPE_CODEC,
+  CONTENT_ENTITY_TYPE_VALUES,
+  PLAY_COMPLETION_STATUS_CODEC,
+  PLAY_COMPLETION_STATUS_VALUES,
+  TAG_STATUS_CODEC,
+  TAG_STATUS_VALUES,
+} from "#src/constants/learning-enums";
+import { SqliteLocalDriver } from "#src/drivers/sqlite-local-driver";
+import { createRepositories } from "#src/repositories/index";
 // biome-ignore lint/performance/noNamespaceImport: dynamically iterates all schema tables
 import * as schema from "#src/schema/index";
 import { SEED_MANAGERS, SEED_USERS } from "#src/seed-accounts";
@@ -30,17 +49,35 @@ import {
 import { extractTableNamesFromSchema, TABLES } from "#tests/global-setup";
 
 const SQL_CHECK_CLAUSE_REGEX = /\bCHECK\s*\(/i;
+const FORBIDDEN_PATTERNS = [
+  /drizzle-orm\/pg-core/,
+  /\bpgEnum\s*\(/,
+  /\bpgTable\s*\(/,
+  /\.(inner|left|right|full)Join\s*\(/,
+] as const;
+const SRC_ROOT = resolve(import.meta.dirname, "..", "..", "src");
+
+function listTsFilesRecursive(dir: string): string[] {
+  const files: string[] = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = resolve(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...listTsFilesRecursive(full));
+    } else if (entry.name.endsWith(".ts")) {
+      files.push(full);
+    }
+  }
+  return files;
+}
 
 function readInitialMigrationSql(): string {
-  const migrationsDir = resolve(
-    import.meta.dirname,
-    "..",
-    "..",
-    "src",
-    "migrations"
-  );
-  const initialDir = readdirSync(migrationsDir).find((entry) =>
-    entry.endsWith("_initial_schema")
+  const migrationsDir = resolve(SRC_ROOT, "migrations");
+  const migrationFolders = readdirSync(migrationsDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+  expect(migrationFolders.length).toBe(1);
+  const initialDir = migrationFolders.find((name) =>
+    name.endsWith("_initial_schema")
   );
   if (!initialDir) {
     throw new Error("Initial schema migration folder not found");
@@ -54,7 +91,7 @@ function readInitialMigrationSql(): string {
 function findTablesMissingTimestamps(schemaObj: object): string[] {
   const missing: string[] = [];
   for (const value of Object.values(schemaObj)) {
-    if (!is(value, PgTable)) {
+    if (!is(value, SQLiteTable)) {
       continue;
     }
     const tableName = getTableName(value);
@@ -67,14 +104,14 @@ function findTablesMissingTimestamps(schemaObj: object): string[] {
   return missing.sort();
 }
 
-function getColumnSqlNames(table: PgTable): string[] {
+function getColumnSqlNames(table: SQLiteTable): string[] {
   const cols = getTableColumns(table);
   return Object.values(cols).map((col) => col.name);
 }
 
-describe("Dynamic Schema Tables Extraction (G6, Task #208)", () => {
-  it("trích xuất đủ các bảng từ schema/ và không thiếu bảng mới", () => {
-    expect(TABLES.length).toBe(69);
+describe("Dynamic Schema Tables Extraction & Architecture (SQLite + Relations + TinyInt)", () => {
+  it("trích xuất đủ 66 bảng chính từ schema/ và loại bỏ 5 bảng phụ trợ", () => {
+    expect(TABLES.length).toBe(66);
     expect(TABLES).toContain("skill_datasets");
     expect(TABLES).toContain("content_skill_map");
     expect(TABLES).toContain("users");
@@ -90,6 +127,13 @@ describe("Dynamic Schema Tables Extraction (G6, Task #208)", () => {
     expect(TABLES).toContain("child_stickers");
     expect(TABLES).toContain("child_sticker_placements");
     expect(TABLES).toContain("child_mascot_gear");
+
+    expect(TABLES).not.toContain("seed_manifest");
+    expect(TABLES).not.toContain("stored_blobs");
+    expect(TABLES).not.toContain("backup_log");
+    expect(TABLES).not.toContain("error_logs");
+    expect(TABLES).not.toContain("feature_flags");
+
     expect(TABLES).not.toContain("content_objective_map");
     expect(TABLES).not.toContain("worksheets");
     expect(TABLES).not.toContain("seo_pages");
@@ -99,8 +143,21 @@ describe("Dynamic Schema Tables Extraction (G6, Task #208)", () => {
     expect(TABLES).not.toContain("package_entitlements");
   });
 
+  it("không còn pg-core, pgEnum, pgTable hay SQL join thủ công trong packages/db/src/", () => {
+    const violations: string[] = [];
+    for (const filePath of listTsFilesRecursive(SRC_ROOT)) {
+      const content = readFileSync(filePath, "utf8");
+      for (const pattern of FORBIDDEN_PATTERNS) {
+        if (pattern.test(content)) {
+          violations.push(`${filePath}: matched ${pattern.source}`);
+        }
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
   it("test chứng minh bắt lỗi: thêm bảng giả vào schema ⟹ xuất hiện trong danh sách trích xuất", () => {
-    const fakeTable = pgTable("fake_table_for_test", {
+    const fakeTable = sqliteTable("fake_table_for_test", {
       id: text("id").primaryKey(),
     });
 
@@ -117,9 +174,9 @@ describe("Dynamic Schema Tables Extraction (G6, Task #208)", () => {
   it("BR-DM-08: mọi bảng đều có cả created_at và updated_at NOT NULL", () => {
     expect(findTablesMissingTimestamps(schema)).toEqual([]);
 
-    const tableWithoutUpdatedAt = pgTable("missing_updated_at_table", {
+    const tableWithoutUpdatedAt = sqliteTable("missing_updated_at_table", {
       id: text("id").primaryKey(),
-      createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
+      createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
     });
     expect(
       findTablesMissingTimestamps({ broken: tableWithoutUpdatedAt })
@@ -137,22 +194,24 @@ describe("Dynamic Schema Tables Extraction (G6, Task #208)", () => {
     }
   });
 
-  it("migration 0000_initial_schema hợp nhất toàn bộ schema, không chứa bảng/trigger đa phiên bản nội dung và giữ UNIQUE(code) trực tiếp", () => {
+  it("chỉ còn duy nhất 1 file migration squashed SQLite hợp lệ với triggers & UNIQUE trực tiếp", () => {
     const migrationSql = readInitialMigrationSql();
     expect(migrationSql).not.toContain("prevent_published_update");
+    expect(migrationSql).toContain("CREATE TABLE `game_levels`");
+    expect(migrationSql).toContain("CREATE TABLE `curricula`");
+    expect(migrationSql).toContain("`code` text NOT NULL UNIQUE");
+    expect(migrationSql).toContain("trg_prevent_audit_logs_update");
+    expect(migrationSql).toContain("trg_prevent_consent_logs_update");
     expect(migrationSql).toContain(
-      'CONSTRAINT "game_levels_code_unique" UNIQUE("code")'
-    );
-    expect(migrationSql).toContain(
-      'CONSTRAINT "curricula_code_unique" UNIQUE("code")'
+      "trg_prevent_completed_play_sessions_update"
     );
     expect(migrationSql).not.toMatch(SQL_CHECK_CLAUSE_REGEX);
   });
 
-  it("BR-DM-14 & Relational API: toàn bộ 64 bảng có 0 CHECK constraint và đăng ký đầy đủ Drizzle relations() cho db.query.*", () => {
+  it("BR-DM-14 & Relational API: toàn bộ 66 bảng có 0 CHECK constraint và đăng ký đầy đủ db.query.*", async () => {
     const tablesWithChecks: string[] = [];
     for (const value of Object.values(schema)) {
-      if (!is(value, PgTable)) {
+      if (!is(value, SQLiteTable)) {
         continue;
       }
       const cfg = getTableConfig(value);
@@ -162,18 +221,23 @@ describe("Dynamic Schema Tables Extraction (G6, Task #208)", () => {
     }
     expect(tablesWithChecks).toEqual([]);
 
-    const mockDb = drizzle.mock({ relations: defineRelations(schema) });
-    expect(Object.keys(mockDb.query).length).toBe(69);
-    expect(mockDb.query.users).toBeDefined();
-    expect(mockDb.query.childProfiles).toBeDefined();
-    expect(mockDb.query.playSessions).toBeDefined();
-    expect(mockDb.query.curricula).toBeDefined();
-    expect(mockDb.query.skills).toBeDefined();
+    const driver = new SqliteLocalDriver({ dataDir: ":memory:" });
+    try {
+      const memDb = driver.getAppDb();
+      expect(Object.keys(memDb.query).length).toBe(66);
+      expect(memDb.query.users).toBeDefined();
+      expect(memDb.query.childProfiles).toBeDefined();
+      expect(memDb.query.playSessions).toBeDefined();
+      expect(memDb.query.curricula).toBeDefined();
+      expect(memDb.query.skills).toBeDefined();
+    } finally {
+      await driver.disconnect();
+    }
   });
 });
 
 describe("Schema Content & Taxonomy Rules (BR-SCT-01..BR-SCT-08)", () => {
-  it("BR-SCT-01: Layer 1 (competencies, strands, skills, learning_objectives, content_tags) KHÔNG dùng content_lifecycle_status", () => {
+  it("BR-SCT-01: Layer 1 không dùng lifecycle status và content_tags.status dùng tinyint + TAG_STATUS_CODEC", () => {
     for (const table of [
       schema.competencies,
       schema.strands,
@@ -186,10 +250,17 @@ describe("Schema Content & Taxonomy Rules (BR-SCT-01..BR-SCT-08)", () => {
     }
 
     const tagCols = getTableColumns(schema.contentTags);
-    expect(tagCols.status.enumValues).toEqual(["active", "deprecated"]);
+    expect(tagCols.status.getSQLType()).toBe("integer");
+    expect(TAG_STATUS_VALUES).toEqual([1, 2]);
+    expect(TAG_STATUS_CODEC.labels).toEqual(["active", "deprecated"]);
+    for (const code of TAG_STATUS_VALUES) {
+      expect(TAG_STATUS_CODEC.toCode(TAG_STATUS_CODEC.toLabel(code))).toBe(
+        code
+      );
+    }
   });
 
-  it("BR-SCT-02 & BR-SCT-03: game_levels, curricula, skill_datasets dùng UNIQUE(code) trực tiếp và bỏ đa version / vòng đời duyệt", () => {
+  it("BR-SCT-02 & BR-SCT-03: game_levels, curricula, skill_datasets dùng UNIQUE(code) trực tiếp", () => {
     const removedLifecycleColumns = [
       "entity_id",
       "content_version",
@@ -221,7 +292,7 @@ describe("Schema Content & Taxonomy Rules (BR-SCT-01..BR-SCT-08)", () => {
     expect(getColumnSqlNames(schema.gameLevels)).not.toContain("legacy_v1_ref");
   });
 
-  it("BR-SCT-04: game_levels tách riêng content_pack và difficulty_params (JSONB NOT NULL) và access_tier NOT NULL không có default", () => {
+  it("BR-SCT-04: game_levels tách riêng content_pack và difficulty_params (JSON NOT NULL) và access_tier tinyint NOT NULL", () => {
     const cols = getTableColumns(schema.gameLevels);
     expect(cols.contentPack.name).toBe("content_pack");
     expect(cols.contentPack.notNull).toBe(true);
@@ -230,7 +301,9 @@ describe("Schema Content & Taxonomy Rules (BR-SCT-01..BR-SCT-08)", () => {
     expect(cols.accessTier.name).toBe("access_tier");
     expect(cols.accessTier.notNull).toBe(true);
     expect(cols.accessTier.hasDefault).toBe(false);
-    expect(cols.accessTier.enumValues).toEqual([
+    expect(cols.accessTier.getSQLType()).toBe("integer");
+    expect(ACCESS_TIER_VALUES).toEqual([1, 2, 3, 4]);
+    expect(ACCESS_TIER_CODEC.labels).toEqual([
       "free",
       "login",
       "standard",
@@ -254,9 +327,17 @@ describe("Schema Content & Taxonomy Rules (BR-SCT-01..BR-SCT-08)", () => {
     expect(itemColNames).not.toContain("game_level_id");
   });
 
-  it("BR-SCT-07 & BR-SCT-08: content_skill_map kiểm tra weight (0, 1] ở tầng validator (BR-DM-14) và các bảng tham chiếu nội dung dùng content_entity_type enum", () => {
+  it("BR-SCT-07 & BR-SCT-08: content_skill_map weight + entity_type dùng tinyint & CONTENT_ENTITY_TYPE_CODEC", () => {
     const expectedEntities = ["game_level", "curriculum"];
-    expect(schema.contentEntityTypeEnum.enumValues).toEqual(expectedEntities);
+    expect(CONTENT_ENTITY_TYPE_VALUES).toEqual([1, 2]);
+    expect(CONTENT_ENTITY_TYPE_CODEC.labels).toEqual(expectedEntities);
+    for (const code of CONTENT_ENTITY_TYPE_VALUES) {
+      expect(
+        CONTENT_ENTITY_TYPE_CODEC.toCode(
+          CONTENT_ENTITY_TYPE_CODEC.toLabel(code)
+        )
+      ).toBe(code);
+    }
 
     const tagMapCols = getTableColumns(schema.contentTagMap);
     const skillMapCols = getTableColumns(schema.contentSkillMap);
@@ -264,11 +345,15 @@ describe("Schema Content & Taxonomy Rules (BR-SCT-01..BR-SCT-08)", () => {
     const pCurItemCols = getTableColumns(schema.personalCurriculumItems);
     const libItemCols = getTableColumns(schema.libraryItems);
 
-    expect(tagMapCols.entityType.enumValues).toEqual(expectedEntities);
-    expect(skillMapCols.entityType.enumValues).toEqual(expectedEntities);
-    expect(curItemCols.entityType.enumValues).toEqual(expectedEntities);
-    expect(pCurItemCols.entityType.enumValues).toEqual(expectedEntities);
-    expect(libItemCols.entityType.enumValues).toEqual(expectedEntities);
+    for (const col of [
+      tagMapCols.entityType,
+      skillMapCols.entityType,
+      curItemCols.entityType,
+      pCurItemCols.entityType,
+      libItemCols.entityType,
+    ]) {
+      expect(col.getSQLType()).toBe("integer");
+    }
 
     expect(skillMapCols.weight.name).toBe("weight");
     expect(skillMapCols.weight.notNull).toBe(true);
@@ -281,7 +366,7 @@ describe("Schema Content & Taxonomy Rules (BR-SCT-01..BR-SCT-08)", () => {
   });
 });
 
-describe("Schema Identity & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
+describe("Schema Identity, Sensitive Hiding, & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
   it("BR-SIB-01: bảng users KHÔNG có cột role, persona, tier, package hay tenant_id", () => {
     const userColNames = getColumnSqlNames(schema.users);
     expect(userColNames).not.toContain("role");
@@ -292,7 +377,7 @@ describe("Schema Identity & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
     expect(userColNames).not.toContain("tenant_id");
   });
 
-  it("BR-SIB-02: seed catalog chứa đúng 13 entitlement_keys (8 MVP + 5 P2) và 2 gói MVP công khai PKG-standard, PKG-premium", () => {
+  it("BR-SIB-02: seed catalog chứa đúng 13 entitlement_keys (8 MVP + 5 P2) và 2 gói MVP công khai", () => {
     expect(SEED_ENTITLEMENT_KEYS.length).toBe(13);
     expect(SEED_ENTITLEMENT_KEYS.filter((k) => k.isMvp).length).toBe(8);
     expect(SEED_ENTITLEMENT_KEYS.filter((k) => !k.isMvp).length).toBe(5);
@@ -304,10 +389,91 @@ describe("Schema Identity & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
     expect(SEED_PACKAGES.length).toBe(5);
   });
 
-  it("BR-SIB-03: manager_role enum đóng ở giá trị super_admin", () => {
-    expect(schema.managerRoleEnum.enumValues).toEqual(["super_admin"]);
+  it("BR-SIB-03: managers.role dùng tinyint + MANAGER_ROLE_CODEC cho super_admin / content_reviewer", () => {
+    expect(MANAGER_ROLE_VALUES).toEqual([1, 2]);
+    expect(MANAGER_ROLE_CODEC.labels).toEqual([
+      "super_admin",
+      "content_reviewer",
+    ]);
     const managerCols = getTableColumns(schema.managers);
-    expect(managerCols.role.enumValues).toEqual(["super_admin"]);
+    expect(managerCols.role.getSQLType()).toBe("integer");
+    expect(MANAGER_ROLE_CODEC.toLabel(MANAGER_ROLE.SUPER_ADMIN)).toBe(
+      "super_admin"
+    );
+  });
+
+  it("ẩn các trường nhạy cảm theo mặc định ở Repositories và chỉ trả khi gọi *ForAuth / *ForDispatch", async () => {
+    const driver = new SqliteLocalDriver({ dataDir: ":memory:" });
+    try {
+      const repos = createRepositories(driver.getAppDb());
+      const createdUser = await repos.users.create({
+        email: "secret-check@mindkid.vn",
+        passwordHash: "$argon2id$user-secret-hash",
+        displayName: "Parent Secret",
+        status: USER_STATUS.ACTIVE,
+      });
+      expect("passwordHash" in createdUser).toBe(false);
+
+      const publicUser = await repos.users.findById(createdUser.id);
+      const authUser = await repos.users.findForAuthById(createdUser.id);
+      expect(publicUser).not.toBeNull();
+      expect(publicUser ? "passwordHash" in publicUser : true).toBe(false);
+      expect(authUser?.passwordHash).toBe("$argon2id$user-secret-hash");
+
+      const createdMgr = await repos.managers.create({
+        email: "mgr-secret@mindkid.vn",
+        passwordHash: "$argon2id$mgr-secret-hash",
+        displayName: "Admin Secret",
+        role: MANAGER_ROLE.SUPER_ADMIN,
+      });
+      expect("passwordHash" in createdMgr).toBe(false);
+
+      const publicMgr = await repos.managers.findByEmail(
+        "mgr-secret@mindkid.vn"
+      );
+      const authMgr = await repos.managers.findForAuthByEmail(
+        "mgr-secret@mindkid.vn"
+      );
+      expect(publicMgr ? "passwordHash" in publicMgr : true).toBe(false);
+      expect(authMgr?.passwordHash).toBe("$argon2id$mgr-secret-hash");
+
+      const credPublic = await repos.authAccounts.upsertUserCredentialAccount(
+        createdUser.id,
+        "$argon2id$acct-secret-hash"
+      );
+      expect("password" in credPublic).toBe(false);
+      const credFoundPublic =
+        await repos.authAccounts.findUserCredentialAccount(createdUser.id);
+      const credFoundAuth =
+        await repos.authAccounts.findUserCredentialAccountForAuth(
+          createdUser.id
+        );
+      expect(credFoundPublic ? "password" in credFoundPublic : true).toBe(
+        false
+      );
+      expect(credFoundAuth?.password).toBe("$argon2id$acct-secret-hash");
+
+      const endpointPublic = await repos.notifications.upsertEndpoint({
+        userId: createdUser.id,
+        provider: NOTIFICATION_ENDPOINT_PROVIDER.FCM_WEB,
+        clientInstallationId: "install-secret-1",
+        tokenEncrypted: "enc:top-secret-token",
+        tokenFingerprint: "fp-secret-1",
+      });
+      expect("tokenEncrypted" in endpointPublic).toBe(false);
+      const endpointsPublic =
+        await repos.notifications.listActiveEndpointsByUser(createdUser.id);
+      const endpointsDispatch =
+        await repos.notifications.listActiveEndpointsForDispatch(
+          createdUser.id
+        );
+      expect(
+        endpointsPublic[0] ? "tokenEncrypted" in endpointsPublic[0] : true
+      ).toBe(false);
+      expect(endpointsDispatch[0]?.tokenEncrypted).toBe("enc:top-secret-token");
+    } finally {
+      await driver.disconnect();
+    }
   });
 
   it("BR-AUT-39: 10 bảng phụ Better Auth tách riêng nhánh User (FK users) và nhánh Manager (FK managers) với ON DELETE CASCADE", () => {
@@ -363,7 +529,14 @@ describe("Schema Identity & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
     const consentCols = getTableColumns(schema.consentLogs);
     expect(auditCols.createdAt.notNull).toBe(true);
     expect(consentCols.createdAt.notNull).toBe(true);
-    expect(consentCols.action.enumValues).toEqual(["accepted", "withdrawn"]);
+    expect(consentCols.action.getSQLType()).toBe("integer");
+    expect(CONSENT_ACTION_VALUES).toEqual([1, 2]);
+    expect(CONSENT_ACTION_CODEC.labels).toEqual(["accepted", "withdrawn"]);
+    for (const code of CONSENT_ACTION_VALUES) {
+      expect(
+        CONSENT_ACTION_CODEC.toCode(CONSENT_ACTION_CODEC.toLabel(code))
+      ).toBe(code);
+    }
 
     for (const table of [
       schema.consentLogs,
@@ -378,19 +551,19 @@ describe("Schema Identity & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
     }
 
     const migration0000 = readInitialMigrationSql();
-    expect(migration0000).toContain("prevent_insert_only_mutation");
-    expect(migration0000).toContain("ON DELETE restrict");
+    expect(migration0000).toContain("trg_prevent_consent_logs_update");
+    expect(migration0000).toContain("ON DELETE RESTRICT");
   });
 
-  it("BR-SIB-07: users và managers đều dùng kiểu citext UNIQUE cho cột email (case-insensitive)", () => {
+  it("BR-SIB-07: users và managers đều dùng kiểu text COLLATE NOCASE UNIQUE cho cột email", () => {
     const userCols = getTableColumns(schema.users);
     const managerCols = getTableColumns(schema.managers);
 
-    expect(userCols.email.getSQLType()).toBe("citext");
+    expect(userCols.email.getSQLType()).toBe("text COLLATE NOCASE");
     expect(userCols.email.notNull).toBe(true);
     expect(userCols.email.isUnique).toBe(true);
 
-    expect(managerCols.email.getSQLType()).toBe("citext");
+    expect(managerCols.email.getSQLType()).toBe("text COLLATE NOCASE");
     expect(managerCols.email.notNull).toBe(true);
     expect(managerCols.email.isUnique).toBe(true);
   });
@@ -426,14 +599,21 @@ describe("Schema Identity & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
     );
   });
 
-  it("BR-SIB-12: consent_requirements dùng PK consent_type (3 giá trị), có reconsent_required_at nullable, không có cột version hay user_id", () => {
+  it("BR-SIB-12: consent_requirements dùng PK consent_type tinyint (3 giá trị), có reconsent_required_at nullable", () => {
     const cols = getTableColumns(schema.consentRequirements);
     expect(cols.consentType.primary).toBe(true);
-    expect(cols.consentType.enumValues).toEqual([
+    expect(cols.consentType.getSQLType()).toBe("integer");
+    expect(CONSENT_TYPE_VALUES).toEqual([1, 2, 3]);
+    expect(CONSENT_TYPE_CODEC.labels).toEqual([
       "terms",
       "privacy",
       "child_data",
     ]);
+    for (const code of CONSENT_TYPE_VALUES) {
+      expect(CONSENT_TYPE_CODEC.toCode(CONSENT_TYPE_CODEC.toLabel(code))).toBe(
+        code
+      );
+    }
     expect(cols.reconsentRequiredAt.name).toBe("reconsent_required_at");
     expect(cols.reconsentRequiredAt.notNull).toBe(false);
     expect(cols.notice.name).toBe("notice");
@@ -446,7 +626,9 @@ describe("Schema Identity & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
 
   it("BR-SIB-13: SEED_MANAGERS và SEED_USERS định nghĩa đủ 1 Super Admin Manager (mfaEnabled=false) và 3 Users phủ đủ free, standard, premium", () => {
     expect(SEED_MANAGERS.length).toBe(1);
-    expect(SEED_MANAGERS.map((m) => m.role)).toEqual(["super_admin"]);
+    expect(
+      SEED_MANAGERS.map((m) => MANAGER_ROLE_CODEC.toLabel(m.role))
+    ).toEqual(["super_admin"]);
     for (const mgr of SEED_MANAGERS) {
       expect(mgr.mfaEnabled).toBe(false);
     }
@@ -466,7 +648,7 @@ describe("Schema Identity & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
 });
 
 describe("Schema Play & Telemetry Rules (BR-SPT-01..BR-SPT-08)", () => {
-  it("BR-SPT-01 & BR-SPT-02: child_profiles chỉ thu dữ liệu tối thiểu (display_name, birth_year) và kiểm tra birth_year ở tầng validator (BR-DM-14)", () => {
+  it("BR-SPT-01 & BR-SPT-02: child_profiles chỉ thu dữ liệu tối thiểu (display_name, birth_year) và kiểm tra birth_year", () => {
     const colNames = getColumnSqlNames(schema.childProfiles);
     expect(colNames).toContain("display_name");
     expect(colNames).toContain("birth_year");
@@ -481,7 +663,18 @@ describe("Schema Play & Telemetry Rules (BR-SPT-01..BR-SPT-08)", () => {
     expect(colNames).not.toContain("phone");
 
     const cols = getTableColumns(schema.childProfiles);
-    expect(cols.relationship.enumValues).toEqual(["child", "student", "other"]);
+    expect(cols.relationship.getSQLType()).toBe("integer");
+    expect(CHILD_RELATIONSHIP_VALUES).toEqual([1, 2, 3]);
+    expect(CHILD_RELATIONSHIP_CODEC.labels).toEqual([
+      "child",
+      "student",
+      "other",
+    ]);
+    for (const code of CHILD_RELATIONSHIP_VALUES) {
+      expect(
+        CHILD_RELATIONSHIP_CODEC.toCode(CHILD_RELATIONSHIP_CODEC.toLabel(code))
+      ).toBe(code);
+    }
     expect(cols.dailyPlayCapMinutes.notNull).toBe(true);
 
     const cfg = getTableConfig(schema.childProfiles);
@@ -490,7 +683,7 @@ describe("Schema Play & Telemetry Rules (BR-SPT-01..BR-SPT-08)", () => {
     expect(() => assertChildBirthYear(2005)).toThrow();
   });
 
-  it("BR-SPT-03 & BR-SPT-04: telemetry_events chỉ dùng child_uuid (nullable, không FK/PII) và play_sessions.child_profile_id nullable cho Guest/Preview", () => {
+  it("BR-SPT-03 & BR-SPT-04: telemetry_events chỉ dùng child_uuid (nullable, không FK/PII) và play_sessions.child_profile_id nullable", () => {
     const tlmCols = getTableColumns(schema.telemetryEvents);
     expect(tlmCols.childUuid.name).toBe("child_uuid");
     expect(tlmCols.childUuid.notNull).toBe(false);
@@ -513,7 +706,7 @@ describe("Schema Play & Telemetry Rules (BR-SPT-01..BR-SPT-08)", () => {
     expect(playCols.childProfileId.notNull).toBe(false);
   });
 
-  it("BR-SPT-05 & BR-SPT-08: mastery_state có UNIQUE (child_profile_id, skill_id), 0 CHECK trong DB và kiểm tra xác suất [0, 1] ở tầng validator", () => {
+  it("BR-SPT-05 & BR-SPT-08: mastery_state có UNIQUE (child_profile_id, skill_id), 0 CHECK và kiểm tra xác suất [0, 1]", () => {
     const cfg = getTableConfig(schema.masteryState);
     const uqNames = cfg.uniqueConstraints.map((u) => u.name);
     expect(uqNames).toContain("mastery_state_child_skill_unique");
@@ -530,30 +723,34 @@ describe("Schema Play & Telemetry Rules (BR-SPT-01..BR-SPT-08)", () => {
     expect(() => assertMasteryProbabilities({ pLearn: "1.5000" })).toThrow();
   });
 
-  it("BR-SPT-06, BR-SPT-07, BR-SPT-08: play_sessions gắn (template_code, game_level_id), enum completion_status & access_tier, cascade khi xoá child_profiles/users", () => {
+  it("BR-SPT-06, BR-SPT-07, BR-SPT-08: play_sessions dùng completion_status & access_tier tinyint, cascade khi xoá child_profiles/users", () => {
     const playCols = getTableColumns(schema.playSessions);
     expect(playCols.templateCode.name).toBe("template_code");
     expect(playCols.templateCode.notNull).toBe(true);
     expect(playCols.gameLevelId.name).toBe("game_level_id");
     expect(playCols.gameLevelId.notNull).toBe(true);
-    expect(playCols.completionStatus.enumValues).toEqual([
+    expect(playCols.completionStatus.getSQLType()).toBe("integer");
+    expect(playCols.accessTierAtStart.getSQLType()).toBe("integer");
+    expect(PLAY_COMPLETION_STATUS_VALUES).toEqual([1, 2, 3]);
+    expect(PLAY_COMPLETION_STATUS_CODEC.labels).toEqual([
       "in_progress",
       "completed",
       "abandoned",
     ]);
-    expect(playCols.accessTierAtStart.enumValues).toEqual([
-      "free",
-      "login",
-      "standard",
-      "premium",
-    ]);
+    for (const code of PLAY_COMPLETION_STATUS_VALUES) {
+      expect(
+        PLAY_COMPLETION_STATUS_CODEC.toCode(
+          PLAY_COMPLETION_STATUS_CODEC.toLabel(code)
+        )
+      ).toBe(code);
+    }
     expect(getColumnSqlNames(schema.playSessions)).not.toContain(
       "content_version"
     );
 
     const tlmCols = getTableColumns(schema.telemetryEvents);
     expect(tlmCols.payload.dataType).toBe("object json");
-    expect(tlmCols.payload.getSQLType()).toBe("jsonb");
+    expect(tlmCols.payload.getSQLType()).toBe("text");
 
     const playCfg = getTableConfig(schema.playSessions);
     expect(playCfg.checks.length).toBe(0);
@@ -579,7 +776,7 @@ describe("Schema Play & Telemetry Rules (BR-SPT-01..BR-SPT-08)", () => {
     expect(userFk?.onDelete).toBe("cascade");
   });
 
-  it("Performance Hot Indexes: các bảng nóng và FK có đủ B-Tree index chuẩn", () => {
+  it("Performance Hot Indexes: các bảng nóng và FK có đủ index chuẩn", () => {
     const playIdxNames = getTableConfig(schema.playSessions).indexes.map(
       (i) => i.config.name
     );

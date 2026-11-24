@@ -1,9 +1,14 @@
 import crypto from "node:crypto";
 import {
+  ACCESS_TIER,
+  CONSENT_ACTION,
+  CONSENT_TYPE,
   childProfiles,
   childStickers,
+  consentLogs,
   gameLevels,
   getOwnerDb,
+  PLAY_COMPLETION_STATUS,
   playSessions,
   users,
 } from "@mindkid/db";
@@ -93,6 +98,13 @@ async function createChild(): Promise<ChildFixture> {
     throw new Error("Không tạo được user");
   }
   createdUserIds.push(user.id);
+  await db.insert(consentLogs).values({
+    userId: user.id,
+    consentType: CONSENT_TYPE.CHILD_DATA,
+    action: CONSENT_ACTION.ACCEPTED,
+    ipAddress: "127.0.0.1",
+    userAgent: "vitest",
+  });
   const [child] = await db
     .insert(childProfiles)
     .values({
@@ -130,7 +142,7 @@ async function createLevelFixture(): Promise<LevelFixture> {
       contentPack: {},
       difficultyParams: {},
       themeId: THEME,
-      accessTier: "free" as const,
+      accessTier: ACCESS_TIER.FREE,
     })
     .returning();
   if (!level) {
@@ -168,7 +180,7 @@ async function createCompletedPlaySession(
       childProfileId: childId,
       gameLevelId: level.id,
       templateCode: level.templateCode,
-      completionStatus: "completed",
+      completionStatus: PLAY_COMPLETION_STATUS.COMPLETED,
       startedAt: now,
       completedAt: now,
     })
@@ -238,7 +250,14 @@ describe("Album sticker API (sticker-album.md, BR-STK-01..07)", () => {
   afterAll(async () => {
     await level.cleanup();
     if (createdUserIds.length > 0) {
-      await getOwnerDb().delete(users).where(inArray(users.id, createdUserIds));
+      await getOwnerDb()
+        .delete(childProfiles)
+        .where(inArray(childProfiles.userId, createdUserIds));
+      // consent_logs is INSERT-only (BR-DM-05) with ON DELETE RESTRICT on users.id.
+      await getOwnerDb()
+        .delete(users)
+        .where(inArray(users.id, createdUserIds))
+        .catch(() => undefined);
     }
   });
 

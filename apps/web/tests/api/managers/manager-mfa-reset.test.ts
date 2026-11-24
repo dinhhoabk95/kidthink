@@ -6,6 +6,7 @@ import {
 import {
   auditLogs,
   getOwnerDb,
+  MANAGER_ROLE,
   managerSessions,
   managers,
   managerTwoFactors,
@@ -32,7 +33,7 @@ async function createManager(tag: string, mfaEnabled: boolean): Promise<Actor> {
       email: `mfa-reset-${tag}-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}@mindkid.vn`,
       passwordHash: await hashPassword("AdminPassword123!"),
       displayName: tag,
-      role: "super_admin",
+      role: MANAGER_ROLE.SUPER_ADMIN,
       isActive: true,
       mfaEnabled,
     })

@@ -8,8 +8,8 @@
  * packages only need `@mindkid/taxonomy`.
  */
 
-import type { CompetencyTier, StrandTier } from "@mindkid/shared";
-import { COMPETENCY_TIERS, STRANDS_CATALOG } from "@mindkid/shared";
+import type { CompetencyTier, StrandTier } from "@mindkid/shared/client";
+import { COMPETENCY_TIERS, STRANDS_CATALOG } from "@mindkid/shared/client";
 
 // Re-export all taxonomy types for convenience
 export type {
@@ -26,7 +26,7 @@ export type {
   SkillTier,
   StrandTier,
   ThinkingProcess,
-} from "@mindkid/shared";
+} from "@mindkid/shared/client";
 
 // ─── Competency constants ────────────────────────────────────────────
 

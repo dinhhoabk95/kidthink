@@ -1,6 +1,9 @@
 import crypto from "node:crypto";
-import { PROOF_SIGNED_URL_TTL_MINUTES, requireEnv } from "@mindkid/config";
-import sharp from "sharp";
+import {
+  isCloudflareRuntime,
+  PROOF_SIGNED_URL_TTL_MINUTES,
+  requireEnv,
+} from "@mindkid/config";
 import {
   buildRelativeAudioPath,
   deletePublicAudio,
@@ -9,6 +12,10 @@ import {
   normalizeAudioAsset,
   uploadPublicAudio,
 } from "#src/audio-storage";
+import {
+  getActiveObjectStorageDriver,
+  type ObjectStorageDriver,
+} from "#src/object-storage-driver";
 import {
   assetBaseUrl,
   assetSigningSecret,
@@ -21,6 +28,7 @@ import {
 } from "#src/storage-common";
 
 export * from "#src/audio-storage";
+export * from "#src/object-storage-driver";
 export { sanitizeRelativeStoragePath } from "#src/storage-common";
 
 export interface UploadPrivateAssetOptions {
@@ -270,8 +278,19 @@ export async function reencodeImageAssetWebp(
   input: Buffer | Uint8Array
 ): Promise<NormalizedImageAsset & { thumbBuffer: Buffer }> {
   const normalized = normalizeImageAsset(input);
+  // Giai đoạn 1 (`MINDKID_RUNTIME=cloudflare`): ảnh đã được nén WebP tại trình duyệt,
+  // bỏ qua nạp native addon `sharp` để không vượt trần 10ms CPU hoặc lỗi V8 isolate.
+  if (isCloudflareRuntime()) {
+    return {
+      ...normalized,
+      thumbBuffer: normalized.buffer,
+    };
+  }
+
   try {
-    const fullResult = await sharp(normalized.buffer)
+    const sharpMod = await import("sharp");
+    const sharpFn = sharpMod.default;
+    const fullResult = await sharpFn(normalized.buffer)
       .rotate()
       .resize({
         width: MAX_IMAGE_EDGE_PX,
@@ -287,7 +306,7 @@ export async function reencodeImageAssetWebp(
     const thumbWidth = Math.min(outWidth, IMAGE_THUMB_SIZE_PX);
     const thumbHeight = Math.min(outHeight, IMAGE_THUMB_SIZE_PX);
 
-    const thumbBuffer = await sharp(normalized.buffer)
+    const thumbBuffer = await sharpFn(normalized.buffer)
       .rotate()
       .resize({
         width: thumbWidth,
@@ -371,8 +390,21 @@ export function deletePublicImage(path: string): boolean {
 export async function uploadPrivateAsset(
   options: UploadPrivateAssetOptions
 ): Promise<PrivateUploadResult> {
-  await Promise.resolve();
   const normalizedPath = sanitizeRelativeStoragePath(options.key);
+  const driver: ObjectStorageDriver | undefined =
+    getActiveObjectStorageDriver();
+  if (driver) {
+    await driver.putObject({
+      bucket: "private",
+      key: normalizedPath,
+      body:
+        options.body instanceof Uint8Array
+          ? options.body
+          : new Uint8Array(options.body),
+      contentType: options.contentType,
+    });
+    return { path: normalizedPath };
+  }
 
   setBoundedStoreEntry(inMemoryPrivateStore, normalizedPath, {
     body: options.body,

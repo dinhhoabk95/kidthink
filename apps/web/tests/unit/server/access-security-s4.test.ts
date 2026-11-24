@@ -14,12 +14,14 @@ type MockRow = Record<string, MockScalar>;
 
 const hoisted = vi.hoisted(() => ({
   curriculumStatus: "in_review" as string,
+  gameLevelTier: "free" as "free" | "standard",
   activeEntitlements: [] as string[],
   updateCustomGameMock: vi.fn(async () => ({ uuid: "cg-1" })),
   resetSelectIndex: () => undefined,
 }));
 
-vi.mock("@mindkid/db", () => {
+vi.mock("@mindkid/db", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@mindkid/db")>();
   const curriculaTable = {
     __table: "curricula",
     id: "id",
@@ -54,8 +56,113 @@ vi.mock("@mindkid/db", () => {
     childProfileId: "child_profile_id",
     dateIct: "date_ict",
   };
+  const consentLogsTable = {
+    __table: "consentLogs",
+    id: "id",
+    userId: "user_id",
+    consentType: "consent_type",
+    action: "action",
+    createdAt: "created_at",
+  };
+  const consentRequirementsTable = {
+    __table: "consentRequirements",
+    consentType: "consent_type",
+    reconsentRequiredAt: "reconsent_required_at",
+    notice: "notice",
+  };
+
+  const resolveTableKey = (
+    table: { readonly __table?: string } | object | undefined
+  ): string => {
+    if (!table) {
+      return "";
+    }
+    const tagged = (table as { readonly __table?: string }).__table;
+    if (tagged) {
+      return tagged;
+    }
+    const drizzleName = Reflect.get(table, Symbol.for("drizzle:Name"));
+    return typeof drizzleName === "string" ? drizzleName : "";
+  };
+
+  const buildLevelRow = () => ({
+    id: 100,
+    code: "GL-C1-CNT-OBJ-0001",
+    templateCode: "GT-001",
+    contentVersion: 1,
+    accessTier:
+      hoisted.gameLevelTier === "standard"
+        ? actual.ACCESS_TIER.STANDARD
+        : actual.ACCESS_TIER.FREE,
+    ageMin: 3,
+    ageMax: 6,
+    title: "Đếm vật",
+    thumbnailEmoji: "🍎",
+    contentPack: {},
+    difficultyParams: {},
+  });
+
+  const buildChildRow = () => ({
+    id: 10,
+    uuid: "00000000-0000-4000-8000-000000000010",
+    userId: 42,
+    displayName: "Bé Test",
+    birthYear: 2021,
+    avatarId: "fox",
+    status: actual.CHILD_STATUS.ACTIVE,
+    dailyPlayCapMinutes: 15,
+  });
+
+  const buildCurriculumRow = () => ({
+    id: 1,
+    code: "CUR-C1-34-STD",
+    title: "Lộ trình C1",
+    description: "Mô tả",
+    programType: actual.PROGRAM_TYPE.AGE_BASED,
+    targetAgeMin: 3,
+    targetAgeMax: 4,
+    durationWeeks: 4,
+    sessionsPerWeek: 3,
+    accessTier: actual.ACCESS_TIER.FREE,
+  });
 
   const mockDb = {
+    query: {
+      curricula: {
+        findFirst: vi.fn(async () =>
+          hoisted.curriculumStatus === "published" ? buildCurriculumRow() : null
+        ),
+      },
+      gameLevels: {
+        findFirst: vi.fn(async () => buildLevelRow()),
+        findMany: vi.fn(async () => [buildLevelRow()]),
+      },
+      childProfiles: {
+        findFirst: vi.fn(async () => buildChildRow()),
+      },
+      childDailyStats: {
+        findFirst: vi.fn(async () => ({
+          childProfileId: 10,
+          dateIct: "2026-10-24",
+          totalPlayTimeSeconds: 15 * 60,
+        })),
+      },
+      consentLogs: {
+        findFirst: vi.fn(async () => ({
+          id: 1,
+          userId: 42,
+          consentType: actual.CONSENT_TYPE.CHILD_DATA,
+          action: actual.CONSENT_ACTION.ACCEPTED,
+          ipAddress: "127.0.0.1",
+          userAgent: "vitest",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })),
+      },
+      consentRequirements: {
+        findMany: vi.fn(async () => []),
+      },
+    },
     select: vi.fn((fields?: Record<string, string>) => {
       let currentTable = "";
       const resolveRows = (): MockRow[] => {
@@ -63,60 +170,30 @@ vi.mock("@mindkid/db", () => {
           if (hoisted.curriculumStatus !== "published") {
             return [];
           }
-          return [
-            {
-              id: 1,
-              code: "CUR-C1-34-STD",
-              title: "Lộ trình C1",
-              description: "Mô tả",
-              programType: "core",
-              targetAgeMin: 3,
-              targetAgeMax: 4,
-              durationWeeks: 4,
-              sessionsPerWeek: 3,
-              accessTier: "free",
-            },
-          ];
+          return [buildCurriculumRow()];
         }
-        if (currentTable === "gameLevels") {
+        if (currentTable === "gameLevels" || currentTable === "game_levels") {
           if (fields && "accessTier" in fields) {
             return [
               {
                 code: "GL-C1-CNT-OBJ-0001",
                 title: "Đếm vật Standard",
-                accessTier: "standard",
+                accessTier: actual.ACCESS_TIER.STANDARD,
               },
             ];
           }
-          return [
-            {
-              id: 100,
-              code: "GL-C1-CNT-OBJ-0001",
-              templateCode: "GT-001",
-              contentVersion: 1,
-              status: "published",
-              accessTier: "free",
-              ageMin: 3,
-              ageMax: 6,
-              title: "Đếm vật",
-              thumbnailEmoji: "🍎",
-              contentPack: {},
-              difficultyParams: {},
-            },
-          ];
+          return [buildLevelRow()];
         }
-        if (currentTable === "childProfiles") {
-          return [
-            {
-              id: 10,
-              uuid: "00000000-0000-4000-8000-000000000010",
-              userId: 42,
-              status: "active",
-              dailyPlayCapMinutes: 15,
-            },
-          ];
+        if (
+          currentTable === "childProfiles" ||
+          currentTable === "child_profiles"
+        ) {
+          return [buildChildRow()];
         }
-        if (currentTable === "childDailyStats") {
+        if (
+          currentTable === "childDailyStats" ||
+          currentTable === "child_daily_stats"
+        ) {
           return [
             {
               childProfileId: 10,
@@ -125,12 +202,28 @@ vi.mock("@mindkid/db", () => {
             },
           ];
         }
+        if (currentTable === "consentLogs" || currentTable === "consent_logs") {
+          return [
+            {
+              id: 1,
+              userId: 42,
+              consentType: actual.CONSENT_TYPE.CHILD_DATA,
+              action: actual.CONSENT_ACTION.ACCEPTED,
+            },
+          ];
+        }
+        if (
+          currentTable === "consentRequirements" ||
+          currentTable === "consent_requirements"
+        ) {
+          return [];
+        }
         return [];
       };
 
       const chain = {
-        from: vi.fn((table?: { __table?: string }) => {
-          currentTable = table?.__table ?? "";
+        from: vi.fn((table?: { readonly __table?: string } | object) => {
+          currentTable = resolveTableKey(table);
           return chain;
         }),
         where: vi.fn(() => chain),
@@ -143,12 +236,18 @@ vi.mock("@mindkid/db", () => {
       return chain;
     }),
     insert: vi.fn(() => ({
-      values: vi.fn(async () => undefined),
+      values: vi.fn(() => ({
+        returning: vi.fn(async () => [{ id: 1 }]),
+        // biome-ignore lint/suspicious/noThenProperty: Drizzle insert query builder mock
+        then: (resolve: (val: undefined) => void) =>
+          Promise.resolve(undefined).then(resolve),
+      })),
     })),
     resetSelectIndex: () => undefined,
   };
 
   return {
+    ...actual,
     getOwnerDb: vi.fn(() => mockDb),
     getDb: vi.fn(() => mockDb),
     curricula: curriculaTable,
@@ -171,6 +270,8 @@ vi.mock("@mindkid/db", () => {
     skills: {},
     childProfiles: childProfilesTable,
     childDailyStats: childDailyStatsTable,
+    consentLogs: consentLogsTable,
+    consentRequirements: consentRequirementsTable,
     playSessions: {},
     aiUsageLog: {},
     masteryState: {},
@@ -245,6 +346,7 @@ describe("Slice S4 Security Fixes ([H-10], [M-11], [L-01])", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     hoisted.curriculumStatus = "in_review";
+    hoisted.gameLevelTier = "free";
     hoisted.activeEntitlements = [];
     hoisted.resetSelectIndex();
   });
@@ -318,7 +420,8 @@ describe("Slice S4 Security Fixes ([H-10], [M-11], [L-01])", () => {
     const { aiAssistantService } = await import(
       "#server/services/ai-assistant"
     );
-    hoisted.activeEntitlements = [];
+    hoisted.activeEntitlements = ["use_ai_analysis"];
+    hoisted.gameLevelTier = "standard";
 
     const result = await aiAssistantService.suggestContent(42, {
       contentType: "game",
@@ -331,6 +434,26 @@ describe("Slice S4 Security Fixes ([H-10], [M-11], [L-01])", () => {
       access_tier: "standard",
       locked: true,
     });
+  });
+
+  it("[M-11] AiAssistantService.suggestContent rejects user without use_ai_analysis entitlement with 403 ENTITLEMENT_REQUIRED", async () => {
+    const { aiAssistantService } = await import(
+      "#server/services/ai-assistant"
+    );
+    const { debitCredits } = await import("#server/services/ai-credit.ts");
+    hoisted.activeEntitlements = ["play_standard_games"];
+    hoisted.gameLevelTier = "standard";
+
+    await expect(
+      aiAssistantService.suggestContent(42, {
+        contentType: "game",
+        limit: 5,
+      })
+    ).rejects.toMatchObject({
+      statusCode: 403,
+      code: "ENTITLEMENT_REQUIRED",
+    });
+    expect(debitCredits).not.toHaveBeenCalled();
   });
 
   it("[L-01] factoryAssertSameOriginRequest rejects missing Origin and Sec-Fetch-Site in production", async () => {

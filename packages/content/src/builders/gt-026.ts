@@ -7,32 +7,30 @@ import type {
 } from "@mindkid/shared";
 import { formatPromptLabel } from "@mindkid/shared";
 import {
+  countPromptWords,
   createRng,
   resolveItemAsset,
   safeGetItem,
+  sanitizeChildPrompt,
   shuffleDeterministic,
 } from "./utils.js";
 
-const WHITESPACE_RE = /\s+/;
-
-function countWords(text: string): number {
-  return text.trim().split(WHITESPACE_RE).filter(Boolean).length;
-}
-
 function buildGT026Prompt(goLabel: string, nogoLabel: string): string {
-  const full = `Bé hãy chạm vào ${goLabel}, bỏ qua ${nogoLabel} nhé!`;
-  if (countWords(full) <= 12) {
-    return full;
+  const full = `Tinh mắt chạm ${goLabel}, bỏ qua ${nogoLabel} nhé!`;
+  if (countPromptWords(full) <= 12) {
+    return sanitizeChildPrompt(full, "Tinh mắt chạm đúng hình mục tiêu nhé!");
   }
-  const compact = `Chạm vào ${goLabel}, bỏ qua ${nogoLabel} nhé!`;
-  if (countWords(compact) <= 12) {
-    return compact;
+  const compact = `Chạm ${goLabel}, bỏ qua ${nogoLabel} nhé!`;
+  if (countPromptWords(compact) <= 12) {
+    return sanitizeChildPrompt(
+      compact,
+      "Tinh mắt chạm đúng hình mục tiêu nhé!"
+    );
   }
-  const goOnly = `Bé hãy chạm vào ${goLabel} nhé!`;
-  if (countWords(goOnly) <= 12) {
-    return goOnly;
-  }
-  return "Bé hãy chạm đúng hình mục tiêu nhé!";
+  return sanitizeChildPrompt(
+    `Bé chạm vào ${goLabel} nhé!`,
+    "Tinh mắt chạm đúng hình mục tiêu nhé!"
+  );
 }
 
 function buildTrials(count: number, rng: ReturnType<typeof createRng>) {

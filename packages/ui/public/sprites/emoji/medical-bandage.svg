@@ -1,0 +1,10 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Băng cá nhân y tế</title>
+  <defs>
+    <linearGradient id="bndTan" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#fde68a" /><stop offset="100%" stop-color="#f59e0b" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.22" rx="34" ry="5" />
+    <rect fill="url(#bndTan)" height="34" rx="17" stroke="#78350f" stroke-width="3.8" transform="rotate(-38 60 60)" width="88" x="16" y="43" />
+    <rect fill="#fffbeb" height="26" rx="6" stroke="#92400e" stroke-width="3.2" transform="rotate(-38 60 60)" width="28" x="46" y="47" />
+    <circle cx="60" cy="60" fill="#ef4444" r="3" />
+</svg>

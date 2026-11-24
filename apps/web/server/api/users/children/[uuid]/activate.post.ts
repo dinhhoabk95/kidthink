@@ -1,17 +1,14 @@
-import { isValidParentGateToken } from "@mindkid/auth";
-import { childProfiles, getOwnerDb, playSessions } from "@mindkid/db";
-import { ParentGateRequiredError } from "@mindkid/errors/auth";
 import { NotFoundError } from "@mindkid/errors/common";
-import { deriveAgeBand } from "@mindkid/shared";
-import { and, eq } from "drizzle-orm";
 import {
   defineEventHandler,
   getCookie,
+  getHeader,
   getRouterParam,
   readBody,
   setCookie,
 } from "h3";
 import { z } from "zod";
+import { activateChildProfileForUser } from "#server/services/child-service";
 import { throwValidationError } from "#server/utils/api-error";
 import {
   getParentGateSecret,
@@ -31,27 +28,6 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError("NOT_FOUND");
   }
 
-  const userId = Number(user.user_id);
-  const db = getOwnerDb();
-
-  // Verify ownership & active status at DB level (BR-CPS-02 & BR-CPS-05)
-  const [targetChild] = await db
-    .select()
-    .from(childProfiles)
-    .where(
-      and(
-        eq(childProfiles.uuid, uuid),
-        eq(childProfiles.userId, userId),
-        eq(childProfiles.status, "active")
-      )
-    );
-
-  if (!targetChild) {
-    throw new NotFoundError(
-      "Không tìm thấy hồ sơ trẻ hoặc hồ sơ đã bị lưu trữ."
-    );
-  }
-
   const currentActiveUuid = getCookie(event, "active_child_id");
   const eventBody = (event.context as { body?: { gate_token?: string } })?.body;
   const raw =
@@ -61,52 +37,19 @@ export default defineEventHandler(async (event) => {
   if (!parsed.success) {
     throwValidationError(parsed.error);
   }
-  const body = parsed.data || {};
 
-  // BR-CPS-01 & BR-PEN-01: Switching between children requires Parent Gate
-  if (currentActiveUuid && currentActiveUuid !== uuid) {
-    const gateToken = String(body.gate_token || "");
-    if (
-      !(
-        gateToken &&
-        isValidParentGateToken(gateToken, userId, getParentGateSecret(event))
-      )
-    ) {
-      throw new ParentGateRequiredError(
-        "Cần xác nhận cổng người lớn khi đổi hồ sơ trẻ."
-      );
-    }
+  const gateToken =
+    parsed.data?.gate_token ?? getHeader(event, "x-parent-gate-token");
 
-    // BR-CPS-04: Mark previous child's active play sessions as abandoned
-    const [previousChild] = await db
-      .select()
-      .from(childProfiles)
-      .where(
-        and(
-          eq(childProfiles.uuid, currentActiveUuid),
-          eq(childProfiles.userId, userId)
-        )
-      );
+  const result = await activateChildProfileForUser({
+    userId: Number(user.user_id),
+    childUuid: uuid,
+    currentActiveUuid,
+    gateToken,
+    parentGateSecret: getParentGateSecret(event),
+  });
 
-    if (previousChild) {
-      await db
-        .update(playSessions)
-        .set({
-          completionStatus: "abandoned",
-          completedAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .where(
-          and(
-            eq(playSessions.childProfileId, previousChild.id),
-            eq(playSessions.completionStatus, "in_progress")
-          )
-        );
-    }
-  }
-
-  // BR-CPS-03: Set active_child_id cookie (context only, SameSite=Lax, 30 days)
-  setCookie(event, "active_child_id", targetChild.uuid, {
+  setCookie(event, "active_child_id", result.child.uuid, {
     httpOnly: false,
     maxAge: 30 * 86_400,
     path: "/",
@@ -114,14 +57,5 @@ export default defineEventHandler(async (event) => {
     secure: !import.meta.dev,
   });
 
-  const currentYear = new Date().getFullYear();
-
-  return {
-    child: {
-      uuid: targetChild.uuid,
-      display_name: targetChild.displayName,
-      avatar_id: targetChild.avatarId,
-      age_band: deriveAgeBand(targetChild.birthYear, currentYear),
-    },
-  };
+  return result;
 });

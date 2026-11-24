@@ -277,5 +277,14 @@ export const C6_WM_01_SEED: SkillSeed = {
       theme: "home",
       rounds: 3,
     },
+    {
+      code: "GL-C6-WM-TAP-6501",
+      template: "GT-001",
+      band: "3-4",
+      difficulty: 1,
+      theme: "home",
+      rounds: 3,
+      sequence_no: 61,
+    },
   ],
 };

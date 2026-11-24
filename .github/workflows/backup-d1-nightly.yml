@@ -1,0 +1,59 @@
+name: Nightly Encrypted D1 Backup (02:00 ICT)
+
+on:
+  schedule:
+    # 19:00 UTC = 02:00 sáng giờ Việt Nam (lúc vắng lưu lượng người dùng nhất)
+    - cron: "0 19 * * *"
+  workflow_dispatch:
+
+jobs:
+  encrypted-d1-backup:
+    name: Export D1 SQLite, Gzip & Encrypt AES-256-GCM (BR-BAK-02)
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Export mindkid-core & mindkid-logs via Wrangler & Encrypt AES-256-GCM
+        run: |
+          mkdir -p .backup-out
+          DATE_STAMP=$(date -u +"%Y%m%dT%H%M%SZ")
+          npx wrangler@latest d1 export mindkid-core --remote --output=".backup-out/core-${DATE_STAMP}.sql"
+          npx wrangler@latest d1 export mindkid-logs --remote --output=".backup-out/logs-${DATE_STAMP}.sql"
+          tar -czf ".backup-out/mindkid-d1-${DATE_STAMP}.tar.gz" -C .backup-out "core-${DATE_STAMP}.sql" "logs-${DATE_STAMP}.sql"
+          node -e '
+            const crypto = require("node:crypto");
+            const fs = require("node:fs");
+            const keyHex = process.env.BACKUP_ENCRYPTION_KEY || "";
+            const key = Buffer.byteLength(keyHex, "utf8") === 32 ? Buffer.from(keyHex, "utf8") : Buffer.from(keyHex, "hex");
+            if (key.length !== 32) throw new Error("BACKUP_ENCRYPTION_KEY must be 32 bytes");
+            const iv = crypto.randomBytes(12);
+            const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+            const plain = fs.readFileSync(".backup-out/mindkid-d1-'${DATE_STAMP}'.tar.gz");
+            const enc = Buffer.concat([iv, cipher.update(plain), cipher.final(), cipher.getAuthTag()]);
+            const outPath = ".backup-out/mindkid-d1-'${DATE_STAMP}'.tar.gz.enc";
+            fs.writeFileSync(outPath, enc);
+            const sha256 = crypto.createHash("sha256").update(enc).digest("hex");
+            fs.writeFileSync(outPath + ".sha256", sha256 + "\n");
+            fs.rmSync(".backup-out/core-'${DATE_STAMP}'.sql");
+            fs.rmSync(".backup-out/logs-'${DATE_STAMP}'.sql");
+            fs.rmSync(".backup-out/mindkid-d1-'${DATE_STAMP}'.tar.gz");
+            console.log("Backup encrypted successfully. SHA-256:", sha256);
+          '
+
+      - name: Retain Encrypted Backup in Private GitHub Actions Artifact (30 days - BR-BAK-05)
+        uses: actions/upload-artifact@v4
+        with:
+          name: mindkid-d1-encrypted-backup-${{ github.run_number }}
+          path: .backup-out/*.enc*
+          retention-days: 30
+          if-no-files-found: error

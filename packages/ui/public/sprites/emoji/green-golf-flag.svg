@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cờ lỗ sân cỏ</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="glfTurf" r="70%"><stop offset="0%" stop-color="#86efac" /><stop offset="55%" stop-color="#22c55e" /><stop offset="100%" stop-color="#15803d" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="86" fill="url(#glfTurf)" rx="44" ry="18" stroke="#14532d" stroke-width="3.8" />
+    <ellipse cx="52" cy="86" fill="#1e293b" rx="9" ry="4.5" />
+    <path d="M52 85V20" stroke="#334155" stroke-linecap="round" stroke-width="4.2" />
+    <polygon fill="#ef4444" points="52,20 88,32 52,44" stroke="#7f1d1d" stroke-linejoin="round" stroke-width="3.6" />
+    <circle cx="74" cy="82" fill="#ffffff" r="5" stroke="#334155" stroke-width="2.6" />
+</svg>

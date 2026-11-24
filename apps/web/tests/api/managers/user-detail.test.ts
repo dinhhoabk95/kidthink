@@ -1,9 +1,12 @@
 import {
   auditLogs,
+  CHILD_STATUS,
   childProfiles,
   getOwnerDb,
+  PAYMENT_ORDER_STATUS,
   packages,
   paymentOrders,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
@@ -82,7 +85,7 @@ describe("Task 4 — GET /api/managers/users/[uuid] Detail (BR-USD-01, BR-USD-04
       .values({
         email: testEmail,
         displayName: "Detail Test Parent",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
         passwordHash: "super-secret-hash",
       })
       .returning();
@@ -93,7 +96,7 @@ describe("Task 4 — GET /api/managers/users/[uuid] Detail (BR-USD-01, BR-USD-04
       displayName: "Bé Bình",
       birthYear: 2021,
       avatarId: "avatar-preset-03",
-      status: "active",
+      status: CHILD_STATUS.ACTIVE,
     });
 
     const event = mockEvent("super_admin", user.uuid);
@@ -141,7 +144,7 @@ describe("Task 4 — GET /api/managers/users/[uuid] Detail (BR-USD-01, BR-USD-04
       .values({
         email: testEmail,
         displayName: "Payment History Parent",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -163,21 +166,21 @@ describe("Task 4 — GET /api/managers/users/[uuid] Detail (BR-USD-01, BR-USD-04
         packageCode: "PKG_TEST_STD",
         offerCode: "OFFER_1M",
         amountVnd: 150_000,
-        status: "approved",
+        status: PAYMENT_ORDER_STATUS.APPROVED,
       },
       {
         userId: user.id,
         packageCode: "PKG_TEST_STD",
         offerCode: "OFFER_1M",
         amountVnd: 150_000,
-        status: "rejected",
+        status: PAYMENT_ORDER_STATUS.REJECTED,
       },
       {
         userId: user.id,
         packageCode: "PKG_TEST_STD",
         offerCode: "OFFER_1M",
         amountVnd: 150_000,
-        status: "rejected",
+        status: PAYMENT_ORDER_STATUS.REJECTED,
       },
     ]);
 
@@ -205,7 +208,7 @@ describe("Task 4 — GET /api/managers/users/[uuid] Detail (BR-USD-01, BR-USD-04
       .values({
         email: `audit_user_with_kids_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Audit Parent With Kids",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -214,7 +217,7 @@ describe("Task 4 — GET /api/managers/users/[uuid] Detail (BR-USD-01, BR-USD-04
       displayName: "Bé Bắp",
       birthYear: 2020,
       avatarId: "avatar-preset-02",
-      status: "active",
+      status: CHILD_STATUS.ACTIVE,
     });
 
     // Open detail twice
@@ -241,7 +244,7 @@ describe("Task 4 — GET /api/managers/users/[uuid] Detail (BR-USD-01, BR-USD-04
       .values({
         email: `audit_user_no_kids_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Audit Parent No Kids",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 

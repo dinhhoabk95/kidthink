@@ -1,18 +1,33 @@
 import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
 import {
   getOwnerDb,
+  NOTIFICATION_STATUS,
   notificationDeliveries,
   notifications,
+  USER_STATUS,
   userAccounts,
   users,
 } from "@mindkid/db";
-import { getQueue } from "@mindkid/queue";
+import { disconnectQueue, getQueue } from "@mindkid/queue";
 import { and, desc, eq } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
+
 import {
   getUserAuth,
   resetBetterAuthInstancesForTests,
 } from "#server/utils/better-auth";
+
+vi.hoisted(() => {
+  process.env.VALKEY_QUEUE_PREFIX ??= `test-${process.pid}-${process.env.VITEST_POOL_ID ?? "0"}`;
+});
 
 interface ResetRequestResponse {
   status?: boolean;
@@ -22,6 +37,7 @@ interface ResetRequestResponse {
 interface ResetEmailJobPayload {
   token?: string;
   reset_url?: string;
+  verify_url?: string;
   url?: string;
 }
 
@@ -40,7 +56,7 @@ async function seedActiveUserWithPassword(
       email,
       passwordHash,
       displayName: `Recovery ${tag}`,
-      status: "active",
+      status: USER_STATUS.ACTIVE,
       emailVerified: true,
       emailVerifiedAt: new Date(),
     })
@@ -60,6 +76,19 @@ async function seedActiveUserWithPassword(
 }
 
 describe("Task 4 — Better Auth Password Recovery (BR-PWR-01..09)", () => {
+  beforeAll(async () => {
+    if (getQueue().name !== "mindkid-jobs") {
+      await getQueue().obliterate({ force: true });
+    }
+  });
+
+  afterAll(async () => {
+    if (getQueue().name !== "mindkid-jobs") {
+      await getQueue().obliterate({ force: true });
+    }
+    await disconnectQueue();
+  });
+
   beforeEach(() => {
     setAuthRedisClient(new InMemoryRedisClient());
     resetBetterAuthInstancesForTests();
@@ -102,13 +131,17 @@ describe("Task 4 — Better Auth Password Recovery (BR-PWR-01..09)", () => {
       .from(notificationDeliveries)
       .where(eq(notificationDeliveries.notificationId, notif?.id ?? 0));
     expect(deliveries).toHaveLength(1);
-    expect(deliveries[0]?.status).toBe("queued");
+    expect(deliveries[0]?.status).toBe(NOTIFICATION_STATUS.QUEUED);
 
     const job = await getQueue().getJob(`email:send:${notif?.id ?? 0}`);
     expect(job).toBeDefined();
-    const jobPayload = (notif?.payload ?? job?.data.payload) as
-      | ResetEmailJobPayload
-      | undefined;
+    const notifPayload = notif?.payload as ResetEmailJobPayload | undefined;
+    expect(notifPayload?.token).toBeUndefined();
+    expect(notifPayload?.reset_url).toBeUndefined();
+    expect(notifPayload?.verify_url).toBeUndefined();
+    expect(notifPayload?.url).toBeUndefined();
+
+    const jobPayload = job?.data.payload as ResetEmailJobPayload | undefined;
     const resetUrl = jobPayload?.reset_url ?? jobPayload?.url ?? "";
     expect(resetUrl).toContain("/reset-password/");
     expect(jobPayload?.token).toBeTruthy();
@@ -163,9 +196,13 @@ describe("Task 4 — Better Auth Password Recovery (BR-PWR-01..09)", () => {
       .orderBy(desc(notifications.id))
       .limit(1);
     const job = await getQueue().getJob(`email:send:${notif?.id ?? 0}`);
-    const jobPayload = (notif?.payload ?? job?.data.payload) as
-      | ResetEmailJobPayload
-      | undefined;
+    const notifPayload = notif?.payload as ResetEmailJobPayload | undefined;
+    expect(notifPayload?.token).toBeUndefined();
+    expect(notifPayload?.reset_url).toBeUndefined();
+    expect(notifPayload?.verify_url).toBeUndefined();
+    expect(notifPayload?.url).toBeUndefined();
+
+    const jobPayload = job?.data.payload as ResetEmailJobPayload | undefined;
     const rawToken = jobPayload?.token ?? "";
     expect(rawToken.length).toBeGreaterThan(10);
 

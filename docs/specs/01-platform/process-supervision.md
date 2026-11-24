@@ -23,9 +23,11 @@ depends_on:
 
 Hai tiến trình runtime — `web` và `worker` — phải chạy liên tục, tự sống lại sau khi chết, tự lên
 lại sau khi máy khởi động, và nạp bản mới **không cắt** yêu cầu đang xử lý. `admin` là static SPA,
-được Nginx phục vụ từ release và không có tiến trình runtime riêng. Hiện chưa có định
-nghĩa nào cho việc đó: đo ngày 2026-08-18, kho không có tệp cấu hình trình giám sát tiến trình
-nào và không có dịch vụ hệ thống nào.
+được Nginx (hoặc Cloudflare Workers Static Assets) phục vụ và không có tiến trình runtime riêng.
+
+> **Lộ trình 2 giai đoạn (`MINDKID_RUNTIME`):**
+> - **Giai đoạn 1 (`MINDKID_RUNTIME=cloudflare`, `< 1.000 DAU`):** Quản lý vòng đời tiến trình do runtime V8 Isolate & Durable Objects Hibernation của Cloudflare đảm nhiệm (`mindkid-web` Worker + `mindkid-worker` Worker chứa `JobQueueDO` và 1 Cron Trigger `*/15 * * * *`).
+> - **Giai đoạn 2 (`MINDKID_RUNTIME=vps`, `≥ 1.000 DAU`):** Áp dụng đầy đủ mô hình PM2 supervisor trên máy chủ Linux được định nghĩa dưới đây.
 
 Không có mô hình tiến trình viết ra thì ba câu hỏi vận hành cơ bản không có câu trả lời: chạy mấy
 bản của `web`, một tiến trình chết thì ai dựng lại, và log của tiến trình đi đâu. Cả ba câu đều

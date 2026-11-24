@@ -1,9 +1,9 @@
 /**
  * @mindkid/emoji — Type definitions
- * Hệ sinh thái emoji curated cho giáo dục mầm non Việt Nam.
+ * Hệ sinh thái emoji & SVG minh hoạ thực tế cho giáo dục mầm non Việt Nam.
  */
 
-// ── 32 emoji categories ──────────────────────────────────────────
+// ── 36 emoji categories ──────────────────────────────────────────
 export type EmojiCategory =
   // Nhóm 1: Bản thân & Xã hội
   | "body"
@@ -11,12 +11,14 @@ export type EmojiCategory =
   | "family"
   | "profession"
   | "school"
+  | "science-lab"
   // Nhóm 2: Thế giới Động vật
   | "animal-farm"
   | "animal-wild"
   | "animal-water"
   | "animal-bird"
   | "animal-insect"
+  | "animal-prehistoric"
   // Nhóm 3: Thực vật & Thực phẩm
   | "fruit"
   | "vegetable"
@@ -37,8 +39,10 @@ export type EmojiCategory =
   // Nhóm 7: Văn hóa & Lễ hội
   | "festival"
   | "music-art"
-  // Nhóm 8: Thể chất & Vận động
+  | "vn-culture"
+  // Nhóm 8: Thể chất, Trò chơi & Vận động
   | "sport-game"
+  | "toy"
   | "hand-gesture"
   // Nhóm 9: Đời sống & Đồ vật
   | "household"
@@ -78,14 +82,32 @@ export type CurriculumTheme =
 export interface EmojiEntry {
   /** Minimum recommended age (3–6) */
   age_min: number;
-  /** Categories this emoji belongs to */
+  /** Categories this emoji belongs to (1..N of 36 categories) */
   categories: EmojiCategory[];
   /** Mapped curriculum themes */
   curriculum_themes: CurriculumTheme[];
   /** The emoji character itself (primary key, NFC, unique), e.g. '🍎' */
   emoji: string;
+  /** Optional 360x360 Hero WebP path for Tier-3 hero assets */
+  hero_webp_path?: string;
   /** Search keywords, English + Vietnamese merged, deduped (≥ 2) */
   keywords: string[];
   /** Display name */
   name: string;
+  /** Sprite kebab-case slug, e.g. 'backpack' */
+  slug?: string;
+  /** Custom 2.5D realistic SVG sprite path, e.g. '/sprites/emoji/backpack.svg' */
+  svg_path?: string;
+}
+
+// ── Custom SVG / Hero WebP Sprite Metadata ───────────────────────
+export type CustomSpriteTier = "vector_craft" | "hero_webp";
+
+export interface EmojiSpriteMeta {
+  readonly emoji: string;
+  readonly heroWebpPath?: string;
+  readonly nameVi: string;
+  readonly slug: string;
+  readonly svgPath: string;
+  readonly tier: CustomSpriteTier;
 }

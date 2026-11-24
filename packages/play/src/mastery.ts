@@ -3,9 +3,9 @@ import {
   type MasteryState,
   selectNext,
 } from "@mindkid/adaptive";
-import { contentSkillMap, masteryState } from "@mindkid/db";
+import { CONTENT_ENTITY_TYPE, type MasteryStateEntity } from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import type { computeSessionResult } from "@mindkid/shared";
-import { and, eq, inArray } from "drizzle-orm";
 import { awardChildBadges } from "#src/badges";
 import type { DbOrTx } from "#src/types";
 
@@ -17,22 +17,13 @@ export async function recordSkillMasteryUpdate(params: {
   readonly correctRatio: number;
   readonly hintRate: number;
   readonly now: Date;
-  readonly existingRow?: typeof masteryState.$inferSelect | null;
+  readonly existingRow?: MasteryStateEntity | null;
 }): Promise<MasteryState> {
   const { db, childId, skillId, weight, correctRatio, hintRate, now } = params;
+  const repos = createRepositories(db);
   let existing = params.existingRow;
   if (existing === undefined) {
-    const [queried] = await db
-      .select()
-      .from(masteryState)
-      .where(
-        and(
-          eq(masteryState.childProfileId, childId),
-          eq(masteryState.skillId, skillId)
-        )
-      )
-      .limit(1);
-    existing = queried ?? null;
+    existing = await repos.mastery.getForChildSkill(childId, skillId);
   }
 
   const prevState: MasteryState | null = existing
@@ -59,33 +50,18 @@ export async function recordSkillMasteryUpdate(params: {
     now,
   });
 
-  await db
-    .insert(masteryState)
-    .values({
-      childProfileId: childId,
-      skillId,
-      pLearn: update.p_learn.toFixed(4),
-      emaCorrect: update.ema_correct.toFixed(4),
-      hintRate: update.hint_rate.toFixed(4),
-      attemptsTotal: update.attempts_total,
-      bestPLearn: update.best_p_learn.toFixed(4),
-      paramsVersion: update.params_version,
-      lastSeenAt: update.last_seen_at,
-      updatedAt: now,
-    })
-    .onConflictDoUpdate({
-      target: [masteryState.childProfileId, masteryState.skillId],
-      set: {
-        pLearn: update.p_learn.toFixed(4),
-        emaCorrect: update.ema_correct.toFixed(4),
-        hintRate: update.hint_rate.toFixed(4),
-        attemptsTotal: update.attempts_total,
-        bestPLearn: update.best_p_learn.toFixed(4),
-        paramsVersion: update.params_version,
-        lastSeenAt: update.last_seen_at,
-        updatedAt: now,
-      },
-    });
+  await repos.mastery.upsertMastery({
+    childProfileId: childId,
+    skillId,
+    pLearn: update.p_learn.toFixed(4),
+    emaCorrect: update.ema_correct.toFixed(4),
+    hintRate: update.hint_rate.toFixed(4),
+    attemptsTotal: update.attempts_total,
+    bestPLearn: update.best_p_learn.toFixed(4),
+    paramsVersion: update.params_version,
+    lastSeenAt: update.last_seen_at,
+    updatedAt: now,
+  });
 
   return {
     child_id: childId,
@@ -103,15 +79,11 @@ export async function applySessionMasteryAndBadges(params: {
   readonly now: Date;
 }): Promise<ReturnType<typeof selectNext> | null> {
   const { db, childId, gameLevelId, sessionUuid, scoringResult, now } = params;
-  const mappedSkills = await db
-    .select()
-    .from(contentSkillMap)
-    .where(
-      and(
-        eq(contentSkillMap.entityType, "game_level"),
-        eq(contentSkillMap.entityId, gameLevelId)
-      )
-    );
+  const repos = createRepositories(db);
+  const mappedSkills = await repos.tagging.listSkillMaps(
+    CONTENT_ENTITY_TYPE.GAME_LEVEL,
+    gameLevelId
+  );
 
   if (mappedSkills.length === 0) {
     console.warn(
@@ -128,16 +100,11 @@ export async function applySessionMasteryAndBadges(params: {
 
   const masteryMap = new Map<number, MasteryState>();
   const skillIds = mappedSkills.map((ms) => Number(ms.skillId));
-  const existingRows = await db
-    .select()
-    .from(masteryState)
-    .where(
-      and(
-        eq(masteryState.childProfileId, childId),
-        inArray(masteryState.skillId, skillIds)
-      )
-    );
-  const existingBySkillId = new Map<number, typeof masteryState.$inferSelect>(
+  const existingRows = await repos.mastery.listForChildBySkills(
+    childId,
+    skillIds
+  );
+  const existingBySkillId = new Map<number, MasteryStateEntity>(
     existingRows.map((row) => [Number(row.skillId), row])
   );
 
@@ -177,31 +144,22 @@ export async function applyAbandonedSessionMastery(params: {
   readonly now: Date;
 }): Promise<void> {
   const { db, childId, gameLevelId, now } = params;
-  const mappedSkills = await db
-    .select()
-    .from(contentSkillMap)
-    .where(
-      and(
-        eq(contentSkillMap.entityType, "game_level"),
-        eq(contentSkillMap.entityId, gameLevelId)
-      )
-    );
+  const repos = createRepositories(db);
+  const mappedSkills = await repos.tagging.listSkillMaps(
+    CONTENT_ENTITY_TYPE.GAME_LEVEL,
+    gameLevelId
+  );
 
   if (mappedSkills.length === 0) {
     return;
   }
 
   const skillIds = mappedSkills.map((ms) => Number(ms.skillId));
-  const existingRows = await db
-    .select()
-    .from(masteryState)
-    .where(
-      and(
-        eq(masteryState.childProfileId, childId),
-        inArray(masteryState.skillId, skillIds)
-      )
-    );
-  const existingBySkillId = new Map<number, typeof masteryState.$inferSelect>(
+  const existingRows = await repos.mastery.listForChildBySkills(
+    childId,
+    skillIds
+  );
+  const existingBySkillId = new Map<number, MasteryStateEntity>(
     existingRows.map((row) => [Number(row.skillId), row])
   );
 

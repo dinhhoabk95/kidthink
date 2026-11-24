@@ -415,6 +415,7 @@
     TIER_OPTIONS,
     type UserAccessContext,
   } from "~/composables/use-games-catalog-page";
+  import { trimCatalogPayload } from "~/utils/seo-payload";
 
   definePageMeta({ layout: false });
 
@@ -527,6 +528,7 @@
       }
       return query;
     }),
+    transform: trimCatalogPayload,
   });
 
   const api = useApi();

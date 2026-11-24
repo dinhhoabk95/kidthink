@@ -1,10 +1,13 @@
 import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
 import {
+  CONSENT_TYPE,
   consentLogs,
   consentRequirements,
   getOwnerDb,
+  NOTIFICATION_CHANNEL,
   notificationDeliveries,
   notifications,
+  USER_STATUS,
   userAccounts,
   userSessions,
   users,
@@ -43,7 +46,12 @@ async function readCurrentConsentMarkers(): Promise<ConsentMarkers> {
   const rows = await db
     .select()
     .from(consentRequirements)
-    .where(inArray(consentRequirements.consentType, ["terms", "privacy"]));
+    .where(
+      inArray(consentRequirements.consentType, [
+        CONSENT_TYPE.TERMS,
+        CONSENT_TYPE.PRIVACY,
+      ])
+    );
 
   let termsRequirementAt: string | null = null;
   let privacyRequirementAt: string | null = null;
@@ -52,9 +60,9 @@ async function readCurrentConsentMarkers(): Promise<ConsentMarkers> {
     const iso = row.reconsentRequiredAt
       ? row.reconsentRequiredAt.toISOString()
       : null;
-    if (row.consentType === "terms") {
+    if (row.consentType === CONSENT_TYPE.TERMS) {
       termsRequirementAt = iso;
-    } else if (row.consentType === "privacy") {
+    } else if (row.consentType === CONSENT_TYPE.PRIVACY) {
       privacyRequirementAt = iso;
     }
   }
@@ -117,7 +125,7 @@ describe("Task 1 — Better Auth POST /api/auth/users/sign-up/email (BR-REG-01..
       throw new Error("Expected created user");
     }
 
-    expect(createdUser.status).toBe("pending_verification");
+    expect(createdUser.status).toBe(USER_STATUS.PENDING_VERIFICATION);
     expect(createdUser.uuid).toBeTruthy();
     expect(createdUser.passwordHash?.startsWith("$argon2id$")).toBe(true);
 
@@ -143,10 +151,9 @@ describe("Task 1 — Better Auth POST /api/auth/users/sign-up/email (BR-REG-01..
       .from(consentLogs)
       .where(eq(consentLogs.userId, createdUser.id));
     expect(consentRows).toHaveLength(2);
-    expect(consentRows.map((c) => c.consentType).sort()).toEqual([
-      "privacy",
-      "terms",
-    ]);
+    expect(consentRows.map((c) => c.consentType).sort((a, b) => a - b)).toEqual(
+      [CONSENT_TYPE.TERMS, CONSENT_TYPE.PRIVACY].sort((a, b) => a - b)
+    );
 
     const notifRows = await db
       .select()
@@ -162,7 +169,7 @@ describe("Task 1 — Better Auth POST /api/auth/users/sign-up/email (BR-REG-01..
         .from(notificationDeliveries)
         .where(eq(notificationDeliveries.notificationId, notif.id));
       expect(deliveryRows).toHaveLength(1);
-      expect(deliveryRows[0]?.channel).toBe("email");
+      expect(deliveryRows[0]?.channel).toBe(NOTIFICATION_CHANNEL.EMAIL);
 
       const job = await getQueue().getJob(`email:send:${notif.id}`);
       expect(job).toBeDefined();
@@ -220,7 +227,7 @@ describe("Task 1 — Better Auth POST /api/auth/users/sign-up/email (BR-REG-01..
       email,
       passwordHash: "dummy_hash",
       displayName: "Người Dùng Dupe",
-      status: "pending_verification",
+      status: USER_STATUS.PENDING_VERIFICATION,
     });
 
     const res = await postSignUpEmail({

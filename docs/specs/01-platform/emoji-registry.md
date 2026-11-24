@@ -5,9 +5,10 @@ area: platform
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-10-18
+reviewed: 2026-11-18
 owns:
-  - Danh mục emoji mã cứng dùng cho picker và tìm kiếm
+  - Danh mục emoji mã cứng dùng cho picker và tìm kiếm (36 nhóm chủ đề học)
+  - Kho SVG minh hoạ thực tế 2.5D và Hero WebP nội bộ
   - Metadata và tìm kiếm tiếng Việt
   - Ranh giới emoji nội dung vs affordance
 depends_on:
@@ -43,14 +44,15 @@ schema nào bắt nó phải nằm trong danh mục.
 
 | Nơi | |
 |---|---|
-| `packages/emoji/` | 32 nhóm data + `search.ts` · `query.ts` · `registry.ts` — **nguồn duy nhất** |
+| `packages/emoji/` | 36 nhóm data + `search.ts` · `query.ts` · `registry.ts` · `sprites.ts` — **nguồn duy nhất** |
+| `packages/ui/public/sprites/emoji/` | Bộ SVG minh hoạ thực tế 2.5D (`viewBox="0 0 120 120"`) phủ 100% danh mục |
 | `packages/emoji/tests/gates/catalog-integrity.test.ts` | Cổng tự nhất quán của **danh mục** |
 | [`../06-admin/emoji-picker.md`](../06-admin/emoji-picker.md) | UI chọn |
 
 ## 4. Main flow — chọn emoji trong studio
 
 1. Manager mở field kiểu `emoji`.
-2. Picker hiện **12 emoji gần đây** + 32 nhóm chủ đề.
+2. Picker hiện **12 emoji gần đây** + 36 nhóm chủ đề.
 3. Gõ tìm **bằng tiếng Việt** — "táo", "con mèo", "hình tròn".
 4. Chọn → lưu **ký tự UTF-8** `"🍎"`.
 5. Preview hiện ở **cỡ thật trong game**.
@@ -79,6 +81,8 @@ schema nào bắt nó phải nằm trong danh mục.
 | `BR-EMJ-10` | Một nghề = **một hàng, glyph trung tính** (🧑‍⚕️ 🧑‍🏫 🧑‍🍳 🧑‍🌾), Cấm — **NEVER hai hàng nam/nữ** | Cùng lý do `BR-EMJ-09`: chọn một giới là loại trừ. Trước đây mã `EMJ-doctor` im lặng chọn 👨‍⚕️ và bỏ 👩‍⚕️ — một hàng trung tính bỏ hẳn lựa chọn ngầm đó. Keyword giữ cả "thầy giáo" và "cô giáo" để tìm kiếm không hụt. Đo 2026-09-01: **0** glyph nghề nghiệp có giới nằm trong nội dung — chỉ 10 ref dạng mã, nên đổi sang trung tính không phải codemod nội dung |
 | `BR-EMJ-11` | Glyph là **khoá chính** của danh mục: duy nhất, chuẩn **NFC** | Trùng glyph thì tra ngược ra tên là ngẫu nhiên theo thứ tự mảng, và picker hiện một glyph nhiều lần |
 | `BR-EMJ-12` | Chặn tư cách thành viên **chỉ** ở nội dung do User tạo ([`../07-addon/custom-game-builder.md`](../07-addon/custom-game-builder.md) `BR-CGB-04`) | `packages/moderation` chỉ quét `title` và `instruction` — **không quét emoji**. Bỏ chặn ở đây là để 🔞🚬🔫 vào game mà con của chính User đó chơi. Nội dung studio do Manager soạn không cần chặn này vì đã qua PR/review người |
+| `BR-EMJ-13` | Mỗi glyph trong `packages/emoji/src/data/` chỉ khai báo **đúng một bản ghi gốc**; `EMOJI_CATEGORIES` được dẫn xuất tự động từ `entry.categories` | Nhân bản vật lý cùng một glyph ở nhiều file tạo ra drift ngầm về `name` / `age_min` / `keywords` khi sửa một nơi quên nơi kia |
+| `BR-EMJ-14` | **100% hàng trong `ALL_EMOJIS`** phải có SVG minh hoạ thực tế trong `CUSTOM_EMOJI_SPRITES` (`viewBox="0 0 120 120"`, `< 4500B`, cấm `#000000`, viền tương phản ≥ 3.0:1 và ≥ 4.0:1 trên vật sáng). Động vật và sinh vật phải vẽ **toàn thân đúng tỷ lệ giải phẫu đặc trưng loài** (cổ dài, 4 chân/móng, đuôi, bờm, vằn, vòi, sừng...) thay vì chỉ vẽ đầu rời hoặc khối hình học sơ sài | Trẻ 3–6 tuổi nhận diện con vật/đồ vật qua hình thái giải phẫu thật (ví dụ hươu cao cổ phải thấy cổ dài và bốn chân); hình SVG tự chủ giúp đồng nhất thẩm mỹ trên mọi thiết bị mà không lệ thuộc font OS |
 
 ## 7. Data
 
@@ -90,22 +94,26 @@ Không có bảng DB. Hàng sống trong `packages/emoji/src/data/<category>.ts`
 |---|---|---|
 | `emoji` | `string` | **Khoá chính** — ký tự UTF-8, NFC, duy nhất |
 | `name` | `string` | Tên tiếng Việt hiển thị — "Táo đỏ" |
-| `categories` | `EmojiCategory[]` | 1 hoặc nhiều trong 32 nhóm chủ đề học. ⭐ thuộc cả `school`, `shape-color`, `sky-space` |
+| `categories` | `EmojiCategory[]` | 1 hoặc nhiều trong 36 nhóm chủ đề học. ⭐ thuộc cả `school`, `shape-color`, `sky-space` |
 | `curriculum_themes` | `CurriculumTheme[]` | 12 chủ đề chương trình mầm non |
 | `keywords` | `string[]` | ≥2, Anh + Việt gộp — "red apple", "apple", "táo", "trái cây" |
 | `age_min` | `3 \| 4 \| 5 \| 6` | Tuổi tối thiểu khuyến nghị |
+| `slug` | `string` | Định danh kebab-case của sprite SVG — `"backpack"` |
+| `svg_path` | `string` | Đường dẫn tĩnh tới file SVG thực tế — `"/sprites/emoji/backpack.svg"` |
+| `hero_webp_path` | `string?` | Đường dẫn Hero WebP 360×360 (khi thuộc nhóm 40 Hero sprites) |
 
 `categories` là mảng vì glyph là khoá chính (`BR-EMJ-11`) và cùng một glyph phục vụ nhiều
 nhóm dạy học thật. Trước 2026-09-01 field là số ít, và 49 glyph phải nhân bản thành nhiều
 hàng để có mặt ở nhiều nhóm — đó là nguồn của 60 mã trùng.
 
-### 7.2 32 nhóm chủ đề học
+### 7.2 36 nhóm chủ đề học
 
 fruit · vegetable · animal-farm · animal-wild · animal-water · animal-bird · animal-insect ·
-shape-color · number-symbol · school · profession · vehicle-road · vehicle-rail ·
-vehicle-air · vehicle-water · weather-season · body · family · food · clothing · household ·
-tool · time · festival · flower-tree · nature-landscape · sky-space · sport-game · music-art ·
-face-emotion · hand-gesture · flag-symbol
+animal-prehistoric · shape-color · number-symbol · school · science-lab · profession ·
+vehicle-road · vehicle-rail · vehicle-air · vehicle-water · weather-season · body · family ·
+food · vn-culture · clothing · household · tool · time · festival · flower-tree ·
+nature-landscape · sky-space · sport-game · toy · music-art · face-emotion · hand-gesture ·
+flag-symbol
 
 Nhóm theo **chủ đề dạy học**, không theo Unicode block. Manager duyệt theo cách nghĩ của
 người soạn bài, không theo cách tổ chức của Unicode Consortium.
@@ -117,6 +125,9 @@ searchEmoji(q: string, limit?: number): EmojiEntry[];
 getByGlyph(glyph: string): EmojiEntry | null;
 getEmojisByCategory(category: EmojiCategory): EmojiEntry[];
 isInCatalog(glyph: string): boolean;   // picker, script kiểm kê, BR-CGB-04
+resolveCustomEmojiSprite(emoji: string): EmojiSpriteMeta | null;
+hasCustomEmojiSprite(emoji: string): boolean;
+listCustomEmojiSprites(): readonly EmojiSpriteMeta[];
 ```
 
 Tìm kiếm không dấu và có dấu đều ra kết quả — "tao" và "táo" cùng ra quả táo.
@@ -148,7 +159,7 @@ biến mất — không phải vì được sửa, mà vì phép tra đã bị b
 |---|---|
 | Auth | `requireManagerAuth()` |
 | Query | `q` `category` `age_band` `limit` (≤100) |
-| 200 | `{ items: [{ emoji, name, categories, keywords, age_min }], total, categories }` |
+| 200 | `{ items: [{ emoji, name, slug, svg_path, hero_webp_path, categories, keywords, age_min }], total, categories }` |
 | Nguồn | `@mindkid/emoji` trực tiếp — Cấm — **NEVER truy vấn DB** |
 | Cache | `private, max-age=3600` |
 

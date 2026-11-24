@@ -273,5 +273,12 @@ export const C4_LIV_07_SEED: SkillSeed = {
       theme: "art",
       rounds: 3,
     },
+    {
+      code: "GL-C4-LIV-INTRO-6007",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 3,
+      theme: "homeland",
+    },
   ],
 };

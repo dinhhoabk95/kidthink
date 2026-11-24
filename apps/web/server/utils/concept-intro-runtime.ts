@@ -1,32 +1,25 @@
 import {
-  childProfiles,
-  contentSkillMap,
-  gameLevels,
-  getOwnerDb,
-  playSessions,
-  skillPrerequisites,
-  skills,
-  telemetryEvents,
+  CONTENT_ENTITY_TYPE,
+  type JsonRecord,
+  type OwnerDb,
 } from "@mindkid/db";
+import {
+  createRepositories,
+  type MindKidRepositories,
+} from "@mindkid/db/repositories";
 import { ALL_TEMPLATES, getGameTemplate } from "@mindkid/game-engine/registry";
 import type {
   CallerIdentity,
   IntroCheckResult,
   IntroQueueItem,
 } from "@mindkid/shared";
-import { and, eq, inArray } from "drizzle-orm";
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 interface TopologicalSkill {
   id: number;
   code: string;
   name: string;
   prerequisiteIds: number[];
-}
-
-interface MappedSkillRow {
-  skillId: number;
-  skillCode: string;
-  skillName: string;
 }
 
 interface IntroLevelRow {
@@ -37,6 +30,38 @@ interface IntroLevelRow {
   skillId: number;
   skillCode: string;
   skillName: string;
+}
+
+export interface IntroLevelRef {
+  readonly levelCode: string;
+  readonly levelId: number;
+}
+
+export interface IntroCheckLevelSource {
+  readonly id: number;
+  readonly code: string;
+  readonly templateCode: string;
+}
+
+export interface CheckLevelIntroOptions {
+  guestDeviceId?: string;
+  isManagerPreview?: boolean;
+  resolvedChildId?: number | null;
+}
+
+export interface ResolveIntroResumeParams {
+  readonly levelId: number;
+  readonly levelCode: string;
+  readonly totalSegments: number;
+  readonly childProfileId: number | null;
+  readonly guestDeviceId?: string;
+  readonly isPreview?: boolean;
+}
+
+function isIntroLevelRefList(
+  value: OwnerDb | readonly IntroLevelRef[]
+): value is readonly IntroLevelRef[] {
+  return Array.isArray(value);
 }
 
 function topologicalSortSkills(
@@ -50,11 +75,7 @@ function topologicalSortSkills(
   );
 
   function visit(skill: TopologicalSkill): void {
-    if (visited.has(skill.id)) {
-      return;
-    }
-    if (visiting.has(skill.id)) {
-      // Chu trình taxonomy: bỏ qua cạnh gây chu trình theo BR-CIG-15
+    if (visited.has(skill.id) || visiting.has(skill.id)) {
       return;
     }
 
@@ -79,144 +100,109 @@ function topologicalSortSkills(
   return result;
 }
 
-async function collectTransitivePrerequisiteSkillIds(
-  db: ReturnType<typeof getOwnerDb>,
-  initialSkillIds: number[]
-): Promise<number[]> {
-  const allSkillIds = new Set<number>(initialSkillIds);
-  let frontier = [...initialSkillIds];
-
-  while (frontier.length > 0) {
-    const prereqs = await db
-      .select({ prereqId: skillPrerequisites.prerequisiteId })
-      .from(skillPrerequisites)
-      .where(inArray(skillPrerequisites.skillId, frontier));
-
-    const nextFrontier: number[] = [];
-    for (const row of prereqs) {
-      if (!allSkillIds.has(row.prereqId)) {
-        allSkillIds.add(row.prereqId);
-        nextFrontier.push(row.prereqId);
-      }
-    }
-    frontier = nextFrontier;
-  }
-
-  return Array.from(allSkillIds);
-}
-
 async function resolveCallerChildId(
-  db: ReturnType<typeof getOwnerDb>,
+  repos: MindKidRepositories,
   caller: CallerIdentity
 ): Promise<number | null> {
   if (caller.kind !== "user" || !caller.active_child_id) {
     return null;
   }
-  const [child] = await db
-    .select({ id: childProfiles.id })
-    .from(childProfiles)
-    .where(
-      and(
-        eq(childProfiles.uuid, caller.active_child_id),
-        eq(childProfiles.userId, Number(caller.user_id))
-      )
-    )
-    .limit(1);
-
+  const child = await repos.childProfiles.findByUuidForUser(
+    caller.active_child_id,
+    Number(caller.user_id)
+  );
   return child?.id ?? null;
-}
-
-export interface IntroLevelRef {
-  readonly levelCode: string;
-  readonly levelId: number;
 }
 
 /**
  * Id các level làm quen (bản đang published) mà trẻ/khách đã hoàn thành.
- * Đối chiếu theo **mã level**: khi cả danh mục lên bản content mới (`BR-CSA-17`)
- * bản cũ bị archive và `game_levels.id` đổi, nhưng bài đã làm vẫn phải tính.
+ * Đối chiếu theo **mã level** theo `BR-CSA-17`.
  */
 export async function findCompletedIntroLevelIds(
-  db: ReturnType<typeof getOwnerDb>,
   levels: readonly IntroLevelRef[],
   childProfileId: number | null,
   guestDeviceId?: string
+): Promise<Set<number>>;
+export async function findCompletedIntroLevelIds(
+  db: OwnerDb,
+  levels: readonly IntroLevelRef[],
+  childProfileId: number | null,
+  guestDeviceId?: string
+): Promise<Set<number>>;
+export async function findCompletedIntroLevelIds(
+  dbOrLevels: OwnerDb | readonly IntroLevelRef[],
+  levelsOrChildId: readonly IntroLevelRef[] | number | null,
+  childOrGuestId: number | null | string | undefined,
+  maybeGuestId?: string
 ): Promise<Set<number>> {
+  const isDbFirst = !isIntroLevelRefList(dbOrLevels);
+  const repos = isDbFirst
+    ? createRepositories(dbOrLevels)
+    : useOwnerRepositories();
+  const levels = isDbFirst
+    ? (levelsOrChildId as readonly IntroLevelRef[])
+    : dbOrLevels;
+  const childProfileId = isDbFirst
+    ? (childOrGuestId as number | null)
+    : (levelsOrChildId as number | null);
+  const guestDeviceId = isDbFirst
+    ? maybeGuestId
+    : (childOrGuestId as string | undefined);
+
   if (levels.length === 0) {
     return new Set();
   }
 
-  const conditions = [
-    inArray(
-      gameLevels.code,
-      levels.map((l) => l.levelCode)
-    ),
-    eq(playSessions.completionStatus, "completed"),
-    eq(playSessions.isPreview, false),
-  ];
-
-  if (childProfileId !== null) {
-    conditions.push(eq(playSessions.childProfileId, childProfileId));
-  } else if (guestDeviceId) {
-    conditions.push(eq(playSessions.guestDeviceId, guestDeviceId));
-  } else {
-    return new Set();
-  }
-
-  const completedSessions = await db
-    .selectDistinct({ code: gameLevels.code })
-    .from(playSessions)
-    .innerJoin(gameLevels, eq(gameLevels.id, playSessions.gameLevelId))
-    .where(and(...conditions));
-
-  const completedCodes = new Set(completedSessions.map((s) => s.code));
+  const completedList = await repos.playSessions.listCompletedLevelCodes(
+    childProfileId,
+    guestDeviceId,
+    levels.map((l) => l.levelCode)
+  );
+  const completedCodes = new Set(completedList);
   return new Set(
     levels.filter((l) => completedCodes.has(l.levelCode)).map((l) => l.levelId)
   );
 }
 
 export async function findCompletedLevelCodes(
-  db: ReturnType<typeof getOwnerDb>,
   childProfileId: number | null,
   guestDeviceId?: string
+): Promise<string[]>;
+export async function findCompletedLevelCodes(
+  db: OwnerDb,
+  childProfileId: number | null,
+  guestDeviceId?: string
+): Promise<string[]>;
+export async function findCompletedLevelCodes(
+  dbOrChildId: OwnerDb | number | null,
+  childOrGuestId?: number | null | string,
+  maybeGuestId?: string
 ): Promise<string[]> {
-  const conditions = [
-    eq(playSessions.completionStatus, "completed"),
-    eq(playSessions.isPreview, false),
-  ];
-
-  if (childProfileId !== null) {
-    conditions.push(eq(playSessions.childProfileId, childProfileId));
-  } else if (guestDeviceId) {
-    conditions.push(eq(playSessions.guestDeviceId, guestDeviceId));
-  } else {
-    return [];
+  if (dbOrChildId === null || typeof dbOrChildId === "number") {
+    const repos = useOwnerRepositories();
+    return await repos.playSessions.listCompletedLevelCodes(
+      dbOrChildId,
+      typeof childOrGuestId === "string" ? childOrGuestId : undefined
+    );
   }
-
-  const rows = await db
-    .selectDistinct({ code: gameLevels.code })
-    .from(playSessions)
-    .innerJoin(gameLevels, eq(gameLevels.id, playSessions.gameLevelId))
-    .where(and(...conditions));
-
-  return rows.map((r) => r.code);
+  const repos = createRepositories(dbOrChildId);
+  const childId = typeof childOrGuestId === "number" ? childOrGuestId : null;
+  return await repos.playSessions.listCompletedLevelCodes(
+    childId,
+    maybeGuestId
+  );
 }
 
 async function sortIntroLevelsTopologically(
-  db: ReturnType<typeof getOwnerDb>,
+  repos: MindKidRepositories,
   uncompletedLevels: IntroLevelRow[]
 ): Promise<IntroQueueItem[]> {
   const uncompletedSkillIds = Array.from(
     new Set(uncompletedLevels.map((l) => l.skillId))
   );
 
-  const prereqRows = await db
-    .select({
-      skillId: skillPrerequisites.skillId,
-      prerequisiteId: skillPrerequisites.prerequisiteId,
-    })
-    .from(skillPrerequisites)
-    .where(inArray(skillPrerequisites.skillId, uncompletedSkillIds));
+  const prereqRows =
+    await repos.taxonomy.listPrerequisitesForSkillIds(uncompletedSkillIds);
 
   const prereqMap = new Map<number, number[]>();
   for (const row of prereqRows) {
@@ -260,16 +246,9 @@ async function sortIntroLevelsTopologically(
 }
 
 export async function checkLevelIntroRequired(
-  level: typeof gameLevels.$inferSelect,
+  level: IntroCheckLevelSource,
   caller: CallerIdentity,
-  optionsOrResolvedChildId:
-    | {
-        guestDeviceId?: string;
-        isManagerPreview?: boolean;
-        resolvedChildId?: number | null;
-      }
-    | number
-    | null = {},
+  optionsOrResolvedChildId: CheckLevelIntroOptions | number | null = {},
   resolvedChildIdArg?: number | null
 ): Promise<IntroCheckResult> {
   const options =
@@ -286,38 +265,27 @@ export async function checkLevelIntroRequired(
     return { intro_required: false };
   }
 
-  const db = getOwnerDb();
-
   const templateDef = getGameTemplate(level.templateCode);
   if (templateDef?.kind === "teach") {
     return { intro_required: false };
   }
 
-  const mappedSkills: MappedSkillRow[] = await db
-    .select({
-      skillId: contentSkillMap.skillId,
-      skillCode: skills.code,
-      skillName: skills.name,
-    })
-    .from(contentSkillMap)
-    .innerJoin(skills, eq(contentSkillMap.skillId, skills.id))
-    .where(
-      and(
-        eq(contentSkillMap.entityType, "game_level"),
-        eq(contentSkillMap.entityId, level.id)
-      )
-    );
-
-  if (mappedSkills.length === 0) {
+  const repos = useOwnerRepositories();
+  const skillMaps = await repos.tagging.listSkillMaps(
+    CONTENT_ENTITY_TYPE.GAME_LEVEL,
+    level.id
+  );
+  if (skillMaps.length === 0) {
     return { intro_required: false };
   }
 
-  const primarySkillCode = mappedSkills[0]?.skillCode ?? "";
-  const initialSkillIds = mappedSkills.map((s) => s.skillId);
-  const transitiveSkillIds = await collectTransitivePrerequisiteSkillIds(
-    db,
-    initialSkillIds
-  );
+  const initialSkillIds = skillMaps.map((m) => m.skillId);
+  const skillMapById = await repos.taxonomy.mapSkillsByIds(initialSkillIds);
+  const primarySkillCode =
+    skillMapById.get(initialSkillIds[0] ?? -1)?.code ?? "";
+
+  const transitiveSkillIds =
+    await repos.taxonomy.collectTransitivePrerequisiteSkillIds(initialSkillIds);
 
   const teachTemplateCodes = Object.values(ALL_TEMPLATES)
     .filter((t) => t.kind === "teach")
@@ -327,31 +295,21 @@ export async function checkLevelIntroRequired(
     return { intro_required: false };
   }
 
-  const introLevels: IntroLevelRow[] = await db
-    .select({
-      levelId: gameLevels.id,
-      levelCode: gameLevels.code,
-      title: gameLevels.title,
-      thumbnailEmoji: gameLevels.thumbnailEmoji,
-      skillId: contentSkillMap.skillId,
-      skillCode: skills.code,
-      skillName: skills.name,
-    })
-    .from(gameLevels)
-    .innerJoin(
-      contentSkillMap,
-      and(
-        eq(contentSkillMap.entityId, gameLevels.id),
-        eq(contentSkillMap.entityType, "game_level")
-      )
-    )
-    .innerJoin(skills, eq(contentSkillMap.skillId, skills.id))
-    .where(
-      and(
-        inArray(gameLevels.templateCode, teachTemplateCodes),
-        inArray(contentSkillMap.skillId, transitiveSkillIds)
-      )
-    );
+  const rawIntroLevels = await repos.gameLevels.listByTeachTemplates(
+    teachTemplateCodes,
+    transitiveSkillIds
+  );
+  const introLevels: IntroLevelRow[] = rawIntroLevels.flatMap((lvl) =>
+    lvl.skillMaps.map((sm) => ({
+      levelId: lvl.id,
+      levelCode: lvl.code,
+      title: lvl.title,
+      thumbnailEmoji: lvl.thumbnailEmoji,
+      skillId: sm.skill.id,
+      skillCode: sm.skill.code,
+      skillName: sm.skill.name,
+    }))
+  );
 
   if (introLevels.length === 0) {
     return { intro_required: false };
@@ -360,9 +318,8 @@ export async function checkLevelIntroRequired(
   const childProfileId =
     explicitChildId !== undefined && explicitChildId !== null
       ? explicitChildId
-      : await resolveCallerChildId(db, caller);
+      : await resolveCallerChildId(repos, caller);
   const completedLevelIds = await findCompletedIntroLevelIds(
-    db,
     introLevels,
     childProfileId,
     options.guestDeviceId
@@ -376,7 +333,10 @@ export async function checkLevelIntroRequired(
     return { intro_required: false };
   }
 
-  const fullQueue = await sortIntroLevelsTopologically(db, uncompletedLevels);
+  const fullQueue = await sortIntroLevelsTopologically(
+    repos,
+    uncompletedLevels
+  );
   const introQueue = fullQueue.slice(0, 2);
   const introRemaining = fullQueue.length - introQueue.length;
 
@@ -390,16 +350,9 @@ export async function checkLevelIntroRequired(
   };
 }
 
-export interface ResolveIntroResumeParams {
-  readonly levelId: number;
-  readonly levelCode: string;
-  readonly totalSegments: number;
-  readonly childProfileId: number | null;
-  readonly guestDeviceId?: string;
-  readonly isPreview?: boolean;
-}
-
-function readSegmentIndexFromPayload(payload: object | null): number | null {
+function readSegmentIndexFromPayload(
+  payload: JsonRecord | object | null
+): number | null {
   if (!(payload && "segment_index" in payload)) {
     return null;
   }
@@ -410,7 +363,7 @@ function readSegmentIndexFromPayload(payload: object | null): number | null {
 }
 
 export function computeIntroResumeSegmentIndex(params: {
-  readonly eventPayloads: readonly (object | null)[];
+  readonly eventPayloads: readonly (JsonRecord | object | null)[];
   readonly totalSegments: number;
   readonly isCompleted: boolean;
   readonly isPreview?: boolean;
@@ -434,14 +387,24 @@ export function computeIntroResumeSegmentIndex(params: {
 
 /**
  * `BR-CIR-18`: tìm chỉ số phân đoạn tiếp theo khi trẻ/khách mở lại một bài làm
- * quen đang dang dở (`in_progress` hoặc `abandoned`). Nếu bài đã từng
- * `completed`, chưa có sự kiện `intro_segment_completed`, hoặc vượt tổng số
- * phân đoạn thì trả `0` (chạy từ đầu).
+ * quen đang dang dở (`in_progress` hoặc `abandoned`).
  */
 export async function resolveIntroResumeSegmentIndex(
-  db: ReturnType<typeof getOwnerDb>,
   params: ResolveIntroResumeParams
+): Promise<number>;
+export async function resolveIntroResumeSegmentIndex(
+  db: OwnerDb,
+  params: ResolveIntroResumeParams
+): Promise<number>;
+export async function resolveIntroResumeSegmentIndex(
+  dbOrParams: OwnerDb | ResolveIntroResumeParams,
+  maybeParams?: ResolveIntroResumeParams
 ): Promise<number> {
+  const params = maybeParams ?? (dbOrParams as ResolveIntroResumeParams);
+  const repos = maybeParams
+    ? createRepositories(dbOrParams as OwnerDb)
+    : useOwnerRepositories();
+
   if (params.isPreview || params.totalSegments <= 1) {
     return 0;
   }
@@ -450,7 +413,6 @@ export async function resolveIntroResumeSegmentIndex(
   }
 
   const completedIds = await findCompletedIntroLevelIds(
-    db,
     [{ levelId: params.levelId, levelCode: params.levelCode }],
     params.childProfileId,
     params.guestDeviceId
@@ -459,33 +421,14 @@ export async function resolveIntroResumeSegmentIndex(
     return 0;
   }
 
-  const ownerCond =
-    params.childProfileId === null
-      ? eq(playSessions.guestDeviceId, params.guestDeviceId ?? "")
-      : eq(playSessions.childProfileId, params.childProfileId);
-
-  const eventRows = await db
-    .select({ payload: telemetryEvents.payload })
-    .from(telemetryEvents)
-    .innerJoin(
-      playSessions,
-      eq(playSessions.sessionUuid, telemetryEvents.sessionUuid)
-    )
-    .innerJoin(gameLevels, eq(gameLevels.id, playSessions.gameLevelId))
-    .where(
-      and(
-        eq(gameLevels.code, params.levelCode),
-        eq(playSessions.isPreview, false),
-        inArray(playSessions.completionStatus, ["in_progress", "abandoned"]),
-        ownerCond,
-        eq(telemetryEvents.eventName, "intro_segment_completed")
-      )
-    );
+  const eventRows = await repos.telemetry.listIntroSegmentEvents(
+    params.levelCode,
+    params.childProfileId,
+    params.guestDeviceId
+  );
 
   return computeIntroResumeSegmentIndex({
-    eventPayloads: eventRows.map((row) =>
-      typeof row.payload === "object" ? row.payload : null
-    ),
+    eventPayloads: eventRows.map((row) => row.payload),
     totalSegments: params.totalSegments,
     isCompleted: false,
     isPreview: params.isPreview,

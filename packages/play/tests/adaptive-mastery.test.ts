@@ -1,5 +1,8 @@
 import crypto from "node:crypto";
 import {
+  ACCESS_TIER,
+  CONTENT_ENTITY_TYPE,
+  CURRICULUM_PROGRESS_STATUS,
   childBadges,
   childDailyStats,
   childProfiles,
@@ -9,9 +12,11 @@ import {
   curriculumEnrollments,
   curriculumItemProgress,
   curriculumItems,
+  ENROLLMENT_STATUS,
   gameLevels,
   getOwnerDb,
   masteryState,
+  PLAY_COMPLETION_STATUS,
   playSessions,
   skills,
   strands,
@@ -141,7 +146,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
           title: "Level Test 1",
           contentPack: {},
           difficultyParams: {},
-          accessTier: "free",
+          accessTier: ACCESS_TIER.FREE,
         })
         .returning();
     }
@@ -155,7 +160,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       .from(contentSkillMap)
       .where(
         and(
-          eq(contentSkillMap.entityType, "game_level"),
+          eq(contentSkillMap.entityType, CONTENT_ENTITY_TYPE.GAME_LEVEL),
           eq(contentSkillMap.entityId, level.id),
           eq(contentSkillMap.skillId, skill.id)
         )
@@ -164,7 +169,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
 
     if (!existingMap) {
       await db.insert(contentSkillMap).values({
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: level.id,
         skillId: skill.id,
         weight: "1.0000",
@@ -186,7 +191,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       childProfileId: child.id,
       gameLevelId: level.id,
       templateCode,
-      completionStatus: "in_progress",
+      completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
     });
 
     // Ingest telemetry events (2 correct rounds out of 2)
@@ -282,7 +287,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       childProfileId: child.id,
       gameLevelId: level.id,
       templateCode,
-      completionStatus: "in_progress",
+      completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
     });
 
     await db.insert(telemetryEvents).values([
@@ -347,7 +352,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       childProfileId: child.id,
       gameLevelId: level.id,
       templateCode,
-      completionStatus: "in_progress",
+      completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
     });
 
     await db.insert(telemetryEvents).values([
@@ -418,7 +423,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       guestDeviceId: "device-123",
       gameLevelId: level.id,
       templateCode,
-      completionStatus: "in_progress",
+      completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
     });
 
     await db.insert(telemetryEvents).values([
@@ -447,7 +452,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       guestDeviceId: "device-preview",
       gameLevelId: level.id,
       templateCode,
-      completionStatus: "in_progress",
+      completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       isPreview: true,
     });
 
@@ -488,7 +493,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       childProfileId: child.id,
       gameLevelId: level.id,
       templateCode,
-      completionStatus: "in_progress",
+      completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
     });
 
     await db.insert(telemetryEvents).values([
@@ -577,7 +582,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       .values({
         code: `CUR-BDG-${Date.now()}`,
         title: "Lộ trình huy hiệu",
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
         durationWeeks: 1,
         sessionsPerWeek: 1,
       })
@@ -593,7 +598,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: level.id,
         isRequired: true,
       })
@@ -607,7 +612,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       .values({
         childId: child.id,
         curriculumId: curr.id,
-        status: "active",
+        status: ENROLLMENT_STATUS.ACTIVE,
       })
       .returning();
     if (!enrollment) {
@@ -618,7 +623,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       enrollmentId: enrollment.id,
       childId: child.id,
       curriculumItemId: item.id,
-      status: "completed",
+      status: CURRICULUM_PROGRESS_STATUS.COMPLETED,
       completedAt: new Date(),
     });
 

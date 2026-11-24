@@ -1,6 +1,16 @@
 import { writeAudit } from "@mindkid/audit";
-import { getClient } from "@mindkid/cache";
-import { entitlements, getDb, packages, quotaUsage } from "@mindkid/db";
+import {
+  getUserEntitlementsCache,
+  invalidateUserEntitlementsCache as invalidateCachedUserEntitlements,
+  setUserEntitlementsCache,
+} from "@mindkid/cache";
+import {
+  type DbExecutor,
+  ENTITLEMENT_SOURCE_CODEC,
+  ENTITLEMENT_STATUS,
+  ENTITLEMENT_STATUS_CODEC,
+} from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import {
   EntitlementNotFoundError,
   PackageNotFoundError,
@@ -11,51 +21,29 @@ import {
   type EntitlementKey,
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
-import { and, eq, gte, inArray, isNull, or } from "drizzle-orm";
+import { useRepositories } from "#server/utils/repositories";
 
-const ENTITLEMENTS_CACHE_PREFIX = "user:entitlements:";
-const CACHE_TTL_SECONDS = 300; // 5 minutes
+const CACHE_TTL_SECONDS = 60;
 
 export async function resolveUserActiveEntitlements(
   userId: number,
   now = new Date()
 ): Promise<EntitlementKey[]> {
-  const cacheKey = `${ENTITLEMENTS_CACHE_PREFIX}${userId}`;
-
-  // Attempt cache lookup
   try {
-    const redis = getClient();
-    const cached = await redis.get(cacheKey);
+    const cached = await getUserEntitlementsCache(userId);
     if (cached) {
-      return JSON.parse(cached) as EntitlementKey[];
+      return cached as EntitlementKey[];
     }
   } catch {
-    // Cache miss or Redis unavailable - fallback cleanly to DB
+    // Cache miss or unavailable - fallback cleanly to DB
   }
 
-  const db = getDb();
-  const rows = await db
-    .select({ key: entitlements.entitlementKey })
-    .from(entitlements)
-    .where(
-      and(
-        eq(entitlements.userId, userId),
-        inArray(entitlements.status, ["active", "soft_unlock", "grace_period"]),
-        or(isNull(entitlements.expiresAt), gte(entitlements.expiresAt, now))
-      )
-    );
+  const repos = useRepositories();
+  const rows = await repos.entitlements.listActiveForUser(userId, now);
+  const activeKeys = rows.map((r) => r.entitlementKey as EntitlementKey);
 
-  const activeKeys = rows.map((r) => r.key as EntitlementKey);
-
-  // Store in cache
   try {
-    const redis = getClient();
-    await redis.set(
-      cacheKey,
-      JSON.stringify(activeKeys),
-      "EX",
-      CACHE_TTL_SECONDS
-    );
+    await setUserEntitlementsCache(userId, activeKeys, CACHE_TTL_SECONDS);
   } catch {
     // Non-blocking cache error
   }
@@ -66,10 +54,8 @@ export async function resolveUserActiveEntitlements(
 export async function invalidateUserEntitlementsCache(
   userId: number
 ): Promise<void> {
-  const cacheKey = `${ENTITLEMENTS_CACHE_PREFIX}${userId}`;
   try {
-    const redis = getClient();
-    await redis.del(cacheKey);
+    await invalidateCachedUserEntitlements(userId);
   } catch {
     // Non-blocking
   }
@@ -88,7 +74,7 @@ export interface MutateEntitlementsParams {
     userAgent?: string | null;
   };
   sourceRef?: string;
-  tx?: Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+  tx?: DbExecutor;
 }
 
 export interface MutatedEntitlementResult {
@@ -110,51 +96,49 @@ export async function mutateUserEntitlements(
   }
 
   const now = new Date();
-  const executeInTransaction = async (
-    tx: Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0]
-  ) => {
+  const executeInTransaction = async (tx: DbExecutor) => {
+    const txRepos = createRepositories(tx);
     const grantedResults: MutatedEntitlementResult[] = [];
     const entitlementKeysToGrant = pkg.entitlements || [];
 
     for (const key of entitlementKeysToGrant) {
-      const [existing] = await tx
-        .select()
-        .from(entitlements)
-        .where(
-          and(
-            eq(entitlements.userId, params.userId),
-            eq(entitlements.entitlementKey, key)
-          )
-        )
-        .limit(1);
+      const existing = await txRepos.entitlements.findByUserAndKey(
+        params.userId,
+        key
+      );
 
       const newExpiresAt = computeStackedExpiryDate(
-        activeStackBase(existing),
+        activeStackBase(
+          existing
+            ? {
+                status: ENTITLEMENT_STATUS_CODEC.toLabel(existing.status),
+                expiresAt: existing.expiresAt,
+              }
+            : undefined
+        ),
         params.durationDays,
         0,
         now
       );
 
       if (existing) {
-        await tx
-          .update(entitlements)
-          .set({
-            status: "active",
-            source: params.source,
-            sourceRef: params.sourceRef ?? null,
-            expiresAt: newExpiresAt,
-            grantedByManagerId: params.actor.id ?? null,
-            grantReason: params.reason,
-            updatedAt: now,
-          })
-          .where(eq(entitlements.id, existing.id));
+        await txRepos.entitlements.updateEntitlementById(existing.id, {
+          status: ENTITLEMENT_STATUS.ACTIVE,
+          source: ENTITLEMENT_SOURCE_CODEC.toCode(params.source),
+          sourceRef: params.sourceRef ?? null,
+          expiresAt: newExpiresAt,
+          grantedByManagerId: params.actor.id ?? null,
+          grantReason: params.reason,
+          updatedAt: now,
+        });
       } else {
-        await tx.insert(entitlements).values({
+        await txRepos.entitlements.grantEntitlement({
           userId: params.userId,
           entitlementKey: key,
-          source: params.source,
+          source: ENTITLEMENT_SOURCE_CODEC.toCode(params.source),
           sourceRef: params.sourceRef ?? null,
-          status: "active",
+          status: ENTITLEMENT_STATUS.ACTIVE,
+          grantedAt: now,
           expiresAt: newExpiresAt,
           grantedByManagerId: params.actor.id ?? null,
           grantReason: params.reason,
@@ -196,8 +180,8 @@ export async function mutateUserEntitlements(
   if (params.tx) {
     results = await executeInTransaction(params.tx);
   } else {
-    const db = getDb();
-    results = await db.transaction(executeInTransaction);
+    const repos = useRepositories();
+    results = await repos.entitlements.transaction(executeInTransaction);
   }
 
   // Invalidate cache immediately (D-JM, BR-EGR-06)
@@ -215,19 +199,12 @@ export async function revokeUserEntitlementById(
     ip?: string | null;
     userAgent?: string | null;
   },
-  tx?: Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0]
+  tx?: DbExecutor
 ): Promise<{ id: number; userId: number; key: string; status: string }> {
   const now = new Date();
-  const executeInTransaction = async (
-    activeTx: Parameters<
-      Parameters<ReturnType<typeof getDb>["transaction"]>[0]
-    >[0]
-  ) => {
-    const [existing] = await activeTx
-      .select()
-      .from(entitlements)
-      .where(eq(entitlements.id, id))
-      .limit(1);
+  const executeInTransaction = async (activeTx: DbExecutor) => {
+    const txRepos = createRepositories(activeTx);
+    const existing = await txRepos.entitlements.findById(id);
 
     if (!existing) {
       throw new EntitlementNotFoundError(String(id));
@@ -235,13 +212,10 @@ export async function revokeUserEntitlementById(
 
     const previousStatus = existing.status;
 
-    await activeTx
-      .update(entitlements)
-      .set({
-        status: "cancelled",
-        updatedAt: now,
-      })
-      .where(eq(entitlements.id, id));
+    await txRepos.entitlements.updateEntitlementById(id, {
+      status: ENTITLEMENT_STATUS.CANCELLED,
+      updatedAt: now,
+    });
 
     // Record audit log (BR-EGR-03, BR-AUD-02)
     await writeAudit(activeTx, {
@@ -251,7 +225,7 @@ export async function revokeUserEntitlementById(
       entity_type: "entitlement",
       entity_id: String(id),
       before_data: {
-        status: previousStatus,
+        status: ENTITLEMENT_STATUS_CODEC.toLabel(previousStatus),
         entitlement_key: existing.entitlementKey,
         user_id: existing.userId,
       },
@@ -277,8 +251,8 @@ export async function revokeUserEntitlementById(
   if (tx) {
     result = await executeInTransaction(tx);
   } else {
-    const db = getDb();
-    result = await db.transaction(executeInTransaction);
+    const repos = useRepositories();
+    result = await repos.entitlements.transaction(executeInTransaction);
   }
 
   // Invalidate cache immediately upon revocation (BR-EGR-06, D-JM)
@@ -302,23 +276,16 @@ export interface ResetUserQuotaParams {
 export async function resetUserQuota(
   params: ResetUserQuotaParams
 ): Promise<{ userId: number; quotaKey: string; resetCount: number }> {
-  const db = getDb();
+  const repos = useRepositories();
   const now = new Date();
 
-  return await db.transaction(async (tx) => {
-    const updated = await tx
-      .update(quotaUsage)
-      .set({
-        used: 0,
-        updatedAt: now,
-      })
-      .where(
-        and(
-          eq(quotaUsage.userId, params.userId),
-          eq(quotaUsage.quotaKey, params.quotaKey)
-        )
-      )
-      .returning({ id: quotaUsage.id });
+  return await repos.entitlements.transaction(async (tx) => {
+    const txRepos = createRepositories(tx);
+    const resetCount = await txRepos.entitlements.resetUserQuota(
+      params.userId,
+      params.quotaKey,
+      now
+    );
 
     await writeAudit(tx, {
       actor_type: params.actor.type,
@@ -334,7 +301,7 @@ export async function resetUserQuota(
         user_id: params.userId,
         quota_key: params.quotaKey,
         used: 0,
-        reset_rows: updated.length,
+        reset_rows: resetCount,
       },
       reason: params.reason,
       ip_address: params.actor.ip ?? null,
@@ -344,7 +311,7 @@ export async function resetUserQuota(
     return {
       userId: params.userId,
       quotaKey: params.quotaKey,
-      resetCount: updated.length,
+      resetCount,
     };
   });
 }
@@ -354,11 +321,12 @@ export async function deployPackageCatalog(actor?: {
   ip?: string | null;
   userAgent?: string | null;
 }): Promise<{ deployedCodes: string[] }> {
-  const db = getDb();
+  const repos = useRepositories();
   const deployedCodes = Object.keys(PACKAGE_CATALOG);
 
-  await db.transaction(async (tx) => {
-    const existing = await tx.select({ code: packages.code }).from(packages);
+  await repos.packages.transaction(async (tx) => {
+    const txRepos = createRepositories(tx);
+    const existing = await txRepos.packages.listAll();
     await writeAudit(tx, {
       actor_type: actor?.id ? "manager" : "system",
       actor_id: actor?.id ?? null,

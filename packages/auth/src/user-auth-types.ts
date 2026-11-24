@@ -1,12 +1,12 @@
-import type { PgTable } from "drizzle-orm/pg-core";
+import type { SQLiteTable } from "drizzle-orm/sqlite-core";
 
 export interface UserAuthSchemaTables {
-  readonly users: PgTable;
-  readonly userAccounts: PgTable;
-  readonly userSessions: PgTable;
-  readonly userVerifications: PgTable;
-  readonly userTwoFactors: PgTable;
-  readonly userPasskeys: PgTable;
+  readonly users: SQLiteTable;
+  readonly userAccounts: SQLiteTable;
+  readonly userSessions: SQLiteTable;
+  readonly userVerifications: SQLiteTable;
+  readonly userTwoFactors: SQLiteTable;
+  readonly userPasskeys: SQLiteTable;
 }
 
 export interface OAuthClientCredentials {
@@ -26,9 +26,12 @@ export interface UserEmailCallbackInput {
 
 export interface UserStatusSnapshot {
   readonly id: number;
+  readonly uuid?: string;
   readonly status: string;
   readonly purgeAt: Date | null;
   readonly hasPassword: boolean;
+  readonly sessionVersion?: number;
+  readonly twoFactorEnabled?: boolean;
 }
 
 export interface EmailSignupConsentInput {
@@ -85,4 +88,9 @@ export interface UserAuthCallbacks {
     readonly ipAddress: string;
     readonly identifier?: string;
   }) => Promise<void>;
+  readonly revokeOtherSessions?: (
+    userId: number,
+    keepSessionToken: string
+  ) => Promise<void>;
+  readonly onPasswordReset?: (userId: number) => Promise<void>;
 }

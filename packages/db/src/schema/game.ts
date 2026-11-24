@@ -1,55 +1,46 @@
 import { sql } from "drizzle-orm";
 import {
-  bigint,
   index,
   integer,
-  jsonb,
-  pgEnum,
-  pgTable,
-  smallint,
+  sqliteTable,
   text,
   unique,
-  varchar,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/sqlite-core";
+import type { JsonRecord } from "#src/constants/json";
+import type { AccessTier } from "#src/constants/learning-enums";
 import { idPk, timestamps } from "./columns.ts";
 import { skillDatasets } from "./taxonomy.ts";
 
-export const accessTierEnum = pgEnum("access_tier", [
-  "free",
-  "login",
-  "standard",
-  "premium",
-]);
-
-export const gameLevels = pgTable(
+export const gameLevels = sqliteTable(
   "game_levels",
   {
     id: idPk(),
-    code: varchar("code", { length: 50 }).notNull().unique(),
-    templateCode: varchar("template_code", { length: 20 }).notNull(),
-    title: varchar("title", { length: 200 }).notNull(),
+    code: text("code").notNull().unique(),
+    templateCode: text("template_code").notNull(),
+    title: text("title").notNull(),
     description: text("description"),
     instruction: text("instruction"),
     instructionAudioPath: text("instruction_audio_path"),
-    contentPack: jsonb("content_pack").notNull(),
-    difficultyParams: jsonb("difficulty_params").notNull(),
-    themeId: varchar("theme_id", { length: 50 }),
-    ageMin: smallint("age_min"),
-    ageMax: smallint("age_max"),
-    difficulty: smallint("difficulty"),
-    accessTier: accessTierEnum("access_tier").notNull(),
-    thumbnailEmoji: varchar("thumbnail_emoji", { length: 50 }),
-    skillDatasetId: bigint("skill_dataset_id", { mode: "number" }).references(
+    contentPack: text("content_pack", { mode: "json" })
+      .$type<JsonRecord>()
+      .notNull(),
+    difficultyParams: text("difficulty_params", { mode: "json" })
+      .$type<JsonRecord>()
+      .notNull(),
+    themeId: text("theme_id"),
+    ageMin: integer("age_min"),
+    ageMax: integer("age_max"),
+    difficulty: integer("difficulty"),
+    accessTier: integer("access_tier").$type<AccessTier>().notNull(),
+    thumbnailEmoji: text("thumbnail_emoji"),
+    skillDatasetId: integer("skill_dataset_id").references(
       () => skillDatasets.id,
       { onDelete: "set null" }
     ),
-    projectionRef: varchar("projection_ref", { length: 100 }),
+    projectionRef: text("projection_ref"),
     ...timestamps(),
   },
   (table) => [
-    // Tra cứu nội dung theo khoá JSONB (content-search) — không có GIN thì mỗi
-    // truy vấn quét toàn bảng game_levels.
-    index("idx_game_levels_content_pack_gin").using("gin", table.contentPack),
     index("idx_game_levels_skill_dataset_id")
       .on(table.skillDatasetId)
       .where(sql`${table.skillDatasetId} IS NOT NULL`),
@@ -61,23 +52,26 @@ export const gameLevels = pgTable(
   ]
 );
 
-export const gameLevelRounds = pgTable(
+export const gameLevelRounds = sqliteTable(
   "game_level_rounds",
   {
     id: idPk(),
-    gameLevelId: bigint("game_level_id", { mode: "number" })
+    gameLevelId: integer("game_level_id")
       .notNull()
       .references(() => gameLevels.id, { onDelete: "cascade" }),
     roundIndex: integer("round_index").notNull(),
     instruction: text("instruction"),
     instructionAudioPath: text("instruction_audio_path"),
-    contentPack: jsonb("content_pack").notNull(),
-    difficultyParams: jsonb("difficulty_params").notNull(),
-    difficulty: smallint("difficulty"),
+    contentPack: text("content_pack", { mode: "json" })
+      .$type<JsonRecord>()
+      .notNull(),
+    difficultyParams: text("difficulty_params", { mode: "json" })
+      .$type<JsonRecord>()
+      .notNull(),
+    difficulty: integer("difficulty"),
     ...timestamps(),
   },
   (table) => [
-    // UNIQUE (game_level_id, round_index) đã phủ tra cứu theo game_level_id.
     unique("game_level_rounds_level_index_unique").on(
       table.gameLevelId,
       table.roundIndex

@@ -5,7 +5,12 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
-import { createRng, resolveItemAsset, shuffleDeterministic } from "./utils.js";
+import {
+  createRng,
+  pickAgeBandPrompt,
+  resolveItemAsset,
+  shuffleDeterministic,
+} from "./utils.js";
 
 export const projectGT020: Projection<"GT-020"> = {
   template: "GT-020",
@@ -40,9 +45,19 @@ export const projectGT020: Projection<"GT-020"> = {
       },
     }));
 
+    const prompt = pickAgeBandPrompt(
+      opts.band,
+      {
+        mam: "Bé lật mở tìm hai thẻ giống nhau nhé!",
+        choi: "Đố bé lật thẻ ghép đúng các cặp đôi nhé!",
+        la: "Bé thử nhớ vị trí mở đúng cặp tương ứng nhé!",
+      },
+      "Bé lật thẻ tìm các cặp tương ứng nhé!"
+    );
+
     return {
       content_pack: {
-        prompt: "Bé hãy lật thẻ và tìm các cặp tương ứng nhé!",
+        prompt,
         pairs,
       },
       difficulty_params: {

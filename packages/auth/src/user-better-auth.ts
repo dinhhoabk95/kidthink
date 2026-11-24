@@ -7,14 +7,13 @@ import {
   getSessionFromCtx,
   isAPIError,
 } from "better-auth/api";
-import { expireCookie } from "better-auth/cookies";
+import { deleteSessionCookie } from "better-auth/cookies";
 import { twoFactor } from "better-auth/plugins";
 import {
-  alignSessionCookieMaxAge,
-  BoundedTtlMap,
   runBetterAuthCallback,
   wrapSecondaryStorageForBetterAuth,
 } from "./better-auth-error.js";
+import { DB_AUTH_METHOD, DB_USER_STATUS } from "./enum-values.js";
 import { deriveInstanceSecret } from "./hmac-secret.js";
 import {
   MFA_LOCK_SECONDS,
@@ -30,18 +29,29 @@ import {
   type SocialSignupConsentPayload,
 } from "./redis-secondary-storage.js";
 import {
+  alignNewSessionCookies,
   assertActiveOrPendingUserStatus,
-  enforcePendingTwoFactorGuard,
+  clearPending2faAccountByCookie,
+  computeSessionReauthAt,
+  consumePendingConsentMeta,
+  enforcePasskeyMutationBeforeHook,
+  enforceTotpStepUpForSensitiveMfaAction,
   enforceUserLinkOrUnlinkRules,
   extractClientIp,
   extractUserAgent,
+  handleOAuthSignInMfaAfter,
+  handleTwoFactorVerifyBeforeHook,
   handleUserSignInBefore,
   handleUserSignUpBefore,
+  issueTwoFactorChallengeAndRevokeSession,
   readCookieFromHeader,
+  resolvePendingTwoFactorAccountId,
   resolveUserIsRemembered,
+  revokeOtherInstanceSessions,
   type SignInBodyPayload,
   type SignUpBodyPayload,
   sanitizeAccountTokens,
+  setPendingConsentMeta,
   shouldInvalidateGetSessionUser,
 } from "./user-auth-helpers.js";
 import type {
@@ -53,7 +63,6 @@ import type {
 export const SESSION_DEFAULT_TTL_SECONDS = 3600;
 export const REMEMBER_MAX_TTL_SECONDS = 365 * 24 * 60 * 60;
 export const REAUTH_FRESH_AGE_SECONDS = 300;
-const PENDING_META_TTL_MS = 10 * 60 * 1000;
 
 export interface CreateMindKidUserAuthDeps {
   readonly db: Parameters<typeof drizzleAdapter>[0];
@@ -83,14 +92,8 @@ export function getEnabledOAuthProviders(oauth?: {
   };
 }
 
-export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
-  const resolvedRpId = deps.rpId ?? new URL(deps.siteUrl).hostname;
-  const secondaryStorage = wrapSecondaryStorageForBetterAuth(
-    createRedisSecondaryStorage(deps.redis, "user")
-  );
-  const mfaGuard = new MfaAttemptGuard(deps.redis);
-
-  const socialProviders: {
+function buildSocialProviders(oauth: CreateMindKidUserAuthDeps["oauth"]) {
+  const providers: {
     google?: {
       clientId: string;
       clientSecret: string;
@@ -104,29 +107,173 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
     };
   } = {};
 
-  if (deps.oauth?.google?.clientId && deps.oauth.google.clientSecret) {
-    socialProviders.google = {
-      clientId: deps.oauth.google.clientId,
-      clientSecret: deps.oauth.google.clientSecret,
+  if (oauth?.google?.clientId && oauth.google.clientSecret) {
+    providers.google = {
+      clientId: oauth.google.clientId,
+      clientSecret: oauth.google.clientSecret,
       disableImplicitSignUp: true,
     };
   }
 
-  if (deps.oauth?.facebook?.clientId && deps.oauth.facebook.clientSecret) {
-    socialProviders.facebook = {
-      clientId: deps.oauth.facebook.clientId,
-      clientSecret: deps.oauth.facebook.clientSecret,
+  if (oauth?.facebook?.clientId && oauth.facebook.clientSecret) {
+    providers.facebook = {
+      clientId: oauth.facebook.clientId,
+      clientSecret: oauth.facebook.clientSecret,
       disableImplicitSignUp: true,
       mapProfileToUser: () => ({ emailVerified: false }),
     };
   }
+  return providers;
+}
 
-  const pendingConsentMeta = new BoundedTtlMap<{
-    ipAddress: string;
-    userAgent: string;
-  }>(PENDING_META_TTL_MS);
-  const pending2faRemember = new BoundedTtlMap<boolean>(PENDING_META_TTL_MS);
-  const pending2faUserByCookie = new BoundedTtlMap<number>(PENDING_META_TTL_MS);
+export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
+  const resolvedRpId = deps.rpId ?? new URL(deps.siteUrl).hostname;
+  const secondaryStorage = wrapSecondaryStorageForBetterAuth(
+    createRedisSecondaryStorage(deps.redis, "user")
+  );
+  const mfaGuard = new MfaAttemptGuard(deps.redis);
+  const pendingAuth2faUserByCtx = new WeakMap<object, number>();
+  const pendingMfaActivationByCtx = new WeakMap<object, number>();
+
+  const handleUserVerify2faAfter = async (
+    ctx: Parameters<Parameters<typeof createAuthMiddleware>[0]>[0]
+  ) => {
+    const tfCookie = ctx.context.createAuthCookie("two_factor");
+    const rawTf = readCookieFromHeader(ctx.headers, tfCookie.name);
+    const pendingUserId = await resolvePendingTwoFactorAccountId({
+      ctx,
+      namespace: "user",
+      redis: deps.redis,
+      rawTf,
+      tfCookieName: tfCookie.name,
+      pendingAuthAccountByCtx: pendingAuth2faUserByCtx,
+    });
+    const returnedIsError = isAPIError(ctx.context.returned);
+    const activeSession = ctx.context.newSession ?? ctx.context.session;
+    if (!returnedIsError && activeSession?.user?.id) {
+      const uid = Number(activeSession.user.id);
+      await runBetterAuthCallback(() => mfaGuard.reset("user", uid));
+      if (rawTf) {
+        await clearPending2faAccountByCookie(deps.redis, "user", rawTf);
+      }
+      if (pendingMfaActivationByCtx.get(ctx.context) !== undefined) {
+        await revokeOtherInstanceSessions({
+          accountId: uid,
+          keepSessionToken: activeSession.session.token,
+          internalAdapter: ctx.context.internalAdapter,
+          customRevokeOtherSessions: deps.callbacks?.revokeOtherSessions,
+        });
+      }
+      return;
+    }
+    if (returnedIsError && pendingUserId !== undefined) {
+      await runBetterAuthCallback(() =>
+        mfaGuard.recordFailure("user", pendingUserId)
+      );
+    }
+  };
+
+  const handleUserGetSessionAfter = async (
+    ctx: Parameters<Parameters<typeof createAuthMiddleware>[0]>[0]
+  ) => {
+    const returned = ctx.context.returned as {
+      user?: {
+        id?: string | number;
+        status?: string | number;
+        uuid?: string;
+        sessionVersion?: number | string;
+      };
+    } | null;
+    if (await shouldInvalidateGetSessionUser(returned, deps.callbacks)) {
+      deleteSessionCookie(ctx, true);
+      return ctx.json(null);
+    }
+    return undefined;
+  };
+
+  const handleUserPostAuthMfaAfter = async (
+    ctx: Parameters<Parameters<typeof createAuthMiddleware>[0]>[0]
+  ) => {
+    const newSession = ctx.context.newSession;
+    const activeSession = newSession ?? ctx.context.session;
+    if (
+      ctx.path === "/two-factor/enable" &&
+      !isAPIError(ctx.context.returned) &&
+      activeSession?.session &&
+      activeSession.user?.id
+    ) {
+      const updatedUser = (await ctx.context.internalAdapter
+        .findUserById(String(activeSession.user.id))
+        .catch(() => null)) as { twoFactorEnabled?: boolean } | null;
+      if (updatedUser?.twoFactorEnabled === true) {
+        await revokeOtherInstanceSessions({
+          accountId: Number(activeSession.user.id),
+          keepSessionToken: activeSession.session.token,
+          internalAdapter: ctx.context.internalAdapter,
+          customRevokeOtherSessions: deps.callbacks?.revokeOtherSessions,
+        });
+      }
+      return undefined;
+    }
+
+    const userWith2fa = newSession?.user as
+      | { twoFactorEnabled?: boolean }
+      | undefined;
+    if (
+      ctx.path === "/passkey/verify-authentication" &&
+      userWith2fa?.twoFactorEnabled === true
+    ) {
+      await issueTwoFactorChallengeAndRevokeSession({
+        ctx,
+        namespace: "user",
+        redis: deps.redis,
+        rememberMe: false,
+      });
+      return ctx.json({
+        twoFactorRedirect: true,
+        twoFactorMethods: ["totp"],
+      });
+    }
+
+    if (
+      (ctx.path === "/sign-in/social" || ctx.path?.startsWith("/callback/")) &&
+      newSession?.user
+    ) {
+      return await handleOAuthSignInMfaAfter({
+        ctx,
+        redis: deps.redis,
+        siteUrl: deps.siteUrl,
+      });
+    }
+
+    return undefined;
+  };
+
+  const handleUserAfterHook = async (
+    ctx: Parameters<Parameters<typeof createAuthMiddleware>[0]>[0]
+  ) => {
+    if (ctx.path === "/get-session") {
+      const invalidated = await handleUserGetSessionAfter(ctx);
+      if (invalidated !== undefined) {
+        return invalidated;
+      }
+    }
+
+    if (
+      ctx.path === "/two-factor/verify-totp" ||
+      ctx.path === "/two-factor/verify-backup-code"
+    ) {
+      await handleUserVerify2faAfter(ctx);
+    }
+
+    const mfaResult = await handleUserPostAuthMfaAfter(ctx);
+    if (mfaResult !== undefined) {
+      return mfaResult;
+    }
+
+    alignNewSessionCookies(ctx, "mindkid-user");
+    return undefined;
+  };
 
   const cookieSyncPlugin: BetterAuthPlugin = {
     id: "mindkid-user-cookie-sync",
@@ -134,68 +281,106 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
       after: [
         {
           matcher: () => true,
-          handler: createAuthMiddleware(async (ctx) => {
-            if (ctx.path === "/get-session") {
-              const returned = ctx.context.returned as {
-                user?: { id?: string | number; status?: string };
-              } | null;
-              if (
-                await shouldInvalidateGetSessionUser(returned, deps.callbacks)
-              ) {
-                expireCookie(ctx, ctx.context.authCookies.sessionToken);
-                return ctx.json(null);
-              }
-            }
-
-            if (
-              ctx.path === "/two-factor/verify-totp" ||
-              ctx.path === "/two-factor/verify-backup-code"
-            ) {
-              const tfCookie = ctx.context.createAuthCookie("two_factor");
-              const rawTf = readCookieFromHeader(ctx.headers, tfCookie.name);
-              const pendingUserId = rawTf
-                ? pending2faUserByCookie.consume(rawTf)
-                : undefined;
-              const created = ctx.context.newSession;
-              if (created?.user?.id) {
-                await runBetterAuthCallback(() =>
-                  mfaGuard.reset("user", Number(created.user.id))
-                );
-              } else if (
-                isAPIError(ctx.context.returned) &&
-                pendingUserId !== undefined
-              ) {
-                await runBetterAuthCallback(() =>
-                  mfaGuard.recordFailure("user", pendingUserId)
-                );
-              }
-            }
-
-            const newSession = ctx.context.newSession;
-            if (newSession?.session?.expiresAt) {
-              const ttlSeconds = Math.max(
-                1,
-                Math.round(
-                  (new Date(newSession.session.expiresAt).getTime() -
-                    Date.now()) /
-                    1000
-                )
-              );
-              alignSessionCookieMaxAge(
-                ctx.context.responseHeaders,
-                "mindkid-user",
-                ttlSeconds
-              );
-              alignSessionCookieMaxAge(
-                ctx.responseHeaders,
-                "mindkid-user",
-                ttlSeconds
-              );
-            }
-          }),
+          handler: createAuthMiddleware(handleUserAfterHook),
         },
       ],
     },
+  };
+
+  const verifyUserReauth = deps.callbacks?.verifySessionReauth
+    ? async (params: {
+        readonly accountId: number;
+        readonly sessionId: string;
+        readonly createdAt: Date;
+        readonly dbReauthAt: Date | null;
+      }) => {
+        await deps.callbacks?.verifySessionReauth?.({
+          userId: params.accountId,
+          sessionId: params.sessionId,
+          createdAt: params.createdAt,
+          dbReauthAt: params.dbReauthAt,
+        });
+      }
+    : undefined;
+
+  const handleUserProtectedBefore = async (
+    path: string,
+    ctx: Parameters<Parameters<typeof createAuthMiddleware>[0]>[0],
+    ipAddress: string
+  ) => {
+    if (
+      path === "/two-factor/verify-totp" ||
+      path === "/two-factor/verify-backup-code"
+    ) {
+      await handleTwoFactorVerifyBeforeHook({
+        ctx,
+        path,
+        namespace: "user",
+        redis: deps.redis,
+        mfaGuard,
+        pendingAuthAccountByCtx: pendingAuth2faUserByCtx,
+        pendingMfaActivationByCtx,
+      });
+      return undefined;
+    }
+
+    if (
+      path === "/two-factor/disable" ||
+      path === "/two-factor/generate-backup-codes"
+    ) {
+      const resolvedSession = await getSessionFromCtx(ctx, {
+        disableCookieCache: true,
+      });
+      await enforceTotpStepUpForSensitiveMfaAction({
+        ctx,
+        resolvedSession,
+        namespace: "user",
+        rootSecret: deps.rootSecret,
+        freshAgeSeconds: REAUTH_FRESH_AGE_SECONDS,
+        mfaGuard,
+        verifySessionReauth: verifyUserReauth,
+      });
+      return undefined;
+    }
+
+    if (
+      path === "/passkey/generate-register-options" ||
+      path === "/passkey/verify-registration" ||
+      path === "/passkey/delete-passkey"
+    ) {
+      return await enforcePasskeyMutationBeforeHook({
+        path,
+        ctx,
+        freshAgeSeconds: REAUTH_FRESH_AGE_SECONDS,
+        customVerify: verifyUserReauth,
+        countUserLoginMethods: deps.callbacks?.countUserLoginMethods,
+      });
+    }
+
+    if (path === "/request-password-reset") {
+      const body = (ctx.body ?? {}) as { email?: string };
+      await runBetterAuthCallback(async () => {
+        await deps.callbacks?.enforceRateLimit?.({
+          routeClass: "auth:forgot-password",
+          ipAddress,
+          identifier: body.email?.trim().toLowerCase(),
+        });
+      });
+      return undefined;
+    }
+
+    if (path === "/link-social" || path === "/unlink-account") {
+      const resolvedSession = await getSessionFromCtx(ctx, {
+        disableCookieCache: true,
+      });
+      await enforceUserLinkOrUnlinkRules(
+        path,
+        resolvedSession,
+        deps.callbacks,
+        REAUTH_FRESH_AGE_SECONDS
+      );
+    }
+    return undefined;
   };
 
   return betterAuth({
@@ -204,8 +389,22 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
     basePath: "/api/auth/users",
     secret: deriveInstanceSecret(deps.rootSecret, "user"),
     trustedOrigins: [...deps.trustedOrigins],
+    disabledPaths: [
+      "/change-password",
+      "/verify-password",
+      "/update-user",
+      "/change-email",
+      "/delete-user",
+      "/delete-user/callback",
+      "/two-factor/get-totp-uri",
+      "/unlink-account",
+      "/list-accounts",
+      "/get-access-token",
+      "/refresh-token",
+      "/account-info",
+    ],
     database: drizzleAdapter(deps.db, {
-      provider: "pg",
+      provider: "sqlite",
       schema: {
         users: deps.schema.users,
         userAccounts: deps.schema.userAccounts,
@@ -218,6 +417,7 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
     secondaryStorage,
     advanced: {
       cookiePrefix: "mindkid-user",
+      ipAddress: { ipAddressHeaders: ["x-real-ip"] },
       database: { generateId: "serial" },
       defaultCookieAttributes: {
         httpOnly: true,
@@ -232,9 +432,9 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
       additionalFields: {
         uuid: { type: "string", required: false, input: false },
         status: {
-          type: "string",
+          type: "number",
           required: false,
-          defaultValue: "pending_verification",
+          defaultValue: DB_USER_STATUS.PENDING_VERIFICATION,
           input: false,
         },
         emailVerifiedAt: { type: "date", required: false, input: false },
@@ -256,9 +456,9 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
       storeSessionInDatabase: true,
       additionalFields: {
         authMethod: {
-          type: "string",
+          type: "number",
           required: false,
-          defaultValue: "password",
+          defaultValue: DB_AUTH_METHOD.PASSWORD,
           input: false,
         },
         reauthAt: { type: "date", required: false, input: false },
@@ -281,6 +481,12 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
       minPasswordLength: 8,
       maxPasswordLength: 128,
       requireEmailVerification: false,
+      revokeSessionsOnPasswordReset: true,
+      onPasswordReset: async ({ user }) => {
+        await runBetterAuthCallback(async () => {
+          await deps.callbacks?.onPasswordReset?.(Number(user.id));
+        });
+      },
       password: {
         hash: hashPassword,
         verify: ({ hash, password }) => verifyPassword(password, hash),
@@ -313,7 +519,7 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
         });
       },
     },
-    socialProviders,
+    socialProviders: buildSocialProviders(deps.oauth),
     plugins: [
       twoFactor({
         issuer: "MindKid",
@@ -331,6 +537,7 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
         rpID: resolvedRpId,
         rpName: "MindKid",
         origin: [...deps.trustedOrigins],
+        authenticatorSelection: { userVerification: "required" },
         schema: { passkey: { modelName: "userPasskeys" } },
       }),
       cookieSyncPlugin,
@@ -341,22 +548,27 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
         const userAgent = extractUserAgent(ctx.headers);
         const path = ctx.path ?? "";
 
+        if (path === "/two-factor/get-totp-uri") {
+          throw new APIError("FORBIDDEN", {
+            code: "FORBIDDEN",
+            message: "Đường dẫn này đã bị vô hiệu hoá.",
+          });
+        }
         if (path === "/sign-in/email") {
           return handleUserSignInBefore(
             (ctx.body ?? {}) as SignInBodyPayload,
             ipAddress,
             deps.callbacks,
-            pending2faRemember
+            deps.redis
           );
         }
-
         if (path === "/sign-up/email") {
           await handleUserSignUpBefore(
             (ctx.body ?? {}) as SignUpBodyPayload,
             ipAddress,
             userAgent,
             deps.callbacks,
-            pendingConsentMeta
+            deps.redis
           );
           return;
         }
@@ -369,49 +581,7 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
           await secondaryStorage.get(signedSessionToken);
         }
 
-        if (
-          path === "/two-factor/verify-totp" ||
-          path === "/two-factor/verify-backup-code"
-        ) {
-          const tfCookie = ctx.context.createAuthCookie("two_factor");
-          await enforcePendingTwoFactorGuard({
-            namespace: "user",
-            rawCookieVal: readCookieFromHeader(ctx.headers, tfCookie.name),
-            signedTf: await ctx.getSignedCookie(
-              tfCookie.name,
-              ctx.context.secret
-            ),
-            findVerificationValue: (id) =>
-              ctx.context.internalAdapter.findVerificationValue(id),
-            pendingAccountByCookie: pending2faUserByCookie,
-            mfaGuard,
-          });
-          return;
-        }
-
-        if (path === "/request-password-reset") {
-          const body = (ctx.body ?? {}) as { email?: string };
-          await runBetterAuthCallback(async () => {
-            await deps.callbacks?.enforceRateLimit?.({
-              routeClass: "auth:forgot-password",
-              ipAddress,
-              identifier: body.email?.trim().toLowerCase(),
-            });
-          });
-          return;
-        }
-
-        if (path === "/link-social" || path === "/unlink-account") {
-          const resolvedSession = await getSessionFromCtx(ctx, {
-            disableCookieCache: true,
-          });
-          await enforceUserLinkOrUnlinkRules(
-            path,
-            resolvedSession,
-            deps.callbacks,
-            REAUTH_FRESH_AGE_SECONDS
-          );
-        }
+        return await handleUserProtectedBefore(path, ctx, ipAddress);
       }),
     },
     databaseHooks: {
@@ -441,7 +611,7 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
                   privacyRequirementAt: ticket.privacyRequirementAt,
                 });
               });
-              pendingConsentMeta.set(user.email.toLowerCase(), {
+              await setPendingConsentMeta(deps.redis, user.email, {
                 ipAddress: ticket.ipAddress,
                 userAgent: ticket.userAgent,
               });
@@ -452,13 +622,18 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
               data: {
                 ...user,
                 image: null,
-                status: isVerified ? "active" : "pending_verification",
+                status: isVerified
+                  ? DB_USER_STATUS.ACTIVE
+                  : DB_USER_STATUS.PENDING_VERIFICATION,
                 emailVerifiedAt: isVerified ? new Date() : null,
               },
             };
           },
           after: async (user, ctx) => {
-            const meta = pendingConsentMeta.consume(user.email.toLowerCase());
+            const meta = await consumePendingConsentMeta(
+              deps.redis,
+              user.email
+            );
             if (deps.callbacks?.recordInitialConsents) {
               const recordConsents = deps.callbacks.recordInitialConsents;
               await runBetterAuthCallback(() =>
@@ -509,40 +684,56 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
       session: {
         create: {
           before: async (session, ctx) => {
+            let snapshotTwoFactorEnabled = false;
             if (deps.callbacks?.getUserStatusById) {
               const getById = deps.callbacks.getUserStatusById;
               const snapshot = await runBetterAuthCallback(() =>
                 getById(Number(session.userId))
               );
-              assertActiveOrPendingUserStatus(snapshot?.status);
+              if (snapshot === null) {
+                throw new APIError("UNAUTHORIZED", {
+                  code: "UNAUTHENTICATED",
+                  message: "Tài khoản không tồn tại hoặc đã bị vô hiệu hoá.",
+                });
+              }
+              assertActiveOrPendingUserStatus(snapshot.status);
+              snapshotTwoFactorEnabled = snapshot.twoFactorEnabled === true;
             }
 
             const now = new Date();
             const pathStr = ctx?.path ?? "";
             const body = (ctx?.body ?? null) as { rememberMe?: boolean } | null;
-            const isRemembered = resolveUserIsRemembered(
+            const isRemembered = await resolveUserIsRemembered(
               pathStr,
               String(session.userId),
               body,
               ctx?.headers,
-              pending2faRemember
+              deps.redis
             );
             const ttlSeconds = isRemembered
               ? REMEMBER_MAX_TTL_SECONDS
               : SESSION_DEFAULT_TTL_SECONDS;
-            let authMethod = "password";
+            let authMethod: number = DB_AUTH_METHOD.PASSWORD;
             if (pathStr.includes("callback") || pathStr.includes("social")) {
-              authMethod = "social";
+              authMethod = DB_AUTH_METHOD.SOCIAL;
             } else if (pathStr.includes("passkey")) {
-              authMethod = "passkey";
+              authMethod = DB_AUTH_METHOD.PASSKEY;
             }
+
+            const reauthAt = await computeSessionReauthAt({
+              pathStr,
+              userId: session.userId,
+              snapshot2faEnabled: snapshotTwoFactorEnabled,
+              ctx,
+              now,
+            });
 
             return {
               data: {
                 ...session,
                 expiresAt: new Date(now.getTime() + ttlSeconds * 1000),
                 authMethod,
-                reauthAt: now,
+                reauthAt,
               },
             };
           },

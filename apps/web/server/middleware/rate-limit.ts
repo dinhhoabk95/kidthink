@@ -4,6 +4,7 @@ import {
 } from "@mindkid/errors/common";
 
 import {
+  canonicalizeRequestPath,
   enforceTwoAxisRateLimit,
   resolveRateLimitRouteClass,
 } from "@mindkid/shared";
@@ -38,10 +39,10 @@ function getAccountIdentifier(event: {
 }
 
 export default defineEventHandler(async (event) => {
-  const resolution = resolveRateLimitRouteClass(
-    getRequestURL(event).pathname,
-    event.method
+  const pathname = canonicalizeRequestPath(
+    event.path || getRequestURL(event).pathname
   );
+  const resolution = resolveRateLimitRouteClass(pathname, event.method);
 
   // `in-route`: handler tự gọi vì trục account cần email trong body.
   // `exempt`: bốn lý do đã liệt kê ở §7.2, không phải nhánh mặc định.

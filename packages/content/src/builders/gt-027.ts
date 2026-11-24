@@ -73,7 +73,7 @@ export const projectGT027: Projection<"GT-027"> = {
 
     return {
       content_pack: {
-        prompt: "Bé phân loại theo tín hiệu quy luật nhé!",
+        prompt: "Bé nhìn kỹ tín hiệu rồi chọn đúng nhóm nhé!",
         rules,
         items,
         switch_after_trials: 2,

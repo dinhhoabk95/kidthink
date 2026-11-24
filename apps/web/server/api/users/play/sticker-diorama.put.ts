@@ -1,7 +1,7 @@
-import { getOwnerDb } from "@mindkid/db";
+import { NoActiveChildError } from "@mindkid/errors/child";
 import { StickerDioramaPutSchema } from "@mindkid/shared";
-import { saveStickerDiorama } from "#server/services/index.js";
-import { requireOwnedActiveChild } from "#server/utils/active-child-runtime";
+import { deleteCookie, getCookie } from "h3";
+import { saveChildStickerDioramaExperience } from "#server/services/play-experience-service";
 import { defineApiRoute } from "#server/utils/define-api-route";
 
 /** Lưu bố cục bày sticker trên một bức tranh chủ đề — `sticker-diorama.md` §8. */
@@ -10,21 +10,18 @@ export default defineApiRoute({
   body: StickerDioramaPutSchema,
   maxBodyBytes: 16 * 1024,
   async handler({ event, auth, body }) {
-    const db = getOwnerDb();
-    const child = await requireOwnedActiveChild(
-      event,
-      db,
-      Number(auth.user_id)
-    );
-    return await saveStickerDiorama(db, child.id, {
-      theme_code: body.theme_code,
-      placements: body.placements.map((item) => ({
-        emoji: item.emoji,
-        instance_index: item.instance_index,
-        norm_x: item.norm_x,
-        norm_y: item.norm_y,
-        scale: item.scale ?? 1,
-      })),
-    });
+    const candidateUuid = getCookie(event, "active_child_id");
+    try {
+      return await saveChildStickerDioramaExperience(
+        Number(auth.user_id),
+        candidateUuid,
+        body
+      );
+    } catch (err) {
+      if (err instanceof NoActiveChildError && candidateUuid) {
+        deleteCookie(event, "active_child_id", { path: "/" });
+      }
+      throw err;
+    }
   },
 });

@@ -1,0 +1,12 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ly trà sữa trân châu</title>
+  <defs>
+    <linearGradient id="pmtTea" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#fed7aa" /><stop offset="100%" stop-color="#d97706" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#451a03" opacity="0.22" rx="28" ry="5" />
+    <path d="M64 14L56 88" stroke="#831843" stroke-linecap="round" stroke-width="9" />
+    <path d="M64 14L56 88" stroke="#f472b6" stroke-linecap="round" stroke-width="3" />
+    <path d="M36 38H84L78 98C77 102 43 102 42 98Z" fill="url(#pmtTea)" stroke="#78350f" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M34 38C34 26 86 26 86 38Z" fill="#f8fafc" stroke="#334155" stroke-linejoin="round" stroke-width="3.6" />
+    <circle cx="48" cy="91" fill="#292524" r="4" /><circle cx="59" cy="93" fill="#292524" r="4" /><circle cx="70" cy="91" fill="#292524" r="4" /><circle cx="53" cy="83" fill="#292524" r="3.8" /><circle cx="65" cy="84" fill="#292524" r="3.8" />
+</svg>

@@ -1,9 +1,7 @@
-import { writeAudit } from "@mindkid/audit";
-import { getOwnerDb } from "@mindkid/db";
 import { AUTOMATED_PAYMENT_PROVIDERS } from "@mindkid/shared";
 import { getHeader } from "h3";
 import { z } from "zod";
-import { reconcileAutomatedPayments } from "#server/services/automated-payment";
+import { runAutomatedPaymentReconciliation } from "#server/services/automated-payment";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 import { defineApiRoute } from "#server/utils/define-api-route";
 
@@ -28,8 +26,9 @@ const runReconciliationSchema = z.object({
 export default defineApiRoute({
   auth: "super_admin",
   body: runReconciliationSchema,
-  handler: async ({ event, auth, body }) => {
-    const report = await reconcileAutomatedPayments({
+  handler: async ({ event, auth, body }) =>
+    await runAutomatedPaymentReconciliation({
+      managerId: auth.manager_id,
       provider: body.provider,
       records: body.records.map((r) => ({
         providerEventId: r.provider_event_id,
@@ -38,38 +37,9 @@ export default defineApiRoute({
         status: r.status,
         timestamp: r.timestamp ?? new Date(),
       })),
-    });
-
-    const reason =
-      body.reason ?? "Đối soát giao dịch thanh toán tự động (BR-APM-06)";
-    const db = getOwnerDb();
-    await db.transaction(async (tx) => {
-      await writeAudit(tx, {
-        actor_type: "manager",
-        actor_id: auth.manager_id,
-        action: "data_exported",
-        reason,
-        entity_type: "payment_reconciliation",
-        entity_id: body.provider,
-        after_data: {
-          provider: body.provider,
-          total_checked: report.totalChecked,
-          matched_count: report.matchedCount,
-          mismatched_count: report.mismatchedCount,
-          mismatches: report.mismatches,
-        },
-        ip_address: getVerifiedRemoteIp(event),
-        user_agent: getHeader(event, "user-agent") ?? "unknown",
-      });
-    });
-
-    return {
-      ok: true,
-      provider: body.provider,
-      total_checked: report.totalChecked,
-      matched_count: report.matchedCount,
-      mismatched_count: report.mismatchedCount,
-      mismatches: report.mismatches,
-    };
-  },
+      reason:
+        body.reason ?? "Đối soát giao dịch thanh toán tự động (BR-APM-06)",
+      ipAddress: getVerifiedRemoteIp(event),
+      userAgent: getHeader(event, "user-agent") ?? "unknown",
+    }),
 });

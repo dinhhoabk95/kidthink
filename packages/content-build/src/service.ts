@@ -1,19 +1,27 @@
 import { SKILL_DATASETS } from "@mindkid/content";
 import {
+  ACCESS_TIER_CODEC,
+  CONTENT_ENTITY_TYPE,
   contentSkillMap,
   contentTagMap,
   contentTags,
   gameLevelRounds,
   gameLevels,
+  type JsonRecord,
+  type JsonValue,
   normalizeMechanicTagCode,
   type OwnerDb,
   skillDatasets,
   skills,
+  TAG_AXIS_CODEC,
+  TAG_STATUS,
+  type TagAxis,
   validateContentSkillMap,
 } from "@mindkid/db";
 import { ValidationError } from "@mindkid/errors/common";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { inArray, sql } from "drizzle-orm";
+import { z } from "zod";
 import { readSeedGatesBaseline } from "#src/cli/check-seed-gates";
 import { runEightGates } from "#src/gates/runner";
 import type {
@@ -22,6 +30,26 @@ import type {
   ContentSeedRound,
   GateResult,
 } from "#src/types";
+
+const jsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
+  z.union([
+    z.string(),
+    z.number(),
+    z.boolean(),
+    z.null(),
+    z.array(jsonValueSchema),
+    z.record(z.string(), jsonValueSchema),
+  ])
+);
+
+const jsonRecordSchema: z.ZodType<JsonRecord> = z.record(
+  z.string(),
+  jsonValueSchema
+);
+
+function serializeSeedRecord(value: ContentSeed["content_pack"]): JsonRecord {
+  return jsonRecordSchema.parse(JSON.parse(JSON.stringify(value ?? {})));
+}
 
 export interface SeedBatchInput {
   batchCode: string;
@@ -40,8 +68,10 @@ export interface SeedExecutionResult {
   gateResults: GateResult[];
 }
 
-function validatePublishAxes(matchedTags: Array<{ axis: string }>) {
-  const axesPresent = new Set(matchedTags.map((t) => t.axis));
+function validatePublishAxes(matchedTags: Array<{ axis: TagAxis }>) {
+  const axesPresent = new Set(
+    matchedTags.map((t) => TAG_AXIS_CODEC.toLabel(t.axis))
+  );
   const requiredAxes: Array<"what" | "thinking" | "mechanic"> = [
     "what",
     "thinking",
@@ -166,14 +196,17 @@ export async function executeSeedBatch(
           rounds: ContentSeedRound[];
           headerInstruction: string;
           headerDifficulty: number;
-          contentPack: ContentSeed["content_pack"];
-          difficultyParams: ContentSeed["difficulty_params"];
+          contentPack: JsonRecord;
+          difficultyParams: JsonRecord;
           skillMapEntries: Array<{ skillId: number; weight: number }>;
           matchedTags: (typeof contentTags.$inferSelect)[];
         }> = [];
 
         for (const glSeed of chunk) {
           const { header, content_pack, difficulty_params } = glSeed;
+          const normalizedContentPack = serializeSeedRecord(content_pack);
+          const normalizedDifficultyParams =
+            serializeSeedRecord(difficulty_params);
 
           const template = ALL_TEMPLATES[header.template_code];
           if (!template) {
@@ -186,9 +219,9 @@ export async function executeSeedBatch(
           const isUnchanged =
             existingLevel !== undefined &&
             JSON.stringify(existingLevel.contentPack) ===
-              JSON.stringify(content_pack) &&
+              JSON.stringify(normalizedContentPack) &&
             JSON.stringify(existingLevel.difficultyParams) ===
-              JSON.stringify(difficulty_params);
+              JSON.stringify(normalizedDifficultyParams);
           if (isUnchanged) {
             totalSkipped++;
             continue;
@@ -231,7 +264,7 @@ export async function executeSeedBatch(
           const missingTags: string[] = [];
           for (const code of tagList) {
             const tag = tagMap.get(code);
-            if (tag && tag.status === "active") {
+            if (tag && tag.status === TAG_STATUS.ACTIVE) {
               matchedTags.push(tag);
             } else {
               missingTags.push(code);
@@ -258,12 +291,12 @@ export async function executeSeedBatch(
             ageMin: header.age_min,
             ageMax: header.age_max,
             difficulty: header.difficulty,
-            accessTier: header.access_tier,
+            accessTier: ACCESS_TIER_CODEC.toCode(header.access_tier),
             themeId: header.theme_tag || null,
             skillDatasetId: matchedDataset?.id ?? null,
             projectionRef: template.code,
-            contentPack: content_pack,
-            difficultyParams: difficulty_params,
+            contentPack: normalizedContentPack,
+            difficultyParams: normalizedDifficultyParams,
           });
 
           preparedMeta.push({
@@ -271,8 +304,8 @@ export async function executeSeedBatch(
             rounds: glSeed.rounds ?? [],
             headerInstruction: header.instruction,
             headerDifficulty: header.difficulty,
-            contentPack: content_pack,
-            difficultyParams: difficulty_params,
+            contentPack: normalizedContentPack,
+            difficultyParams: normalizedDifficultyParams,
             skillMapEntries,
             matchedTags,
           });
@@ -297,7 +330,7 @@ export async function executeSeedBatch(
                 projectionRef: sql`excluded.projection_ref`,
                 contentPack: sql`excluded.content_pack`,
                 difficultyParams: sql`excluded.difficulty_params`,
-                updatedAt: sql`now()`,
+                updatedAt: new Date(),
               },
             })
             .returning({
@@ -350,8 +383,8 @@ export async function executeSeedBatch(
                   roundIndex: rIdx,
                   instruction: r.instruction,
                   instructionAudioPath: r.instruction_audio_path ?? null,
-                  contentPack: r.content_pack,
-                  difficultyParams: r.difficulty_params,
+                  contentPack: serializeSeedRecord(r.content_pack),
+                  difficultyParams: serializeSeedRecord(r.difficulty_params),
                   difficulty: r.difficulty,
                 });
               }
@@ -370,7 +403,7 @@ export async function executeSeedBatch(
             // Skills
             for (const entry of meta.skillMapEntries) {
               allSkillsToLink.push({
-                entityType: "game_level",
+                entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
                 entityId: inserted.id,
                 skillId: entry.skillId,
                 weight: entry.weight.toString(),
@@ -380,7 +413,7 @@ export async function executeSeedBatch(
             // Tags
             for (const tag of meta.matchedTags) {
               allTagsToLink.push({
-                entityType: "game_level",
+                entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
                 entityId: inserted.id,
                 tagId: tag.id,
               });

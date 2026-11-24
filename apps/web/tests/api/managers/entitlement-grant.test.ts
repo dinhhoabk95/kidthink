@@ -1,8 +1,11 @@
 import {
   auditLogs,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
+  MANAGER_ROLE,
   managers,
   notifications,
   packages,
@@ -203,7 +206,7 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
         email: `mgr-grant-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Admin Granter",
         passwordHash: "hash123",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
       })
       .returning();
 
@@ -245,8 +248,8 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
       );
 
     expect(userEnts1).toHaveLength(1);
-    expect(userEnts1[0].source).toBe("manual_grant");
-    expect(userEnts1[0].status).toBe("active");
+    expect(userEnts1[0].source).toBe(ENTITLEMENT_SOURCE.MANUAL_GRANT);
+    expect(userEnts1[0].status).toBe(ENTITLEMENT_STATUS.ACTIVE);
     const initialExpiry = new Date(userEnts1[0].expiresAt ?? 0).getTime();
 
     // BR-EGR-08 & D-JO: verify NO payment_orders were created!
@@ -329,7 +332,7 @@ describe("Task 2 — Manual Entitlement Grant & Revoke Suite (BR-EGR-01..08, D-J
       .select()
       .from(entitlements)
       .where(eq(entitlements.id, userEnts2.id));
-    expect(revokedRow.status).toBe("cancelled");
+    expect(revokedRow.status).toBe(ENTITLEMENT_STATUS.CANCELLED);
 
     // BR-EGR-03: Verify audit_logs recorded entitlement_revoked
     const revokeAudit = await db

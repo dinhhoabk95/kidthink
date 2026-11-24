@@ -3,7 +3,7 @@ import {
   InMemoryRedisClient,
   setAuthRedisClient,
 } from "@mindkid/auth";
-import { getOwnerDb, userAccounts, users } from "@mindkid/db";
+import { getOwnerDb, USER_STATUS, userAccounts, users } from "@mindkid/db";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   getUserAuth,
@@ -52,7 +52,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
         email: passEmail,
         passwordHash: passHash,
         displayName: "Password User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning({ id: users.id });
     if (!pwdUser) {
@@ -72,7 +72,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
         email: socialEmail,
         passwordHash: null,
         displayName: "Social User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning({ id: users.id });
     if (!socialUser) {
@@ -129,7 +129,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
         email: existEmail,
         passwordHash: passHash,
         displayName: "Exist User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning({ id: users.id });
     if (u) {
@@ -167,7 +167,7 @@ describe("Task 5 — Identity Disclosure Prevention Test Suite (D-EP)", () => {
         email: googleEmail,
         passwordHash: null,
         displayName: "Google User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning({ id: users.id });
     if (socialUser) {

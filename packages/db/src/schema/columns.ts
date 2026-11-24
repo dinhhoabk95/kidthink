@@ -1,36 +1,43 @@
-import { bigint, timestamp } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { customType, integer, text } from "drizzle-orm/sqlite-core";
 
 export function idPk() {
-  return bigint("id", { mode: "number" })
-    .primaryKey()
-    .generatedAlwaysAsIdentity();
+  return integer("id").primaryKey({ autoIncrement: true });
+}
+
+export function uuidCol(name = "uuid") {
+  return text(name)
+    .notNull()
+    .$defaultFn(() => crypto.randomUUID());
+}
+
+export const citext = customType<{ data: string }>({
+  dataType() {
+    return "text COLLATE NOCASE";
+  },
+});
+
+export function timestampMs(name: string) {
+  return integer(name, { mode: "timestamp_ms" });
+}
+
+export function nowTimestampMs(name: string) {
+  return integer(name, { mode: "timestamp_ms" })
+    .notNull()
+    .default(sql`(CAST(unixepoch('subsec') * 1000 AS INTEGER))`)
+    .$defaultFn(() => new Date());
 }
 
 export function timestamps() {
   return {
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull()
-      .$onUpdate(() => new Date()),
+    createdAt: nowTimestampMs("created_at"),
+    updatedAt: nowTimestampMs("updated_at").$onUpdateFn(() => new Date()),
   };
 }
 
-/**
- * Timestamps cho bảng INSERT-only (`audit_logs`, `consent_logs`, `telemetry_events`):
- * giữ đủ `created_at` và `updated_at` theo `BR-DM-08`, nhưng không gắn `$onUpdate`
- * để tác vụ ẩn danh hoá cột được phép (`telemetry_events.child_uuid = NULL`) không
- * tự động chạm `updated_at`.
- */
 export function insertOnlyTimestamps() {
   return {
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    createdAt: nowTimestampMs("created_at"),
+    updatedAt: nowTimestampMs("updated_at"),
   };
 }

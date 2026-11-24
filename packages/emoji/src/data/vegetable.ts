@@ -2,15 +2,9 @@ import type { EmojiEntry } from "#src/types";
 
 export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   {
-    emoji: "🥑",
-    name: "Quả bơ",
-    categories: ["fruit", "vegetable"],
-    curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
-    keywords: ["avocado", "bơ", "quả bơ", "rau"],
-    age_min: 3,
-  },
-  {
     emoji: "🥕",
+    slug: "carrot",
+    svg_path: "/sprites/emoji/carrot.svg",
     name: "Củ cà rốt",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -19,6 +13,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌽",
+    slug: "corn",
+    svg_path: "/sprites/emoji/corn.svg",
     name: "Bắp ngô",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -27,6 +23,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥒",
+    slug: "cucumber",
+    svg_path: "/sprites/emoji/cucumber.svg",
     name: "Quả dưa chuột",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -35,6 +33,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥦",
+    slug: "broccoli",
+    svg_path: "/sprites/emoji/broccoli.svg",
     name: "Bông cải xanh",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -43,6 +43,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🧅",
+    slug: "onion",
+    svg_path: "/sprites/emoji/onion.svg",
     name: "Củ hành tây",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -51,6 +53,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🧄",
+    slug: "garlic-bulb",
+    svg_path: "/sprites/emoji/garlic-bulb.svg",
     name: "Củ tỏi",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -59,6 +63,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍅",
+    slug: "tomato",
+    svg_path: "/sprites/emoji/tomato.svg",
     name: "Quả cà chua",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -67,6 +73,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍆",
+    slug: "eggplant",
+    svg_path: "/sprites/emoji/eggplant.svg",
     name: "Quả cà tím",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -75,6 +83,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌶️",
+    slug: "chili-pepper",
+    svg_path: "/sprites/emoji/chili-pepper.svg",
     name: "Quả ớt",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -83,6 +93,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥬",
+    slug: "bok-choy",
+    svg_path: "/sprites/emoji/bok-choy.svg",
     name: "Cây rau cải",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -91,6 +103,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫑",
+    slug: "bell-pepper",
+    svg_path: "/sprites/emoji/bell-pepper.svg",
     name: "Quả ớt chuông",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -99,6 +113,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫘",
+    slug: "beans",
+    svg_path: "/sprites/emoji/beans.svg",
     name: "Hạt đậu",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -107,6 +123,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥔",
+    slug: "potato",
+    svg_path: "/sprites/emoji/potato.svg",
     name: "Củ khoai tây",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -115,6 +133,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍠",
+    slug: "sweet-potato",
+    svg_path: "/sprites/emoji/sweet-potato.svg",
     name: "Củ khoai lang",
     categories: ["vegetable"],
     curriculum_themes: [
@@ -127,6 +147,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥜",
+    slug: "peanuts",
+    svg_path: "/sprites/emoji/peanuts.svg",
     name: "Hạt lạc",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -135,6 +157,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫚",
+    slug: "ginger-root",
+    svg_path: "/sprites/emoji/ginger-root.svg",
     name: "Củ gừng",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -143,6 +167,8 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌰",
+    slug: "chestnut",
+    svg_path: "/sprites/emoji/chestnut.svg",
     name: "Hạt dẻ",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -151,10 +177,38 @@ export const VEGETABLE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍄",
+    slug: "mushroom",
+    svg_path: "/sprites/emoji/mushroom.svg",
     name: "Cây nấm",
     categories: ["vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["mushroom", "nấm", "cây nấm"],
+    age_min: 3,
+  },
+  {
+    emoji: "🫛",
+    slug: "pea-pod",
+    svg_path: "/sprites/emoji/pea-pod.svg",
+    name: "Quả đậu Hà Lan",
+    categories: ["vegetable"],
+    curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
+    keywords: [
+      "pea pod",
+      "green peas",
+      "đậu hà lan",
+      "quả đậu",
+      "hạt đậu xanh",
+    ],
+    age_min: 3,
+  },
+  {
+    emoji: "🍄‍🟫",
+    slug: "shiitake-mushroom",
+    svg_path: "/sprites/emoji/shiitake-mushroom.svg",
+    name: "Nấm hương nâu",
+    categories: ["vegetable", "flower-tree", "vn-culture"],
+    curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
+    keywords: ["brown mushroom", "shiitake", "nấm hương", "nấm nâu", "nấm rơm"],
     age_min: 3,
   },
 ];

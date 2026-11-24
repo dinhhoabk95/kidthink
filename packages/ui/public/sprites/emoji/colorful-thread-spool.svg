@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cuộn chỉ màu</title>
+  <defs>
+    <linearGradient id="thdPink" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#f472b6" /><stop offset="100%" stop-color="#db2777" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.22" rx="30" ry="5" />
+    <rect fill="url(#thdPink)" height="52" stroke="#831843" stroke-width="3.6" width="44" x="38" y="34" />
+    <path d="M38 46H82M38 58H82M38 70H82" stroke="#fbcfe8" stroke-width="2.4" />
+    <rect fill="#d97706" height="12" rx="5" stroke="#5c2d16" stroke-width="3.6" width="58" x="31" y="22" />
+    <rect fill="#d97706" height="12" rx="5" stroke="#5c2d16" stroke-width="3.6" width="58" x="31" y="86" />
+</svg>

@@ -33,11 +33,11 @@ ghi trong cột **Task mở** của từng bảng dưới. Thêm, xoá hay chuy�
 | `02-public` | 9 | 9 | 3 |
 | `03-account` | 23 | 19 | 18 |
 | `04-play` | 24 | 14 | 9 |
-| `05-content` | 19 | 8 | 7 |
+| `05-content` | 20 | 8 | 7 |
 | `06-admin` | 19 | 18 | 10 |
 | `07-addon` | 5 | 0 | 2 |
 | `08-quality` | 11 | 9 | 8 |
-| **Tổng** | **170** | **127** | **74** |
+| **Tổng** | **171** | **127** | **74** |
 
 Một outcome một file là chủ ý — xem [`CONVENTIONS.md`](CONVENTIONS.md) §1. Lịch sử thêm
 từng spec nằm trong git và ở `docs/tasks/`, không chép lại ở đây.
@@ -77,7 +77,7 @@ từng spec nằm trong git và ở `docs/tasks/`, không chép lại ở đây.
 | [taxonomy-service](01-platform/taxonomy-service.md) | P0 | Cây 5 tầng, DAG, 443 skill |  |
 | [auth-tokens-sessions](01-platform/auth-tokens-sessions.md) | P0 | Opaque cookie session Redis 1 giờ, remember tối đa 1 năm, revoke thiết bị, **reauth 5 phút** | [#305](../tasks/305-platform-api-gaps-plan.md) |
 | [audit-log](01-platform/audit-log.md) | P0 | 29 hành động bắt buộc audit | [#305](../tasks/305-platform-api-gaps-plan.md) |
-| [emoji-registry](01-platform/emoji-registry.md) | P0 | Kho emoji cố định, 32 nhóm |  |
+| [emoji-registry](01-platform/emoji-registry.md) | P0 | Kho emoji cố định & SVG thực tế, 36 nhóm |  |
 | [rate-limiting](01-platform/rate-limiting.md) | P0 | Hai trục IP + account |  |
 | [health-check](01-platform/health-check.md) | P0 | Cấm 200 cứng | [#304](../tasks/304-platform-ops-gaps-plan.md) |
 | [backup-and-restore](01-platform/backup-and-restore.md) | P0 | Verify hàng tuần, chặn go-live | [#304](../tasks/304-platform-ops-gaps-plan.md) |
@@ -194,6 +194,7 @@ từng spec nằm trong git và ở `docs/tasks/`, không chép lại ở đây.
 | [round-set-corpus-depth](05-content/round-set-corpus-depth.md) | P4 | Sàn vòng thật có trong corpus, vòng gọi lại, bậc thang 4 mức |  |
 | [curriculum-model](05-content/curriculum-model.md) | P3 | Thứ tự prerequisite, cân bằng |  |
 | **[learning-roadmap-model](05-content/learning-roadmap-model.md)** | P4 | Lộ trình theo lứa tuổi là nguồn cầu; sổ cầu nội dung; cấm gán tiết bằng phép chia lấy dư |  |
+| **[koguma-curriculum-program](05-content/koguma-curriculum-program.md)** | P4 | Chương trình tư duy 100 học phần Koguma-kai / Kuno Method (5 trụ cột K1..K5, 6 lộ trình RM-*-koguma-*, bản địa hoá 10 chủ đề GDMN Việt Nam) |  |
 | [engine-content-depth](05-content/engine-content-depth.md) | P4 | Sàn level mỗi engine, bậc thang 4 mức |  |
 | [content-theme-registry](05-content/content-theme-registry.md) | P4 | Trục theme đóng, trần tập trung chủ đề |  |
 | [montessori-corpus-mapping](05-content/montessori-corpus-mapping.md) | P3 | Ánh xạ 21 workbook sang strand, band tuổi, khuôn; ranh giới lô A và lô B |  |

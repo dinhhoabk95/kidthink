@@ -1,8 +1,11 @@
 import {
   auditLogs,
+  CONSENT_ACTION,
+  CONSENT_TYPE,
   consentLogs,
   consentRequirements,
   getOwnerDb,
+  MANAGER_ROLE,
   managers,
   users,
 } from "@mindkid/db";
@@ -184,8 +187,8 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
           .from(consentLogs)
           .where(eq(consentLogs.userId, u.id));
         expect(logs).toHaveLength(1);
-        expect(logs[0].action).toBe("accepted");
-        expect(logs[0].consentType).toBe("child_data");
+        expect(logs[0].action).toBe(CONSENT_ACTION.ACCEPTED);
+        expect(logs[0].consentType).toBe(CONSENT_TYPE.CHILD_DATA);
       } finally {
         await db
           .delete(users)
@@ -231,7 +234,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
           email: `super_admin_${Date.now()}_${Math.random()}@mindkid.test`,
           passwordHash: "adminhash",
           displayName: "Super Admin Tester",
-          role: "super_admin",
+          role: MANAGER_ROLE.SUPER_ADMIN,
         })
         .returning();
 
@@ -421,7 +424,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
           email: `super_admin_lca07_${Date.now()}_${Math.random()}@mindkid.test`,
           passwordHash: "adminhash",
           displayName: "Super Admin LCA07",
-          role: "super_admin",
+          role: MANAGER_ROLE.SUPER_ADMIN,
         })
         .returning();
 

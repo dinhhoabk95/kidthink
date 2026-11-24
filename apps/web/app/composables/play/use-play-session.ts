@@ -10,8 +10,6 @@ import {
   type RoundConfig,
   RoundRunner,
   type StageZones,
-  TemplateGameSession,
-  type ZoneRect,
 } from "@mindkid/game-engine";
 import type { AgeBand } from "@mindkid/shared/client";
 import { nextTick, type Ref, ref } from "vue";
@@ -21,6 +19,15 @@ import {
 } from "~/composables/play/completion-outcome";
 import { isRereadPromptEscalation } from "~/composables/play/hint-narration";
 import { playOpeningAudioThenSettle } from "~/composables/play/opening-audio";
+import {
+  assertPlayRoundsValid,
+  buildPlayEngineConfig,
+  handleIntroRoundNarration,
+  type IntroSessionView,
+  isSameZoneRect,
+  openingAudioSource,
+  readIntroStepFlags,
+} from "~/composables/play/play-intro-narration";
 import {
   createTimerBag,
   scheduleRetryDisallowedSkip,
@@ -41,15 +48,7 @@ import {
   type SessionCompleteSticker,
   usePlayTelemetry,
 } from "~/composables/play/use-play-telemetry";
-import { findInvalidRound } from "~/composables/play/validate-rounds";
 import { useApi } from "~/composables/use-api";
-
-/** Chỉ session mẫu mới có âm đề tự phát (`getOpeningAudioText`). */
-function openingAudioSource(
-  session: ReturnType<RoundRunner["getCurrentSession"]> | undefined
-): TemplateGameSession | null {
-  return session instanceof TemplateGameSession ? session : null;
-}
 
 export interface JsonObject {
   [key: string]: string | number | boolean | readonly string[] | undefined;
@@ -109,17 +108,7 @@ export interface UsePlaySessionOptions {
   ) => void;
 }
 
-/**
- * Seed dựng bàn cho lượt chơi (`BR-RNG-06`).
- *
- * `payload.layout_seed` do server phát cho **mỗi phiên chơi** (bậc random
- * thật ở `createLayoutSeed`), nên đây phải là nguồn duy nhất. Thiếu nó —
- * payload hỏng, cache cũ, hay đường phát nội bộ chưa gắn — Cấm — NEVER rơi về
- * `Math.random()`: đó là nguồn ngẫu nhiên thứ hai ngoài generator của phiên,
- * đúng thứ `BR-RNG-01`/`BR-RNG-06` cấm. Rơi về seed `0` cố định (có cảnh báo)
- * an toàn hơn — tối đa là bàn không đổi vị trí, không phải bàn không tái dựng
- * được.
- */
+/** Seed dựng bàn cho lượt chơi (`BR-RNG-06`) — thiếu thì rơi về `0` cố định thay vì `Math.random()`. */
 export function resolveLayoutSeed(payload: ConfigPayload): number {
   if (payload.layout_seed !== undefined) {
     return payload.layout_seed;
@@ -130,50 +119,7 @@ export function resolveLayoutSeed(payload: ConfigPayload): number {
   return 0;
 }
 
-function isSameRect(
-  a: ZoneRect | null | undefined,
-  b: ZoneRect | null | undefined
-): boolean {
-  if (!(a && b)) {
-    return !(a || b);
-  }
-  return a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
-}
-
-/** Phần của session GT-000 mà bề mặt chơi đọc để dựng nút đi tiếp. */
-export interface IntroSessionView {
-  readonly steps?: readonly { readonly action: string }[];
-  readonly currentStepIndex?: number;
-  /** Getter `GT000Session.speakAlong` — trường thiếu đã được hiểu là `off`. */
-  readonly speakAlong?: "off" | "tap";
-}
-
-export interface IntroStepFlags {
-  readonly stepIndex: number;
-  /** Mời "nói theo": nút "Bé nói theo" có icon micro (`BR-E000-11`). */
-  readonly isEchoStep: boolean;
-  readonly isIntroCardStep: boolean;
-}
-
-/**
- * Cờ nút đi tiếp của bài làm quen. Chỉ mời "nói theo" khi bài khai `tap`
- * tường minh — thiếu thì là `off` (Task #274 `D-274-2`); bước `echo` vẫn là
- * một thẻ chạm để đi tiếp.
- */
-export function readIntroStepFlags(view: IntroSessionView): IntroStepFlags {
-  const stepIndex = view.currentStepIndex ?? 0;
-  const action = view.steps?.[stepIndex]?.action;
-  return {
-    stepIndex,
-    isEchoStep: action === "echo" && view.speakAlong === "tap",
-    isIntroCardStep: action === "present" || action === "echo",
-  };
-}
-
-/**
- * Gom toàn bộ tài nguyên (hình ảnh + âm thanh câu dẫn của mọi vòng) để tải
- * trước khi mở Vòng 1 (`BR-OFF-02`, Task #303 S3).
- */
+/** Gom tài nguyên (ảnh + âm câu dẫn mọi vòng) để preload trước Vòng 1 (`BR-OFF-02`). */
 export function collectSessionAssets(
   payload: ConfigPayload
 ): Array<{ ref: string; kind: string; url?: string; glyph?: string }> {
@@ -184,7 +130,6 @@ export function collectSessionAssets(
     glyph?: string;
   }> = [];
   const seenUrls = new Set<string>();
-
   const pushUniqueAsset = (asset: {
     ref: string;
     kind: string;
@@ -199,11 +144,9 @@ export function collectSessionAssets(
     }
     result.push(asset);
   };
-
   for (const asset of payload.assets ?? []) {
     pushUniqueAsset(asset);
   }
-
   for (const round of payload.rounds ?? []) {
     if (round.instruction_audio_path) {
       pushUniqueAsset({
@@ -213,13 +156,10 @@ export function collectSessionAssets(
       });
     }
   }
-
   return result;
 }
 
-/**
- * Câu dẫn chờ tiếng chuông mở vòng dứt rồi mới vang, để hai âm không đè nhau.
- */
+/** Câu dẫn chờ tiếng chuông mở vòng dứt rồi mới vang, để hai âm không đè nhau. */
 const ROUND_OPEN_NARRATION_DELAY_MS = 600;
 
 /** Nhịp ăn mừng giữa lúc thắng một vòng và lúc mở vòng kế. */
@@ -303,26 +243,6 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       isIntroCardStep.value = false;
       isEchoStep.value = false;
     }
-  }
-
-  function buildEngineConfig(
-    payload: ConfigPayload,
-    levelCode: string,
-    firstRound?: RoundPayload
-  ): EngineConfig {
-    return {
-      level_code: payload.code || payload.level_code || levelCode,
-      content_version: payload.content_version ?? 1,
-      template_code: payload.template_code,
-      content_pack: (firstRound?.content_pack ??
-        payload.content_pack) as EngineConfig["content_pack"],
-      difficulty_params: (firstRound?.difficulty_params ??
-        payload.difficulty_params) as EngineConfig["difficulty_params"],
-      theme_id: payload.theme_id,
-      age_band: payload.age_band || "3-4",
-      reduced_motion: payload.flags?.reduced_motion ?? false,
-      audio_enabled: payload.flags?.audio_enabled ?? true,
-    };
   }
 
   let lastUploadedTelemetryCount = -1;
@@ -469,10 +389,20 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         // gọi vào đây thay vì tự phát, nên câu dẫn không bao giờ vang hai lần.
         setInstructionAudio(roundConfig.instruction_audio_path);
         // GT-000 tự kể lời dẫn theo từng bước làm quen, không dùng câu dẫn
-        // vòng, và tự gate cử chỉ bằng `audioPromptCalled` của riêng nó —
-        // Cấm — NEVER hạ `engine.acceptingInput` ở đây, không ai nâng lại.
+        // vòng ở `round_open` (tránh chồng giọng), còn ở `replay` thì uỷ quyền
+        // cho `replayStepAudio()` đọc lại đúng câu dẫn bước hiện tại.
         if (cachedPayload?.template_code === "GT-000") {
-          roundRunner?.notePromptSettled();
+          handleIntroRoundNarration({
+            trigger,
+            currentSession:
+              roundRunner?.getCurrentSession() ?? engine?.activeSession,
+            notePromptSettled: () => {
+              roundRunner?.notePromptSettled();
+            },
+            fallbackSpeak: (text) => {
+              playInstructionNarration(text);
+            },
+          });
           return;
         }
         // Khung chuyện đứng trước câu dẫn ở vòng đầu (`BR-FBK-16`).
@@ -657,7 +587,10 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     }
     const stage = roundRunner.getStageRect();
     const tray = roundRunner.getTrayRect() ?? null;
-    if (isSameRect(stage, zones.stage) && isSameRect(tray, zones.tray)) {
+    if (
+      isSameZoneRect(stage, zones.stage) &&
+      isSameZoneRect(tray, zones.tray)
+    ) {
       return;
     }
     roundRunner.setLogicSpace(
@@ -686,19 +619,6 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     });
   }
 
-  /** Kiểm mọi vòng trước khi chơi (Task #313 B3): vòng sau hỏng sẽ kẹt giữa chừng. */
-  function assertRoundsValid(
-    templateCode: string,
-    rounds: readonly RoundPayload[]
-  ): void {
-    const invalidRound = findInvalidRound(templateCode, rounds);
-    if (invalidRound !== null) {
-      throw new Error(
-        `Câu hỏi ở vòng ${invalidRound + 1} bị lỗi nội dung. Bé thử lại sau nhé!`
-      );
-    }
-  }
-
   async function fetchAndStartGame(levelCode: string): Promise<void> {
     const endpoint = loggedIn.value
       ? `/api/users/levels/${levelCode}/config`
@@ -719,7 +639,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       );
     }
 
-    assertRoundsValid(payload.template_code, rounds);
+    assertPlayRoundsValid(payload.template_code, rounds);
 
     initSessionTelemetryIfPresent(payload, levelCode);
 
@@ -759,7 +679,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     startRounds(
       payload,
       rounds,
-      buildEngineConfig(payload, levelCode, rounds[0])
+      buildPlayEngineConfig(payload, levelCode, rounds[0])
     );
   }
 

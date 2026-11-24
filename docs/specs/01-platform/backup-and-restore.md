@@ -43,7 +43,8 @@ Spec này biến backup thành điều kiện go-live, không phải việc đ�
 
 | Nơi | |
 |---|---|
-| `apps/worker` job `backup:postgres` · `backup:verify` | |
+| `apps/worker` job `backup:postgres` · `backup:verify` | Chế độ `MINDKID_RUNTIME=vps` (`pg_dump` + mã hoá `AES-256-GCM` lên Garage S3 / Offsite S3) |
+| `.github/workflows/backup-d1-nightly.yml` + D1 Time Travel | Chế độ `MINDKID_RUNTIME=cloudflare` (`wrangler d1 export` hàng đêm lúc 02:00 ICT + nén gzip + mã hoá `AES-256-GCM` lưu GitHub Private Backup Release, kết hợp khôi phục tức thì 7 ngày của D1 Time Travel) |
 | `pnpm db:restore` (`apps/worker/src/backup/restore.ts`) | Khôi phục thủ công |
 | `backup_log` | Bản ghi mỗi lần chạy |
 

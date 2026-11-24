@@ -288,14 +288,20 @@ describe("ScaffoldingSystem (BR-SCF-01..08 & SCAFFOLDING-AND-HINTS spec)", () =>
     );
     round1Session.prepareRound("3-4");
 
-    // Trả lời sai 2 lần ở câu 1 -> bật gợi ý L1
+    // Trả lời sai 2 lần ở câu 1 -> bật gợi ý L1 (vùng tiêu chí), sai thêm lần 3 -> L2 (focusIndex)
     engine.scaffolding?.onMiss();
     engine.scaffolding?.onMiss();
     engine.advanceFrame(16);
     expect(engine.scaffolding?.getCurrentLevel()).toBe(1);
+    expect(engine.hintRegionIds).toEqual(["gt002-criterion-header"]);
+    expect(engine.focusIndex).toBeNull();
+
+    engine.scaffolding?.onMiss();
+    engine.advanceFrame(16);
+    expect(engine.scaffolding?.getCurrentLevel()).toBe(2);
     expect(engine.focusIndex).not.toBeNull();
 
-    // Trả lời đúng qua `onSuccess()` -> khung tiếp theo phải tự xoá focusIndex về null
+    // Trả lời đúng qua `onSuccess()` -> khung tiếp theo phải tự xoá sạch hintRegionIds và focusIndex
     engine.scaffolding?.onSuccess();
     engine.advanceFrame(16);
     expect(engine.scaffolding?.getCurrentLevel()).toBe(0);
@@ -303,8 +309,11 @@ describe("ScaffoldingSystem (BR-SCF-01..08 & SCAFFOLDING-AND-HINTS spec)", () =>
     expect(engine.actionHinted).toBe(false);
     expect(engine.hintRegionIds).toEqual([]);
 
-    // Bật lại gợi ý rồi sang câu 2 bằng `resetScaffolding()` (kể cả khi đang khóa input chờ đọc đề)
+    // Bật lại gợi ý L1 -> L2 rồi sang câu 2 bằng `resetScaffolding()` (kể cả khi đang khóa input chờ đọc đề)
     engine.scaffolding?.onMiss();
+    engine.scaffolding?.onMiss();
+    engine.advanceFrame(16);
+    expect(engine.hintRegionIds).toEqual(["gt002-criterion-header"]);
     engine.scaffolding?.onMiss();
     engine.advanceFrame(16);
     expect(engine.focusIndex).not.toBeNull();

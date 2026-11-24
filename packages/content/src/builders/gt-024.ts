@@ -6,7 +6,12 @@ import type {
   SkillDataset,
 } from "@mindkid/shared";
 import { formatPromptLabel } from "@mindkid/shared";
-import { createRng, resolveItemAsset, safeGetItem } from "./utils.js";
+import {
+  createRng,
+  resolveItemAsset,
+  safeGetItem,
+  sanitizeChildPrompt,
+} from "./utils.js";
 
 function buildPolygonWaypoints(count: number) {
   const radius = 160;
@@ -43,9 +48,14 @@ export const projectGT024: Projection<"GT-024"> = {
 
     const waypoints = buildPolygonWaypoints(params.item_count);
 
+    const prompt = sanitizeChildPrompt(
+      `Bé lướt tay nối chấm tạo ${formatPromptLabel(baseItem.label)} nhé!`,
+      "Bé nối theo chấm tròn để vẽ hình nhé!"
+    );
+
     return {
       content_pack: {
-        prompt: `Bé hãy vẽ nối điểm để tạo ${formatPromptLabel(baseItem.label)} nhé!`,
+        prompt,
         shape_name: baseItem.label,
         guide_asset: resolveItemAsset(baseItem, true),
         waypoints,

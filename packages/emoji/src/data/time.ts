@@ -3,6 +3,8 @@ import type { EmojiEntry } from "#src/types";
 export const TIME_EMOJIS: EmojiEntry[] = [
   {
     emoji: "⏰",
+    slug: "alarm-clock",
+    svg_path: "/sprites/emoji/alarm-clock.svg",
     name: "Đồng hồ báo thức",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -11,6 +13,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕐",
+    slug: "clock-one",
+    svg_path: "/sprites/emoji/clock-one.svg",
     name: "1 giờ",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -19,6 +23,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕑",
+    slug: "clock-two",
+    svg_path: "/sprites/emoji/clock-two.svg",
     name: "2 giờ",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -27,6 +33,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕒",
+    slug: "clock-three",
+    svg_path: "/sprites/emoji/clock-three.svg",
     name: "3 giờ",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -35,6 +43,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕓",
+    slug: "clock-four",
+    svg_path: "/sprites/emoji/clock-four.svg",
     name: "4 giờ",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -43,6 +53,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕔",
+    slug: "clock-five",
+    svg_path: "/sprites/emoji/clock-five.svg",
     name: "5 giờ",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -51,6 +63,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕕",
+    slug: "clock-six",
+    svg_path: "/sprites/emoji/clock-six.svg",
     name: "6 giờ",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -59,6 +73,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕖",
+    slug: "clock-seven",
+    svg_path: "/sprites/emoji/clock-seven.svg",
     name: "7 giờ",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -67,6 +83,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕗",
+    slug: "clock-eight",
+    svg_path: "/sprites/emoji/clock-eight.svg",
     name: "8 giờ",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -75,6 +93,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕘",
+    slug: "clock-nine",
+    svg_path: "/sprites/emoji/clock-nine.svg",
     name: "9 giờ",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -83,6 +103,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕙",
+    slug: "clock-ten",
+    svg_path: "/sprites/emoji/clock-ten.svg",
     name: "10 giờ",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -91,6 +113,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕚",
+    slug: "clock-eleven",
+    svg_path: "/sprites/emoji/clock-eleven.svg",
     name: "11 giờ",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -99,6 +123,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕛",
+    slug: "clock-twelve",
+    svg_path: "/sprites/emoji/clock-twelve.svg",
     name: "12 giờ",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -114,6 +140,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⏳",
+    slug: "flowing-hourglass",
+    svg_path: "/sprites/emoji/flowing-hourglass.svg",
     name: "Đồng hồ cát",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -122,6 +150,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⌛",
+    slug: "done-hourglass",
+    svg_path: "/sprites/emoji/done-hourglass.svg",
     name: "Đồng hồ cát xong",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -130,6 +160,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⏱️",
+    slug: "stopwatch",
+    svg_path: "/sprites/emoji/stopwatch.svg",
     name: "Đồng hồ bấm giờ",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -138,6 +170,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "📅",
+    slug: "monthly-calendar",
+    svg_path: "/sprites/emoji/monthly-calendar.svg",
     name: "Lịch",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -146,6 +180,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🗓️",
+    slug: "flip-calendar",
+    svg_path: "/sprites/emoji/flip-calendar.svg",
     name: "Lịch xé",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -154,6 +190,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⌚",
+    slug: "wristwatch",
+    svg_path: "/sprites/emoji/wristwatch.svg",
     name: "Đồng hồ đeo tay",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -162,6 +200,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕰️",
+    slug: "desk-clock",
+    svg_path: "/sprites/emoji/desk-clock.svg",
     name: "Đồng hồ để bàn",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],
@@ -170,6 +210,8 @@ export const TIME_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "📆",
+    slug: "tear-off-calendar",
+    svg_path: "/sprites/emoji/tear-off-calendar.svg",
     name: "Tờ lịch",
     categories: ["time"],
     curriculum_themes: ["truong_mam_non"],

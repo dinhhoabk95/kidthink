@@ -182,6 +182,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-SAP` | [`skill-age-progression.md`](../05-content/skill-age-progression.md) | | `BR-LDC` | [`level-difficulty-contract.md`](../05-content/level-difficulty-contract.md) |
 | `BR-SVI` | [`skill-value-inventory.md`](../05-content/skill-value-inventory.md) | | `BR-NRL` | [`numeracy-representation-ladder.md`](../05-content/numeracy-representation-ladder.md) |
 | `BR-STS` | [`skill-thinking-structure.md`](../05-content/skill-thinking-structure.md) | | `BR-LRM` | [`learning-roadmap-model.md`](../05-content/learning-roadmap-model.md) |
+| `BR-KGM` | [`koguma-curriculum-program.md`](../05-content/koguma-curriculum-program.md) | | | |
 
 **Prefix chia nhiều spec** — luật bền của các đợt dựng khuôn và nạp nội dung (kế hoạch đợt nằm
 ở `docs/tasks/`, không là spec — mục 2 của [`CONVENTIONS.md`](../CONVENTIONS.md)). Mỗi mã giữ
@@ -260,11 +261,11 @@ còn trích mã ngưng thì task ghi ở cột cuối đổi chỗ trích.
 
 | | Số |
 |---|---:|
-| Spec module (theo [`../index.md`](../index.md)) | 194 |
-| Spec module có bảng `BR-*` ở mục 6 | 193 |
+| Spec module (theo [`../index.md`](../index.md)) | 195 |
+| Spec module có bảng `BR-*` ở mục 6 | 194 |
 | Phiếu engine có bảng `BR-*` | 38 |
-| Prefix BR (kể cả 38 prefix `BR-E0nn`) | 240 |
-| Business rule khai ở mục 6 | 2107 |
+| Prefix BR (kể cả 38 prefix `BR-E0nn`) | 241 |
+| Business rule khai ở mục 6 | 2118 |
 
 ### 7.3 Rule không bao giờ được nới lỏng
 

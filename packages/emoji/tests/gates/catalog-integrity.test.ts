@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ALL_EMOJIS } from "#src/index";
+import { ALL_EMOJIS, RAW_EMOJI_DATA_SOURCES } from "#src/index";
 import type { EmojiEntry } from "#src/types";
 import {
   DUPLICATE_GLYPH_FIXTURE,
@@ -128,6 +128,16 @@ describe("Catalog Integrity Gate (D-EK)", () => {
       const result = checkNoGenderedProfessions(GENDERED_PROFESSION_FIXTURE);
       expect(result.valid).toBe(false);
       expect(result.violations).toContain("👩‍⚕️");
+    });
+  });
+
+  describe("Invariant 5: Single canonical row per glyph across all data files (BR-EMJ-13)", () => {
+    it("has zero physical duplicate glyphs across RAW_EMOJI_DATA_SOURCES", () => {
+      const allRawEntries = Object.values(RAW_EMOJI_DATA_SOURCES).flat();
+      const result = checkUniqueGlyphs(allRawEntries);
+      expect(result.valid).toBe(true);
+      expect(result.duplicates).toHaveLength(0);
+      expect(allRawEntries).toHaveLength(ALL_EMOJIS.length);
     });
   });
 });

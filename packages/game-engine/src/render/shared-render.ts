@@ -1,8 +1,4 @@
-import {
-  CONTENT_TOP_PX,
-  DEFAULT_LOGIC_SPACE,
-  TRAY_ZONE_H_PX,
-} from "#src/layout/constants";
+import { CONTENT_TOP_PX, TRAY_ZONE_H_PX } from "#src/layout/constants";
 import type { ZoneRect } from "#src/layout/stage-zones.js";
 import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
@@ -15,116 +11,32 @@ import {
 } from "./cache.js";
 import { alpha } from "./color-utils.js";
 import {
-  drawPlaceholderBox,
-  drawQuantityRepresentation,
-} from "./numeracy-primitives.js";
+  drawAssetInSlot,
+  drawTextInSlot,
+  graphemes,
+} from "./shared-slot-render.js";
 import {
-  detectSlotVisualComparisonCue,
-  drawCheckMark,
-  drawSlotVisualComparisonCue,
-} from "./slot-decor.js";
-import { getEmojiSprite, getImageSprite } from "./sprite-registry.js";
-import {
+  applyCanvasFontAtSize,
   canvasFontPx,
   type LogicSpace,
-  minLegiblePx,
   spaceOf,
 } from "./type-scale.js";
-import type {
-  ItemVisualState,
-  RenderAsset,
-  RenderItem,
-  SceneBox,
-} from "./types.js";
+import type { RenderAsset, SceneBox } from "./types.js";
+import {
+  drawBambooJointAccent,
+  drawDoPaperFiberMarks,
+} from "./vn-folk-motifs.js";
 
 /**
  * Nguyên thuỷ vẽ dùng chung cho `render()` của mọi engine.
  *
  * Mọi kích thước lấy từ `RenderSystem.LOGIC_WIDTH/LOGIC_HEIGHT` chứ ❌ NEVER
- * viết `960`/`540` vào thân hàm: bản trước hằng số hoá cả khung nền lẫn vị trí
- * câu lệnh, nên đổi độ phân giải logic là vỡ bố cục mà không cổng nào thấy.
- *
- * Toạ độ **item** luôn tới từ `Slot` do `resolveLayout()` sinh (`BR-ERC-03`).
- * Hàm ở đây chỉ nhận `Slot`, ❌ NEVER tự chế toạ độ cho item.
+ * viết `960`/`540` vào thân hàm. Toạ độ **item** luôn tới từ `Slot` do
+ * `resolveLayout()` sinh (`BR-ERC-03`).
  */
 
 const PROMPT_TOP_RATIO = 0.045;
-const LABEL_FONT_RATIO = 0.16;
-const GLYPH_FILL_RATIO = 0.52;
-export const SPRITE_FILL_RATIO = 0.68;
-
-function drawCenteredSprite(
-  ctx: CanvasRenderingContext2D,
-  sprite: CanvasImageSource,
-  cx: number,
-  cy: number,
-  size: number
-): void {
-  const half = size / 2;
-  ctx.drawImage(sprite, cx - half, cy - half, size, size);
-}
-
-export function getColorsForState(state: ItemVisualState): {
-  fill: string;
-  border: string;
-} {
-  switch (state) {
-    case "correct":
-      return {
-        fill: designTokens.colors.semantic.success[100],
-        border: designTokens.colors.semantic.success[600],
-      };
-    case "wrong":
-      return {
-        fill: designTokens.colors.retry[100],
-        border: designTokens.colors.retry[600],
-      };
-    case "touching":
-      return {
-        fill: designTokens.colors.montessori.amberLight,
-        border: designTokens.colors.montessori.amberDark,
-      };
-    case "selected":
-      return {
-        fill: designTokens.colors.montessori.amberLight,
-        border: designTokens.colors.montessori.amber,
-      };
-    case "locked":
-      return {
-        fill: designTokens.colors.surface[100],
-        border: designTokens.colors.surface[400],
-      };
-    default:
-      return {
-        fill: designTokens.colors.surface[0],
-        border: designTokens.colors.cta[200],
-      };
-  }
-}
-
-export type EmojiResolver = (code: string) => string | null;
-let customEmojiResolver: EmojiResolver | null = null;
-
-export function setEmojiResolver(resolver: EmojiResolver | null): void {
-  customEmojiResolver = resolver;
-}
-
-/**
- * Tra cứu glyph emoji theo `asset.ref` (Task #202 D-EE).
- * Ref chính là glyph UTF-8 thật.
- */
-export function resolveEmojiGlyph(ref: string): string | null {
-  if (customEmojiResolver) {
-    const resolved = customEmojiResolver(ref);
-    if (resolved) {
-      return resolved;
-    }
-  }
-  if (ref && ref.length > 0) {
-    return ref;
-  }
-  return null;
-}
+const PROMPT_MAX_LINES = 2;
 
 export function sceneBox(rs: RenderSystem): SceneBox {
   return { x: 0, y: 0, w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT };
@@ -256,21 +168,6 @@ export function wrapPromptText(
   return lines;
 }
 
-const SEGMENTER =
-  typeof Intl !== "undefined" && "Segmenter" in Intl
-    ? new Intl.Segmenter("vi", { granularity: "grapheme" })
-    : null;
-
-/** Tách chuỗi theo cụm ký tự người đọc thấy — giữ nguyên emoji và dấu tổ hợp (NFD). */
-export function graphemes(text: string): string[] {
-  return SEGMENTER
-    ? Array.from(SEGMENTER.segment(text), (part) => part.segment)
-    : Array.from(text);
-}
-
-/** Tối đa dòng của khung yêu cầu — khung cao hơn sẽ đè vùng nội dung (`BR-ERC-15`). */
-const PROMPT_MAX_LINES = 2;
-
 /** Giữ `PROMPT_MAX_LINES` dòng; dòng cuối cắt theo ký tự (không theo UTF-16) kèm "…". */
 function capPromptLines(
   ctx: CanvasRenderingContext2D,
@@ -322,10 +219,9 @@ export function drawPromptText(
     h: height,
   };
   const fontPx = canvasFontPx(space, "prompt", rs?.viewport?.scale);
-  const fontStr = `bold ${fontPx}px ${designTokens.fonts.sans}`;
 
   ctx.save();
-  ctx.font = fontStr;
+  applyCanvasFontAtSize(ctx, fontPx, "sans", "bold");
 
   const maxCardW = Math.min(860, width - 40);
   const maxContentW = maxCardW - 48;
@@ -375,12 +271,6 @@ export function drawPromptText(
   const lineCount = Math.max(1, lines.length);
   const cardH = Math.max(54, 20 + lineCount * lineHeight);
   const cardX = (width - cardW) / 2;
-  /**
-   * `BR-ERC-15`: khung yêu cầu không được đè nội dung. `CONTENT_TOP_PX` là mốc
-   * mà hình học đặt slot bên dưới, còn `height * PROMPT_TOP_RATIO` lớn dần theo
-   * cạnh dài — trên máy dọc (cạnh dài 1168) lề đó một mình đã vượt mốc. Kẹp để
-   * đáy khung nằm trong dải trên; prompt phải xuống dòng thì lùi sát mép.
-   */
   const cardY = Math.max(
     8,
     Math.min(height * PROMPT_TOP_RATIO, CONTENT_TOP_PX - cardH - 4)
@@ -392,24 +282,36 @@ export function drawPromptText(
   ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.16);
   ctx.shadowBlur = 12;
   ctx.shadowOffsetY = 4;
-  ctx.fillStyle = designTokens.colors.surface[0];
+  ctx.fillStyle = designTokens.colors.vnMaterials.doPaper.sheet;
   ctx.beginPath();
   ctx.roundRect(cardX, cardY, cardW, cardH, radius);
   ctx.fill();
   ctx.restore();
 
-  // Floating claymorphic card body
-  ctx.fillStyle = designTokens.colors.surface[0];
-  ctx.strokeStyle = designTokens.colors.surface[300];
+  // Thẻ giấy dó viền tre ngà ấm
+  ctx.fillStyle = designTokens.colors.vnMaterials.doPaper.sheet;
+  ctx.strokeStyle = designTokens.colors.vnMaterials.bamboo.stalk;
   ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.roundRect(cardX, cardY, cardW, cardH, radius);
   ctx.fill();
   ctx.stroke();
 
-  // Prompt text (cùng cỡ font với khi đo, BR-ERC-15) — căn giữa, bỏ badge loa trang trí (H8, Task #277 S3)
-  ctx.fillStyle = designTokens.colors.surface[900];
-  ctx.font = fontStr;
+  // Đốt tre mảnh trang trí hai đầu thẻ câu lệnh
+  if (cardW >= 220) {
+    drawBambooJointAccent(
+      ctx,
+      cardX + radius + 6,
+      cardY + cardH - 4,
+      cardX + cardW - radius - 6,
+      cardY + cardH - 4,
+      3
+    );
+  }
+
+  // Prompt text (tương phản cao >11:1 trên nền giấy dó)
+  ctx.fillStyle = designTokens.colors.vnMaterials.doPaper.ink;
+  applyCanvasFontAtSize(ctx, fontPx, "sans", "bold");
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
@@ -426,21 +328,9 @@ export function drawPromptText(
   ctx.restore();
 }
 
-export function drawEmojiContent(
-  ctx: CanvasRenderingContext2D,
-  emojiRef: string,
-  slot: Slot
-): boolean {
-  return drawAssetInSlot(ctx, { kind: "emoji", ref: emojiRef }, slot);
-}
-
 /**
  * Vùng chữ nhật của thẻ gỗ trung tâm hiển thị vật thể / câu đố lớn cho trẻ
- * (GT-001, GT-009, GT-026...), vẽ bởi `drawCentralTargetCard` — một nguồn
- * hình học duy nhất cho cả vẽ và chạm lại nghe từ khoá (Task #273). Tách ra
- * để session dựng `ViewEntity` khớp đúng ô đang vẽ, không đoán lại toạ độ.
- * Nhận `LogicSpace` trực tiếp (không phải `RenderSystem`) để gọi được từ
- * `getView()`, nơi không có `RenderSystem` trong tay.
+ * (GT-001, GT-009, GT-026...).
  */
 export function getCentralTargetCardSlot(
   logicSpace: LogicSpace,
@@ -501,7 +391,7 @@ export function drawCentralTargetCard(
   ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.2);
   ctx.shadowBlur = 16;
   ctx.shadowOffsetY = 8;
-  ctx.fillStyle = designTokens.colors.surface[0];
+  ctx.fillStyle = designTokens.colors.vnMaterials.doPaper.sheet;
   ctx.beginPath();
   ctx.roundRect(cardX, cardY, cardW, cardH, 28);
   ctx.fill();
@@ -516,14 +406,27 @@ export function drawCentralTargetCard(
   ctx.fill();
   ctx.restore();
 
-  // 3. Card Body & Wooden Bevel Border
-  ctx.fillStyle = designTokens.colors.surface[0];
-  ctx.strokeStyle = designTokens.colors.montessori.woodBevel;
+  // 3. Thân thẻ giấy dó mộc & viền tre ngà
+  ctx.fillStyle = designTokens.colors.vnMaterials.doPaper.sheet;
+  ctx.strokeStyle = designTokens.colors.vnMaterials.bamboo.stalk;
   ctx.lineWidth = 4;
   ctx.beginPath();
   ctx.roundRect(cardX, cardY, cardW, cardH, 28);
   ctx.fill();
   ctx.stroke();
+
+  // 3b. Xơ giấy dó & thanh đốt tre ngà mảnh
+  drawDoPaperFiberMarks(ctx, cardX, cardY, cardW, cardH);
+  if (cardW >= 110) {
+    drawBambooJointAccent(
+      ctx,
+      cardX + 30,
+      cardY + cardH - 8,
+      cardX + cardW - 30,
+      cardY + cardH - 8,
+      2
+    );
+  }
 
   // 4. Specular White Highlight
   ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.9);
@@ -566,10 +469,8 @@ export function getWoodenTokenDockRect(
 const DOCK_SLAB_DEPTH_PX = 4;
 
 /**
- * Dock khay gỗ cho các token lựa chọn, vẽ trọn trong `rect` (`BR-PSZ-01`,
- * Task #277 S5): mặt dock cộng tấm gỗ đáy không vượt đáy rect. Session đã nhận
- * khay chung truyền đúng `zones.tray`; bỏ trống thì rơi về toạ độ cũ
- * `getWoodenTokenDockRect(space)` cho session chưa chuyển vào khung.
+ * Dock khay gỗ mộc & tre ngà cho các token lựa chọn, vẽ trọn trong `rect`
+ * (`BR-PSZ-01`, Task #277 S5): mặt dock cộng tấm gỗ đáy không vượt đáy rect.
  */
 export function drawWoodenTokenDock(
   ctx: CanvasRenderingContext2D,
@@ -588,7 +489,7 @@ export function drawWoodenTokenDock(
   ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.16);
   ctx.shadowBlur = 14;
   ctx.shadowOffsetY = 6;
-  ctx.fillStyle = designTokens.colors.surface[100];
+  ctx.fillStyle = designTokens.colors.vnMaterials.woodGrain.surface;
   ctx.beginPath();
   ctx.roundRect(dockX, dockY, dockW, dockH, radius);
   ctx.fill();
@@ -603,18 +504,21 @@ export function drawWoodenTokenDock(
   ctx.fill();
   ctx.restore();
 
-  // 3. Dock Surface & Bevel
-  ctx.fillStyle = designTokens.colors.montessori.woodTray;
-  ctx.strokeStyle = designTokens.colors.montessori.woodBevel;
+  // 3. Dock Surface & Warm Bamboo-Wood Bevel
+  ctx.fillStyle = designTokens.colors.vnMaterials.woodGrain.surface;
+  ctx.strokeStyle = designTokens.colors.vnMaterials.bamboo.joint;
   ctx.lineWidth = 3.5;
   ctx.beginPath();
   ctx.roundRect(dockX, dockY, dockW, dockH, radius);
   ctx.fill();
   ctx.stroke();
 
-  // 3b. Subtle Montessori wood-grain groove lines
+  // 3b. Vân gỗ mộc & đốt tre ngà trang trí lòng khay (không gọi roundRect)
   if (dockH >= 48 && dockW >= 180) {
-    ctx.strokeStyle = alpha(designTokens.colors.montessori.woodGrain, 0.28);
+    ctx.strokeStyle = alpha(
+      designTokens.colors.vnMaterials.woodGrain.groove,
+      0.3
+    );
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(dockX + radius + 8, dockY + dockH * 0.68);
@@ -622,6 +526,15 @@ export function drawWoodenTokenDock(
     ctx.moveTo(dockX + dockW * 0.62, dockY + dockH * 0.34);
     ctx.lineTo(dockX + dockW - radius - 8, dockY + dockH * 0.34);
     ctx.stroke();
+
+    drawBambooJointAccent(
+      ctx,
+      dockX + radius + 12,
+      dockY + dockH - 6,
+      dockX + dockW - radius - 12,
+      dockY + dockH - 6,
+      4
+    );
   }
 
   // 4. Specular highlight
@@ -636,9 +549,7 @@ export function drawWoodenTokenDock(
 }
 
 /**
- * Vẽ trong một vùng của bàn chơi, cắt mọi nét tràn ra ngoài (`BR-PSZ-01`,
- * Task #277 S5) — quầng sáng hay bóng đổ của primitive không được lấn sang
- * vùng lời dẫn, khay hay nút hành động.
+ * Vẽ trong một vùng của bàn chơi, cắt mọi nét tràn ra ngoài (`BR-PSZ-01`).
  */
 export function drawClippedToZone(
   ctx: CanvasRenderingContext2D,
@@ -658,7 +569,6 @@ export function drawSubPromptText(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   text: string,
-  /** Có thì nhãn nằm trọn trong vùng này (đỉnh vùng, giữa ngang), không theo tỉ lệ canvas. */
   rect?: ZoneRect
 ): void {
   if (!text) {
@@ -667,7 +577,7 @@ export function drawSubPromptText(
   const { space, scale } = spaceOf(rs);
   const fontPx = canvasFontPx(space, "subPrompt", scale);
   ctx.save();
-  ctx.font = `${fontPx}px ${designTokens.fonts.sans}`;
+  applyCanvasFontAtSize(ctx, fontPx, "sans", 500);
   const metrics = ctx.measureText(text);
   const pillW = Math.min(
     rect?.w ?? Number.POSITIVE_INFINITY,
@@ -678,7 +588,6 @@ export function drawSubPromptText(
   const pillX = centerX - pillW / 2;
   const pillY = rect ? rect.y : rs.LOGIC_HEIGHT * PROMPT_TOP_RATIO + 56;
 
-  // Sub-prompt pill background
   ctx.fillStyle = designTokens.colors.montessori.amberLight;
   ctx.strokeStyle = designTokens.colors.montessori.amber;
   ctx.lineWidth = 2;
@@ -690,7 +599,6 @@ export function drawSubPromptText(
   ctx.fillStyle = designTokens.colors.montessori.amberDark;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  // Pill đã kẹp theo bề ngang vùng: chữ dài co lại thay vì tràn ra ngoài pill.
   ctx.fillText(text, centerX, pillY + pillH / 2, pillW - 24);
   ctx.restore();
 }
@@ -698,11 +606,8 @@ export function drawSubPromptText(
 /** Chấm tiến độ trong thẻ phụ: `done` chấm đặc trên `total`, không chữ (`BR-ENG-10`). */
 export interface ProgressDotsSpec {
   readonly done: number;
-  /** Có `total` thì hiện đủ chấm (đặc + rỗng); không có thì chỉ hiện chấm đặc đã đạt. */
   readonly total?: number;
-  /** Ký hiệu số ngắn đặt đầu hàng, vd `+2` — chữ số là ký hiệu toán nên giữ. */
   readonly badge?: string;
-  /** Chữ số đích đặt cuối hàng — số là ký hiệu toán nên giữ. */
   readonly trailing?: string;
 }
 
@@ -710,7 +615,6 @@ const PROGRESS_DOT_MAX = 12;
 const PROGRESS_DOT_RADIUS = 8;
 const PROGRESS_DOT_GAP = 10;
 
-/** Thay dòng phụ "Đã đếm: x / y" bằng một hàng chấm lấp đầy dần. */
 export function drawProgressDots(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
@@ -738,7 +642,6 @@ export function drawProgressDots(
   const pillX = centerX - pillW / 2;
   const pillY = rect ? rect.y : rs.LOGIC_HEIGHT * PROMPT_TOP_RATIO + 56;
   const cy = pillY + pillH / 2;
-  // Vùng hẹp thì co khoảng cách và cỡ chấm để hàng chấm không tràn khỏi viên thuốc.
   const dotsW = Math.max(1, pillW - 28 - badgeW - trailingW);
   const step = Math.min(
     PROGRESS_DOT_RADIUS * 2 + PROGRESS_DOT_GAP,
@@ -757,7 +660,7 @@ export function drawProgressDots(
 
   let x = pillX + 14;
   if (spec.badge) {
-    ctx.font = `${fontPx}px ${designTokens.fonts.sans}`;
+    applyCanvasFontAtSize(ctx, fontPx, "sans", 500);
     ctx.fillStyle = designTokens.colors.montessori.amberDark;
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
@@ -778,7 +681,7 @@ export function drawProgressDots(
     }
   }
   if (spec.trailing) {
-    ctx.font = `${fontPx}px ${designTokens.fonts.sans}`;
+    applyCanvasFontAtSize(ctx, fontPx, "sans", 500);
     ctx.fillStyle = designTokens.colors.montessori.amberDark;
     ctx.textAlign = "right";
     ctx.textBaseline = "middle";
@@ -787,381 +690,12 @@ export function drawProgressDots(
   ctx.restore();
 }
 
-/** Vẽ nội dung asset vào tâm slot. Trả `false` khi không vẽ được gì. */
-export function drawAssetInSlot(
-  ctx: CanvasRenderingContext2D,
-  asset: RenderAsset | null | undefined,
-  slot: Slot,
-  glyphScale = 1
-): boolean {
-  if (!asset) {
-    return false;
-  }
-  if (asset.kind === "text") {
-    drawTextInSlot(ctx, asset.text, slot);
-    return true;
-  }
-  if (asset.kind === "image") {
-    const sprite = getImageSprite(asset.path);
-    if (sprite) {
-      const size = Math.max(
-        18,
-        Math.floor(Math.min(slot.w, slot.h) * SPRITE_FILL_RATIO * glyphScale)
-      );
-      drawCenteredSprite(ctx, sprite, slot.x, slot.y, size);
-      return true;
-    }
-    // Ảnh bitmap chưa có đường nạp trong engine — ô thay thế trung tính
-    // (`BR-ENG-09`: asset hỏng ❌ NEVER làm trống màn).
-    drawPlaceholderBox(ctx, slot);
-    return true;
-  }
-  const glyph = resolveEmojiGlyph(asset.ref);
-  if (!glyph) {
-    drawPlaceholderBox(ctx, slot);
-    return true;
-  }
-  const parts = getGraphemeParts(glyph);
-  if (parts.length === 1) {
-    const single = parts[0] ?? glyph;
-    const sprite = getEmojiSprite(single);
-    if (sprite) {
-      const size = Math.max(
-        18,
-        Math.floor(Math.min(slot.w, slot.h) * SPRITE_FILL_RATIO * glyphScale)
-      );
-      drawCenteredSprite(ctx, sprite, slot.x, slot.y, size);
-      return true;
-    }
-  }
-  drawGlyphInSlot(ctx, glyph, slot, glyphScale);
-  return true;
-}
-
-/** Mã tham chiếu emoji, ví dụ `🍎`. */
-const EMOJI_CODE_REGEX = /^EMJ-[a-z0-9-]+$/i;
-
-const graphemePartsCache = new Map<string, readonly string[]>();
-
-function getGraphemeParts(drawable: string): readonly string[] {
-  const cached = graphemePartsCache.get(drawable);
-  if (cached !== undefined) {
-    return cached;
-  }
-  const parts =
-    drawable.length <= 2
-      ? [drawable]
-      : graphemes(drawable).filter((p) => p.trim().length > 0);
-  if (graphemePartsCache.size > 4096) {
-    graphemePartsCache.clear();
-  }
-  graphemePartsCache.set(drawable, parts);
-  return parts;
-}
-
-function resolveMultiGlyphCols(count: number): number {
-  if (count <= 2) {
-    return count;
-  }
-  if (count <= 4) {
-    return 2;
-  }
-  if (count <= 6) {
-    return 3;
-  }
-  return 4;
-}
-
-function drawMultiGlyphClusterInSlot(
-  ctx: CanvasRenderingContext2D,
-  parts: readonly string[],
-  slot: Slot
-): void {
-  const count = parts.length;
-  const cols = resolveMultiGlyphCols(count);
-  const rows = Math.ceil(count / cols);
-  const cellW = (slot.w * 0.72) / cols;
-  const cellH = (slot.h * 0.72) / rows;
-  const itemSize = Math.max(14, Math.floor(Math.min(cellW, cellH) * 0.86));
-  ctx.font = `${itemSize}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
-  const totalH = (rows - 1) * cellH;
-  const startY = slot.y - totalH / 2;
-  for (let r = 0; r < rows; r++) {
-    const rowStart = r * cols;
-    const rowCount = Math.min(cols, count - rowStart);
-    const totalW = (rowCount - 1) * cellW;
-    const startX = slot.x - totalW / 2;
-    for (let c = 0; c < rowCount; c++) {
-      const g = parts[rowStart + c];
-      if (g) {
-        const gx = startX + c * cellW;
-        const gy = startY + r * cellH;
-        const sprite = getEmojiSprite(g);
-        if (sprite) {
-          drawCenteredSprite(ctx, sprite, gx, gy, itemSize);
-        } else {
-          ctx.fillText(g, gx, gy);
-        }
-      }
-    }
-  }
-}
-
-/**
- * Vẽ một glyph vào ô.
- *
- * Nhận cả **mã** `EMJ-*` lẫn ký tự thật, vì nơi gọi không phải lúc nào cũng
- * phân giải trước: `GT-004` truyền thẳng `group.label_emoji`, và ngày
- * 2026-09-01 chụp thật thấy chuỗi `⚽` / `👦` hiện **to bằng nửa
- * màn** cho trẻ 3-6 đọc. Mã không phân giải được thì vẽ ô thay thế, đúng ý đã
- * ghi ở `resolveEmojiGlyph()`: cấm — NEVER in mã ra màn hình cho trẻ.
- */
-export function drawGlyphInSlot(
-  ctx: CanvasRenderingContext2D,
-  glyph: string,
-  slot: Slot,
-  glyphScale = 1
-): void {
-  let drawable = glyph;
-  if (EMOJI_CODE_REGEX.test(drawable)) {
-    const resolved = resolveEmojiGlyph(drawable);
-    // Sau Task #202, `resolveEmojiGlyph` coi ref chính là glyph và trả nguyên
-    // chuỗi vào. Nên mã `EMJ-*` còn sót lại trong corpus sẽ quay về y hệt —
-    // cấm — NEVER vẽ nó, và cấm gọi đệ quy vì nó không bao giờ hội tụ.
-    if (!resolved || EMOJI_CODE_REGEX.test(resolved)) {
-      drawPlaceholderBox(ctx, slot);
-      return;
-    }
-    drawable = resolved;
-  }
-  const parts = getGraphemeParts(drawable);
-  ctx.save();
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  if (parts.length > 1 && parts.length <= 12) {
-    drawMultiGlyphClusterInSlot(ctx, parts, slot);
-    ctx.restore();
-    return;
-  }
-  const single = parts.length === 1 ? (parts[0] ?? drawable) : drawable;
-  const sprite = getEmojiSprite(single);
-  if (sprite) {
-    const spriteSize = Math.max(
-      18,
-      Math.floor(Math.min(slot.w, slot.h) * SPRITE_FILL_RATIO * glyphScale)
-    );
-    drawCenteredSprite(ctx, sprite, slot.x, slot.y, spriteSize);
-    ctx.restore();
-    return;
-  }
-  const size = Math.max(
-    14,
-    Math.floor(Math.min(slot.w, slot.h) * GLYPH_FILL_RATIO * glyphScale)
-  );
-  ctx.font = `${size}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
-  ctx.fillText(drawable, slot.x, slot.y);
-  ctx.restore();
-}
-
-/** Chữ vẽ thay asset — số, dấu, giá trị phương án. */
-export function drawTextInSlot(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  slot: Slot,
-  color: string = designTokens.colors.surface[800]
-): void {
-  const size = Math.floor(Math.min(slot.w, slot.h) * 0.42);
-  ctx.save();
-  ctx.fillStyle = color;
-  ctx.font = `bold ${size}px ${designTokens.fonts.heading}`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  // "04:30" ở cỡ 0,42 cạnh ô rộng hơn ô tròn — co lại trong 85% bề ngang.
-  ctx.fillText(text, slot.x, slot.y, slot.w * 0.85);
-  ctx.restore();
-}
-
-/** Cỡ chữ nhãn dưới ô (`drawSlotLabel`). */
-function slotLabelFontPx(slot: Slot, rs?: RenderSystem): number {
-  const space: LogicSpace = rs
-    ? { w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT }
-    : DEFAULT_LOGIC_SPACE;
-  return Math.max(
-    minLegiblePx(space, rs?.viewport?.scale),
-    Math.floor(Math.min(slot.w, slot.h) * LABEL_FONT_RATIO)
-  );
-}
-
-/**
- * Chiều cao dải nhãn dưới ô tính từ mép dưới ô: lề 4 px cộng một dòng chữ.
- * Đồ trang trí đặt dưới ô (thanh quầy GT-031) phải bắt đầu dưới dải này để
- * không đè nhãn.
- */
-export function slotLabelBandPx(slot: Slot, rs?: RenderSystem): number {
-  return 4 + slotLabelFontPx(slot, rs);
-}
-
-/**
- * Nhãn chữ dưới một slot.
- *
- * Sàn cỡ chữ là **16 px CSS** (`BR-A11-08`), không phải 16 px logic: trên máy
- * dọc 390 px tỉ lệ là ~0,72 nên sàn logic phải là 23. Truyền `rs` để lấy tỉ lệ
- * thật của khung nhìn; thiếu nó thì `minLegiblePx` lấy sàn máy dọc thận trọng.
- */
-export function drawSlotLabel(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  slot: Slot,
-  rs?: RenderSystem
-): void {
-  const size = slotLabelFontPx(slot, rs);
-  ctx.save();
-  ctx.fillStyle = designTokens.colors.surface[600];
-  ctx.font = `${size}px ${designTokens.fonts.sans}`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  // Nhãn dài hơn vật thì co ngang vừa vùng chạm — không chồng sang nhãn vật kề bên.
-  ctx.fillText(
-    text,
-    slot.x,
-    slot.y + slot.h / 2 + 4,
-    Math.max(slot.hitW, slot.w)
-  );
-  ctx.restore();
-}
-
-/**
- * Hình mờ (bóng) của vật trong ô đích: thay cho nhãn chữ để trẻ chưa biết đọc
- * vẫn thấy ô này nhận vật nào (`BR-ENG-10`). Vẽ mờ để không lẫn với vật thật.
- */
-export function drawGhostAssetInSlot(
-  ctx: CanvasRenderingContext2D,
-  asset: RenderItem["asset"],
-  slot: Slot,
-  alpha = 0.35
-): void {
-  ctx.save();
-  ctx.globalAlpha = alpha;
-  drawAssetInSlot(ctx, asset, slot);
-  ctx.restore();
-}
-
-function drawSlotAssetOrPlaceholder(
-  ctx: CanvasRenderingContext2D,
-  slot: Slot,
-  item: RenderItem
-): void {
-  const emojiRef = item.asset?.kind === "emoji" ? item.asset.ref : undefined;
-  const cue = detectSlotVisualComparisonCue(item.label, item.id, emojiRef);
-  if (cue) {
-    drawSlotVisualComparisonCue(ctx, slot, cue);
-  }
-  if (!drawAssetInSlot(ctx, item.asset, slot, cue?.glyphScale ?? 1)) {
-    drawPlaceholderBox(ctx, slot);
-  }
-}
-
-/**
- * Một vật thể hoàn chỉnh trong một slot: thân clay, nội dung, nhãn, dấu đúng.
- *
- * Đây là đường vẽ mà **mọi** engine dùng cho danh sách item của nó. Không engine
- * nào tự đặt toạ độ: `slot` tới từ `resolveLayout()`, nên vùng chạm theo band
- * tuổi được giữ nguyên (`BR-ERC-02`).
- */
-export function drawSlotItem(
-  ctx: CanvasRenderingContext2D,
-  rs: RenderSystem,
-  slot: Slot,
-  item: RenderItem,
-  shape: "circle" | "square" = "circle"
-): void {
-  const state = item.state ?? "idle";
-  const { fill, border } = getColorsForState(state);
-  const radius = Math.min(slot.w, slot.h) / 2;
-
-  rs.drawClayBody(ctx, slot.x, slot.y, radius, fill, border, shape);
-
-  const drawnAsRepresentation = item.representation
-    ? drawQuantityRepresentation(ctx, rs, slot, item.representation)
-    : false;
-
-  if (!drawnAsRepresentation) {
-    if (item.text === undefined) {
-      drawSlotAssetOrPlaceholder(ctx, slot, item);
-    } else {
-      drawTextInSlot(ctx, item.text, slot);
-    }
-  }
-
-  if (item.label) {
-    drawSlotLabel(ctx, item.label, slot, rs);
-  }
-  if (state === "correct") {
-    drawCheckMark(ctx, slot);
-  }
-}
-
-/**
- * Một vật thể được vẽ **lật gương** qua trục: thân clay đứng yên, nội dung
- * (glyph hoặc ô giữ chỗ) lật quanh tâm slot — trục `vertical` lật trái-phải,
- * `horizontal` lật trên-dưới. Dùng cho nửa phản chiếu của bài đối xứng, để hình
- * bất đối xứng (giày, khủng long) hiện đúng ảnh trong gương chứ không là bản sao.
- */
-export function drawMirroredSlotItem(
-  ctx: CanvasRenderingContext2D,
-  rs: RenderSystem,
-  slot: Slot,
-  item: RenderItem,
-  axis: "vertical" | "horizontal",
-  shape: "circle" | "square" = "square"
-): void {
-  const state = item.state ?? "idle";
-  const { fill, border } = getColorsForState(state);
-  const radius = Math.min(slot.w, slot.h) / 2;
-  rs.drawClayBody(ctx, slot.x, slot.y, radius, fill, border, shape);
-
-  ctx.save();
-  ctx.translate(slot.x, slot.y);
-  if (axis === "vertical") {
-    ctx.scale(-1, 1);
-  } else {
-    ctx.scale(1, -1);
-  }
-  ctx.translate(-slot.x, -slot.y);
-  if (!drawAssetInSlot(ctx, item.asset, slot)) {
-    drawPlaceholderBox(ctx, slot);
-  }
-  ctx.restore();
-
-  if (state === "correct") {
-    drawCheckMark(ctx, slot);
-  }
-}
-
-/** Ghép danh sách item với danh sách slot theo chỉ số, bỏ qua phần thừa. */
-export function drawSlotItems(
-  ctx: CanvasRenderingContext2D,
-  rs: RenderSystem,
-  slots: readonly Slot[],
-  items: readonly RenderItem[],
-  shape: "circle" | "square" = "circle"
-): void {
-  const count = Math.min(slots.length, items.length);
-  for (let i = 0; i < count; i++) {
-    const slot = slots[i];
-    const item = items[i];
-    if (slot && item) {
-      drawSlotItem(ctx, rs, slot, item, shape);
-    }
-  }
-}
-
-// Tách khỏi file này vì kích thước (review game-engine, Phase 6). Re-export ở
-// đây — không ở barrel — để `vi.mock("#src/render/shared-render")` của test
-// vẫn thay được `drawSceneBackground`, `drawProgressBadge` như trước khi tách.
+// Re-export giữ tương thích mọi đường import & `vi.mock("#src/render/shared-render")`
 // biome-ignore lint/performance/noBarrelFile: giữ đường mock của test sau khi tách file
 export * from "./craft-shapes.js";
 export * from "./flashcard.js";
 export * from "./particles.js";
 export * from "./scene-background.js";
+export * from "./shared-slot-render.js";
 export * from "./slot-decor.js";
+export * from "./vn-folk-motifs.js";

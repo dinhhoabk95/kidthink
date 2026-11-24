@@ -72,15 +72,13 @@
       </div>
     </main>
 
-    <PublicFooter />
-    <CookieNoticeBanner />
+    <LazyPublicFooter hydrate-on-visible />
+    <LazyCookieNoticeBanner hydrate-on-idle />
   </div>
 </template>
 
 <script lang="ts" setup>
   import { definePageMeta, useHead, useSeoMeta } from "#imports";
-  import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
-  import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +

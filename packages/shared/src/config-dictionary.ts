@@ -1183,6 +1183,131 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Giá trị lớn nhất",
     help: "Mốc cuối hoặc sức chứa tối đa của giáo cụ số học.",
   },
+  // GT-002: Polymorphic Pedagogy & Criterion Anchor (Task #318)
+  criterion_anchor: {
+    label: "Neo tiêu chí trực quan",
+    help: "Thẻ biểu tượng tiêu chí (màu, hình học, kích thước, số lượng CPA, nhóm vật, ngữ âm hoặc giao 2 thuộc tính) neo ở đầu bàn chơi.",
+  },
+  preserve_order: {
+    label: "Giữ nguyên trật tự không gian",
+    help: "Tắt xáo trộn vị trí vật phẩm khi bài học kiểm tra vị trí trái-phải hoặc trên-dưới.",
+  },
+  selection_mode: {
+    label: "Chế độ chốt tập chọn",
+    help: "Chọn tất cả vật thỏa tiêu chí (all_matching) hoặc chọn đúng N vật bất kỳ thỏa tiêu chí (exact_count).",
+  },
+  required_select_count: {
+    label: "Số lượng cần chọn (exact_count)",
+    help: "Số vật đúng bé cần gom vào khay ở chế độ exact_count.",
+  },
+  preselected_item_ids: {
+    label: "Danh sách vật chọn sẵn đầu vòng",
+    help: "Các mã vật phẩm được đặt sẵn trong giỏ để bé kiểm tra và sửa lại cho đúng.",
+  },
+  secondary_asset: {
+    label: "Hình minh hoạ neo nghĩa phụ",
+    help: "Tranh vật thật đi kèm mặt chữ/vần trên thẻ kép ngôn ngữ C5.",
+  },
+  geometric_spec: {
+    label: "Đặc tả hình học vector 2D/3D",
+    help: "Cấu hình vẽ hình phẳng 2D hoặc khối 3D chuẩn Montessori thay cho emoji.",
+  },
+  form: {
+    label: "Hình dạng / khối hình học",
+    help: "Loại hình phẳng 2D hoặc khối 3D (circle, square, rectangle, cube, cylinder...).",
+  },
+  color_token: {
+    label: "Token màu giáo cụ",
+    help: "Màu chuẩn thuộc bảng màu giáo cụ mầm non (coral, amber, emerald, indigo, sky, lotus, terracotta, wood).",
+  },
+  size_tier: {
+    label: "Bậc kích thước Weber",
+    help: "Cỡ tương đối của hình khối (small, medium, large) kèm vòng chuẩn đối chiếu.",
+  },
+  rotation_deg: {
+    label: "Góc xoay hình học (độ)",
+    help: "Góc xoay quanh tâm của hình học (-360 đến 360 độ).",
+  },
+  show_orientation_pin: {
+    label: "Hiện chấm mốc định hướng",
+    help: "Vẽ chấm mốc định hướng trên hình để bé nhận biết phép quay.",
+  },
+  plate_variant: {
+    label: "Kiểu đế giáo cụ",
+    help: "Đĩa gỗ tròn (round_plate) hoặc thẻ gỗ giấy dó chữ nhật (wood_tile).",
+  },
+  negated: {
+    label: "Tiêu chí loại trừ (phủ định)",
+    help: "Chỉ dùng cho lứa 5-6 tuổi: gắn vạch loại trừ hổ phách trên neo tiêu chí.",
+  },
+  label_vi: {
+    label: "Nhãn tiếng Việt",
+    help: "Nhãn ngắn tiếng Việt hiển thị hoặc đọc bổ trợ.",
+  },
+  relation: {
+    label: "Quan hệ so sánh",
+    help: "Chiều so sánh kích thước/độ dài/khối lượng (larger, smaller, longer, shorter...).",
+  },
+  reference_asset: {
+    label: "Vật chuẩn đối chiếu",
+    help: "Hình ảnh vật làm mốc chuẩn trong bài toán so sánh.",
+  },
+  secondary_cue_asset: {
+    label: "Hình gợi mở phụ",
+    help: "Biểu tượng đại diện thứ hai giúp làm rõ nhóm phân loại.",
+  },
+  category_code: {
+    label: "Mã nhóm phân loại",
+    help: "Mã định danh nhóm đối tượng cần thu thập.",
+  },
+  symbol_text: {
+    label: "Ký hiệu chữ / vần / âm",
+    help: "Chữ cái, âm đầu hoặc vần hiển thị trên neo tiêu chí ngôn ngữ.",
+  },
+  phonics_mode: {
+    label: "Chế độ ngữ âm",
+    help: "Loại tiêu chí ngôn ngữ: chữ cái, âm đầu, vần, thanh điệu hoặc số tiếng.",
+  },
+  operator: {
+    label: "Toán tử kết hợp tiêu chí",
+    help: "Phép giao (and) hoặc hợp (or) giữa hai tiêu chí thành phần.",
+  },
+  clauses: {
+    label: "Các mệnh đề tiêu chí thành phần",
+    help: "Hai tiêu chí con tạo nên tiêu chí đa thuộc tính.",
+  },
+  story_context: {
+    label: "Ngữ cảnh câu chuyện",
+    help: "Khung chuyện mở đầu và kết thúc của bài học làm quen.",
+  },
+  theme_code: {
+    label: "Mã chủ đề câu chuyện",
+    help: "Mã chủ đề gắn với bối cảnh dẫn chuyện.",
+  },
+  guide_character: {
+    label: "Nhân vật dẫn dắt",
+    help: "Nhân vật đồng hành cùng bé trong câu chuyện.",
+  },
+  hook_line: {
+    label: "Câu mở truyện khơi gợi",
+    help: "Câu dẫn nhập ngắn mở màn câu chuyện.",
+  },
+  resolution_line: {
+    label: "Câu kết truyện khích lệ",
+    help: "Câu khép lại câu chuyện khi hoàn thành bài học.",
+  },
+  syllables: {
+    label: "Danh sách tiếng / âm tiết",
+    help: "Các tiếng tách rời phục vụ bài học ngữ âm.",
+  },
+  scene_cue: {
+    label: "Lời dẫn chuyển cảnh phân đoạn",
+    help: "Câu gợi cảnh ngắn khi bước vào phân đoạn mới.",
+  },
+  milestone_line: {
+    label: "Câu mừng cột mốc phân đoạn",
+    help: "Câu khen ngắn khi bé hoàn thành một phân đoạn.",
+  },
 };
 
 /**
@@ -1321,6 +1446,18 @@ export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
   count: "Số lượng đơn vị số nguyên của giáo cụ biểu diễn lượng.",
   min: "Cận dưới số nguyên trên trục biểu diễn lượng.",
   max: "Cận trên số nguyên trên trục biểu diễn lượng.",
+  preselected_item_ids:
+    "Mã định danh kỹ thuật các vật phẩm được chọn sẵn đầu vòng chơi.",
+  rotation_deg: "Góc xoay hình học số thực (-360 đến 360 độ).",
+  category_code: "Mã kỹ thuật của nhóm phân loại đối tượng.",
+  symbol_text: "Ký tự chữ cái, âm đầu hoặc vần hiển thị trực quan.",
+  theme_code: "Mã kỹ thuật của chủ đề bối cảnh câu chuyện.",
+  guide_character: "Mã nhân vật dẫn chuyện trong bài làm quen.",
+  hook_line: "Lời thoại mở truyện ngắn đọc cho bé.",
+  resolution_line: "Lời thoại kết truyện ngắn đọc cho bé.",
+  syllables: "Chuỗi âm tiết tiếng Việt tách rời.",
+  scene_cue: "Lời dẫn chuyển cảnh ngắn của phân đoạn.",
+  milestone_line: "Lời khen hoàn thành phân đoạn đọc cho bé.",
 };
 
 export function getFieldDictionaryEntry(

@@ -1,5 +1,5 @@
 import { hashSecureToken } from "@mindkid/auth";
-import { getOwnerDb, users, userVerifications } from "@mindkid/db";
+import { getOwnerDb, USER_STATUS, users, userVerifications } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { describe, expect, it } from "vitest";
@@ -200,7 +200,7 @@ describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11, BR-NOT-01)", () 
         .values({
           email: `orig_${Date.now()}@example.com`,
           displayName: "Email Change User",
-          status: "active",
+          status: USER_STATUS.ACTIVE,
         })
         .returning({ id: users.id });
 

@@ -1,0 +1,50 @@
+# Checklist Thực Thi — Task #315
+
+- [x] **Workstream 1: Kiến Trúc Spec, Đối Chiếu 100 Học Phần & Design System (`spec-architect`)**
+  - [x] Biên soạn & kiểm chứng tự động [`../taxonomy/koguma-100-alignment.md`](../taxonomy/koguma-100-alignment.md) (`KGM-001`…`KGM-100`, 28 Mầm / 34 Chồi / 38 Lá, phủ 443/443 `skills.code`, `0` mã mới)
+  - [x] Viết spec sở hữu [`../specs/05-content/koguma-curriculum-program.md`](../specs/05-content/koguma-curriculum-program.md) (`BR-KGM-01..10`) theo chuẩn 11 mục `TEMPLATE.md` & `CONVENTIONS.md`
+  - [x] Cập nhật [`../specs/index.md`](../specs/index.md) (171 spec) và [`../specs/00-foundation/business-rules.md`](../specs/00-foundation/business-rules.md) (đăng ký `BR-KGM`)
+  - [x] Cập nhật [`../SPEC.md`](../SPEC.md) (§1.1 Vision, §1.8, §2.6, §9.1–9.2, §14) giữ nguyên `D1`–`D12` và `business-rules.md` §7.3
+  - [x] Ban hành [`../design-system/vn-preschool-identity.md`](../design-system/vn-preschool-identity.md) và liên kết từ `01-principles.md` + `README.md`
+- [x] **Workstream 2: Bộ 6 Lộ Trình Xoắn Ốc Koguma-VN (`curriculum`)**
+  - [x] Định nghĩa `KOGUMA_DOMAINS`, `MOET_PRESCHOOL_THEMES`, `KOGUMA_100_UNITS`, `KOGUMA_ROADMAPS` trong `@mindkid/content`
+  - [x] Biên soạn `RM-{3-4,4-5,5-6}-koguma-01` (12w × 3s) và `RM-{3-4,4-5,5-6}-koguma-year-01` (36w × 3s), giữ nguyên bất biến 9 `RM-*` nền (`ALL_ROADMAPS = 15`)
+  - [x] Cập nhật `content-demand.json` (`972/972` ô cầu đủ level, `0` nợ) và vượt qua toàn bộ test cổng `koguma-roadmaps.test.ts` + `@mindkid/content-build` (`10/10` suite, `115/115` test xanh)
+- [x] **Workstream 3: Bộ Sinh Câu Dẫn Sư Phạm Kuno & Kho Vật Liệu Việt (`levels-vn`)**
+  - [x] Mở rộng `koguma-pedagogy.ts`, `vn-preschool-culture.ts` (10 chủ đề Bộ GD&ĐT, 16/16 `ContentThemeCode`, 40 vật phẩm kiểm chứng trong `@mindkid/emoji`) và nâng cấp 35 engine builder theo *Jibutsu* / *Taiwa* (`<= 12` từ, `0` phủ định)
+  - [x] Hoàn thành kiểm thử `vn-pedagogy-builders.test.ts` và toàn bộ `@mindkid/content` (`13/13` file, `88/88` test xanh)
+- [x] **Workstream 4: Sân Khấu Canvas 2D "Giấy Gỗ Mộc" & Âm Sắc Ngũ Cung (`canvas-vn`)**
+  - [x] Bổ sung token `vnMaterials` (tre ngà, chiếu cói, đất nung, hoa sen, giấy dó, vân gỗ) trong `designTokens.ts` (`0` hex ngoài file token)
+  - [x] Vẽ khung đốt tre, vân chiếu cói và hoạ tiết văn hoá Việt (`vn-folk-motifs.ts`) có cổng `ambientMotionEnabled` tự giảm cấp dưới 42 fps (`0` cấp phát mỗi frame)
+  - [x] Cập nhật `sfx-engine.ts` & `sfx-recipes-folk.ts` với thang âm ngũ cung (*Hò – Xự – Xang – Xê – Cống*), mộc cầm / đàn T'rưng / trống bỏi (ramp `>= 20ms` / `>= 40ms`, trần `<= -1 dBTP`); `@mindkid/game-engine` đạt `363/363` file (`5.543/5.543` test xanh)
+- [x] **Workstream 5: Bề Mặt Thế Giới Trẻ `/play/**` & Giới Thiệu Chương Trình (`kid-ui-vn`)**
+  - [x] Hiển thị 10 vùng đất chủ đề mầm non Việt Nam, lời khen đồng dao Gấu Con, khay giáo cụ gỗ mộc Koguma & Montessori và `koguma-program-banner.vue` giới thiệu 100 học phần trên `/programs` & `/curricula`
+  - [x] Đảm bảo Light-only, `0` hex literal trong `.vue`, `0` `dark:`/`danger`/`uppercase` trên bề mặt trẻ, `0` emoji làm nút điều hướng, vùng chạm đạt sàn `64px–76px` (`@mindkid/web` `44/44` file, `215/215` test xanh)
+- [x] **Workstream 6: Kiểm Định Độc Lập Toàn Hệ Thống Wave 1 (`verifier`)**
+  - [x] Kiểm định độc lập toàn bộ `122` file thuộc 5 phân luồng: `biome check` (`1.517` file `0` lỗi), `pnpm lint:deps` (`0` vi phạm trên `3.030` module), `tsc --noEmit` & `typecheck` từng gói sạch lỗi (`0` `any`/`unknown`, `0` `../` import), và toàn bộ bộ cổng Vitest (`@mindkid/shared`, `@mindkid/content`, `@mindkid/content-build`, `@mindkid/game-engine`, `@mindkid/web`) xanh 100%
+- [x] **Workstream 7 (Wave 2): Tích Hợp `@mindkid/taxonomy`, API Server & `seed` PostgreSQL Local (`backend-seed`)**
+  - [x] Xuất browser-safe `KOGUMA_100_UNITS` (`KGM-001`…`KGM-100`), `KOGUMA_DOMAINS` (`K1`…`K5`), `MOET_PRESCHOOL_THEMES` (10 chủ đề tuần 1..36), giáo cụ *Jibutsu*, câu hỏi *Taiwa* và bộ helper tra cứu tại `@mindkid/taxonomy` (`26/26` test xanh)
+  - [x] Làm giàu tương thích ngược cho `GET /api/guest/curricula`, `GET /api/guest/curricula/[code]`, `GET/POST /api/users/curricula/**`, `GET /api/users/play/{home,adventure,theme-map}` và `GET /api/managers/curricula`; sửa lỗi cú pháp `;` trong 2 test tích hợp `packages/db/tests/integration/{pdf-export-schema,taxonomy}.test.ts`
+  - [x] Chạy `pnpm db:migrate` và `pnpm db:seed` trên PostgreSQL local (`15` lộ trình gồm 6 lộ trình Koguma-VN, `2.135` game level v13, `1.398` mục lộ trình)
+- [x] **Workstream 8 (Wave 2): Đấu Nối Gameplay Trực Tiếp "Giấy Gỗ Mộc" & Góc Phụ Huynh Kuno (`engine-live-play`)**
+  - [x] Đấu nối âm thanh ngũ cung (`marimba_1..5`), `bamboo_clack`, `wood_pickup`, `wood_clack_snap`, `trung_chime`, `dan_tranh_pluck` vào `AudioController` và `RoundRunner` (`<= 800` dòng)
+  - [x] Ánh xạ đủ 16 chủ đề nội dung và 10 chủ đề Bộ GD&ĐT trong `SCENE_PAINTERS` kèm banner cột mốc đồng dao không cấp phát mỗi frame và `KidKogumaParentCorner` trên `/play/**` (`364/364` file, `5.548/5.548` test `@mindkid/game-engine` xanh)
+- [x] **Workstream 9 (Wave 2): Bộ Khám Phá 100 Học Phần, Bề Mặt Phụ Huynh & Admin Catalog Chỉ Đọc (`explorer-admin-ui`)**
+  - [x] Xây dựng `KogumaUnitExplorer` (`KGM-001`…`KGM-100`), `KogumaRoadmapView` (`36` tuần × `3` buổi = `108` buổi kèm dòng thời gian 10 chủ đề Bộ GD&ĐT và thẻ hướng dẫn vật thật), `KogumaEnrollmentPanel` trên `/curricula` và `KogumaMeCompanionPanel` trên `/me`
+  - [x] Nâng cấp danh mục chương trình chỉ đọc tại `apps/admin/app/pages/curriculum/index.vue` và `curriculum-koguma-detail-modal.vue` (`14/14` file, `80/80` test `@mindkid/admin` xanh)
+- [x] **Workstream 10 (Wave 2): Cổng `pnpm check` Toàn Monorepo & Kiểm Thử E2E Trình Duyệt (`qa-gatekeeper`)**
+  - [x] Xác nhận `pnpm check` gốc (`pnpm lint && pnpm lint:deps && pnpm typecheck`) exit `0` trên toàn bộ `3.731` file và `3.059` module; kiểm toán quy tắc cứng sạch `0` vi phạm trên `171` file chạm trong đợt việc
+  - [x] Chạy kịch bản Playwright headless E2E trực tiếp trên server local ở cả `768×1024` (Tablet), `375×667` (Mobile) và `1024×768` (Landscape): xác nhận `/api/guest/health` (`200`), `/api/guest/curricula` (`200`, đủ 15 lộ trình), `/`, `/programs`, `/programs/RM-3-4-koguma-year-01` và `/play/GL-C1-CMP-INTRO-0001` đạt `0` lỗi console, `0` lỗi trang và `0` cuộn ngang, sau đó dừng gọn dev server tạm
+- [x] **Workstream 11 (Wave 3 `/goal`): Lập Lịch Trọn Vẹn 100/100 Học Phần Koguma-kai & Xoá Nợ Cầu (`koguma-100-complete`)**
+  - [x] Bổ sung 6 lộ trình Chặng 2 (`RM-{3-4,4-5,5-6}-koguma-{02,year-02}`), nâng `KOGUMA_ROADMAPS` lên `12` lộ trình (`ALL_ROADMAPS = 30`), bảo đảm **100 / 100 (`KGM-001`…`KGM-100`: `28/28` Mầm, `34/34` Chồi, `38/38` Lá)** mã `primary_skill_code` đều được dạy trực tiếp (`BR-KGM-11` trong [`../specs/05-content/koguma-curriculum-program.md`](../specs/05-content/koguma-curriculum-program.md))
+  - [x] Bổ sung `scheduled_roadmap_code`, `scheduled_week_no`, `koguma_stage`, `koguma_variant` và `getKogumaSiblingTracksForBand` trong `@mindkid/taxonomy`; sửa `GL-C1-NREC-SLOT-0105` đạt `BR-CTR-09` và tái sinh `content-demand.json` đạt `2.304/2.304` ô cầu (`0` nợ)
+- [x] **Workstream 12 (Wave 3 `/goal`): Giáo Cụ Vật Thật *Jibutsu* Trong `/play/toybox` & Góc Ba Mẹ Kuno (`koguma-toybox-vn`)**
+  - [x] Bổ sung chế độ **Gấp Giấy Dó Hoa Sen / Ông Sao** (*Origami Tenkai* `K3`) trên `mirror-blocks-toy.vue`, **Khay Tre 5 Ô / 10 Ô Hạt Sen Tách–Gộp** (`K2`) trên `number-rods-toy.vue`, quả quê Việt Nam trên `balance-scale-toy.vue` và thẻ `toybox-kuno-parent-card.vue` trên `/play/toybox/[tool].vue` (`0` chấm điểm theo `BR-TBX-01..06`, `koguma-toybox-vn.test.ts` xanh 100%)
+- [x] **Workstream 13 (Wave 3 `/goal`): Deep-Link Tuần Học `#week-N`, Phiếu In Gia Đình Kuno & Giao Diện Đa Nhánh (`koguma-journey-ui`)**
+  - [x] Gắn huy hiệu tuần học và liên kết `/programs/${scheduled_roadmap_code}#week-${scheduled_week_no}` trên 100/100 thẻ `KogumaUnitExplorer`, tự đánh dấu `#week-N` không lệch SSR hydration và không tràn ngang trên `375×667`
+  - [x] Xây dựng `KogumaPrintableFamilySheet` (`window.print()` + `@media print` không hex literal) trên `/programs/[code]` & `/me`, cùng bộ lọc 4 nhánh Koguma và số đếm lộ trình động trên `/programs`, `/curricula`, `/` và Admin `/curriculum`
+- [x] **Workstream 14 (Wave 3 `/goal`): Hạ Tầng Docker, Mở Rộng API 4 Nhánh & Re-Seed PostgreSQL (`infra-db-api`)**
+  - [x] Khởi chạy `db` (`127.0.0.1:5433` healthy) & `valkey` (`127.0.0.1:6380` healthy), làm sạch Biome trên `audition/index.html` & `skill-template-affinity.json`, mở rộng API `curricula` / `play` cho Chặng 2 (`02`, `year-02`), cập nhật sổ `shell-frame-capacity.test.ts` và chạy `pnpm db:migrate` + `pnpm db:seed` (`30` lộ trình, `2.713` game level, `3.352` mục lộ trình, `0` độ lệch DB)
+- [x] **Workstream 15 (Wave 3 `/goal`): Kiểm Toán Độc Lập Cuối Cùng & Cổng Playwright E2E Đa Khung Hình (`goal-auditor`)**
+  - [x] Kiểm chứng độc lập `100/100` học phần Koguma-kai, `2.304/2.304` ô cầu (`0` nợ), `30/30` lộ trình trong PostgreSQL, `pnpm check` gốc exit `0` (`3.874` file, `3.111` module) và toàn bộ Vitest tuần tự (`@mindkid/shared` `51/51`, `@mindkid/taxonomy` `2/2`, `@mindkid/content` `13/13`, `@mindkid/content-build` `13/13` cổng, `@mindkid/game-engine` `364/364`, `@mindkid/admin` `14/14`, `@mindkid/web` `56/56`)
+  - [x] Chạy Playwright headless E2E trên 3 khung hình (`768×1024`, `375×667`, `1024×768`) qua `/programs`, `/programs/RM-3-4-koguma-year-01#week-8`, `/programs/RM-3-4-koguma-year-02#week-8`, `/play`, `/play/map` (`10/10` vùng chủ đề), `/play/toybox`, `/play/toybox/{mirror-blocks,number-rods,balance-scale}` và `/play/GL-C1-CMP-INTRO-0001`: đạt `0` lỗi console, `0` lỗi SSR hydration, `0` lỗi trang và `0` tràn ngang (`30/30` lượt kiểm xanh), dọn sạch server & script tạm

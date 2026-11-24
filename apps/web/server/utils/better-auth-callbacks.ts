@@ -7,22 +7,18 @@ import {
 } from "@mindkid/auth";
 import {
   assertNoOAuthProviderTokens,
-  consentLogs,
-  consentRequirements,
-  getOwnerDb,
-  managers,
-  userAccounts,
-  userPasskeys,
-  userSessions,
-  users,
+  CONSENT_ACTION,
+  CONSENT_TYPE,
+  CONSENT_TYPE_CODEC,
+  USER_STATUS_CODEC,
 } from "@mindkid/db";
 import { ConsentRequirementChangedError } from "@mindkid/errors/account";
 import { isAppError } from "@mindkid/errors/base";
 import { ServiceUnavailableError } from "@mindkid/errors/common";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { enforceTwoAxisRateLimit as sharedEnforceTwoAxisRateLimit } from "@mindkid/shared";
-import { and, count, eq, inArray } from "drizzle-orm";
 import { factoryAssertRateLimitAllowed as assertRateLimitAllowed } from "#server/utils/auth-runtime-factory";
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 function resolveRateLimitRouteClass(
   routeClass: string
@@ -76,24 +72,24 @@ export async function validateSignupConsentMarkersImpl(input: {
   readonly termsRequirementAt: string | null;
   readonly privacyRequirementAt: string | null;
 }): Promise<void> {
-  const db = getOwnerDb();
-  const rows = await db
-    .select()
-    .from(consentRequirements)
-    .where(inArray(consentRequirements.consentType, ["terms", "privacy"]));
+  const repos = useOwnerRepositories();
+  const rows = await repos.consents.getRequirements([
+    CONSENT_TYPE.TERMS,
+    CONSENT_TYPE.PRIVACY,
+  ]);
 
   for (const row of rows) {
     const dbIso = row.reconsentRequiredAt
       ? row.reconsentRequiredAt.toISOString()
       : null;
     const clientIso =
-      row.consentType === "terms"
+      row.consentType === CONSENT_TYPE.TERMS
         ? input.termsRequirementAt
         : input.privacyRequirementAt;
 
     if (dbIso !== (clientIso ?? null)) {
       throw new ConsentRequirementChangedError({
-        consent_type: row.consentType,
+        consent_type: CONSENT_TYPE_CODEC.toLabel(row.consentType),
         requirement_at: dbIso,
       });
     }
@@ -103,51 +99,60 @@ export async function validateSignupConsentMarkersImpl(input: {
 async function resolveAvailableUserReauthMethods(
   userId: number
 ): Promise<ReauthMethod[]> {
-  const db = getOwnerDb();
-  const [userRow] = await db
-    .select({
-      passwordHash: users.passwordHash,
-      twoFactorEnabled: users.twoFactorEnabled,
-    })
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1);
-
-  const accounts = await db
-    .select({
-      providerId: userAccounts.providerId,
-      password: userAccounts.password,
-    })
-    .from(userAccounts)
-    .where(eq(userAccounts.userId, userId));
+  const repos = useOwnerRepositories();
+  const [userRow, credAccount] = await Promise.all([
+    repos.users.findForAuthById(userId),
+    repos.authAccounts.findUserCredentialAccountForAuth(userId),
+  ]);
 
   const methods: ReauthMethod[] = [];
-  const hasCredential = Boolean(
-    userRow?.passwordHash ||
-      accounts.some(
-        (acc) => acc.providerId === "credential" && Boolean(acc.password)
-      )
-  );
+  const hasCredential = Boolean(userRow?.passwordHash || credAccount?.password);
   if (hasCredential) {
     methods.push("password");
   }
   if (userRow?.twoFactorEnabled) {
     methods.push("totp");
   }
-  if (accounts.some((acc) => acc.providerId !== "credential")) {
-    methods.push("social");
-  }
   return methods.length > 0 ? methods : ["password"];
 }
 
+async function resolveAvailableManagerReauthMethods(
+  managerId: number
+): Promise<ReauthMethod[]> {
+  const repos = useOwnerRepositories();
+  const managerRow = await repos.managers.findForAuthById(managerId);
+  const methods: ReauthMethod[] = ["password"];
+  if (managerRow?.mfaEnabled) {
+    methods.push("totp");
+  }
+  return methods;
+}
+
+export type ResolveReauthTimestampFn = (
+  sessionId: string,
+  createdAt: Date,
+  dbReauthAt: Date | null | undefined
+) => Promise<Date | undefined>;
+
+export interface UserAuthCallbackHandlers {
+  readonly onPasswordReset?: (userId: number) => Promise<void>;
+  readonly revokeOtherSessions?: (
+    userId: number,
+    keepSessionToken: string
+  ) => Promise<void>;
+}
+
+export interface ManagerAuthCallbackHandlers {
+  readonly revokeOtherSessions?: (
+    managerId: number,
+    keepSessionToken: string
+  ) => Promise<void>;
+}
+
 export function buildUserAuthCallbacks(
-  resolveReauth: (
-    sessionId: string,
-    createdAt: Date,
-    dbReauthAt: Date | null | undefined
-  ) => Promise<Date | undefined>
+  resolveReauth: ResolveReauthTimestampFn,
+  handlers?: UserAuthCallbackHandlers
 ): UserAuthCallbacks {
-  const db = getOwnerDb();
   return {
     sendVerificationEmail: async ({ user, url, token }) => {
       await dispatchTransactionalEmail({
@@ -155,7 +160,8 @@ export function buildUserAuthCallbacks(
         recipientId: Number(user.id),
         code: "email_verification",
         to: user.email,
-        payload: { display_name: user.name, verify_url: url, token },
+        payload: { display_name: user.name },
+        secrets: { url, verify_url: url, token },
       });
     },
     sendResetPassword: async ({ user, url, token }) => {
@@ -164,7 +170,8 @@ export function buildUserAuthCallbacks(
         recipientId: Number(user.id),
         code: "password_reset",
         to: user.email,
-        payload: { display_name: user.name, reset_url: url, token },
+        payload: { display_name: user.name },
+        secrets: { url, reset_url: url, token },
       });
     },
     sendChangeEmailVerification: async ({ user, newEmail, url, token }) => {
@@ -173,110 +180,76 @@ export function buildUserAuthCallbacks(
         recipientId: Number(user.id),
         code: "email_change_verification",
         to: newEmail,
-        payload: { display_name: user.name, verify_url: url, token },
+        payload: { display_name: user.name },
+        secrets: { url, verify_url: url, token },
       });
     },
     onEmailVerified: async (userId) => {
-      const now = new Date();
-      await db
-        .update(users)
-        .set({
-          status: "active",
-          emailVerified: true,
-          emailVerifiedAt: now,
-          updatedAt: now,
-        })
-        .where(
-          and(eq(users.id, userId), eq(users.status, "pending_verification"))
-        );
+      const repos = useOwnerRepositories();
+      await repos.users.markEmailVerifiedIfPending(userId, new Date());
     },
     getUserStatusByEmail: async (email) => {
-      const [row] = await db
-        .select({
-          id: users.id,
-          status: users.status,
-          purgeAt: users.purgeAt,
-          passwordHash: users.passwordHash,
-        })
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1);
+      const repos = useOwnerRepositories();
+      const row = await repos.users.findForAuthByEmail(email);
       if (!row) {
         return null;
       }
-      const [cred] = await db
-        .select({ password: userAccounts.password })
-        .from(userAccounts)
-        .where(
-          and(
-            eq(userAccounts.userId, row.id),
-            eq(userAccounts.providerId, "credential")
-          )
-        )
-        .limit(1);
+      const cred = await repos.authAccounts.findUserCredentialAccountForAuth(
+        row.id
+      );
       return {
         id: row.id,
-        status: row.status,
+        uuid: row.uuid,
+        status: USER_STATUS_CODEC.toLabel(row.status),
         purgeAt: row.purgeAt,
         hasPassword: Boolean(cred?.password || row.passwordHash),
+        sessionVersion: row.sessionVersion,
+        twoFactorEnabled: row.twoFactorEnabled,
       };
     },
     getUserStatusById: async (userId) => {
-      const [row] = await db
-        .select({
-          id: users.id,
-          status: users.status,
-          purgeAt: users.purgeAt,
-          passwordHash: users.passwordHash,
-        })
-        .from(users)
-        .where(eq(users.id, userId))
-        .limit(1);
+      const repos = useOwnerRepositories();
+      const row = await repos.users.findForAuthById(userId);
       if (!row) {
         return null;
       }
       return {
         id: row.id,
-        status: row.status,
+        uuid: row.uuid,
+        status: USER_STATUS_CODEC.toLabel(row.status),
         purgeAt: row.purgeAt,
         hasPassword: Boolean(row.passwordHash),
+        sessionVersion: row.sessionVersion,
+        twoFactorEnabled: row.twoFactorEnabled,
       };
     },
     validateConsentMarkers: validateSignupConsentMarkersImpl,
     recordInitialConsents: async ({ userId, ipAddress, userAgent }) => {
-      await db.insert(consentLogs).values([
+      const repos = useOwnerRepositories();
+      await repos.consents.recordBatchConsents([
         {
           userId,
-          consentType: "terms",
-          action: "accepted",
+          consentType: CONSENT_TYPE.TERMS,
+          action: CONSENT_ACTION.ACCEPTED,
           ipAddress,
           userAgent,
         },
         {
           userId,
-          consentType: "privacy",
-          action: "accepted",
+          consentType: CONSENT_TYPE.PRIVACY,
+          action: CONSENT_ACTION.ACCEPTED,
           ipAddress,
           userAgent,
         },
       ]);
     },
     mirrorCredentialPassword: async (userId, passwordHash) => {
-      await db
-        .update(users)
-        .set({ passwordHash, updatedAt: new Date() })
-        .where(eq(users.id, userId));
+      const repos = useOwnerRepositories();
+      await repos.users.updatePasswordHash(userId, passwordHash);
     },
     countUserLoginMethods: async (userId) => {
-      const [accCountRow] = await db
-        .select({ cnt: count(userAccounts.id) })
-        .from(userAccounts)
-        .where(eq(userAccounts.userId, userId));
-      const [pkCountRow] = await db
-        .select({ cnt: count(userPasskeys.id) })
-        .from(userPasskeys)
-        .where(eq(userPasskeys.userId, userId));
-      return Number(accCountRow?.cnt ?? 0) + Number(pkCountRow?.cnt ?? 0);
+      const repos = useOwnerRepositories();
+      return await repos.authAccounts.countUserLoginMethods(userId);
     },
     verifySessionReauth: async ({
       userId,
@@ -287,13 +260,10 @@ export function buildUserAuthCallbacks(
       let resolvedDbReauth = dbReauthAt;
       const numericId = Number(sessionId);
       if (Number.isInteger(numericId) && numericId > 0) {
-        const [sessRow] = await db
-          .select({ reauthAt: userSessions.reauthAt })
-          .from(userSessions)
-          .where(eq(userSessions.id, numericId))
-          .limit(1);
-        if (sessRow?.reauthAt) {
-          resolvedDbReauth = sessRow.reauthAt;
+        const repos = useOwnerRepositories();
+        const sessReauthAt = await repos.users.getSessionReauthAt(numericId);
+        if (sessReauthAt) {
+          resolvedDbReauth = sessReauthAt;
         }
       }
       const reauthAt = await resolveReauth(
@@ -313,41 +283,47 @@ export function buildUserAuthCallbacks(
       });
       assertRateLimitAllowed(res.statusCode);
     },
+    revokeOtherSessions: handlers?.revokeOtherSessions,
+    onPasswordReset: handlers?.onPasswordReset,
   };
 }
 
-export function buildManagerAuthCallbacks(): ManagerAuthCallbacks {
-  const db = getOwnerDb();
+export function buildManagerAuthCallbacks(
+  resolveReauth: ResolveReauthTimestampFn,
+  handlers?: ManagerAuthCallbackHandlers
+): ManagerAuthCallbacks {
   return {
     getManagerStatusByEmail: async (email) => {
-      const [row] = await db
-        .select({
-          id: managers.id,
-          isActive: managers.isActive,
-          role: managers.role,
-        })
-        .from(managers)
-        .where(eq(managers.email, email))
-        .limit(1);
-      return row ?? null;
+      const repos = useOwnerRepositories();
+      const row = await repos.managers.findStatusByEmail(email);
+      if (!row) {
+        return null;
+      }
+      return {
+        id: row.id,
+        uuid: row.uuid,
+        isActive: row.isActive,
+        role: row.role,
+        sessionVersion: row.sessionVersion,
+      };
     },
     getManagerStatusById: async (managerId) => {
-      const [row] = await db
-        .select({
-          id: managers.id,
-          isActive: managers.isActive,
-          role: managers.role,
-        })
-        .from(managers)
-        .where(eq(managers.id, managerId))
-        .limit(1);
-      return row ?? null;
+      const repos = useOwnerRepositories();
+      const row = await repos.managers.findStatusById(managerId);
+      if (!row) {
+        return null;
+      }
+      return {
+        id: row.id,
+        uuid: row.uuid,
+        isActive: row.isActive,
+        role: row.role,
+        sessionVersion: row.sessionVersion,
+      };
     },
     mirrorCredentialPassword: async (managerId, passwordHash) => {
-      await db
-        .update(managers)
-        .set({ passwordHash, updatedAt: new Date() })
-        .where(eq(managers.id, managerId));
+      const repos = useOwnerRepositories();
+      await repos.managers.updatePasswordHash(managerId, passwordHash);
     },
     recordManagerAudit: async ({
       action,
@@ -356,17 +332,20 @@ export function buildManagerAuthCallbacks(): ManagerAuthCallbacks {
       userAgent,
       metadata,
     }) => {
-      await writeAudit(db, {
-        actor_type: managerId ? "manager" : "system",
-        actor_id: managerId ?? undefined,
-        action,
-        entity_type: "manager",
-        entity_id: managerId
-          ? String(managerId)
-          : (metadata?.email ?? "unknown"),
-        after_data: metadata ? { email: metadata.email } : undefined,
-        ip_address: ipAddress,
-        user_agent: userAgent,
+      const repos = useOwnerRepositories();
+      await repos.auditLogs.transaction(async (tx) => {
+        await writeAudit(tx, {
+          actor_type: managerId ? "manager" : "system",
+          actor_id: managerId ?? undefined,
+          action,
+          entity_type: "manager",
+          entity_id: managerId
+            ? String(managerId)
+            : (metadata?.email ?? "unknown"),
+          after_data: metadata ? { email: metadata.email } : undefined,
+          ip_address: ipAddress,
+          user_agent: userAgent,
+        });
       });
     },
     enforceRateLimit: async ({ ipAddress, identifier }) => {
@@ -377,5 +356,29 @@ export function buildManagerAuthCallbacks(): ManagerAuthCallbacks {
       });
       assertRateLimitAllowed(res.statusCode);
     },
+    verifySessionReauth: async ({
+      managerId,
+      sessionId,
+      createdAt,
+      dbReauthAt,
+    }) => {
+      let resolvedDbReauth = dbReauthAt;
+      const numericId = Number(sessionId);
+      if (Number.isInteger(numericId) && numericId > 0) {
+        const repos = useOwnerRepositories();
+        const sessReauthAt = await repos.managers.getSessionReauthAt(numericId);
+        if (sessReauthAt) {
+          resolvedDbReauth = sessReauthAt;
+        }
+      }
+      const reauthAt = await resolveReauth(
+        sessionId,
+        createdAt,
+        resolvedDbReauth
+      );
+      const methods = await resolveAvailableManagerReauthMethods(managerId);
+      verifyReauthWindow(reauthAt, methods);
+    },
+    revokeOtherSessions: handlers?.revokeOtherSessions,
   };
 }

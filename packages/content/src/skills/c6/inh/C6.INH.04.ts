@@ -250,6 +250,16 @@ export const C6_INH_04_SEED: SkillSeed = {
   dataset: C6_INH_04_DATASET,
   levels: [
     {
+      code: "GL-C6-INH-INTRO-7004",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "vehicle",
+      rounds: 1,
+      sequence_no: 1,
+    },
+    {
       code: "GL-C6-INH-STIK-0005",
       template: "GT-025",
       band: "4-5",

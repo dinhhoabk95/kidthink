@@ -1,0 +1,12 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đĩa mì sốt cà chua</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="spgSauce" r="70%"><stop offset="0%" stop-color="#ef4444" /><stop offset="55%" stop-color="#dc2626" /><stop offset="100%" stop-color="#991b1b" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#334155" opacity="0.22" rx="42" ry="5.5" />
+    <ellipse cx="60" cy="72" fill="#f8fafc" rx="46" ry="24" stroke="#334155" stroke-width="3.8" />
+    <ellipse cx="60" cy="68" fill="#fde047" rx="34" ry="17" stroke="#a16207" stroke-width="3.4" />
+    <ellipse cx="60" cy="60" fill="url(#spgSauce)" rx="20" ry="11" stroke="#7f1d1d" stroke-width="3" />
+    <circle cx="53" cy="56" fill="#7c2d12" r="5" /><circle cx="67" cy="58" fill="#7c2d12" r="5" />
+    <path d="M56 48C58 41 65 41 64 48" fill="#22c55e" stroke="#14532d" stroke-width="2.4" />
+</svg>

@@ -147,6 +147,16 @@ export function clearParentGateTelemetryRecords(): void {
   parentGateTelemetryRecords.length = 0;
 }
 
+export function resetInMemoryTelemetryBuffer(): void {
+  if (activeTelemetryBuffer) {
+    activeTelemetryBuffer.destroy();
+    activeTelemetryBuffer = null;
+  }
+  activeRoundRunner = null;
+  parentGateTelemetryRecords.length = 0;
+  defaultPersistentStorage.clear().catch(() => undefined);
+}
+
 interface StatusHolder {
   status: string | number;
 }

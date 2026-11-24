@@ -1,0 +1,7 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tờ báo buổi sáng</title>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.22" rx="36" ry="5" />
+    <rect fill="#f8fafc" height="72" rx="8" stroke="#334155" stroke-width="3.8" width="72" x="24" y="24" />
+    <rect fill="#38bdf8" height="22" rx="3" stroke="#0c4a6e" stroke-width="2.8" width="26" x="32" y="34" />
+    <path d="M64 38H86M64 48H86M32 66H86M32 78H76" stroke="#475569" stroke-linecap="round" stroke-width="3.5" />
+</svg>

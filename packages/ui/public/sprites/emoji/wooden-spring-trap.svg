@@ -1,0 +1,10 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc bẫy gỗ lò xo</title>
+  <defs>
+    <linearGradient id="wstWood" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#fde68a" /><stop offset="100%" stop-color="#d97706" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#451a03" opacity="0.22" rx="42" ry="5" />
+    <polygon fill="url(#wstWood)" points="16,80 88,56 104,76 32,96" stroke="#5c2d16" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M48 76L76 66L62 46Z" fill="none" stroke="#334155" stroke-linejoin="round" stroke-width="3.8" />
+    <polygon fill="#facc15" points="32,76 48,72 44,86" stroke="#78350f" stroke-linejoin="round" stroke-width="2.8" />
+</svg>

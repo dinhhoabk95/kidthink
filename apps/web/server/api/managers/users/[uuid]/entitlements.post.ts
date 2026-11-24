@@ -1,20 +1,16 @@
-import { getDb, notifications, users } from "@mindkid/db";
 import { UserNotFoundError } from "@mindkid/errors/account";
-import { PackageNotFoundError } from "@mindkid/errors/billing";
-import { PACKAGE_CATALOG } from "@mindkid/shared";
-import { eq } from "drizzle-orm";
 import {
   defineEventHandler,
   getHeader,
   getRouterParam,
-  readBody,
   setResponseStatus,
 } from "h3";
 import { z } from "zod";
+import { grantManagerUserEntitlements } from "#server/services/subscription-service";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
-import { mutateUserEntitlements } from "#server/utils/entitlements-runtime";
+import { readRequestBody } from "#server/utils/request-body";
 
 /**
  * D-JN: Schema receives ONLY package_code, duration_days, grant_reason, notify_user.
@@ -51,74 +47,23 @@ export default defineEventHandler(async (event) => {
     throw new UserNotFoundError();
   }
 
-  const customEvent = event as unknown as {
-    _body?: unknown;
-    context?: { body?: unknown };
-  };
-  const rawBody =
-    (await readBody(event).catch(() => undefined)) ??
-    customEvent._body ??
-    customEvent.context?.body;
-
+  const rawBody = await readRequestBody(event);
   const parsed = grantEntitlementSchema.safeParse(rawBody);
   if (!parsed.success) {
     throwValidationError(parsed.error);
   }
 
-  const { package_code, duration_days, grant_reason, notify_user } =
-    parsed.data;
-
-  // Check package in catalog (gồm cả add-on chưa bán is_public: false)
-  const pkg = PACKAGE_CATALOG[package_code];
-  if (!pkg) {
-    throw new PackageNotFoundError();
-  }
-
-  const db = getDb();
-  const [user] = await db
-    .select({ id: users.id, uuid: users.uuid })
-    .from(users)
-    .where(eq(users.uuid, userUuid))
-    .limit(1);
-
-  if (!user) {
-    throw new UserNotFoundError(userUuid);
-  }
-
-  // Mutate entitlements using shared helper (D-JM, BR-EGR-08: no payment_orders created)
-  const granted = await mutateUserEntitlements({
-    userId: user.id,
-    packageCode: package_code,
-    durationDays: duration_days,
-    source: "manual_grant",
-    reason: grant_reason,
-    actor: {
-      type: "manager",
-      id: session.manager_id,
-      ip: getVerifiedRemoteIp(event),
-      userAgent: getHeader(event, "user-agent") || null,
-    },
+  const result = await grantManagerUserEntitlements({
+    managerId: session.manager_id,
+    userUuid,
+    packageCode: parsed.data.package_code,
+    durationDays: parsed.data.duration_days,
+    grantReason: parsed.data.grant_reason,
+    notifyUser: parsed.data.notify_user,
+    ipAddress: getVerifiedRemoteIp(event),
+    userAgent: getHeader(event, "user-agent") || null,
   });
 
-  // Notify user if requested (BR-EGR-03: do NOT leak internal grant_reason to user)
-  if (notify_user) {
-    await db.insert(notifications).values({
-      recipientType: "user",
-      recipientId: user.id,
-      templateCode: "entitlement_granted",
-      payload: {
-        package_code,
-        package_name: pkg.name,
-        duration_days,
-      },
-    });
-  }
-
   setResponseStatus(event, 201);
-  return {
-    entitlements: granted.map((g) => ({
-      key: g.key,
-      expires_at: g.expires_at ? g.expires_at.toISOString() : null,
-    })),
-  };
+  return result;
 });

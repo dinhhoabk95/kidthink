@@ -24,6 +24,14 @@ vi.mock("@mindkid/auth", () => ({
   }),
 }));
 
+vi.mock("@mindkid/config", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@mindkid/config")>();
+  return {
+    ...actual,
+    getDbConnectionName: () => "postgres" as const,
+  };
+});
+
 vi.mock("@mindkid/db", () => ({
   getOwnerDb: vi.fn(),
 }));
@@ -49,7 +57,7 @@ const mockedGetWaitingCount = vi.mocked(getWaitingCount);
 
 function setupHealthyDependencies(): void {
   mockedGetOwnerDb.mockReturnValue({
-    execute: vi.fn().mockResolvedValue([{ "?column?": 1 }]),
+    run: vi.fn().mockResolvedValue([{ "?column?": 1 }]),
   } as never);
   mockedPing.mockResolvedValue(true);
   mockedGetWaitingCount.mockResolvedValue(0);
@@ -98,7 +106,7 @@ describe("Health Check API (BR-HLT-01..06)", () => {
 
   it("Ca âm BR-HLT-01 & BR-HLT-03: tắt PostgreSQL → 503, không phải 200, phát alert", async () => {
     mockedGetOwnerDb.mockReturnValue({
-      execute: vi.fn().mockRejectedValue(new Error("Connection refused")),
+      run: vi.fn().mockRejectedValue(new Error("Connection refused")),
     } as never);
 
     const response = await handler(mockEvent);
@@ -138,7 +146,7 @@ describe("Health Check API (BR-HLT-01..06)", () => {
     vi.useFakeTimers();
 
     mockedGetOwnerDb.mockReturnValue({
-      execute: vi.fn().mockImplementation(
+      run: vi.fn().mockImplementation(
         () =>
           new Promise(() => {
             /* never resolves */

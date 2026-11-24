@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đường cao tốc rộng</title>
+  <defs>
+    <linearGradient id="hwyGrass" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#86efac" /><stop offset="100%" stop-color="#16a34a" /></linearGradient>
+  </defs>
+  <rect fill="url(#hwyGrass)" height="74" rx="14" stroke="#14532d" stroke-width="3.8" width="96" x="12" y="26" />
+    <polygon fill="#475569" points="48,26 72,26 98,100 22,100" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M60 32V94" stroke="#facc15" stroke-dasharray="10 8" stroke-linecap="round" stroke-width="3" />
+</svg>

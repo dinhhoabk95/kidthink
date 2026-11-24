@@ -1,7 +1,33 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import { createHmac } from "node:crypto";
-import { requireEnv } from "@mindkid/config";
+import { isCloudflareRuntime, requireEnv } from "@mindkid/config";
 import { RateLimiterMemory, RateLimiterRedis } from "rate-limiter-flexible";
 import { getClient, onClientDisconnect } from "./client.js";
+
+export interface RateLimitCoordinatorPort {
+  consumeRateLimit(input: {
+    readonly key: string;
+    readonly limit: number;
+    readonly windowSeconds: number;
+  }): Promise<RateLimitCheckResult>;
+}
+
+const cfRateLimitAls = new AsyncLocalStorage<
+  RateLimitCoordinatorPort | undefined
+>();
+let cloudflareRateLimitPort: RateLimitCoordinatorPort | undefined;
+
+export function enterCloudflareRateLimitPort(
+  port: RateLimitCoordinatorPort | undefined
+): void {
+  cfRateLimitAls.enterWith(port);
+}
+
+export function registerCloudflareRateLimitPort(
+  port: RateLimitCoordinatorPort | undefined
+): void {
+  cloudflareRateLimitPort = port;
+}
 
 export interface RateLimitCheckResult {
   allowed: boolean;
@@ -42,6 +68,9 @@ export function clearInMemoryBuckets(): void {
  */
 export async function clearRateLimitBuckets(): Promise<void> {
   clearInMemoryBuckets();
+  if (isCloudflareRuntime()) {
+    return;
+  }
 
   const client = getClient();
   let cursor = "0";
@@ -146,6 +175,38 @@ export async function checkRateLimit(
   windowSeconds: number,
   failOpen = true
 ): Promise<RateLimitCheckResult> {
+  if (isCloudflareRuntime()) {
+    const port = cfRateLimitAls.getStore() ?? cloudflareRateLimitPort;
+    if (!port) {
+      if (failOpen) {
+        return {
+          allowed: true,
+          remaining: 1,
+          resetSeconds: windowSeconds,
+        };
+      }
+      throw new Error(
+        "Cloudflare rate limit coordinator port is not registered"
+      );
+    }
+    try {
+      return await port.consumeRateLimit({
+        key,
+        limit,
+        windowSeconds,
+      });
+    } catch (err) {
+      if (failOpen) {
+        return {
+          allowed: true,
+          remaining: 1,
+          resetSeconds: windowSeconds,
+        };
+      }
+      throw err;
+    }
+  }
+
   if (process.env.NODE_ENV === "test") {
     return consumeMemoryRateLimit(key, limit, windowSeconds);
   }

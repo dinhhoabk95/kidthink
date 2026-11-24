@@ -254,8 +254,8 @@ describe("sổ cầu — band của nội dung lấp ô (BR-LRM-04)", () => {
       const prior = byRoadmap.get(cell.roadmap_code) ?? "";
       byRoadmap.set(cell.roadmap_code, `${prior}|${cell.filled_by.join(",")}`);
     }
-    expect(byRoadmap.size).toBe(9);
-    expect(new Set(byRoadmap.values()).size).toBe(9);
+    expect(byRoadmap.size).toBe(30);
+    expect(new Set(byRoadmap.values()).size).toBe(30);
   });
 
   it("ca âm: level band 5-6 đặt vào lộ trình 3-4 thì đỏ và in mã level", () => {

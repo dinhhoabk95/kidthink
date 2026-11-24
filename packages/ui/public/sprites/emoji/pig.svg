@@ -1,66 +1,25 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <title>Heo hồng</title>
+  <title>Con lợn hồng</title>
   <defs>
-    <radialGradient cx="38%" cy="32%" id="pigPink" r="70%">
-      <stop offset="0%" stop-color="#fce7f3" />
-      <stop offset="55%" stop-color="#f9a8d4" />
-      <stop offset="100%" stop-color="#f472b6" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="g_pig" r="70%"><stop offset="0%" stop-color="#fce7f3" /><stop offset="55%" stop-color="#f9a8d4" /><stop offset="100%" stop-color="#f472b6" /></radialGradient>
   </defs>
-  <ellipse cx="60" cy="74" fill="#881337" opacity="0.26" rx="40" ry="34" />
-  <path
-    d="M25 46L21 22L45 31Z"
-    fill="url(#pigPink)"
-    stroke="#9d174d"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <path
-    d="M95 46L99 22L75 31Z"
-    fill="url(#pigPink)"
-    stroke="#9d174d"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <ellipse
-    cx="60"
-    cy="66"
-    fill="url(#pigPink)"
-    rx="40"
-    ry="34"
-    stroke="#9d174d"
-    stroke-width="4"
-  />
-  <circle cx="44" cy="56" fill="#1c1917" r="4.8" />
-  <circle cx="42.5" cy="54.2" fill="#ffffff" r="1.9" />
-  <circle cx="76" cy="56" fill="#1c1917" r="4.8" />
-  <circle cx="74.5" cy="54.2" fill="#ffffff" r="1.9" />
-  <circle cx="33" cy="70" fill="#fb7185" fill-opacity="0.5" r="5.5" />
-  <circle cx="87" cy="70" fill="#fb7185" fill-opacity="0.5" r="5.5" />
-  <ellipse
-    cx="60"
-    cy="72"
-    fill="#fbcfe8"
-    rx="16"
-    ry="11"
-    stroke="#9d174d"
-    stroke-width="3.6"
-  />
-  <ellipse cx="54" cy="72" fill="#831843" rx="3" ry="4.5" />
-  <ellipse cx="66" cy="72" fill="#831843" rx="3" ry="4.5" />
-  <path
-    d="M53 87C56 90 64 90 67 87"
-    stroke="#831843"
-    stroke-linecap="round"
-    stroke-width="2.8"
-  />
-  <ellipse
-    cx="46"
-    cy="42"
-    fill="#ffffff"
-    fill-opacity="0.65"
-    rx="8"
-    ry="3.6"
-    transform="rotate(-20 46 42)"
-  />
+  <ellipse cx="62" cy="106" fill="#831843" opacity="0.22" rx="40" ry="5.5" />
+    <path d="M93 62C102 58 104 67 98 69C94 70 95 63 102 64" fill="none" stroke="#831843" stroke-linecap="round" stroke-width="3.4" />
+    <!-- Far legs -->
+    <path d="M47 81L44 102H51L53 81ZM81 81L79 102H86L88 81Z" fill="#f472b6" stroke="#831843" stroke-linejoin="round" stroke-width="3.4" />
+    <path d="M44 98H51V103H44ZM79 98H86V103H79Z" fill="#9d174d" />
+    <!-- Torso & Neck -->
+    <path d="M35 60C41 51 34 49 64 49C94 49 98 64 94 74C90 87 40 87 36 72C32 64 31 70 35 60Z" fill="url(#g_pig)" stroke="#831843" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M46 82C56 88 74 88 84 82" fill="#fdf2f8" opacity="0.85" />
+    
+    <!-- Near legs -->
+    <path d="M39 79L36 104H44L47 79ZM73 79L71 104H79L81 79Z" fill="url(#g_pig)" stroke="#831843" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M36 99H44V104H36ZM71 99H79V104H71Z" fill="#9d174d" stroke="#831843" stroke-linejoin="round" stroke-width="2.2" />
+    <!-- Head -->
+    <ellipse cx="29" cy="54" fill="url(#g_pig)" rx="15" ry="13" stroke="#831843" stroke-width="3.8" />
+    <ellipse cx="18" cy="58" fill="#fb7185" rx="7.5" ry="6" stroke="#831843" stroke-width="3.2" />
+    <circle cx="16" cy="57" fill="#831843" r="1.8" />
+    <path d="M16 61C19 63 22 62 23 60" stroke="#831843" stroke-linecap="round" stroke-width="2.2" />
+    <circle cx="27" cy="51" fill="#1c1917" r="2.7" /><circle cx="26.2" cy="50.2" fill="#ffffff" r="1" />
+    <path d="M24 42L18 33L30 39ZM34 42L39 33L41 43Z" fill="#f9a8d4" stroke="#831843" stroke-linejoin="round" stroke-width="3.2" />
 </svg>

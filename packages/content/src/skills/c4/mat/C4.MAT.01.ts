@@ -238,6 +238,16 @@ export const C4_MAT_01_SEED: SkillSeed = {
   dataset: C4_MAT_01_DATASET,
   levels: [
     {
+      code: "GL-C4-MAT-INTRO-7001",
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "weather",
+      rounds: 1,
+      sequence_no: 1,
+    },
+    {
       code: "GL-C4-MAT-TAP-0001",
       template: "GT-001",
       band: "3-4",

@@ -56,14 +56,14 @@ function buildRequiredCells(count: number): { row: number; col: number }[] {
 }
 
 /** Lời đề khi level không có con số nào để gọi tên đích. */
-export const GT013_PROMPT = "Bé hãy tìm đường qua mê cung về tới lá cờ nhé!";
+export const GT013_PROMPT = "Đố bé dẫn lối qua mê cung tới lá cờ nhé!";
 
 /** Chỉ con số mới được gọi "lá cờ số …" và vẽ lên cờ (`BR-E013-11`). */
 const NUMERAL_GLYPH = /^\d{1,2}$/;
 
 /** Lời đề khi đích mang con số `glyph`: số chỉ là tên đích, không chỉ đường. */
 export function gt013NumberedPrompt(glyph: string): string {
-  return `Bé hãy tìm đường về tới lá cờ số ${glyph} nhé!`;
+  return `Đố bé dẫn lối về tới lá cờ số ${glyph} nhé!`;
 }
 
 /** Con số gọi tên đích của vòng `roundIdx`, hoặc `null` nếu dataset không có số. */

@@ -1,9 +1,12 @@
 import {
+  ACCESS_TIER,
+  CONTENT_ENTITY_TYPE,
   curricula,
   curriculumItems,
   curriculumWeeks,
   gameLevels,
   getOwnerDb,
+  PROGRAM_TYPE,
 } from "@mindkid/db";
 import {
   buildCourseJsonLd,
@@ -77,7 +80,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         instruction: "Hướng dẫn đếm",
         contentPack: { secret: 123 },
         difficultyParams: { difficulty: 1 },
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
 
@@ -90,7 +93,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         instruction: "Hướng dẫn hình",
         contentPack: { shapes: ["circle", "square"] },
         difficultyParams: { difficulty: 2 },
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
       })
       .returning();
 
@@ -103,7 +106,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         instruction: "Hướng dẫn người dạy",
         contentPack: {},
         difficultyParams: { difficulty: 1 },
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
 
@@ -112,14 +115,14 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
       .insert(curricula)
       .values({
         code: publishedCode,
-        programType: "age_based",
+        programType: PROGRAM_TYPE.AGE_BASED,
         targetAgeMin: 4,
         targetAgeMax: 5,
         durationWeeks: 4,
         sessionsPerWeek: 2,
         title: "Chương trình Tư duy Toán 4 tuổi",
         description: "Phát triển năng lực số học và hình học cho trẻ 4 tuổi.",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
       })
       .returning();
 
@@ -139,7 +142,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gl1.id,
         isRequired: true,
       },
@@ -148,7 +151,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         weekNo: 1,
         sessionNo: 2,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gl3.id,
         isRequired: true,
       },
@@ -157,7 +160,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         weekNo: 2,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gl2.id,
         isRequired: true,
       },
@@ -166,7 +169,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         weekNo: 3,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gl1.id,
         isRequired: true,
       },
@@ -175,7 +178,7 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
         weekNo: 4,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gl3.id,
         isRequired: true,
       },
@@ -184,14 +187,14 @@ describe("Public Program Showcase Suite — P3.8 (Task #61, BR-PSH-01..07, D-NF.
     // 4. Published Journey Curriculum (42 weeks)
     await db.insert(curricula).values({
       code: journeyCode,
-      programType: "journey",
+      programType: PROGRAM_TYPE.JOURNEY,
       targetAgeMin: 3,
       targetAgeMax: 6,
       durationWeeks: 42,
       sessionsPerWeek: 3,
       title: "Hành trình Toán Mầm non 42 Tuần",
       description: "Hành trình phát triển toàn diện 6 năng lực toán học.",
-      accessTier: "premium",
+      accessTier: ACCESS_TIER.PREMIUM,
     });
   });
 

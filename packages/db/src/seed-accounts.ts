@@ -1,7 +1,20 @@
 import { hashPassword } from "@mindkid/auth";
 import { type EntitlementKey, PACKAGE_CATALOG } from "@mindkid/shared";
-import { and, eq } from "drizzle-orm";
 import type { DbExecutor } from "#src/client";
+import {
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
+} from "#src/constants/billing-ops-enums";
+import {
+  CHILD_RELATIONSHIP,
+  CHILD_STATUS,
+  type ChildRelationship,
+  CONSENT_ACTION,
+  CONSENT_TYPE_VALUES,
+  MANAGER_ROLE,
+  type ManagerRole,
+  USER_STATUS,
+} from "#src/constants/identity-enums";
 import { entitlements } from "#src/schema/billing";
 import { childProfiles } from "#src/schema/child";
 import {
@@ -16,7 +29,7 @@ export interface SeedManagerAccount {
   email: string;
   passwordRaw: string;
   displayName: string;
-  role: "super_admin";
+  role: ManagerRole;
   mfaEnabled: boolean;
   isActive: boolean;
 }
@@ -25,7 +38,7 @@ export interface SeedChildProfile {
   displayName: string;
   birthYear: number;
   avatarId: string;
-  relationship: "child" | "student" | "other";
+  relationship: ChildRelationship;
   dailyPlayCapMinutes: number;
 }
 
@@ -42,7 +55,7 @@ export const SEED_MANAGERS: readonly SeedManagerAccount[] = [
     email: "admin@mindkid.test",
     passwordRaw: "xK9#mQ2$vL8!wP5@",
     displayName: "Super Admin",
-    role: "super_admin",
+    role: MANAGER_ROLE.SUPER_ADMIN,
     mfaEnabled: false,
     isActive: true,
   },
@@ -58,7 +71,7 @@ export const SEED_USERS: readonly SeedUserAccount[] = [
         displayName: "Bé Bắp",
         birthYear: 2021,
         avatarId: "avatar-rabbit-01",
-        relationship: "child",
+        relationship: CHILD_RELATIONSHIP.CHILD,
         dailyPlayCapMinutes: 60,
       },
     ],
@@ -73,14 +86,14 @@ export const SEED_USERS: readonly SeedUserAccount[] = [
         displayName: "Bé Đậu",
         birthYear: 2020,
         avatarId: "avatar-bear-01",
-        relationship: "child",
+        relationship: CHILD_RELATIONSHIP.CHILD,
         dailyPlayCapMinutes: 60,
       },
       {
         displayName: "Bé Mầm",
         birthYear: 2022,
         avatarId: "avatar-cat-01",
-        relationship: "child",
+        relationship: CHILD_RELATIONSHIP.CHILD,
         dailyPlayCapMinutes: 60,
       },
     ],
@@ -95,14 +108,14 @@ export const SEED_USERS: readonly SeedUserAccount[] = [
         displayName: "Bé Sóc",
         birthYear: 2019,
         avatarId: "avatar-fox-01",
-        relationship: "child",
+        relationship: CHILD_RELATIONSHIP.CHILD,
         dailyPlayCapMinutes: 90,
       },
       {
         displayName: "Bé Gấu",
         birthYear: 2021,
         avatarId: "avatar-panda-01",
-        relationship: "child",
+        relationship: CHILD_RELATIONSHIP.CHILD,
         dailyPlayCapMinutes: 90,
       },
     ],
@@ -116,9 +129,7 @@ export interface SeedAccountsStats {
   entitlementCount: number;
 }
 
-type DatabaseClient = DbExecutor;
-
-async function seedManagers(db: DatabaseClient): Promise<number> {
+async function seedManagers(db: DbExecutor): Promise<number> {
   let count = 0;
   for (const mgr of SEED_MANAGERS) {
     const passwordHash = await hashPassword(mgr.passwordRaw);
@@ -135,10 +146,10 @@ async function seedManagers(db: DatabaseClient): Promise<number> {
       })
       .onConflictDoNothing({ target: managers.email });
 
-    const [mgrRecord] = await db
-      .select({ id: managers.id })
-      .from(managers)
-      .where(eq(managers.email, mgr.email));
+    const mgrRecord = await db.query.managers.findFirst({
+      columns: { id: true },
+      where: { email: mgr.email },
+    });
 
     if (mgrRecord) {
       await db
@@ -159,23 +170,20 @@ async function seedManagers(db: DatabaseClient): Promise<number> {
 }
 
 async function ensureUserConsents(
-  db: DatabaseClient,
+  db: DbExecutor,
   userId: number
 ): Promise<void> {
-  const consentTypes = ["terms", "privacy", "child_data"] as const;
-  for (const cType of consentTypes) {
-    const [existing] = await db
-      .select({ id: consentLogs.id })
-      .from(consentLogs)
-      .where(
-        and(eq(consentLogs.userId, userId), eq(consentLogs.consentType, cType))
-      );
+  for (const cType of CONSENT_TYPE_VALUES) {
+    const existing = await db.query.consentLogs.findFirst({
+      columns: { id: true },
+      where: { userId, consentType: cType },
+    });
 
     if (!existing) {
       await db.insert(consentLogs).values({
         userId,
         consentType: cType,
-        action: "accepted",
+        action: CONSENT_ACTION.ACCEPTED,
         ipAddress: "127.0.0.1",
         userAgent: "Seed Initial Accounts",
       });
@@ -184,21 +192,16 @@ async function ensureUserConsents(
 }
 
 async function seedUserChildren(
-  db: DatabaseClient,
+  db: DbExecutor,
   userId: number,
   children: readonly SeedChildProfile[]
 ): Promise<number> {
   let createdCount = 0;
   for (const child of children) {
-    const [existingChild] = await db
-      .select({ id: childProfiles.id })
-      .from(childProfiles)
-      .where(
-        and(
-          eq(childProfiles.userId, userId),
-          eq(childProfiles.displayName, child.displayName)
-        )
-      );
+    const existingChild = await db.query.childProfiles.findFirst({
+      columns: { id: true },
+      where: { userId, displayName: child.displayName },
+    });
 
     if (!existingChild) {
       await db.insert(childProfiles).values({
@@ -208,7 +211,7 @@ async function seedUserChildren(
         avatarId: child.avatarId,
         relationship: child.relationship,
         dailyPlayCapMinutes: child.dailyPlayCapMinutes,
-        status: "active",
+        status: CHILD_STATUS.ACTIVE,
       });
     }
     createdCount++;
@@ -217,7 +220,7 @@ async function seedUserChildren(
 }
 
 async function seedUserEntitlements(
-  db: DatabaseClient,
+  db: DbExecutor,
   userId: number,
   packageCode: "PKG-standard" | "PKG-premium" | undefined,
   now: Date,
@@ -233,22 +236,17 @@ async function seedUserEntitlements(
 
   let createdCount = 0;
   for (const entKey of pkgDef.entitlements) {
-    const [existingEnt] = await db
-      .select({ id: entitlements.id })
-      .from(entitlements)
-      .where(
-        and(
-          eq(entitlements.userId, userId),
-          eq(entitlements.entitlementKey, entKey)
-        )
-      );
+    const existingEnt = await db.query.entitlements.findFirst({
+      columns: { id: true },
+      where: { userId, entitlementKey: entKey },
+    });
 
     if (!existingEnt) {
       await db.insert(entitlements).values({
         userId,
         entitlementKey: entKey as EntitlementKey,
-        source: "package_order",
-        status: "active",
+        source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+        status: ENTITLEMENT_STATUS.ACTIVE,
         grantedAt: now,
         expiresAt,
         grantReason: `Seed default package ${packageCode}`,
@@ -260,8 +258,11 @@ async function seedUserEntitlements(
 }
 
 export async function seedInitialAccounts(
-  db: DatabaseClient
+  db: DbExecutor
 ): Promise<SeedAccountsStats> {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Refusing to seed default test accounts in production");
+  }
   const managerCount = await seedManagers(db);
 
   let userCount = 0;
@@ -281,15 +282,15 @@ export async function seedInitialAccounts(
         passwordHash,
         displayName: usr.displayName,
         emailVerified: true,
-        status: "active",
+        status: USER_STATUS.ACTIVE,
         emailVerifiedAt: now,
       })
       .onConflictDoNothing({ target: users.email });
 
-    const [userRecord] = await db
-      .select({ id: users.id })
-      .from(users)
-      .where(eq(users.email, usr.email));
+    const userRecord = await db.query.users.findFirst({
+      columns: { id: true },
+      where: { email: usr.email },
+    });
 
     if (!userRecord) {
       continue;
@@ -310,21 +311,18 @@ export async function seedInitialAccounts(
 
     await ensureUserConsents(db, userRecord.id);
 
-    const childrenAdded = await seedUserChildren(
+    childProfileCount += await seedUserChildren(
       db,
       userRecord.id,
       usr.children
     );
-    childProfileCount += childrenAdded;
-
-    const entitlementsAdded = await seedUserEntitlements(
+    entitlementCount += await seedUserEntitlements(
       db,
       userRecord.id,
       usr.packageCode,
       now,
       oneYearLater
     );
-    entitlementCount += entitlementsAdded;
   }
 
   return {

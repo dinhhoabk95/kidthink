@@ -1,0 +1,10 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "mindkid-admin",
+  "compatibility_date": "2026-04-01",
+  "workers_dev": false,
+  "assets": {
+    "directory": ".output/public",
+    "not_found_handling": "single-page-application"
+  }
+}

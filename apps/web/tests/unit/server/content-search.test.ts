@@ -1,4 +1,4 @@
-import { gameLevels, getOwnerDb } from "@mindkid/db";
+import { ACCESS_TIER, gameLevels, getOwnerDb } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { searchGameLevels } from "#server/services/content-search.js";
@@ -120,7 +120,7 @@ describe("Content Search Service & Invariants (BR-SRC-01..07)", () => {
         description: "Trò chơi đếm quả táo",
         contentPack: { prompt: "Đếm táo" },
         difficultyParams: { distractor_count: 1 },
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning({ id: gameLevels.id });
 

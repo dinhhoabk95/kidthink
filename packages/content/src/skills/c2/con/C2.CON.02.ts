@@ -325,5 +325,14 @@ export const C2_CON_02_SEED: SkillSeed = {
       theme: "job",
       rounds: 3,
     },
+    {
+      code: "GL-C2-CON-INTRO-6003",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 3,
+      theme: "home",
+      rounds: 3,
+      sequence_no: 61,
+    },
   ],
 };

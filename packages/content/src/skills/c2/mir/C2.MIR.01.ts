@@ -274,5 +274,14 @@ export const C2_MIR_01_SEED: SkillSeed = {
       theme: "farm",
       rounds: 3,
     },
+    {
+      code: "GL-C2-MIR-INTRO-6501",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 2,
+      theme: "job",
+      rounds: 3,
+      sequence_no: 61,
+    },
   ],
 };

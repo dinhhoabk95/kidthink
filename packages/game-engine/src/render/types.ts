@@ -1,5 +1,52 @@
 import type { QuantityRepKind } from "@mindkid/shared/skill-dataset-types";
 
+export type GeometricColorToken =
+  | "coral"
+  | "amber"
+  | "emerald"
+  | "indigo"
+  | "sky"
+  | "lotus"
+  | "terracotta"
+  | "wood";
+
+export type Geometric2DForm =
+  | "circle"
+  | "square"
+  | "triangle"
+  | "rectangle"
+  | "rhombus"
+  | "oval"
+  | "pentagon"
+  | "hexagon"
+  | "star";
+
+export type Geometric3DForm =
+  | "cube"
+  | "rectangular_prism"
+  | "sphere"
+  | "cylinder"
+  | "cone"
+  | "pyramid";
+
+export type GeometricShapeForm = Geometric2DForm | Geometric3DForm;
+export type GeometricSizeTier = "small" | "medium" | "large";
+
+export interface GeometricRenderSpec {
+  readonly form: GeometricShapeForm;
+  readonly color_token: GeometricColorToken;
+  readonly size_tier?: GeometricSizeTier;
+  readonly rotation_deg?: number;
+  readonly show_orientation_pin?: boolean;
+}
+
+export interface GeometricColorPalette {
+  readonly fill: string;
+  readonly stroke: string;
+  readonly shade: string;
+  readonly highlight: string;
+}
+
 export type ItemVisualState =
   | "idle"
   | "touching"
@@ -13,6 +60,8 @@ export type RenderAsset =
   | { readonly kind: "emoji"; readonly ref: string }
   | { readonly kind: "image"; readonly path: string }
   | { readonly kind: "text"; readonly text: string };
+
+export type AssetRef = RenderAsset;
 
 /** Cấu hình biểu diễn lượng theo thang đại diện chuẩn (Task #268 / BR-ERC-13). */
 export interface QuantityRepConfig {
@@ -37,6 +86,16 @@ export interface RenderItem {
   readonly state?: ItemVisualState;
   /** Cấu hình biểu diễn lượng theo thang đại diện chuẩn (Task #268 / BR-ERC-13). */
   readonly representation?: QuantityRepConfig;
+  /** Cấu hình hình học vector 2D phẳng / khối 3D Montessori (Task #318 / GT-002). */
+  readonly geometricSpec?: GeometricRenderSpec;
+  /** Tài sản phụ neo nghĩa trên mặt thẻ kép (ví dụ chữ/vần C5 kèm tranh vật thật). */
+  readonly secondaryAsset?: AssetRef | null;
+  /** Hình thái đế thẻ chọn: đĩa sứ tròn hoặc thẻ gỗ chữ nhật bo góc. */
+  readonly plateVariant?: "round_plate" | "wood_tile";
+  /** Làm dịu tĩnh (globalAlpha = 0.72, không nhấp nháy) trên thẻ nhiễu ở bậc gợi ý L1. */
+  readonly isSoftDimmed?: boolean;
+  /** Vòng sóng âm mảnh khi thẻ ngữ âm vừa được chạm phát tiếng (không vẽ icon loa giả nút). */
+  readonly isSpeakingPulse?: boolean;
 }
 
 export interface SceneBox {

@@ -258,5 +258,20 @@ export const C2_PER_01_SEED: SkillSeed = {
       theme: "body",
       rounds: 3,
     },
+    {
+      code: "GL-C2-PER-INTRO-6001",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 2,
+      theme: "homeland",
+    },
+    {
+      code: "GL-C2-PER-TAP-6002",
+      template: "GT-001",
+      band: "4-5",
+      difficulty: 2,
+      theme: "vehicle",
+      rounds: 3,
+    },
   ],
 };

@@ -1,20 +1,19 @@
 import { CHILD_PROFILE_CLOSED_COLUMNS } from "@mindkid/shared";
-import { sql } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "#src/index";
+import { DB, getOwnerDb } from "#src/index";
+
+function getChildProfileSqliteColumns(): string[] {
+  getOwnerDb();
+  const rawDb = DB.getSqliteDriver().getRawDatabase();
+  const rows = rawDb
+    .prepare("PRAGMA table_info('child_profiles');")
+    .all() as Array<{ name: string }>;
+  return rows.map((r) => r.name);
+}
 
 describe("Child Schema Integration Tests", () => {
-  it("BR-CDC-01 & BR-SPT-01: child_profiles matches canonical closed 12-column list exactly", async () => {
-    const db = getOwnerDb();
-
-    // Query information_schema.columns for child_profiles table
-    const result = await db.execute<{ column_name: string }>(sql`
-      SELECT column_name 
-      FROM information_schema.columns 
-      WHERE table_name = 'child_profiles' AND table_schema = 'public'
-    `);
-
-    const columnNames = Array.from(result).map((r) => r.column_name);
+  it("BR-CDC-01 & BR-SPT-01: child_profiles matches canonical closed 12-column list exactly", () => {
+    const columnNames = getChildProfileSqliteColumns();
 
     const actualSet = new Set<string>(columnNames);
     const expectedSet = new Set<string>(CHILD_PROFILE_CLOSED_COLUMNS);
@@ -38,18 +37,9 @@ describe("Child Schema Integration Tests", () => {
     );
   });
 
-  it("BR-SPT-02: child_profiles contains no forbidden sensitive PII or image path columns", async () => {
-    const db = getOwnerDb();
+  it("BR-SPT-02: child_profiles contains no forbidden sensitive PII or image path columns", () => {
+    const columnNames = getChildProfileSqliteColumns();
 
-    const result = await db.execute<{ column_name: string }>(sql`
-      SELECT column_name 
-      FROM information_schema.columns 
-      WHERE table_name = 'child_profiles' AND table_schema = 'public'
-    `);
-
-    const columnNames = Array.from(result).map((r) => r.column_name);
-
-    // Rule BR-SPT-02 & BR-CDC-04: NO image paths or URL columns (%_url, %_path, photo%)
     const forbiddenPatterns = ["full_name", "birth_date", "school", "age_band"];
 
     for (const forbidden of forbiddenPatterns) {

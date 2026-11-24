@@ -1,86 +1,24 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Con mèo</title>
   <defs>
-    <radialGradient cx="38%" cy="34%" id="catBody" r="68%">
-      <stop offset="0%" stop-color="#fde68a" />
-      <stop offset="50%" stop-color="#fbbf24" />
-      <stop offset="100%" stop-color="#d97706" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="catCoat" r="70%"><stop offset="0%" stop-color="#fde68a" /><stop offset="55%" stop-color="#fbbf24" /><stop offset="100%" stop-color="#d97706" /></radialGradient>
   </defs>
-  <!-- 2.5D warm base shadow -->
-  <ellipse cx="60" cy="72" fill="#78350f" opacity="0.32" rx="39" ry="34" />
-  <!-- Ears -->
-  <path
-    d="M25 56L28 21C29 17 34 16 37 19L53 37"
-    fill="url(#catBody)"
-    stroke="#92400e"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <path d="M31 46L33 27L45 39Z" fill="#fbcfe8" />
-  <path
-    d="M95 56L92 21C91 17 86 16 83 19L67 37"
-    fill="url(#catBody)"
-    stroke="#92400e"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <path d="M89 46L87 27L75 39Z" fill="#fbcfe8" />
-  <!-- Head -->
-  <ellipse
-    cx="60"
-    cy="68"
-    fill="url(#catBody)"
-    rx="39"
-    ry="33"
-    stroke="#92400e"
-    stroke-width="4"
-  />
-  <!-- Forehead stripes -->
-  <path
-    d="M53 38V46M60 36V47M67 38V46"
-    opacity="0.65"
-    stroke="#b45309"
-    stroke-linecap="round"
-    stroke-width="3.5"
-  />
-  <!-- Eyes -->
-  <circle cx="45" cy="63" fill="#1c1917" r="5" />
-  <circle cx="43.5" cy="61" fill="#ffffff" r="2" />
-  <circle cx="75" cy="63" fill="#1c1917" r="5" />
-  <circle cx="73.5" cy="61" fill="#ffffff" r="2" />
-  <!-- Cheeks -->
-  <circle cx="35" cy="73" fill="#fb7185" fill-opacity="0.45" r="5" />
-  <circle cx="85" cy="73" fill="#fb7185" fill-opacity="0.45" r="5" />
-  <!-- Whiskers -->
-  <path
-    d="M16 68L29 70M16 77L29 76M104 68L91 70M104 77L91 76"
-    stroke="#92400e"
-    stroke-linecap="round"
-    stroke-width="2.8"
-  />
-  <!-- Nose & mouth -->
-  <path
-    d="M56 71H64L60 76Z"
-    fill="#f472b6"
-    stroke="#9d174d"
-    stroke-linejoin="round"
-    stroke-width="2"
-  />
-  <path
-    d="M53 79C56 82 59 80 60 77C61 80 64 82 67 79"
-    stroke="#78350f"
-    stroke-linecap="round"
-    stroke-width="2.8"
-  />
-  <!-- Specular -->
-  <ellipse
-    cx="42"
-    cy="48"
-    fill="#ffffff"
-    fill-opacity="0.45"
-    rx="8"
-    ry="4"
-    transform="rotate(-18 42 48)"
-  />
+  <ellipse cx="58" cy="105" fill="#78350f" opacity="0.22" rx="36" ry="5.5" />
+    <!-- Striped curled tail -->
+    <path d="M78 92C96 92 104 77 98 62C95 55 88 57 90 64C92 73 87 83 76 84" fill="none" stroke="#78350f" stroke-linecap="round" stroke-width="8" />
+    <path d="M78 92C96 92 104 77 98 62" fill="none" stroke="#fbbf24" stroke-linecap="round" stroke-opacity="0.92" stroke-width="3.6" />
+    <!-- Full seated tabby cat body, chest ruff & 4 paws -->
+    <path d="M40 54C34 67 35 86 41 98H75C81 86 79 66 69 54Z" fill="url(#catCoat)" stroke="#78350f" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M48 56C54 62 62 62 68 56C66 72 64 84 58 88C52 84 50 72 48 56Z" fill="#fffbeb" />
+    <path d="M38 68L45 69M37 77L45 77M78 68L71 69M79 77L71 77" stroke="#92400e" stroke-linecap="round" stroke-width="3" />
+    <ellipse cx="48" cy="99" fill="#fffbeb" rx="7.5" ry="4.5" stroke="#78350f" stroke-width="3.4" />
+    <ellipse cx="67" cy="99" fill="#fffbeb" rx="7.5" ry="4.5" stroke="#78350f" stroke-width="3.4" />
+    <!-- Ears & tabby head -->
+    <path d="M38 35L40 15L53 27ZM76 35L74 15L61 27Z" fill="url(#catCoat)" stroke="#78350f" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M42 31L43 20L50 28ZM72 31L71 20L64 28Z" fill="#fbcfe8" />
+    <ellipse cx="57" cy="39" fill="url(#catCoat)" rx="20" ry="16" stroke="#78350f" stroke-width="3.8" />
+    <path d="M53 25V31M57 24V32M61 25V31" stroke="#92400e" stroke-linecap="round" stroke-width="2.6" />
+    <circle cx="49" cy="38" fill="#1c1917" r="3" /><circle cx="48.2" cy="37.1" fill="#ffffff" r="1.1" /><circle cx="65" cy="38" fill="#1c1917" r="3" /><circle cx="64.2" cy="37.1" fill="#ffffff" r="1.1" />
+    <path d="M55 44H59L57 47Z" fill="#fb7185" />
+    <path d="M52 49C55 51 59 51 62 49M30 42L42 44M30 47L42 47M84 42L72 44M84 47L72 47" stroke="#78350f" stroke-linecap="round" stroke-width="2.2" />
 </svg>

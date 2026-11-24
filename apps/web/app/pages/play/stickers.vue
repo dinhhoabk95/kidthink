@@ -397,9 +397,9 @@
     gap: 1rem;
     padding: 1rem;
     border-radius: 2rem;
-    border: 3px solid var(--color-surface-300);
+    border: 3px solid var(--color-warning-300);
     background-color: var(--color-surface-50);
-    box-shadow: 0 5px 0 var(--color-surface-300);
+    box-shadow: 0 5px 0 var(--color-warning-300);
     cursor: pointer;
     transition: border-color 160ms ease;
   }

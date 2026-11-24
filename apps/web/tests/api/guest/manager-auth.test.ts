@@ -3,7 +3,13 @@ import {
   InMemoryRedisClient,
   setAuthRedisClient,
 } from "@mindkid/auth";
-import { auditLogs, getOwnerDb, managerSessions, managers } from "@mindkid/db";
+import {
+  auditLogs,
+  getOwnerDb,
+  MANAGER_ROLE,
+  managerSessions,
+  managers,
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
@@ -34,7 +40,7 @@ async function seedManagerWithPassword(
       email,
       passwordHash,
       displayName: `Admin ${tag}`,
-      role: "super_admin",
+      role: MANAGER_ROLE.SUPER_ADMIN,
       isActive: true,
       mfaEnabled: false,
     })

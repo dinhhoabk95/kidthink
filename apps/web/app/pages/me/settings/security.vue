@@ -342,6 +342,27 @@
             </p>
           </div>
 
+          <div v-if="mfaStatus?.enabled">
+            <label
+              class="block text-sm font-bold text-surface-700 mb-1"
+              for="securityPasswordModalTotp"
+            >
+              Mã xác thực hai lớp (TOTP) *
+            </label>
+            <input
+              autocomplete="one-time-code"
+              class="w-full min-h-11 px-4 py-2.5 rounded-xl border-2 border-surface-300 focus:border-brand-600 focus:outline-none text-base font-mono tracking-widest text-surface-900"
+              data-testid="password-totp-input"
+              id="securityPasswordModalTotp"
+              inputmode="numeric"
+              maxlength="6"
+              placeholder="123456"
+              required
+              type="text"
+              v-model.trim="passwordModal.totp"
+            >
+          </div>
+
           <p
             class="rounded-xl border border-amber-200 bg-amber-50 p-3 font-medium text-amber-900 text-sm"
             data-testid="password-modal-error"
@@ -431,6 +452,27 @@
             >
           </div>
 
+          <div v-if="mfaStatus?.enabled">
+            <label
+              class="block text-sm font-bold text-surface-700 mb-1"
+              for="logoutAllTotp"
+            >
+              Mã xác thực hai lớp (TOTP) *
+            </label>
+            <input
+              autocomplete="one-time-code"
+              class="w-full min-h-11 px-4 py-2.5 rounded-xl border-2 border-surface-300 focus:border-danger-600 focus:outline-none text-base font-mono tracking-widest text-surface-900"
+              data-testid="logout-all-totp-input"
+              id="logoutAllTotp"
+              inputmode="numeric"
+              maxlength="6"
+              placeholder="123456"
+              required
+              type="text"
+              v-model.trim="logoutAllModal.totp"
+            >
+          </div>
+
           <p
             class="rounded-xl border border-amber-200 bg-amber-50 p-3 font-medium text-amber-900 text-sm"
             data-testid="logout-all-modal-error"
@@ -452,7 +494,7 @@
               class="min-h-11 px-5 py-2 rounded-xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white text-sm font-bold font-heading"
               data-testid="confirm-logout-all-btn"
               type="submit"
-              :disabled="!logoutAllModal.password.trim() || submitting"
+              :disabled="!logoutAllModal.password.trim() || (mfaStatus?.enabled && logoutAllModal.totp.trim().length !== 6) || submitting"
             >
               {{ submitting ? "Đang xử lý..." : "Xác nhận đăng xuất tất cả" }}
             </button>
@@ -477,6 +519,7 @@
     useUserAuthClient,
     useUserSession,
   } from "~/composables/use-auth-client";
+  import { clearOfflinePackClientData } from "~/composables/use-offline-pack";
   import {
     formatSecurityAuthMethod as formatAuthMethod,
     formatSecurityDate as formatDate,
@@ -515,12 +558,14 @@
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
+    totp: "",
     error: "",
   });
 
   const logoutAllModal = reactive({
     isOpen: false,
     password: "",
+    totp: "",
     error: "",
   });
 
@@ -587,6 +632,7 @@
     passwordModal.currentPassword = "";
     passwordModal.newPassword = "";
     passwordModal.confirmPassword = "";
+    passwordModal.totp = "";
     passwordModal.error = "";
     passwordFieldErrors.value = {};
     passwordModal.isOpen = true;
@@ -616,9 +662,12 @@
 
     isSubmittingPassword.value = true;
     try {
+      const trimmedTotp = passwordModal.totp.trim();
       await api("/api/users/auth/reauth", {
         method: "POST",
-        body: { password: passwordModal.currentPassword },
+        body: trimmedTotp
+          ? { password: passwordModal.currentPassword, totp: trimmedTotp }
+          : { password: passwordModal.currentPassword },
       });
 
       const res = await api<{ ok: boolean; message: string }>(
@@ -669,6 +718,7 @@
 
   function openLogoutAllModal(): void {
     logoutAllModal.password = "";
+    logoutAllModal.totp = "";
     logoutAllModal.error = "";
     logoutAllModal.isOpen = true;
   }
@@ -680,13 +730,17 @@
     submitting.value = true;
     logoutAllModal.error = "";
     try {
+      const trimmedTotp = logoutAllModal.totp.trim();
       await api("/api/users/auth/reauth", {
         method: "POST",
-        body: { password: logoutAllModal.password },
+        body: trimmedTotp
+          ? { password: logoutAllModal.password, totp: trimmedTotp }
+          : { password: logoutAllModal.password },
       });
       await authClient.revokeSessions();
       await authClient.signOut();
       await clearUserSession();
+      await clearOfflinePackClientData({ reason: "logout" });
       logoutAllModal.isOpen = false;
       sessions.value = [];
       successMessage.value = "Đã đăng xuất khỏi tất cả các thiết bị.";

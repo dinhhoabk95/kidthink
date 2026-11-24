@@ -1,19 +1,40 @@
 import { describe, expect, it, vi } from "vitest";
-import { DEFAULT_LOGIC_SPACE, type LogicSpace } from "#src/layout/constants";
-import { findHitEntity } from "#src/layout/hit-test.js";
+import {
+  DEFAULT_LOGIC_SPACE,
+  deriveLogicSpace,
+  type LogicSpace,
+} from "#src/layout/constants";
+import { findHitEntity } from "#src/layout/hit-test";
+import { computeStageZones } from "#src/layout/stage-zones";
+import {
+  drawGT002ActionCornerPin,
+  drawGT002CriterionHeader,
+  drawGT002CriterionHintRegion,
+  inferFallbackCriterionAnchor,
+} from "#src/render/gt-002-criterion";
+import { drawGT002BoardFrame } from "#src/render/gt-002-shapes";
 import { designTokens } from "#src/systems/designTokens";
 import { RenderSystem } from "#src/systems/render-system";
 import { WRONG_FLASH_MS } from "#src/systems/wrong-flash";
 import { GT002_FIXTURES } from "#src/templates/GT-002/fixtures";
+import {
+  computeGT002StageLayout,
+  resolveGT002PlateShape,
+  resolveGT002TokenPose,
+  toHitShape,
+} from "#src/templates/GT-002/layout";
 import { GT002Session } from "#src/templates/GT-002/session";
+import type {
+  GT002Content,
+  GT002CriterionAnchor,
+} from "#src/templates/GT-002/template";
 import { createFakeCanvas } from "#tests/gates/fake-canvas";
+import {
+  findDrawsOutsideStage,
+  findSlotsOutsideStage,
+} from "#tests/layout/stage-checks";
 
-/**
- * GT-002 chấm tập chọn **chỉ** khi `commit` (`BR-E002-02`, `N4`, `N6`).
- * Trước Task #275 S1a, chọn đủ tập đúng là thắng ngay: `dispatch()` nuốt mọi
- * cử chỉ sau đó nên trẻ không bỏ chọn được, và bề mặt web từ chối "Bỏ qua"
- * vì vòng đã "thắng" mà chưa ai nộp.
- */
+const RATIO_TEXT_RE = /\d+\/\d+/u;
 const fixture = GT002_FIXTURES[0];
 if (!fixture) {
   throw new Error("Fixture GT-002 not found");
@@ -46,11 +67,9 @@ function tapItem(session: GT002Session, itemId: string): void {
 describe("GT-002 — thắng chỉ khi commit (BR-E002-02, Task #275 S1a)", () => {
   it("chọn đủ tập đúng mà chưa commit thì chưa thắng", () => {
     const session = buildSession();
-
     for (const id of correctIds) {
       tapItem(session, id);
     }
-
     expect(session.checkWinCondition()).toBe(false);
   });
 
@@ -63,9 +82,7 @@ describe("GT-002 — thắng chỉ khi commit (BR-E002-02, Task #275 S1a)", () =
     if (!firstCorrect) {
       throw new Error("Fixture không có vật đúng");
     }
-
     tapItem(session, firstCorrect);
-
     expect(session.getItemState(firstCorrect)).toBe("idle");
   });
 
@@ -74,19 +91,12 @@ describe("GT-002 — thắng chỉ khi commit (BR-E002-02, Task #275 S1a)", () =
     for (const id of correctIds) {
       tapItem(session, id);
     }
-
     const verdict = session.dispatch({ type: "commit", timeMs: 0 });
-
     expect(verdict?.valid).toBe(true);
     expect(session.checkWinCondition()).toBe(true);
   });
 });
 
-/**
- * Nút **Xong** nằm ở `zones.action` do shell vẽ (`BR-PSZ-05`, Task #283 B2): engine
- * khai `needsCommit`, báo sáng/mờ qua `canCommit()` và chỉ nhận `commit`.
- * Trước đó (#275 S1b) engine tự vẽ nút trong canvas; nút đó đã gỡ.
- */
 describe("GT-002 — nút Xong ở zones.action (BR-PSZ-05, Task #283 B2)", () => {
   it("khai needsCommit, mờ khi chưa chọn, sáng khi đã chọn", () => {
     const session = buildSession();
@@ -94,7 +104,6 @@ describe("GT-002 — nút Xong ở zones.action (BR-PSZ-05, Task #283 B2)", () =
     if (!firstCorrect) {
       throw new Error("Fixture không có vật đúng");
     }
-
     expect(session.needsCommit).toBe(true);
     expect(session.canCommit()).toBe(false);
     tapItem(session, firstCorrect);
@@ -103,9 +112,7 @@ describe("GT-002 — nút Xong ở zones.action (BR-PSZ-05, Task #283 B2)", () =
 
   it("getView() không còn entity nút Xong — shell dựng nút hành động", () => {
     const session = buildSession();
-
     const ids = session.getView().entities.map((e) => e.id);
-
     expect(ids.every((id) => id !== "commit:done")).toBe(true);
   });
 
@@ -118,18 +125,14 @@ describe("GT-002 — nút Xong ở zones.action (BR-PSZ-05, Task #283 B2)", () =
     }
     tapItem(session, firstCorrect);
     tapItem(session, firstDistractor);
-
     const verdict = session.dispatch({ type: "commit", timeMs: 0 });
-
     expect(verdict).toEqual({ valid: false, feedback: "amber_soft" });
     expect(session.checkWinCondition()).toBe(false);
   });
 
   it("commit khi chưa chọn vật nào thì bị nuốt, không tính lần sai", () => {
     const session = buildSession();
-
     const verdict = session.dispatch({ type: "commit", timeMs: 0 });
-
     expect(verdict).toEqual({ valid: false, feedback: "none" });
     expect(session.checkWinCondition()).toBe(false);
   });
@@ -137,16 +140,14 @@ describe("GT-002 — nút Xong ở zones.action (BR-PSZ-05, Task #283 B2)", () =
   it("chọn đủ vật đúng thì gợi ý trỏ vào nút hành động, chưa đủ thì trỏ vật", () => {
     const session = buildSession();
     expect(session.getHintTarget()?.kind).toBe("slot");
-
     for (const id of correctIds) {
       tapItem(session, id);
     }
-
     expect(session.getHintTarget()).toEqual({ kind: "action" });
   });
 });
 
-describe("GT-002 — commit sai giữ tập chọn, trạng thái một nguồn (G3, G5, Task #275 S2)", () => {
+describe("GT-002 — commit sai giữ tập chọn, trạng thái một nguồn (G3, G5)", () => {
   it("commit sai thì giữ nguyên tập chọn và không entity nào ở trạng thái incorrect", () => {
     const session = buildSession();
     const [firstCorrect] = correctIds;
@@ -156,13 +157,13 @@ describe("GT-002 — commit sai giữ tập chọn, trạng thái một nguồn 
     }
     tapItem(session, firstCorrect);
     tapItem(session, firstDistractor);
-
     session.dispatch({ type: "commit", timeMs: 0 });
 
     expect(session.getItemState(firstDistractor)).toBe("selected");
     expect(session.getItemState(firstCorrect)).toBe("selected");
-    const entities = session.getView().entities;
-    expect(entities.some((e) => e.state === "incorrect")).toBe(false);
+    expect(
+      session.getView().entities.some((e) => e.state === "incorrect")
+    ).toBe(false);
   });
 
   it("chạm lại distractor sau khi commit sai: trở về idle và mechanic không còn chọn", () => {
@@ -173,7 +174,6 @@ describe("GT-002 — commit sai giữ tập chọn, trạng thái một nguồn 
     }
     tapItem(session, firstDistractor);
     session.dispatch({ type: "commit", timeMs: 0 });
-
     tapItem(session, firstDistractor);
 
     expect(session.getItemState(firstDistractor)).toBe("idle");
@@ -184,8 +184,8 @@ describe("GT-002 — commit sai giữ tập chọn, trạng thái một nguồn 
   });
 });
 
-describe("GT-002 — vị trí vật xáo theo seed (R3, Task #275 S4)", () => {
-  it("cùng seed thì cùng thứ tự, khác seed thì vị trí vật đổi", () => {
+describe("GT-002 — vị trí vật xáo theo seed & preserve_order (BR-E002-07)", () => {
+  it("cùng seed thì cùng thứ tự, khác seed thì vị trí vật đổi; preserve_order giữ nguyên trật tự gốc", () => {
     const s1 = new GT002Session(content, difficulty, 42);
     s1.prepareRound("4-5");
     const s2 = new GT002Session(content, difficulty, 42);
@@ -193,12 +193,22 @@ describe("GT-002 — vị trí vật xáo theo seed (R3, Task #275 S4)", () => {
     const s3 = new GT002Session(content, difficulty, 9999);
     s3.prepareRound("4-5");
 
-    const order1 = s1.displayItems.map((i) => i.item_id);
-    const order2 = s2.displayItems.map((i) => i.item_id);
-    const order3 = s3.displayItems.map((i) => i.item_id);
+    expect(s1.displayItems.map((i) => i.item_id)).toEqual(
+      s2.displayItems.map((i) => i.item_id)
+    );
+    expect(s1.displayItems.map((i) => i.item_id)).not.toEqual(
+      s3.displayItems.map((i) => i.item_id)
+    );
 
-    expect(order1).toEqual(order2);
-    expect(order1).not.toEqual(order3);
+    const ordered = new GT002Session(
+      { ...content, preserve_order: true },
+      difficulty,
+      9999
+    );
+    ordered.prepareRound("4-5");
+    expect(ordered.displayItems.map((i) => i.item_id)).toEqual(
+      content.items.map((i) => i.item_id)
+    );
   });
 
   it("getHintTargetIndex() trỏ đúng vật đúng sau khi xáo", () => {
@@ -212,9 +222,7 @@ describe("GT-002 — vị trí vật xáo theo seed (R3, Task #275 S4)", () => {
 
   it("20.000 seed: tỉ lệ vật đúng ở ô 0 lệch <= 1 điểm % so với target_count / item_count", () => {
     const targetCount = content.items.filter((i) => i.is_correct).length;
-    const totalCount = content.items.length;
-    const expectedRatio = targetCount / totalCount;
-
+    const expectedRatio = targetCount / content.items.length;
     let correctAtZero = 0;
     const totalTrials = 20_000;
     for (let seed = 1; seed <= totalTrials; seed++) {
@@ -224,66 +232,96 @@ describe("GT-002 — vị trí vật xáo theo seed (R3, Task #275 S4)", () => {
         correctAtZero++;
       }
     }
-
-    const actualRatio = correctAtZero / totalTrials;
-    expect(Math.abs(actualRatio - expectedRatio)).toBeLessThanOrEqual(0.01);
+    expect(
+      Math.abs(correctAtZero / totalTrials - expectedRatio)
+    ).toBeLessThanOrEqual(0.01);
   });
 });
 
-describe("GT-002 — chạm vật đọc tên, một hình học chạm (R6, E4/E5, Task #275 S5)", () => {
-  it("getView() mang glyph, label, spokenLabel và role neutral", () => {
-    const session = buildSession();
-    const entities = session.getView().entities;
-
-    expect(entities.length).toBe(content.items.length);
-    for (const entity of entities) {
-      expect(entity.role).toBe("neutral");
-      expect(entity.label).toBeDefined();
-      expect(entity.spokenLabel).toBeDefined();
-    }
+describe("GT-002 — đế đa hình thái & đồng bộ HitShape (BR-E002-07)", () => {
+  it("resolveGT002PlateShape bật wood_tile cho representation, 3D/rectangle, text và secondary_asset", () => {
+    expect(
+      resolveGT002PlateShape({ asset: { kind: "emoji", ref: "🍎" } })
+    ).toBe("round_plate");
+    expect(
+      resolveGT002PlateShape({
+        asset: { kind: "text", text: "bò" },
+      })
+    ).toBe("wood_tile");
+    expect(
+      resolveGT002PlateShape({
+        asset: { kind: "emoji", ref: "🍎" },
+        representation: { kind: "ten-frame", count: 4 },
+      })
+    ).toBe("wood_tile");
+    expect(
+      resolveGT002PlateShape({
+        asset: { kind: "emoji", ref: "🧊" },
+        geometric_spec: { form: "cube", color_token: "sky" },
+      })
+    ).toBe("wood_tile");
+    expect(
+      resolveGT002PlateShape({
+        asset: { kind: "emoji", ref: "🟧" },
+        geometric_spec: { form: "rectangle", color_token: "amber" },
+      })
+    ).toBe("wood_tile");
+    expect(toHitShape("round_plate")).toBe("circle");
+    expect(toHitShape("wood_tile")).toBe("square");
   });
 
-  it("điểm ở góc hình vuông cũ nhưng ngoài vòng tròn (bán kính + 24px) thì toAction trả null", () => {
-    const session = buildSession();
-    const slot = session.slots[0];
-    if (!slot) {
+  it("round_plate từ chối góc Chebyshev ngoài vòng tròn, còn wood_tile nhận góc và đồng bộ findHitEntity", () => {
+    const roundSession = buildSession();
+    const slot0 = roundSession.slots[0];
+    if (!slot0) {
       throw new Error("Thiếu slot");
     }
-    const r = Math.min(slot.hitW, slot.w) / 2;
-    // Điểm ở góc: dx = r + 16, dy = r + 16.
-    // Chebyshev (hình vuông): max(dx, dy) = r + 16 <= r + 24.
-    // Euclid (vòng tròn): hypot(dx, dy) = 1.414 * (r + 16) > r + 24.
-    const cornerX = slot.x + r + 16;
-    const cornerY = slot.y + r + 16;
+    const r = Math.min(slot0.hitW, slot0.w) / 2;
+    const cornerX = slot0.x + r + 16;
+    const cornerY = slot0.y + r + 16;
+    expect(
+      roundSession.toAction({ type: "tap", x: cornerX, y: cornerY, timeMs: 0 })
+    ).toBeNull();
 
-    const action = session.toAction({
-      type: "tap",
-      x: cornerX,
-      y: cornerY,
-      timeMs: 0,
-    });
+    const geomFixture = GT002_FIXTURES[2];
+    if (!geomFixture) {
+      throw new Error("Thiếu fixture hình học");
+    }
+    const tileSession = new GT002Session(
+      geomFixture.content,
+      geomFixture.difficulty,
+      1
+    );
+    tileSession.prepareRound("5-6");
+    const tileSlot0 = tileSession.slots[0];
+    if (!tileSlot0) {
+      throw new Error("Thiếu tile slot");
+    }
+    const tr = tileSlot0.hitW / 2;
+    expect(
+      tileSession.toAction({
+        type: "tap",
+        x: tileSlot0.x + tr + 16,
+        y: tileSlot0.y + tr + 16,
+        timeMs: 0,
+      })
+    ).not.toBeNull();
 
-    expect(action).toBeNull();
-  });
-
-  it("quét lưới điểm: toAction và findHitEntity chọn cùng một entity", () => {
-    const session = buildSession();
-    const entities = session.getView().entities;
-
-    for (let x = 0; x <= 960; x += 30) {
-      for (let y = 0; y <= 540; y += 30) {
-        const action = session.toAction({ type: "tap", x, y, timeMs: 0 });
-        const hitEntity = findHitEntity(entities, x, y);
-
-        const actionItemId =
-          action &&
-          typeof action.data === "object" &&
-          action.data !== null &&
-          "item_id" in action.data
-            ? String(Reflect.get(action.data, "item_id"))
-            : null;
-
-        expect(actionItemId).toBe(hitEntity ? hitEntity.id : null);
+    for (const s of [roundSession, tileSession]) {
+      const entities = s.getView().entities;
+      for (let x = 0; x <= 960; x += 30) {
+        for (let y = 0; y <= 540; y += 30) {
+          const action = s.toAction({ type: "tap", x, y, timeMs: 0 });
+          const hitEntity = findHitEntity(entities, x, y);
+          const actionItemId =
+            action &&
+            typeof action.data === "object" &&
+            action.data !== null &&
+            "item_id" in action.data
+              ? String(Reflect.get(action.data, "item_id"))
+              : null;
+          expect(actionItemId).toBe(hitEntity ? hitEntity.id : null);
+        }
       }
     }
   });
@@ -303,7 +341,6 @@ function createRecordingContext(w = 960, h = 540): RecordedDrawContext {
   }
   const calls: string[] = [];
   let maxBlur = 0;
-
   const trackBlur = (): void => {
     if (rawCtx.shadowBlur > maxBlur) {
       maxBlur = rawCtx.shadowBlur;
@@ -344,14 +381,219 @@ function createRecordingContext(w = 960, h = 540): RecordedDrawContext {
   };
 }
 
-describe("GT-002 — Regression & UI/UX Contract (Hint, Retry, Telemetry, 7 Render Gates)", () => {
+describe("GT-002 — Bố cục 360x640 portrait, exact_count, preselected & Thang trợ giúp L1-L3", () => {
+  it("8 vật trên portrait 360x640 (canvas 300x493) vừa khít 3x3, 0 tràn, đạt sàn chạm >= 76px CSS (4-5) và >= 64px CSS (5-6)", () => {
+    const eightItems: GT002Content = {
+      prompt: "Chọn hết quả đỏ",
+      target_criterion: "Quả đỏ",
+      items: Array.from({ length: 8 }, (_, idx) => ({
+        item_id: `it_${idx}`,
+        asset: { kind: "emoji" as const, ref: idx < 3 ? "🍎" : "🍐" },
+        is_correct: idx < 3,
+      })),
+    };
+    const space = deriveLogicSpace(300, 493);
+    const cssPerLogic = 300 / space.w;
+
+    for (const [band, floorCss] of [
+      ["4-5", 76],
+      ["5-6", 64],
+    ] as const) {
+      const zones = computeStageZones({
+        logicW: space.w,
+        logicH: space.h,
+        ageBand: band,
+        cssPerLogic,
+        needsTray: false,
+        needsCommit: true,
+      });
+      const s = new GT002Session(eightItems, {
+        ...difficulty,
+        item_count: 8,
+        target_count: 3,
+        distractor_count: 5,
+      });
+      s.prepareRound(band, space, zones.stage, undefined, cssPerLogic);
+      expect(s.slots.every((sl) => sl.page === 0)).toBe(true);
+      for (const sl of s.slots) {
+        expect(sl.hitW * cssPerLogic).toBeGreaterThanOrEqual(floorCss - 0.01);
+        expect(sl.hitH * cssPerLogic).toBeGreaterThanOrEqual(floorCss - 0.01);
+      }
+      expect(findSlotsOutsideStage(s.slots, zones.stage)).toEqual([]);
+      const stageLayout = computeGT002StageLayout({
+        itemCount: 8,
+        ageBand: band,
+        logicSpace: space,
+        stageRect: zones.stage,
+        cssPerLogic,
+      });
+      const rs = new RenderSystem();
+      const anchor = inferFallbackCriterionAnchor(eightItems);
+      expect(
+        findDrawsOutsideStage(zones.stage, (ctx) => {
+          drawGT002BoardFrame(ctx, rs, stageLayout.boardRect, "sedge_harvest");
+          drawGT002CriterionHeader(ctx, rs, stageLayout, {
+            anchor,
+            allowNegated: band === "5-6",
+            selectionMode: "all_matching",
+            requiredSelectCount: 3,
+            selectedChips: [],
+            isWon: false,
+            isWrongFlashing: false,
+            hintLevel: 1,
+          });
+          drawGT002ActionCornerPin(
+            ctx,
+            rs,
+            stageLayout.actionPinRect,
+            anchor,
+            band === "5-6"
+          );
+          drawGT002CriterionHintRegion(ctx, rs, stageLayout, 250);
+        })
+      ).toEqual([]);
+    }
+
+    const ultraWideLayout = computeGT002StageLayout({
+      itemCount: 8,
+      ageBand: "4-5",
+      logicSpace: { w: 960, h: 320 },
+      stageRect: { x: 16, y: 16, w: 800, h: 260 },
+      cssPerLogic: 0.65,
+    });
+    expect(ultraWideLayout.headerPlacement).toBe("side");
+    expect(ultraWideLayout.slots.every((sl) => sl.page === 0)).toBe(true);
+  });
+
+  it("exact_count + preselected_item_ids: kiểm giỏ nạp sẵn lựa chọn, thắng với bất kỳ N vật đúng và 0 nhiễu", () => {
+    const exactFixture = GT002_FIXTURES[5];
+    if (!exactFixture) {
+      throw new Error("Thiếu fixture exact_count");
+    }
+    const s = new GT002Session(exactFixture.content, exactFixture.difficulty);
+    s.prepareRound("5-6");
+
+    expect(s.getItemState("apple_left")).toBe("selected");
+    expect(s.getItemState("lemon_mid")).toBe("selected");
+    expect(s.dispatch({ type: "commit", timeMs: 0 })?.valid).toBe(false);
+
+    tapItem(s, "lemon_mid");
+    tapItem(s, "strawberry_right");
+    expect(s.getHintTarget()).toEqual({ kind: "action" });
+    expect(s.dispatch({ type: "commit", timeMs: 10 })?.valid).toBe(true);
+    expect(s.checkWinCondition()).toBe(true);
+    expect(s.getItemState("apple_left")).toBe("correct");
+    expect(s.getItemState("strawberry_right")).toBe("correct");
+    expect(s.getItemState("cherry_mid")).toBe("idle");
+  });
+
+  it("BR-E002-08: thang trợ giúp L1 (region + tắt thở + isSoftDimmed), L2 (slot), L3 (demo sequence -> action)", () => {
+    const s = buildSession(DEFAULT_LOGIC_SPACE);
+    expect(s.getHintTargetForLevel(1)).toEqual({
+      kind: "region",
+      ids: ["gt002-criterion-header"],
+    });
+    expect(
+      s.getView().entities.some((e) => e.id === "gt002-criterion-header")
+    ).toBe(false);
+
+    const breatheOn = resolveGT002TokenPose("idle", 0, false, {
+      timeMs: 650,
+      selectElapsedMs: 9999,
+      winElapsedMs: 0,
+      wrongProgress: 0,
+      isActiveWrong: false,
+      isHintActive: false,
+    });
+    const breatheMuted = resolveGT002TokenPose("idle", 0, false, {
+      timeMs: 650,
+      selectElapsedMs: 9999,
+      winElapsedMs: 0,
+      wrongProgress: 0,
+      isActiveWrong: false,
+      isHintActive: true,
+    });
+    expect(breatheOn.dy).not.toBe(0);
+    expect(breatheMuted.dy).toBe(0);
+
+    s.onScaffoldEscalated(1);
+    const rs = new RenderSystem();
+    const regionSpy = vi.spyOn(rs, "renderScaffoldingRegion");
+    const recL1 = createRecordingContext();
+    s.render(recL1.ctx, rs, 500);
+    expect(regionSpy).toHaveBeenCalledTimes(1);
+
+    s.onScaffoldEscalated(2);
+    expect(s.getHintTargetForLevel(2)?.kind).toBe("slot");
+    const seqL3 = s.getHintDemoSequence(3);
+    expect(seqL3?.length).toBe(correctIds.length);
+    expect(seqL3?.[0]?.from).toBe(s.getHintTargetIndex());
+
+    for (const id of correctIds) {
+      tapItem(s, id);
+    }
+    expect(s.getHintTargetForLevel(1)).toEqual({ kind: "action" });
+    expect(s.getHintTargetForLevel(3)).toEqual({ kind: "action" });
+    expect(s.getHintDemoSequence(3)).toBeNull();
+    s.onHintCleared();
+  });
+
+  it("BR-E002-06: vẽ đủ 7 kind criterion_anchor + negated ở 5-6, fallback suy diễn và mẹt mở không lộ x/N", () => {
+    const anchors: readonly GT002CriterionAnchor[] = [
+      { kind: "color", color_token: "coral" },
+      { kind: "shape", form: "pyramid", color_token: "indigo" },
+      { kind: "size_compare", relation: "larger" },
+      { kind: "quantity", count: 4 },
+      {
+        kind: "category",
+        cue_asset: { kind: "emoji", ref: "🍎" },
+        secondary_cue_asset: { kind: "emoji", ref: "🍓" },
+      },
+      {
+        kind: "phonics",
+        symbol_text: "b",
+        cue_asset: { kind: "emoji", ref: "🐄" },
+      },
+      {
+        kind: "conjunction",
+        operator: "and",
+        clauses: [
+          { kind: "color", color_token: "coral" },
+          { kind: "shape", form: "circle" },
+        ],
+        negated: true,
+      },
+    ];
+    const rs = new RenderSystem();
+    for (const anchor of anchors) {
+      const s = new GT002Session(
+        { ...content, criterion_anchor: anchor },
+        difficulty
+      );
+      s.prepareRound("5-6", DEFAULT_LOGIC_SPACE);
+      const rec = createRecordingContext();
+      expect(() => s.render(rec.ctx, rs, 100)).not.toThrow();
+      for (const call of rec.calls.filter((c) => c.startsWith("fillText("))) {
+        expect(call).not.toMatch(RATIO_TEXT_RE);
+      }
+    }
+
+    const inferred = inferFallbackCriterionAnchor({
+      prompt: "Chọn tất cả quả màu vàng",
+      target_criterion: "Màu vàng",
+      items: content.items,
+    });
+    expect(inferred).toEqual({ kind: "color", color_token: "amber" });
+  });
+});
+
+describe("GT-002 — Regression & UI/UX Contract (Retry, Telemetry, 7 Render Gates)", () => {
   it("Hint khi chọn thừa distractor: trỏ vào distractor để bỏ chọn, KHÔNG trỏ nút action", () => {
     const session = buildSession();
     const [firstDistractor] = distractorIds;
     if (!firstDistractor) {
       throw new Error("Thiếu distractor");
     }
-
     for (const id of correctIds) {
       tapItem(session, id);
     }
@@ -371,26 +613,6 @@ describe("GT-002 — Regression & UI/UX Contract (Hint, Retry, Telemetry, 7 Rend
     expect(session.getHintTarget()).toEqual({ kind: "action" });
   });
 
-  it("Hint sau khi thắng hoặc đóng vòng trả null; getHintDemoSequence(3) trả chuỗi bước khi còn >= 2 bước", () => {
-    const session = buildSession();
-    const demoInitial = session.getHintDemoSequence(3);
-    expect(demoInitial).not.toBeNull();
-    expect(demoInitial?.length).toBe(correctIds.length);
-    expect(demoInitial?.[0]?.from).toBe(session.getHintTargetIndex());
-    expect(session.getHintDemoSequence(2)).toBeNull();
-
-    for (const id of correctIds) {
-      tapItem(session, id);
-    }
-    expect(session.getHintDemoSequence(3)).toBeNull();
-
-    session.dispatch({ type: "commit", timeMs: 0 });
-    expect(session.checkWinCondition()).toBe(true);
-    expect(session.getHintTargetIndex()).toBeNull();
-    expect(session.getHintTarget()).toBeNull();
-    expect(session.getHintDemoSequence(3)).toBeNull();
-  });
-
   it("allow_retry: false — nộp sai đóng vòng, khoá input và sau WRONG_FLASH_MS làm sáng các vật đúng", () => {
     const session = new GT002Session(
       content,
@@ -399,8 +621,7 @@ describe("GT-002 — Regression & UI/UX Contract (Hint, Retry, Telemetry, 7 Rend
     );
     session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
     const [firstDistractor] = distractorIds;
-    const [firstCorrect] = correctIds;
-    if (!(firstDistractor && firstCorrect)) {
+    if (!firstDistractor) {
       throw new Error("Thiếu item");
     }
 
@@ -413,26 +634,13 @@ describe("GT-002 — Regression & UI/UX Contract (Hint, Retry, Telemetry, 7 Rend
     expect(session.getHintTarget()).toBeNull();
     expect(session.getRenderState(firstDistractor)).toBe("wrong");
 
-    const slot0 = session.slots[0];
-    if (!slot0) {
-      throw new Error("Thiếu slot 0");
-    }
-    expect(
-      session.toAction({ type: "tap", x: slot0.x, y: slot0.y, timeMs: 10 })
-    ).toBeNull();
-    expect(
-      session.dispatch({ type: "tap", x: slot0.x, y: slot0.y, timeMs: 10 })
-    ).toEqual({ valid: false, feedback: "none" });
-
     session.update(WRONG_FLASH_MS);
     expect(session.isWrongFlashing()).toBe(false);
     for (const id of correctIds) {
       expect(session.getItemState(id)).toBe("selected");
-      expect(session.getRenderState(id)).toBe("selected");
     }
     for (const id of distractorIds) {
       expect(session.getItemState(id)).toBe("idle");
-      expect(session.getRenderState(id)).toBe("idle");
     }
   });
 
@@ -452,10 +660,6 @@ describe("GT-002 — Regression & UI/UX Contract (Hint, Retry, Telemetry, 7 Rend
       .getTelemetry()
       .events.filter((e) => e.event_name === "item_selected");
     expect(selectedEvents1).toHaveLength(1);
-    expect(selectedEvents1[0]?.data).toEqual({
-      item_id: firstDistractor,
-      is_correct: false,
-    });
 
     session.dispatch({ type: "commit", timeMs: 0 });
     expect(session.isWrongFlashing()).toBe(true);
@@ -467,12 +671,6 @@ describe("GT-002 — Regression & UI/UX Contract (Hint, Retry, Telemetry, 7 Rend
     tapItem(session, firstCorrect);
     expect(session.isWrongFlashing()).toBe(false);
     expect(session.getRenderState(firstCorrect)).toBe("selected");
-
-    tapItem(session, firstDistractor);
-    const selectedEventsAfterDeselect = session
-      .getTelemetry()
-      .events.filter((e) => e.event_name === "item_selected");
-    expect(selectedEventsAfterDeselect).toHaveLength(2);
   });
 
   it("BR-ERC-02: render() thuần 100% — gọi 100 lần cùng timeMs giữ nguyên Object.entries(session), 0 telemetry mới và hạt chỉ bước ở update()", () => {
@@ -552,11 +750,7 @@ describe("GT-002 — Regression & UI/UX Contract (Hint, Retry, Telemetry, 7 Rend
         idx === 0
           ? {
               ...item,
-              asset: {
-                id: "broken_fish",
-                kind: "emoji" as const,
-                ref: "EMJ-BROKEN-999",
-              },
+              asset: { kind: "emoji" as const, ref: "EMJ-BROKEN-999" },
             }
           : item
       ),

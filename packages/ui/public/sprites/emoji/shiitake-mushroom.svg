@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nấm hương nâu</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="shmCap" r="70%"><stop offset="0%" stop-color="#d97706" /><stop offset="55%" stop-color="#92400e" /><stop offset="100%" stop-color="#5c2d16" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#451a03" opacity="0.22" rx="28" ry="5" />
+    <path d="M49 62H71L75 97C75 102 45 102 45 97Z" fill="#fef3c7" stroke="#5c2d16" stroke-linejoin="round" stroke-width="3.8" />
+    <ellipse cx="60" cy="62" fill="#fde68a" rx="36" ry="9" stroke="#5c2d16" stroke-width="3.6" />
+    <path d="M22 61C22 33 40 20 60 20C80 20 98 33 98 61C82 67 38 67 22 61Z" fill="url(#shmCap)" stroke="#451a03" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M46 30L52 38M62 26L60 36M75 32L69 40" stroke="#fef3c7" stroke-linecap="round" stroke-width="3" />
+</svg>

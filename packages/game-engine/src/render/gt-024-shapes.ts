@@ -1,4 +1,5 @@
 import { alpha } from "#src/render/color-utils";
+import { getEmojiSprite } from "#src/render/sprite-registry";
 import { applyCanvasFontAtSize, legibleFontPx } from "#src/render/type-scale";
 import type { SceneBox } from "#src/render/types";
 import { designTokens } from "#src/systems/designTokens";
@@ -154,10 +155,17 @@ export function drawGT024SandSlate(
   if (opts.guideGlyph && gx + px < box.x + box.w && gy + px < box.y + box.h) {
     ctx.save();
     ctx.globalAlpha = 0.24;
-    applyCanvasFontAtSize(ctx, px, "body", "normal");
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(opts.guideGlyph, gx, gy);
+    const guideSprite = getEmojiSprite(opts.guideGlyph);
+    if (guideSprite) {
+      const sz = Math.round(px * 1.3);
+      const half = sz / 2;
+      ctx.drawImage(guideSprite, gx - half, gy - half, sz, sz);
+    } else {
+      applyCanvasFontAtSize(ctx, px, "body", "normal");
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(opts.guideGlyph, gx, gy);
+    }
     ctx.restore();
   }
   ctx.restore();

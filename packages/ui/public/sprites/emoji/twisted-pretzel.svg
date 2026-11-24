@@ -1,0 +1,10 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh quy xoắn</title>
+  <defs>
+    <linearGradient id="przBake" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#d97706" /><stop offset="100%" stop-color="#78350f" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#451a03" opacity="0.22" rx="38" ry="5.5" />
+    <path d="M38 88C20 76 18 44 36 32C48 24 60 34 60 48C60 34 72 24 84 32C102 44 100 76 82 88C70 94 52 72 38 56M82 56C68 72 50 94 38 88" fill="none" stroke="#451a03" stroke-linecap="round" stroke-linejoin="round" stroke-width="15" />
+    <path d="M38 88C20 76 18 44 36 32C48 24 60 34 60 48C60 34 72 24 84 32C102 44 100 76 82 88C70 94 52 72 38 56M82 56C68 72 50 94 38 88" fill="none" stroke="url(#przBake)" stroke-linecap="round" stroke-linejoin="round" stroke-width="8.5" />
+    <circle cx="34" cy="36" fill="#ffffff" r="2" /><circle cx="86" cy="36" fill="#ffffff" r="2" /><circle cx="60" cy="68" fill="#ffffff" r="2" />
+</svg>

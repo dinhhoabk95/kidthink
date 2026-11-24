@@ -245,5 +245,23 @@ export const C5_WRT_03_SEED: SkillSeed = {
       theme: "nature",
       rounds: 3,
     },
+    {
+      code: "GL-C5-WRT-INTRO-6004",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 2,
+      theme: "vehicle",
+      rounds: 3,
+      sequence_no: 61,
+    },
+    {
+      code: "GL-C5-WRT-MATCH-6004",
+      template: "GT-005",
+      band: "4-5",
+      difficulty: 3,
+      theme: "family",
+      rounds: 3,
+      sequence_no: 63,
+    },
   ],
 };

@@ -1,67 +1,17 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Con vịt</title>
   <defs>
-    <radialGradient cx="38%" cy="32%" id="duckHead" r="68%">
-      <stop offset="0%" stop-color="#fef08a" />
-      <stop offset="50%" stop-color="#facc15" />
-      <stop offset="100%" stop-color="#eab308" />
-    </radialGradient>
-    <linearGradient id="duckBeak" x1="0%" x2="100%" y1="0%" y2="100%">
-      <stop offset="0%" stop-color="#fdba74" />
-      <stop offset="100%" stop-color="#ea580c" />
-    </linearGradient>
+    <radialGradient cx="38%" cy="30%" id="dckBody" r="70%"><stop offset="0%" stop-color="#f5f5f4" /><stop offset="55%" stop-color="#d6d3d1" /><stop offset="100%" stop-color="#a8a29e" /></radialGradient><radialGradient cx="38%" cy="30%" id="dckHead" r="70%"><stop offset="0%" stop-color="#6ee7b7" /><stop offset="55%" stop-color="#10b981" /><stop offset="100%" stop-color="#047857" /></radialGradient>
   </defs>
-  <!-- 2.5D base shadow -->
-  <ellipse cx="60" cy="70" fill="#854d0e" opacity="0.3" rx="38" ry="36" />
-  <!-- Top tuft & head -->
-  <path
-    d="M55 24C52 16 61 13 64 21C68 15 74 18 70 26"
-    fill="#facc15"
-    stroke="#854d0e"
-    stroke-linejoin="round"
-    stroke-width="3.5"
-  />
-  <ellipse
-    cx="60"
-    cy="65"
-    fill="url(#duckHead)"
-    rx="38"
-    ry="35"
-    stroke="#854d0e"
-    stroke-width="4"
-  />
-  <!-- Eyes -->
-  <circle cx="45" cy="56" fill="#1c1917" r="5" />
-  <circle cx="43.5" cy="54" fill="#ffffff" r="2" />
-  <circle cx="75" cy="56" fill="#1c1917" r="5" />
-  <circle cx="73.5" cy="54" fill="#ffffff" r="2" />
-  <!-- Cheeks -->
-  <circle cx="33" cy="67" fill="#fb923c" fill-opacity="0.45" r="5.5" />
-  <circle cx="87" cy="67" fill="#fb923c" fill-opacity="0.45" r="5.5" />
-  <!-- Smiling orange bill -->
-  <ellipse
-    cx="60"
-    cy="72"
-    fill="url(#duckBeak)"
-    rx="17"
-    ry="10"
-    stroke="#9a3412"
-    stroke-width="3.5"
-  />
-  <path
-    d="M47 72C53 77 67 77 73 72"
-    stroke="#9a3412"
-    stroke-linecap="round"
-    stroke-width="2.5"
-  />
-  <!-- Specular -->
-  <ellipse
-    cx="42"
-    cy="41"
-    fill="#ffffff"
-    fill-opacity="0.55"
-    rx="8"
-    ry="4"
-    transform="rotate(-24 42 41)"
-  />
+  <ellipse cx="60" cy="105" fill="#292524" opacity="0.22" rx="34" ry="5" />
+    <!-- Webbed orange feet -->
+    <path d="M52 86V101L44 104H57ZM67 86V101L59 104H72Z" fill="#f97316" stroke="#7c2d12" stroke-linejoin="round" stroke-width="3.2" />
+    <!-- Mallard body, chestnut breast, white collar & emerald head -->
+    <path d="M34 62C42 54 68 54 88 58L98 51L95 66C90 80 74 88 54 88C38 88 30 76 34 62Z" fill="url(#dckBody)" stroke="#292524" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M34 62C39 56 48 58 48 69C48 79 40 84 34 78Z" fill="#92400e" />
+    <ellipse cx="64" cy="69" fill="#3b82f6" rx="14" ry="7" stroke="#1e3a8a" stroke-width="2.8" />
+    <circle cx="38" cy="38" fill="url(#dckHead)" r="14" stroke="#064e3b" stroke-width="3.8" />
+    <rect fill="#ffffff" height="5" rx="2.5" stroke="#292524" stroke-width="2" width="16" x="30" y="48" />
+    <path d="M25 36L13 39C11 43 16 45 26 44Z" fill="#fbbf24" stroke="#78350f" stroke-linejoin="round" stroke-width="3" />
+    <circle cx="35" cy="35" fill="#1c1917" r="2.4" /><circle cx="34.3" cy="34.3" fill="#ffffff" r="0.9" />
 </svg>

@@ -3,6 +3,8 @@ import type { EmojiEntry } from "#src/types";
 export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   {
     emoji: "🌊",
+    slug: "ocean-wave",
+    svg_path: "/sprites/emoji/ocean-wave.svg",
     name: "Sóng",
     categories: ["nature-landscape", "weather-season"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien", "thoi_tiet_mua"],
@@ -11,6 +13,9 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "☀️",
+    slug: "sun",
+    svg_path: "/sprites/emoji/sun.svg",
+    hero_webp_path: "/sprites/hero/sun.webp",
     name: "Mặt trời",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -19,6 +24,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌤️",
+    slug: "mostly-sunny",
+    svg_path: "/sprites/emoji/mostly-sunny.svg",
     name: "Nắng nhẹ",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua"],
@@ -27,6 +34,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⛅",
+    slug: "sun-behind-cloud",
+    svg_path: "/sprites/emoji/sun-behind-cloud.svg",
     name: "Mây che nắng",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua"],
@@ -35,6 +44,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "☁️",
+    slug: "cloud",
+    svg_path: "/sprites/emoji/cloud.svg",
     name: "Mây",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -43,6 +54,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌧️",
+    slug: "rain-cloud",
+    svg_path: "/sprites/emoji/rain-cloud.svg",
     name: "Mưa",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -51,6 +64,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⛈️",
+    slug: "storm-cloud",
+    svg_path: "/sprites/emoji/storm-cloud.svg",
     name: "Giông bão",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -59,6 +74,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌩️",
+    slug: "lightning-cloud",
+    svg_path: "/sprites/emoji/lightning-cloud.svg",
     name: "Sấm chớp",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -67,6 +84,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "❄️",
+    slug: "snowflake",
+    svg_path: "/sprites/emoji/snowflake.svg",
     name: "Tuyết",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -75,6 +94,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⛄",
+    slug: "snowman",
+    svg_path: "/sprites/emoji/snowman.svg",
     name: "Người tuyết",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua"],
@@ -83,6 +104,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌈",
+    slug: "rainbow",
+    svg_path: "/sprites/emoji/rainbow.svg",
     name: "Cầu vồng",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -91,6 +114,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "💨",
+    slug: "wind-gust",
+    svg_path: "/sprites/emoji/wind-gust.svg",
     name: "Gió",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -99,6 +124,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌫️",
+    slug: "misty-fog",
+    svg_path: "/sprites/emoji/misty-fog.svg",
     name: "Sương mù",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -107,14 +134,18 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌡️",
+    slug: "thermometer",
+    svg_path: "/sprites/emoji/thermometer.svg",
     name: "Nhiệt kế",
-    categories: ["weather-season"],
+    categories: ["weather-season", "science-lab"],
     curriculum_themes: ["thoi_tiet_mua"],
     keywords: ["thermometer", "nhiệt kế", "nhiệt độ", "đo"],
     age_min: 5,
   },
   {
     emoji: "☔",
+    slug: "rain-umbrella",
+    svg_path: "/sprites/emoji/rain-umbrella.svg",
     name: "Dù mưa",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua"],
@@ -123,6 +154,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌂",
+    slug: "folded-umbrella",
+    svg_path: "/sprites/emoji/folded-umbrella.svg",
     name: "Ô dù",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua"],
@@ -131,6 +164,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "💧",
+    slug: "droplet",
+    svg_path: "/sprites/emoji/droplet.svg",
     name: "Giọt nước",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -139,6 +174,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌬️",
+    slug: "blowing-wind",
+    svg_path: "/sprites/emoji/blowing-wind.svg",
     name: "Gió thổi",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -147,6 +184,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔥",
+    slug: "campfire-flame",
+    svg_path: "/sprites/emoji/campfire-flame.svg",
     name: "Lửa",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -155,6 +194,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌪️",
+    slug: "wind-tornado",
+    svg_path: "/sprites/emoji/wind-tornado.svg",
     name: "Lốc xoáy",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -163,6 +204,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌥️",
+    slug: "cloudy-sun",
+    svg_path: "/sprites/emoji/cloudy-sun.svg",
     name: "Mây che",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua"],
@@ -171,6 +214,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌦️",
+    slug: "sun-rain-cloud",
+    svg_path: "/sprites/emoji/sun-rain-cloud.svg",
     name: "Mưa nắng",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua"],
@@ -179,6 +224,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌨️",
+    slug: "snow-cloud",
+    svg_path: "/sprites/emoji/snow-cloud.svg",
     name: "Tuyết rơi",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -187,6 +234,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "☃️",
+    slug: "snowy-snowman",
+    svg_path: "/sprites/emoji/snowy-snowman.svg",
     name: "Người tuyết lớn",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua"],
@@ -195,6 +244,9 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌞",
+    slug: "smiling-sun",
+    svg_path: "/sprites/emoji/smiling-sun.svg",
+    hero_webp_path: "/sprites/hero/smiling-sun.webp",
     name: "Mặt trời cười",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua"],
@@ -203,6 +255,8 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "☂️",
+    slug: "umbrella",
+    svg_path: "/sprites/emoji/umbrella.svg",
     name: "Cái ô",
     categories: ["weather-season", "clothing"],
     curriculum_themes: ["thoi_tiet_mua"],
@@ -211,14 +265,18 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⚡",
+    slug: "lightning-bolt",
+    svg_path: "/sprites/emoji/lightning-bolt.svg",
     name: "Tia chớp",
-    categories: ["weather-season"],
+    categories: ["weather-season", "science-lab"],
     curriculum_themes: ["thoi_tiet_mua"],
     keywords: ["lightning", "sấm sét", "tia chớp"],
     age_min: 3,
   },
   {
     emoji: "🌀",
+    slug: "spiral-swirl",
+    svg_path: "/sprites/emoji/spiral-swirl.svg",
     name: "Cơn lốc xoáy",
     categories: ["weather-season"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],

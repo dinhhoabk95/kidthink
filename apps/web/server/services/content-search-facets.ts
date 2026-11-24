@@ -1,16 +1,11 @@
 import {
-  contentSkillMap,
-  gameLevels,
-  type OwnerDb,
-  skills,
-  strands,
+  ACCESS_TIER_CODEC,
+  type GameLevelFacetRow,
+  type GameLevelsRepository,
+  type SearchGameLevelsFilter,
 } from "@mindkid/db";
 import type { AccessTier } from "@mindkid/shared";
-import { and, eq, sql } from "drizzle-orm";
-import type {
-  SearchParams,
-  SearchViewerRole,
-} from "#server/services/content-search";
+import type { SearchParams } from "#server/services/content-search";
 
 export interface GameLevelFacets {
   total: number;
@@ -45,7 +40,9 @@ export function ageBandLabel(
   return `${ageMin}-${ageMax}`;
 }
 
-function aggregateCompetency(rows: FacetCountRow[]): Record<string, number> {
+export function aggregateCompetency(
+  rows: readonly FacetCountRow[]
+): Record<string, number> {
   const result: Record<string, number> = {};
   for (const row of rows) {
     const code = competencyFromCode(row.code);
@@ -56,7 +53,7 @@ function aggregateCompetency(rows: FacetCountRow[]): Record<string, number> {
   return result;
 }
 
-function aggregateAgeAndBand(rows: FacetCountRow[]): {
+export function aggregateAgeAndBand(rows: readonly FacetCountRow[]): {
   age: Record<string, number>;
   age_band: Record<string, number>;
 } {
@@ -77,7 +74,9 @@ function aggregateAgeAndBand(rows: FacetCountRow[]): {
   return { age, age_band };
 }
 
-function aggregateTier(rows: FacetCountRow[]): Record<string, number> {
+export function aggregateTier(
+  rows: readonly FacetCountRow[]
+): Record<string, number> {
   const result: Record<string, number> = {};
   for (const row of rows) {
     result[row.accessTier] = (result[row.accessTier] ?? 0) + 1;
@@ -85,8 +84,8 @@ function aggregateTier(rows: FacetCountRow[]): Record<string, number> {
   return result;
 }
 
-function aggregateStrand(
-  rows: Array<{ code: string; count: number }>
+export function aggregateStrand(
+  rows: ReadonlyArray<{ readonly code: string; readonly count: number }>
 ): Record<string, number> {
   const result: Record<string, number> = {};
   for (const row of rows) {
@@ -95,50 +94,79 @@ function aggregateStrand(
   return result;
 }
 
+function normalizeFilterString(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed && trimmed.length > 0 ? trimmed : undefined;
+}
+
+export function toSearchRepoFilter(
+  params: SearchParams,
+  options: { includeQuery?: boolean; includeCursor?: boolean } = {}
+): SearchGameLevelsFilter {
+  const cursorStr = options.includeCursor
+    ? normalizeFilterString(params.cursor)
+    : undefined;
+  const cursorId = cursorStr ? Number.parseInt(cursorStr, 10) : Number.NaN;
+  return {
+    q: options.includeQuery ? normalizeFilterString(params.q) : undefined,
+    accessTier: params.access_tier
+      ? ACCESS_TIER_CODEC.toCode(params.access_tier)
+      : undefined,
+    templateCode:
+      normalizeFilterString(params.template) ??
+      normalizeFilterString(params.template_code),
+    ageMin: params.age_min,
+    ageMax: params.age_max,
+    age: params.age,
+    ageBand: params.age_band,
+    difficulty: params.difficulty,
+    themeId: normalizeFilterString(params.theme),
+    competency: params.competency,
+    strand: normalizeFilterString(params.strand),
+    skillCode:
+      normalizeFilterString(params.skill_code) ??
+      normalizeFilterString(params.skill),
+    learningObjective: normalizeFilterString(params.learning_objective),
+    what: normalizeFilterString(params.what),
+    thinking: normalizeFilterString(params.thinking),
+    mechanic: normalizeFilterString(params.mechanic),
+    sort: params.sort,
+    limit: params.limit,
+    cursorId: Number.isNaN(cursorId) ? undefined : cursorId,
+  };
+}
+
+export function toFacetRows(
+  rows: readonly GameLevelFacetRow[]
+): FacetCountRow[] {
+  return rows.map((row) => ({
+    code: row.code,
+    ageMin: row.ageMin,
+    ageMax: row.ageMax,
+    accessTier: ACCESS_TIER_CODEC.toLabel(row.accessTier),
+  }));
+}
+
 /**
  * Số lượng cho từng giá trị bộ lọc — `GAME-CATALOG-PUBLIC` §8.
  *
- * Mỗi trục được đếm với **mọi bộ lọc khác trừ chính nó**. Đếm với cả bộ lọc
- * hiện tại thì mọi lựa chọn chưa chọn đều ra 0 và giao diện sẽ vô hiệu hết.
- * Nếu một trục không có bộ lọc kích hoạt, tái sử dụng totalRowsPromise để tránh lặp query.
+ * Mỗi trục được đếm với **mọi bộ lọc khác trừ chính nó**.
  */
 export async function buildGameLevelFacets(
-  db: OwnerDb,
-  params: SearchParams,
-  viewerRole: SearchViewerRole,
-  buildSearchWhereConditions: (
-    params: SearchParams,
-    viewerRole: SearchViewerRole
-  ) => ReturnType<typeof sql>[]
+  gameLevelsRepo: GameLevelsRepository,
+  params: SearchParams
 ): Promise<GameLevelFacets> {
-  const countWith = async (
-    overrides: Partial<SearchParams>
-  ): Promise<FacetCountRow[]> => {
-    const scoped = { ...params, ...overrides };
-    const conditions = buildSearchWhereConditions(scoped, viewerRole);
-    return await db
-      .select({
-        code: gameLevels.code,
-        ageMin: gameLevels.ageMin,
-        ageMax: gameLevels.ageMax,
-        accessTier: gameLevels.accessTier,
-      })
-      .from(gameLevels)
-      .where(conditions.length > 0 ? and(...conditions) : undefined);
-  };
+  const baseFilter = toSearchRepoFilter(params, {
+    includeQuery: true,
+    includeCursor: false,
+  });
 
-  const clearCursor = { cursor: undefined };
-  const strandConditions = buildSearchWhereConditions(
-    { ...params, strand: undefined, cursor: undefined },
-    viewerRole
-  );
-
-  const totalRowsPromise = countWith(clearCursor);
+  const totalRowsPromise = gameLevelsRepo.listFacetRows(baseFilter);
 
   const competencyPromise =
     params.competency === undefined
       ? totalRowsPromise
-      : countWith({ ...clearCursor, competency: undefined });
+      : gameLevelsRepo.listFacetRows({ ...baseFilter, competency: undefined });
 
   const hasAgeFilter =
     params.age !== undefined ||
@@ -146,37 +174,21 @@ export async function buildGameLevelFacets(
     params.age_max !== undefined ||
     params.age_band !== undefined;
   const ageRowsPromise = hasAgeFilter
-    ? countWith({
-        ...clearCursor,
+    ? gameLevelsRepo.listFacetRows({
+        ...baseFilter,
         age: undefined,
-        age_min: undefined,
-        age_max: undefined,
-        age_band: undefined,
+        ageMin: undefined,
+        ageMax: undefined,
+        ageBand: undefined,
       })
     : totalRowsPromise;
 
   const tierRowsPromise =
     params.access_tier === undefined
       ? totalRowsPromise
-      : countWith({ ...clearCursor, access_tier: undefined });
+      : gameLevelsRepo.listFacetRows({ ...baseFilter, accessTier: undefined });
 
-  const strandRowsPromise = db
-    .select({
-      code: strands.code,
-      count: sql<number>`count(distinct ${gameLevels.id})`.mapWith(Number),
-    })
-    .from(gameLevels)
-    .innerJoin(
-      contentSkillMap,
-      and(
-        eq(contentSkillMap.entityId, gameLevels.id),
-        eq(contentSkillMap.entityType, "game_level")
-      )
-    )
-    .innerJoin(skills, eq(contentSkillMap.skillId, skills.id))
-    .innerJoin(strands, eq(skills.strandId, strands.id))
-    .where(strandConditions.length > 0 ? and(...strandConditions) : undefined)
-    .groupBy(strands.code);
+  const strandRowsPromise = gameLevelsRepo.countFacetStrands(baseFilter);
 
   const [competencyRows, ageRows, tierRows, totalRows, strandRows] =
     await Promise.all([
@@ -187,14 +199,14 @@ export async function buildGameLevelFacets(
       strandRowsPromise,
     ]);
 
-  const { age, age_band } = aggregateAgeAndBand(ageRows);
+  const { age, age_band } = aggregateAgeAndBand(toFacetRows(ageRows));
 
   return {
     total: totalRows.length,
-    competency: aggregateCompetency(competencyRows),
+    competency: aggregateCompetency(toFacetRows(competencyRows)),
     age,
     age_band,
-    access_tier: aggregateTier(tierRows),
+    access_tier: aggregateTier(toFacetRows(tierRows)),
     strand: aggregateStrand(strandRows),
   };
 }

@@ -206,8 +206,9 @@
                   Người nhận:
                   {{
                     item.recipientEmailMasked ||
-                      item.recipientEmail ||
-                      `User #${item.recipientId}`
+                      (item.recipientType === "manager"
+                        ? `Manager #${item.recipientId}`
+                        : `User #${item.recipientId}`)
                   }}
                 </p>
 
@@ -552,6 +553,7 @@
     templateCode: string;
     recipientEmail: string | null;
     recipientEmailMasked?: string | null;
+    recipientType?: string;
     recipientId: number;
     createdAt: string;
   }

@@ -46,7 +46,8 @@ Spec này cũng là nơi phát ngôn một ràng buộc ngược lên cách vi�
 | `pnpm deploy rollback --host <tên>` | Người vận hành | Về bản liền trước |
 | `pnpm deploy rollback --host <tên> --to <tên bản>` | Người vận hành | Về một bản cụ thể trong 5 bản giữ lại |
 | `pnpm deploy status --host <tên>` | Người vận hành | Xem danh sách bản còn giữ và bản đang chạy |
-| `mindkid.sh rollback [--to <tên bản>]` | | Nội dung thật, chạy trên máy chủ tại `/opt/mindkid/bin/` |
+| `mindkid.sh rollback [--to <tên bản>]` | | Nội dung thật cho đích `vps`, chạy trên máy chủ tại `/opt/mindkid/bin/` |
+| `pnpm deploy rollback --target cloudflare` | Người vận hành / CI | Quay lui nguyên tử phiên bản Cloudflare Worker bằng `wrangler rollback` khi smoke test thất bại hoặc có sự cố ở Giai đoạn 1 |
 
 ## 4. Main flow
 

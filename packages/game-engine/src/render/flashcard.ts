@@ -442,24 +442,40 @@ function drawFlashcardNonNumberContent(
     };
   },
   cardW: number,
+  cardH: number,
   x: number,
   y: number,
   labelToDraw: string,
   minFontPx: number
 ): void {
   const cue = resolveFlashcardComparisonCue(asset);
-  if (cue) {
+  if (cue && cardH >= 190) {
     drawFlashcardComparisonCue(ctx, cue, cardW, x, y);
   }
 
-  drawFlashcardMainVisual(ctx, asset, cue, cardW, x, y, labelToDraw, minFontPx);
+  const visualY = cardH < 210 ? y + 6 : y;
+  drawFlashcardMainVisual(
+    ctx,
+    asset,
+    cue,
+    cardW,
+    x,
+    visualY,
+    labelToDraw,
+    minFontPx
+  );
 
+  const labelOffsetY = Math.min(80, Math.max(36, Math.round(cardH * 0.31)));
   ctx.save();
-  applyCanvasFontAtSize(ctx, Math.max(24, minFontPx), "sans", "bold");
+  applyCanvasFontAtSize(ctx, Math.max(20, minFontPx), "sans", "bold");
   ctx.fillStyle = designTokens.colors.surface[800];
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(labelToDraw, x, y + 80);
+  if (cardW < 220) {
+    ctx.fillText(labelToDraw, x, y + labelOffsetY, Math.max(40, cardW - 16));
+  } else {
+    ctx.fillText(labelToDraw, x, y + labelOffsetY);
+  }
   ctx.restore();
 }
 
@@ -468,31 +484,34 @@ function drawFlashcardCounterItems(
   itemEmoji: string,
   val: number,
   cardW: number,
+  cardH: number,
   x: number,
   y: number
 ): void {
   const maxCount = Math.min(val, 10);
-  const gap = Math.min(60, (cardW - 60) / maxCount);
+  const sidePad = cardW >= 300 ? 60 : 32;
+  const gap = Math.min(60, Math.max(16, (cardW - sidePad) / maxCount));
   const startX = x - ((maxCount - 1) * gap) / 2;
+  const counterCy = y + Math.min(55, Math.round(cardH * 0.16));
   const sprite = getEmojiSprite(itemEmoji);
 
   if (sprite) {
-    const size = Math.max(24, Math.min(48, Math.floor(gap * 0.86)));
+    const minSize = cardW >= 300 ? 24 : 18;
+    const size = Math.max(minSize, Math.min(48, Math.floor(gap * 0.88)));
     const half = size / 2;
-    const cy = y + 55;
     for (let i = 0; i < maxCount; i++) {
       const cx = startX + i * gap;
-      ctx.drawImage(sprite, cx - half, cy - half, size, size);
+      ctx.drawImage(sprite, cx - half, counterCy - half, size, size);
     }
     return;
   }
 
   ctx.save();
-  applyEmojiFont(ctx, Math.max(22, Math.min(44, Math.floor(gap * 0.82))));
+  applyEmojiFont(ctx, Math.max(18, Math.min(42, Math.floor(gap * 0.8))));
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   for (let i = 0; i < maxCount; i++) {
-    ctx.fillText(itemEmoji, startX + i * gap, y + 55);
+    ctx.fillText(itemEmoji, startX + i * gap, counterCy);
   }
   ctx.restore();
 }
@@ -514,27 +533,30 @@ function drawFlashcardNumberContent(
   },
   val: number,
   cardW: number,
+  cardH: number,
   x: number,
   y: number,
   labelToDraw: string,
   minFontPx: number
 ): void {
-  // Large orange numeral
+  const numeralPx = Math.max(48, Math.min(100, Math.round(cardH * 0.34)));
+  const numeralOffsetY = Math.min(50, Math.round(cardH * 0.2));
   ctx.save();
-  applyCanvasFontAtSize(ctx, 100, "heading", "bold");
+  applyCanvasFontAtSize(ctx, numeralPx, "heading", "bold");
   ctx.fillStyle = designTokens.colors.cta[500];
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(String(val), x, y - 50);
+  ctx.fillText(String(val), x, y - numeralOffsetY);
   ctx.restore();
 
   if (val === 0) {
+    const emptyY = y + Math.min(55, Math.round(cardH * 0.14));
     ctx.save();
-    applyCanvasFontAtSize(ctx, Math.max(18, minFontPx), "sans");
+    applyCanvasFontAtSize(ctx, Math.max(16, minFontPx), "sans");
     ctx.fillStyle = designTokens.colors.surface[500];
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("(Không có đồ vật nào)", x, y + 55);
+    ctx.fillText("(Không có đồ vật nào)", x, emptyY, Math.max(48, cardW - 24));
     ctx.restore();
   } else {
     const fallbackEmoji =
@@ -547,16 +569,20 @@ function drawFlashcardNumberContent(
       !asset.image_ref.ref.includes("️⃣")
         ? asset.image_ref.ref
         : fallbackEmoji;
-    drawFlashcardCounterItems(ctx, itemEmoji, val, cardW, x, y);
+    drawFlashcardCounterItems(ctx, itemEmoji, val, cardW, cardH, x, y);
   }
 
-  // Label at bottom
+  const labelOffsetY = Math.min(115, Math.max(42, Math.round(cardH * 0.36)));
   ctx.save();
-  applyCanvasFontAtSize(ctx, Math.max(22, minFontPx), "sans", "bold");
+  applyCanvasFontAtSize(ctx, Math.max(20, minFontPx), "sans", "bold");
   ctx.fillStyle = designTokens.colors.surface[700];
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(labelToDraw, x, y + 115);
+  if (cardW < 220) {
+    ctx.fillText(labelToDraw, x, y + labelOffsetY, Math.max(40, cardW - 16));
+  } else {
+    ctx.fillText(labelToDraw, x, y + labelOffsetY);
+  }
   ctx.restore();
 }
 
@@ -631,6 +657,7 @@ export function drawFlashcard(
       ctx,
       asset,
       rect.w,
+      rect.h,
       rect.x,
       rect.y,
       labelToDraw,
@@ -642,6 +669,7 @@ export function drawFlashcard(
       asset,
       val,
       rect.w,
+      rect.h,
       rect.x,
       rect.y,
       labelToDraw,

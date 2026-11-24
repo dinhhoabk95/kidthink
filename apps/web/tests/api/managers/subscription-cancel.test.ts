@@ -2,6 +2,7 @@ import {
   entitlementKeys,
   getOwnerDb,
   packages,
+  RECURRING_SUBSCRIPTION_STATUS,
   recurringSubscriptions,
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
@@ -21,7 +22,8 @@ const RE_INVALID_CANCEL_REASON = /INVALID_CANCEL_REASON/;
 function mockManagerEvent(
   managerRole?: "super_admin" | "content_reviewer",
   subscriptionId?: number,
-  body?: Record<string, string | number | boolean>
+  body?: Record<string, string | number | boolean>,
+  reauthAt: Date | null = new Date()
 ): H3Event {
   return {
     method: "POST",
@@ -46,12 +48,14 @@ function mockManagerEvent(
               display_name: "Test Admin",
               session_id: "sess_admin_test",
               role: managerRole,
+              ...(reauthAt ? { reauth_at: reauthAt } : {}),
             },
             manager: {
               manager_id: 1,
               display_name: "Test Admin",
               session_id: "sess_admin_test",
               role: managerRole,
+              ...(reauthAt ? { reauth_at: reauthAt } : {}),
             },
           }
         : {}),
@@ -91,6 +95,38 @@ describe("POST /api/managers/subscriptions/[id]/cancel (BR-ASC-01..06)", () => {
     await expect(adminCancelHandler(event)).rejects.toMatchObject({
       statusCode: 403,
       code: "INSUFFICIENT_ROLE",
+    });
+  });
+
+  it("Scenario: rejects request without reauth_at or expired reauth_at (> 300s) with 428 REAUTH_REQUIRED", async () => {
+    const missingReauthEvent = mockManagerEvent(
+      "super_admin",
+      1,
+      {
+        reason: "other",
+        admin_note: "Ghi chú hợp lệ dài trên hai mươi ký tự.",
+      },
+      null
+    );
+
+    await expect(adminCancelHandler(missingReauthEvent)).rejects.toMatchObject({
+      statusCode: 428,
+      code: "REAUTH_REQUIRED",
+    });
+
+    const staleReauthEvent = mockManagerEvent(
+      "super_admin",
+      1,
+      {
+        reason: "other",
+        admin_note: "Ghi chú hợp lệ dài trên hai mươi ký tự.",
+      },
+      new Date(Date.now() - 301 * 1000)
+    );
+
+    await expect(adminCancelHandler(staleReauthEvent)).rejects.toMatchObject({
+      statusCode: 428,
+      code: "REAUTH_REQUIRED",
     });
   });
 
@@ -170,7 +206,7 @@ describe("POST /api/managers/subscriptions/[id]/cancel (BR-ASC-01..06)", () => {
       .select()
       .from(recurringSubscriptions)
       .where(eq(recurringSubscriptions.id, sub.id));
-    expect(dbSub?.status).toBe("cancelled");
+    expect(dbSub?.status).toBe(RECURRING_SUBSCRIPTION_STATUS.CANCELLED);
     expect(dbSub?.cancelReason).toBe("user_request_messenger");
   });
 });

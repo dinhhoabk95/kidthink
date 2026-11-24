@@ -12,7 +12,8 @@
     "./content-themes": "./src/constants/content-themes.ts",
     "./preschool-terminology": "./src/preschool-terminology.ts",
     "./skill-dataset-types": "./src/skill-dataset-types.ts",
-    "./taxonomy-types": "./src/taxonomy-types.ts"
+    "./taxonomy-types": "./src/taxonomy-types.ts",
+    "./voice-path": "./src/voice-path.ts"
   },
   "scripts": {
     "test": "vitest run"

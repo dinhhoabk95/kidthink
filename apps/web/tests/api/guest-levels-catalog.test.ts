@@ -1,4 +1,4 @@
-import { gameLevels, getOwnerDb } from "@mindkid/db";
+import { ACCESS_TIER, gameLevels, getOwnerDb } from "@mindkid/db";
 import type { AccessTier, LevelCta } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
@@ -76,7 +76,7 @@ describe("GET /api/guest/levels — Catalog CTA & Session Independence (BR-GCP-0
       {
         code: testCodes[0],
         title: "Catalog Free Level",
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
         difficulty: 1,
         ageMin: 3,
         ageMax: 4,
@@ -88,7 +88,7 @@ describe("GET /api/guest/levels — Catalog CTA & Session Independence (BR-GCP-0
       {
         code: testCodes[1],
         title: "Catalog Login Level",
-        accessTier: "login",
+        accessTier: ACCESS_TIER.LOGIN,
         difficulty: 1,
         ageMin: 3,
         ageMax: 4,
@@ -100,7 +100,7 @@ describe("GET /api/guest/levels — Catalog CTA & Session Independence (BR-GCP-0
       {
         code: testCodes[2],
         title: "Catalog Standard Level",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         difficulty: 2,
         ageMin: 4,
         ageMax: 5,
@@ -112,7 +112,7 @@ describe("GET /api/guest/levels — Catalog CTA & Session Independence (BR-GCP-0
       {
         code: testCodes[3],
         title: "Catalog Premium Level",
-        accessTier: "premium",
+        accessTier: ACCESS_TIER.PREMIUM,
         difficulty: 3,
         ageMin: 5,
         ageMax: 6,

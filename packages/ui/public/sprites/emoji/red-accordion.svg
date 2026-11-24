@@ -1,0 +1,12 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đàn phong cầm</title>
+  <defs>
+    <linearGradient id="accRed" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#f87171" /><stop offset="100%" stop-color="#b91c1c" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#451a03" opacity="0.22" rx="40" ry="5" />
+    <rect fill="url(#accRed)" height="56" rx="8" stroke="#7f1d1d" stroke-width="3.8" width="24" x="16" y="32" />
+    <polygon fill="#fef3c7" points="40,36 80,32 80,88 40,84" stroke="#78350f" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M50 35V85M60 34V86M70 33V87" stroke="#92400e" stroke-width="2.6" />
+    <rect fill="url(#accRed)" height="56" rx="8" stroke="#7f1d1d" stroke-width="3.8" width="24" x="80" y="32" />
+    <rect fill="#ffffff" height="40" rx="2" stroke="#1e293b" stroke-width="2.4" width="10" x="90" y="40" />
+</svg>

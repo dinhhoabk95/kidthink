@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh quy giòn gấp</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="ftcTan" r="70%"><stop offset="0%" stop-color="#fef08a" /><stop offset="55%" stop-color="#f59e0b" /><stop offset="100%" stop-color="#b45309" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.22" rx="34" ry="5" />
+    <rect fill="#ffffff" height="14" stroke="#475569" stroke-width="3" transform="rotate(14 86 68)" width="28" x="72" y="61" />
+    <path d="M24 68C20 40 44 24 68 30C90 36 96 62 80 82C68 94 56 80 54 66C46 80 30 88 24 68Z" fill="url(#ftcTan)" stroke="#78350f" stroke-linejoin="round" stroke-width="3.8" />
+</svg>

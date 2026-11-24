@@ -13,6 +13,7 @@ coverage/
 .DS_Store
 .idea/
 .backups/
+.data/
 .codegraph/
 .ua/
 .claude/worktrees/

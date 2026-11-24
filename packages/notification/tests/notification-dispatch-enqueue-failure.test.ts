@@ -1,5 +1,6 @@
 import {
   getOwnerDb,
+  NOTIFICATION_STATUS,
   notificationDeliveries,
   notifications,
   users,
@@ -74,7 +75,7 @@ describe("dispatchTransactionalEmail — hàng đợi chết (BR-JOB-01)", () =>
       .from(notificationDeliveries)
       .where(eq(notificationDeliveries.notificationId, notification?.id ?? 0));
 
-    expect(delivery?.status).toBe("failed");
+    expect(delivery?.status).toBe(NOTIFICATION_STATUS.FAILED);
     expect(delivery?.error).toContain(OFFLINE);
   });
 

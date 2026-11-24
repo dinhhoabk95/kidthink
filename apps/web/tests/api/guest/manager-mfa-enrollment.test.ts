@@ -3,7 +3,12 @@ import {
   InMemoryRedisClient,
   setAuthRedisClient,
 } from "@mindkid/auth";
-import { getOwnerDb, managers, managerTwoFactors } from "@mindkid/db";
+import {
+  getOwnerDb,
+  MANAGER_ROLE,
+  managers,
+  managerTwoFactors,
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
@@ -32,7 +37,7 @@ async function createLoggedInManager(tag: string) {
       email,
       passwordHash,
       displayName: `Enroll Admin ${tag}`,
-      role: "super_admin",
+      role: MANAGER_ROLE.SUPER_ADMIN,
       isActive: true,
       mfaEnabled: false,
     })

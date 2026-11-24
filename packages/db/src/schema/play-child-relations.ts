@@ -1,159 +1,168 @@
-import { relations } from "drizzle-orm/_relations";
-import { childBadges, masteryState } from "./adaptive.ts";
-import { childProfiles } from "./child.ts";
-import { childStickers } from "./child-stickers.ts";
-import {
-  curricula,
-  curriculumEnrollments,
-  curriculumItemProgress,
-} from "./curriculum.ts";
-import { gameLevels } from "./game.ts";
-import { users } from "./identity.ts";
-import { childMascotGear, childStickerPlacements } from "./kid-world.ts";
-import {
-  personalCurriculumEnrollments,
-  personalCurriculumItemProgress,
-} from "./personal-curriculum.ts";
-import {
-  childDailyStats,
-  childSessionSummaries,
-  playSessions,
-  skillDailyStats,
-  telemetryEvents,
-} from "./play.ts";
-import { skills } from "./taxonomy.ts";
+import type { RelationsBuilder } from "drizzle-orm";
+import type { DbTables } from "./tables.ts";
 
-export const childProfilesRelations = relations(
-  childProfiles,
-  ({ one, many }) => ({
-    user: one(users, {
-      fields: [childProfiles.userId],
-      references: [users.id],
-    }),
-    currentCurriculum: one(curricula, {
-      fields: [childProfiles.currentCurriculumId],
-      references: [curricula.id],
-    }),
-    playSessions: many(playSessions),
-    sessionSummaries: many(childSessionSummaries),
-    dailyStats: many(childDailyStats),
-    masteryStates: many(masteryState),
-    badges: many(childBadges),
-    stickers: many(childStickers),
-    stickerPlacements: many(childStickerPlacements),
-    mascotGear: one(childMascotGear),
-    curriculumEnrollments: many(curriculumEnrollments),
-    curriculumItemProgress: many(curriculumItemProgress),
-    personalCurriculumEnrollments: many(personalCurriculumEnrollments),
-    personalCurriculumItemProgress: many(personalCurriculumItemProgress),
-  })
-);
+type SchemaTables = DbTables;
 
-export const playSessionsRelations = relations(
-  playSessions,
-  ({ one, many }) => ({
-    childProfile: one(childProfiles, {
-      fields: [playSessions.childProfileId],
-      references: [childProfiles.id],
-    }),
-    gameLevel: one(gameLevels, {
-      fields: [playSessions.gameLevelId],
-      references: [gameLevels.id],
-    }),
-    telemetryEvents: many(telemetryEvents),
-    awardedStickers: many(childStickers),
-  })
-);
-
-export const telemetryEventsRelations = relations(
-  telemetryEvents,
-  ({ one }) => ({
-    playSession: one(playSessions, {
-      fields: [telemetryEvents.sessionUuid],
-      references: [playSessions.sessionUuid],
-    }),
-  })
-);
-
-export const childSessionSummariesRelations = relations(
-  childSessionSummaries,
-  ({ one }) => ({
-    childProfile: one(childProfiles, {
-      fields: [childSessionSummaries.childProfileId],
-      references: [childProfiles.id],
-    }),
-    gameLevel: one(gameLevels, {
-      fields: [childSessionSummaries.gameLevelId],
-      references: [gameLevels.id],
-    }),
-  })
-);
-
-export const childDailyStatsRelations = relations(
-  childDailyStats,
-  ({ one }) => ({
-    childProfile: one(childProfiles, {
-      fields: [childDailyStats.childProfileId],
-      references: [childProfiles.id],
-    }),
-  })
-);
-
-export const skillDailyStatsRelations = relations(
-  skillDailyStats,
-  ({ one }) => ({
-    skill: one(skills, {
-      fields: [skillDailyStats.skillId],
-      references: [skills.id],
-    }),
-  })
-);
-
-export const masteryStateRelations = relations(masteryState, ({ one }) => ({
-  childProfile: one(childProfiles, {
-    fields: [masteryState.childProfileId],
-    references: [childProfiles.id],
-  }),
-  skill: one(skills, {
-    fields: [masteryState.skillId],
-    references: [skills.id],
-  }),
-}));
-
-export const childBadgesRelations = relations(childBadges, ({ one }) => ({
-  childProfile: one(childProfiles, {
-    fields: [childBadges.childProfileId],
-    references: [childProfiles.id],
-  }),
-}));
-
-export const childStickersRelations = relations(childStickers, ({ one }) => ({
-  childProfile: one(childProfiles, {
-    fields: [childStickers.childProfileId],
-    references: [childProfiles.id],
-  }),
-  playSession: one(playSessions, {
-    fields: [childStickers.playSessionId],
-    references: [playSessions.id],
-  }),
-}));
-
-export const childStickerPlacementsRelations = relations(
-  childStickerPlacements,
-  ({ one }) => ({
-    childProfile: one(childProfiles, {
-      fields: [childStickerPlacements.childProfileId],
-      references: [childProfiles.id],
-    }),
-  })
-);
-
-export const childMascotGearRelations = relations(
-  childMascotGear,
-  ({ one }) => ({
-    childProfile: one(childProfiles, {
-      fields: [childMascotGear.childProfileId],
-      references: [childProfiles.id],
-    }),
-  })
-);
+export function buildPlayChildRelations(r: RelationsBuilder<SchemaTables>) {
+  return {
+    childProfiles: {
+      user: r.one.users({
+        from: r.childProfiles.userId,
+        to: r.users.id,
+        optional: false,
+      }),
+      currentCurriculum: r.one.curricula({
+        from: r.childProfiles.currentCurriculumId,
+        to: r.curricula.id,
+        optional: true,
+      }),
+      playSessions: r.many.playSessions({
+        from: r.childProfiles.id,
+        to: r.playSessions.childProfileId,
+      }),
+      sessionSummaries: r.many.childSessionSummaries({
+        from: r.childProfiles.id,
+        to: r.childSessionSummaries.childProfileId,
+      }),
+      dailyStats: r.many.childDailyStats({
+        from: r.childProfiles.id,
+        to: r.childDailyStats.childProfileId,
+      }),
+      masteryStates: r.many.masteryState({
+        from: r.childProfiles.id,
+        to: r.masteryState.childProfileId,
+      }),
+      badges: r.many.childBadges({
+        from: r.childProfiles.id,
+        to: r.childBadges.childProfileId,
+      }),
+      stickers: r.many.childStickers({
+        from: r.childProfiles.id,
+        to: r.childStickers.childProfileId,
+      }),
+      stickerPlacements: r.many.childStickerPlacements({
+        from: r.childProfiles.id,
+        to: r.childStickerPlacements.childProfileId,
+      }),
+      mascotGear: r.one.childMascotGear({
+        from: r.childProfiles.id,
+        to: r.childMascotGear.childProfileId,
+        optional: true,
+      }),
+      curriculumEnrollments: r.many.curriculumEnrollments({
+        from: r.childProfiles.id,
+        to: r.curriculumEnrollments.childId,
+      }),
+      curriculumItemProgress: r.many.curriculumItemProgress({
+        from: r.childProfiles.id,
+        to: r.curriculumItemProgress.childId,
+      }),
+      personalCurriculumEnrollments: r.many.personalCurriculumEnrollments({
+        from: r.childProfiles.id,
+        to: r.personalCurriculumEnrollments.childId,
+      }),
+      personalCurriculumItemProgress: r.many.personalCurriculumItemProgress({
+        from: r.childProfiles.id,
+        to: r.personalCurriculumItemProgress.childId,
+      }),
+    },
+    playSessions: {
+      childProfile: r.one.childProfiles({
+        from: r.playSessions.childProfileId,
+        to: r.childProfiles.id,
+        optional: true,
+      }),
+      gameLevel: r.one.gameLevels({
+        from: r.playSessions.gameLevelId,
+        to: r.gameLevels.id,
+        optional: false,
+      }),
+      telemetryEvents: r.many.telemetryEvents({
+        from: r.playSessions.sessionUuid,
+        to: r.telemetryEvents.sessionUuid,
+      }),
+      awardedStickers: r.many.childStickers({
+        from: r.playSessions.id,
+        to: r.childStickers.playSessionId,
+      }),
+    },
+    telemetryEvents: {
+      playSession: r.one.playSessions({
+        from: r.telemetryEvents.sessionUuid,
+        to: r.playSessions.sessionUuid,
+        optional: true,
+      }),
+    },
+    childSessionSummaries: {
+      childProfile: r.one.childProfiles({
+        from: r.childSessionSummaries.childProfileId,
+        to: r.childProfiles.id,
+        optional: false,
+      }),
+      gameLevel: r.one.gameLevels({
+        from: r.childSessionSummaries.gameLevelId,
+        to: r.gameLevels.id,
+        optional: false,
+      }),
+    },
+    childDailyStats: {
+      childProfile: r.one.childProfiles({
+        from: r.childDailyStats.childProfileId,
+        to: r.childProfiles.id,
+        optional: false,
+      }),
+    },
+    skillDailyStats: {
+      skill: r.one.skills({
+        from: r.skillDailyStats.skillId,
+        to: r.skills.id,
+        optional: false,
+      }),
+    },
+    masteryState: {
+      childProfile: r.one.childProfiles({
+        from: r.masteryState.childProfileId,
+        to: r.childProfiles.id,
+        optional: false,
+      }),
+      skill: r.one.skills({
+        from: r.masteryState.skillId,
+        to: r.skills.id,
+        optional: false,
+      }),
+    },
+    childBadges: {
+      childProfile: r.one.childProfiles({
+        from: r.childBadges.childProfileId,
+        to: r.childProfiles.id,
+        optional: false,
+      }),
+    },
+    childStickers: {
+      childProfile: r.one.childProfiles({
+        from: r.childStickers.childProfileId,
+        to: r.childProfiles.id,
+        optional: false,
+      }),
+      playSession: r.one.playSessions({
+        from: r.childStickers.playSessionId,
+        to: r.playSessions.id,
+        optional: true,
+      }),
+    },
+    childStickerPlacements: {
+      childProfile: r.one.childProfiles({
+        from: r.childStickerPlacements.childProfileId,
+        to: r.childProfiles.id,
+        optional: false,
+      }),
+    },
+    childMascotGear: {
+      childProfile: r.one.childProfiles({
+        from: r.childMascotGear.childProfileId,
+        to: r.childProfiles.id,
+        optional: false,
+      }),
+    },
+  };
+}

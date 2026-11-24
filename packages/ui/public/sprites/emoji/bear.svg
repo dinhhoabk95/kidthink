@@ -1,75 +1,25 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <title>Con gấu</title>
+  <title>Con gấu nâu</title>
   <defs>
-    <radialGradient cx="38%" cy="32%" id="bearBody" r="68%">
-      <stop offset="0%" stop-color="#fbbf24" />
-      <stop offset="48%" stop-color="#d97706" />
-      <stop offset="100%" stop-color="#b45309" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="g_bear" r="70%"><stop offset="0%" stop-color="#d97706" /><stop offset="55%" stop-color="#92400e" /><stop offset="100%" stop-color="#78350f" /></radialGradient>
   </defs>
-  <!-- 2.5D warm base shadow -->
-  <circle cx="60" cy="70" fill="#78350f" opacity="0.34" r="39" />
-  <!-- Ears -->
-  <circle
-    cx="33"
-    cy="34"
-    fill="url(#bearBody)"
-    r="14"
-    stroke="#92400e"
-    stroke-width="4"
-  />
-  <circle cx="33" cy="34" fill="#fde68a" r="7" />
-  <circle
-    cx="87"
-    cy="34"
-    fill="url(#bearBody)"
-    r="14"
-    stroke="#92400e"
-    stroke-width="4"
-  />
-  <circle cx="87" cy="34" fill="#fde68a" r="7" />
-  <!-- Head -->
-  <circle
-    cx="60"
-    cy="66"
-    fill="url(#bearBody)"
-    r="39"
-    stroke="#92400e"
-    stroke-width="4"
-  />
-  <!-- Muzzle -->
-  <ellipse
-    cx="60"
-    cy="75"
-    fill="#fffbeb"
-    rx="18"
-    ry="13"
-    stroke="#92400e"
-    stroke-width="3"
-  />
-  <ellipse cx="60" cy="69" fill="#451a03" rx="6" ry="4" />
-  <path
-    d="M60 73V78M54 78C56 82 64 82 66 78"
-    stroke="#451a03"
-    stroke-linecap="round"
-    stroke-width="2.8"
-  />
-  <!-- Eyes -->
-  <circle cx="46" cy="57" fill="#1c1917" r="5" />
-  <circle cx="44.5" cy="55" fill="#ffffff" r="2" />
-  <circle cx="74" cy="57" fill="#1c1917" r="5" />
-  <circle cx="72.5" cy="55" fill="#ffffff" r="2" />
-  <!-- Cheeks -->
-  <circle cx="36" cy="68" fill="#fb923c" fill-opacity="0.45" r="5.5" />
-  <circle cx="84" cy="68" fill="#fb923c" fill-opacity="0.45" r="5.5" />
-  <!-- Specular highlight -->
-  <ellipse
-    cx="43"
-    cy="40"
-    fill="#ffffff"
-    fill-opacity="0.38"
-    rx="8"
-    ry="4"
-    transform="rotate(-24 43 40)"
-  />
+  <ellipse cx="62" cy="106" fill="#451a03" opacity="0.22" rx="40" ry="5.5" />
+    <circle cx="95" cy="62" fill="#78350f" r="5.5" stroke="#451a03" stroke-width="3.4" />
+    <!-- Far legs -->
+    <path d="M47 81L44 102H51L53 81ZM81 81L79 102H86L88 81Z" fill="#78350f" stroke="#451a03" stroke-linejoin="round" stroke-width="3.4" />
+    <path d="M44 98H51V103H44ZM79 98H86V103H79Z" fill="#451a03" />
+    <!-- Torso & Neck -->
+    <path d="M35 55C41 47 33 45 64 45C95 45 99 62 95 72C91 87 39 87 35 70C31 62 31 65 35 55Z" fill="url(#g_bear)" stroke="#451a03" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M46 82C56 88 74 88 84 82" fill="#b45309" opacity="0.85" />
+    
+    <!-- Near legs -->
+    <path d="M39 79L36 104H44L47 79ZM73 79L71 104H79L81 79Z" fill="url(#g_bear)" stroke="#451a03" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M36 99H44V104H36ZM71 99H79V104H71Z" fill="#451a03" stroke="#451a03" stroke-linejoin="round" stroke-width="2.2" />
+    <!-- Head -->
+    <ellipse cx="29" cy="49" fill="url(#g_bear)" rx="15" ry="13" stroke="#451a03" stroke-width="3.8" />
+    <ellipse cx="18" cy="53" fill="#fde68a" rx="7.5" ry="6" stroke="#451a03" stroke-width="3.2" />
+    <circle cx="16" cy="52" fill="#451a03" r="1.8" />
+    <path d="M16 56C19 58 22 57 23 55" stroke="#451a03" stroke-linecap="round" stroke-width="2.2" />
+    <circle cx="27" cy="46" fill="#1c1917" r="2.7" /><circle cx="26.2" cy="45.2" fill="#ffffff" r="1" />
+    <circle cx="22" cy="36" fill="#92400e" r="5" stroke="#451a03" stroke-width="3.4" /><circle cx="37" cy="36" fill="#92400e" r="5" stroke="#451a03" stroke-width="3.4" />
 </svg>

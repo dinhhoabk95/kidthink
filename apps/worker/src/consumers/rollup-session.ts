@@ -1,76 +1,17 @@
-import {
-  childSessionSummaries,
-  getOwnerDb,
-  playSessions,
-  telemetryEvents,
-} from "@mindkid/db";
+import { getOwnerDb, PLAY_COMPLETION_STATUS } from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import {
   computeSessionResult,
   computeStars,
   getDateIct,
   type TelemetryEventInput,
 } from "@mindkid/shared";
-import { eq } from "drizzle-orm";
 import { logJobDone } from "#src/log";
 import {
   computeNetSessionDurationSeconds,
   rollupChildDailyStatsForWindow,
 } from "#src/services/rollup";
 import type { Consumer } from "./types.js";
-
-function isPayloadRecord(
-  val: typeof telemetryEvents.$inferSelect.payload
-): val is NonNullable<TelemetryEventInput["payload"]> {
-  return typeof val === "object" && val !== null && !Array.isArray(val);
-}
-
-async function upsertChildSessionSummary(
-  db: ReturnType<typeof getOwnerDb>,
-  params: {
-    childProfileId: number;
-    sessionUuid: string;
-    gameLevelId: number;
-    templateCode: string;
-    targetStatus: (typeof childSessionSummaries.$inferInsert)["completionStatus"];
-    rawScore: number;
-    durationSec: number;
-    stars: number;
-    hintCount: number;
-    retryCount: number;
-    completedAt?: Date | null;
-  }
-) {
-  await db
-    .insert(childSessionSummaries)
-    .values({
-      childProfileId: params.childProfileId,
-      sessionUuid: params.sessionUuid,
-      gameLevelId: params.gameLevelId,
-      templateCode: params.templateCode,
-      completionStatus: params.targetStatus,
-      score: params.rawScore,
-      durationSeconds: params.durationSec,
-      starsEarned: params.stars,
-      hintsUsed: params.hintCount,
-      retriesCount: params.retryCount,
-      completedAt: params.completedAt || new Date(),
-    })
-    .onConflictDoUpdate({
-      target: [
-        childSessionSummaries.childProfileId,
-        childSessionSummaries.sessionUuid,
-      ],
-      set: {
-        completionStatus: params.targetStatus,
-        score: params.rawScore,
-        durationSeconds: params.durationSec,
-        starsEarned: params.stars,
-        hintsUsed: params.hintCount,
-        retriesCount: params.retryCount,
-        completedAt: params.completedAt || new Date(),
-      },
-    });
-}
 
 export async function runSessionRollup(
   sessionUuid: string,
@@ -82,12 +23,10 @@ export async function runSessionRollup(
   }
 
   const db = getOwnerDb();
+  const repos = createRepositories(db);
 
   // 1. Fetch play_session
-  const [session] = await db
-    .select()
-    .from(playSessions)
-    .where(eq(playSessions.sessionUuid, targetUuid));
+  const session = await repos.playSessions.findByUuid(targetUuid);
 
   if (!session) {
     console.warn(
@@ -97,18 +36,14 @@ export async function runSessionRollup(
   }
 
   // 2. Fetch telemetry_events
-  const events = await db
-    .select()
-    .from(telemetryEvents)
-    .where(eq(telemetryEvents.sessionUuid, targetUuid))
-    .orderBy(telemetryEvents.seq);
+  const events = await repos.telemetry.listBySession(targetUuid);
 
   const mappedEvents: TelemetryEventInput[] = events.map((e) => ({
     sessionUuid: e.sessionUuid,
     seq: e.seq,
     eventName: e.eventName,
     occurredAtMs: e.occurredAtMs,
-    payload: isPayloadRecord(e.payload) ? e.payload : null,
+    payload: e.payload,
     clientTimestamp: e.clientTimestamp,
   }));
 
@@ -119,49 +54,43 @@ export async function runSessionRollup(
     mappedEvents
   );
   const targetStatus =
-    session.completionStatus === "in_progress"
-      ? "completed"
+    session.completionStatus === PLAY_COMPLETION_STATUS.IN_PROGRESS
+      ? PLAY_COMPLETION_STATUS.COMPLETED
       : session.completionStatus;
 
-  const stars = computeStars(result.normalized_score, targetStatus);
+  const starsStatus =
+    targetStatus === PLAY_COMPLETION_STATUS.ABANDONED
+      ? "abandoned"
+      : "completed";
+  const stars = computeStars(result.normalized_score, starsStatus);
 
   // 4. Update play_sessions if in_progress or if net duration needs sync (BR-HPL-07)
-  if (session.completionStatus === "in_progress") {
-    await db
-      .update(playSessions)
-      .set({
-        score: result.raw_score,
-        starsEarned: stars ?? 0,
-        durationSeconds: durationSec,
-        completionStatus: targetStatus,
-        completedAt: new Date(),
-        updatedAt: new Date(),
-      })
-      .where(eq(playSessions.sessionUuid, targetUuid));
+  if (session.completionStatus === PLAY_COMPLETION_STATUS.IN_PROGRESS) {
+    await repos.playSessions.completeSession(targetUuid, {
+      score: result.raw_score,
+      starsEarned: stars ?? 0,
+      durationSeconds: durationSec,
+      completionStatus: PLAY_COMPLETION_STATUS.COMPLETED,
+      completedAt: new Date(),
+    });
   } else if (session.durationSeconds !== durationSec) {
-    await db
-      .update(playSessions)
-      .set({
-        durationSeconds: durationSec,
-        updatedAt: new Date(),
-      })
-      .where(eq(playSessions.sessionUuid, targetUuid));
+    await repos.playSessions.updateSessionDuration(targetUuid, durationSec);
   }
 
   // 5. Update child_session_summaries & child_daily_stats if childProfileId is present (Idempotent upsert)
   if (session.childProfileId) {
     const childId = Number(session.childProfileId);
-    await upsertChildSessionSummary(db, {
+    await repos.analyticsRollup.upsertSessionSummary({
       childProfileId: childId,
       sessionUuid: targetUuid,
       gameLevelId: session.gameLevelId,
       templateCode: session.templateCode,
-      targetStatus,
-      rawScore: result.raw_score,
-      durationSec,
-      stars: stars ?? 0,
-      hintCount: result.metrics.hint_count ?? 0,
-      retryCount: result.metrics.retry_count ?? 0,
+      completionStatus: targetStatus,
+      score: result.raw_score,
+      durationSeconds: durationSec,
+      starsEarned: stars ?? 0,
+      hintsUsed: result.metrics.hint_count ?? 0,
+      retriesCount: result.metrics.retry_count ?? 0,
       completedAt: session.completedAt,
     });
 

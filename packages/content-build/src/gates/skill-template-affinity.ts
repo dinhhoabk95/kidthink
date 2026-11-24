@@ -120,6 +120,15 @@ export function getSkillAgeBands(ageMin: number, ageMax: number): AgeBand[] {
   return bands;
 }
 
+const THINKING_AFFINITY_NORMALIZE_MAP: Readonly<Record<string, string>> = {
+  solve: "infer",
+  verify: "compare",
+  create: "plan",
+  listen: "observe",
+  describe: "observe",
+  deduce: "infer",
+};
+
 export function isTemplateAffinityMatch(
   skill: Pick<ParsedSkill, "age_min" | "age_max" | "thinking_processes">,
   templateCode: string,
@@ -127,9 +136,10 @@ export function isTemplateAffinityMatch(
   engineThinkingMap: Record<string, string[]>
 ): boolean {
   const tThinking = engineThinkingMap[templateCode] ?? [];
-  const hasThinkingIntersection = skill.thinking_processes.some((tp) =>
-    tThinking.includes(tp)
-  );
+  const hasThinkingIntersection = skill.thinking_processes.some((tp) => {
+    const normalized = THINKING_AFFINITY_NORMALIZE_MAP[tp] ?? tp;
+    return tThinking.includes(tp) || tThinking.includes(normalized);
+  });
   if (!hasThinkingIntersection) {
     return false;
   }

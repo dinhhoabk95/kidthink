@@ -1,4 +1,7 @@
 import {
+  ACCESS_TIER,
+  type AccessTier,
+  CONTENT_ENTITY_TYPE,
   childProfiles,
   curricula,
   curriculumItems,
@@ -109,7 +112,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
     async function insertUniqueGameLevel(
       difficulty: number,
       title: string,
-      accessTier: "standard" | "premium"
+      accessTier: AccessTier
     ): Promise<number> {
       for (let i = 0; i < 20; i++) {
         const code = `GL-C1-TST-PCU-${Math.floor(Math.random() * 8000) + 1000}`;
@@ -143,17 +146,17 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
     standardGameLevelId = await insertUniqueGameLevel(
       1,
       "Đếm số tiêu chuẩn",
-      "standard"
+      ACCESS_TIER.STANDARD
     );
     premiumGameLevelId = await insertUniqueGameLevel(
       2,
       "Đếm số cao cấp",
-      "premium"
+      ACCESS_TIER.PREMIUM
     );
     secondGameLevelId = await insertUniqueGameLevel(
       1,
       "Hình khối cơ bản",
-      "standard"
+      ACCESS_TIER.STANDARD
     );
     archivedGameLevelId = 999_999_999;
 
@@ -164,7 +167,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
       .values({
         code: systemCurriculumCode,
         title: "Chương trình mẫu hệ thống",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })
@@ -180,7 +183,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: standardGameLevelId,
         isRequired: true,
       },
@@ -189,7 +192,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
         weekNo: 1,
         sessionNo: 2,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: secondGameLevelId,
         isRequired: true,
       },

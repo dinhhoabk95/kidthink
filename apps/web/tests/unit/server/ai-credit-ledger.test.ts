@@ -1,8 +1,12 @@
 import {
+  ACTOR_TYPE,
+  AI_CREDIT_REASON,
   auditLogs,
   getOwnerDb,
+  MANAGER_ROLE,
   managers,
   notifications,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
 import { AI_FEATURE_COSTS } from "@mindkid/shared";
@@ -28,7 +32,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       .values({
         email: `test-credit-acl01-${uid}@example.com`,
         displayName: "Parent Credit Tester",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -94,7 +98,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       .values({
         email: `test-credit-acl02-${uid}@example.com`,
         displayName: "Parent Refund Tester",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -134,9 +138,9 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
     // Check ledger has both debit and refund rows (append-only)
     const txs = await listCreditTransactions(user.id);
     expect(txs.total).toBe(3);
-    expect(txs.items[0]?.reason).toBe("refund");
+    expect(txs.items[0]?.reason).toBe(AI_CREDIT_REASON.REFUND);
     expect(txs.items[0]?.delta).toBe(2);
-    expect(txs.items[1]?.reason).toBe("usage");
+    expect(txs.items[1]?.reason).toBe(AI_CREDIT_REASON.USAGE);
     expect(txs.items[1]?.delta).toBe(-2);
   });
 
@@ -149,7 +153,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       .values({
         email: `test-credit-acl03-${uid}@example.com`,
         displayName: "Parent Depleted Tester",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -192,7 +196,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       .values({
         email: `test-credit-acl04-${uid}@example.com`,
         displayName: "Parent No Expiry Tester",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -219,7 +223,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       .values({
         email: `test-credit-acl05-${uid}@example.com`,
         displayName: "Parent Concurrency Tester",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -268,7 +272,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       .values({
         email: `test-credit-acl06-${uid}@example.com`,
         displayName: "Parent Tier Tester",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -298,7 +302,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       .values({
         email: `sa-credit-${uid}@mindkid.edu.vn`,
         displayName: "Super Admin Tester",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
         passwordHash: "hash-mock",
       })
       .returning();
@@ -311,7 +315,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       .values({
         email: `test-credit-acl07-${uid}@example.com`,
         displayName: "Parent Manual Grant Tester",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -356,7 +360,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
 
     expect(auditLog).toBeDefined();
     expect(auditLog?.action).toBe("entitlement_granted");
-    expect(auditLog?.actorType).toBe("manager");
+    expect(auditLog?.actorType).toBe(ACTOR_TYPE.MANAGER);
     expect(auditLog?.actorId).toBe(manager.id);
   });
 
@@ -369,7 +373,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       .values({
         email: `test-credit-acl08-${uid}@example.com`,
         displayName: "Parent Usd Tester",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -397,7 +401,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       .values({
         email: `test-credit-acl09-${uid}@example.com`,
         displayName: "Parent Low Warning Tester",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -458,7 +462,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       .values({
         email: `test-credit-idemp-${uid}@example.com`,
         displayName: "Parent Idempotency Tester",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {

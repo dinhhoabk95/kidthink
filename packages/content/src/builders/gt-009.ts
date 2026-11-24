@@ -48,7 +48,7 @@ function buildDed01HighClues(clueTotal: number): ClueSpec[] {
     return [
       {
         clue_id: "clue_1",
-        text: "Vật này là hoa quả ngọt",
+        text: "Món quả này là hoa quả ngọt",
         predicate: {
           kind: "has_attribute",
           key: "type",
@@ -57,7 +57,7 @@ function buildDed01HighClues(clueTotal: number): ClueSpec[] {
       },
       {
         clue_id: "clue_2",
-        text: "Không có dạng hình chữ nhật",
+        text: "Khác dạng hình chữ nhật",
         predicate: {
           kind: "not_attribute",
           key: "shape",
@@ -66,7 +66,7 @@ function buildDed01HighClues(clueTotal: number): ClueSpec[] {
       },
       {
         clue_id: "clue_3",
-        text: "Vật này không có màu tím",
+        text: "Món quả này khác màu tím",
         predicate: {
           kind: "not_attribute",
           key: "color",
@@ -75,7 +75,7 @@ function buildDed01HighClues(clueTotal: number): ClueSpec[] {
       },
       {
         clue_id: "clue_4",
-        text: "Vật này không có màu vàng",
+        text: "Món quả này khác màu vàng",
         predicate: {
           kind: "not_attribute",
           key: "color",
@@ -87,7 +87,7 @@ function buildDed01HighClues(clueTotal: number): ClueSpec[] {
   return [
     {
       clue_id: "clue_1",
-      text: "Vật này là hoa quả ngọt",
+      text: "Món quả này là hoa quả ngọt",
       predicate: {
         kind: "has_attribute",
         key: "type",
@@ -96,7 +96,7 @@ function buildDed01HighClues(clueTotal: number): ClueSpec[] {
     },
     {
       clue_id: "clue_2",
-      text: "Không có dạng hình chữ nhật",
+      text: "Khác dạng hình chữ nhật",
       predicate: {
         kind: "not_attribute",
         key: "shape",
@@ -115,7 +115,7 @@ function buildNumericClues(
   clueTotal: number,
   candidateCount: number
 ): { prompt: string; answerCandidateId: string; clues: ClueSpec[] } {
-  const prompt = "Bé chạm mở manh mối rồi chọn số bí mật nhé!";
+  const prompt = "Đố bé mở manh mối tìm con số bí mật nhé!";
   if (clueTotal === 1) {
     return {
       prompt,
@@ -205,7 +205,7 @@ function buildCluesForSkill(
   clueTotal: number,
   candidateCount: number
 ): { prompt: string; answerCandidateId: string; clues: ClueSpec[] } {
-  const attrPrompt = "Bé chạm mở manh mối rồi chọn đúng vật nhé!";
+  const attrPrompt = "Đố bé mở manh mối tìm đúng vật bí mật nhé!";
   if (dataset.skill_code === "C3.DED.02" && clueTotal === 3) {
     return {
       prompt: attrPrompt,
@@ -290,7 +290,7 @@ function buildCluesForSkill(
         },
         {
           clue_id: "clue_3",
-          text: "Vật này không có màu vàng",
+          text: "Chiếc xe này khác màu vàng",
           predicate: {
             kind: "not_attribute",
             key: "color",

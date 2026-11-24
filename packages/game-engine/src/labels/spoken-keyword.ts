@@ -259,6 +259,25 @@ const CORPUS_GLYPH_FALLBACK_NAMES: Readonly<Record<string, string>> = {
   "📛": "Bảng tên",
   "💌": "Thiệp hồng",
   "💤": "Ngủ say",
+  // Đồ vật & ký ức "Tuổi thơ Việt × Giấy Gỗ Mộc"
+  "🪁": "Cánh diều",
+  "🏮": "Đèn lồng",
+  "🪷": "Hoa sen",
+  "🎋": "Cành trúc",
+  "🎍": "Khóm tre",
+  "🥁": "Cái trống",
+  "🪈": "Ống sáo trúc",
+  "🌾": "Bông lúa",
+  "🐃": "Con trâu",
+  "👒": "Chiếc nón",
+  "🥮": "Bánh trung thu",
+  "🧧": "Bao lì xì",
+  "🫖": "Ấm trà gốm",
+  "🍵": "Chén trà ấm",
+  "🪇": "Lục lạc gỗ",
+  "🧺": "Cái rổ tre",
+  "🥣": "Cái bát gốm",
+  "🥢": "Đôi đũa tre",
 };
 
 /**

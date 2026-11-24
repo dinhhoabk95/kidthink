@@ -1,8 +1,5 @@
-import { childProfiles, consentLogs, getOwnerDb, users } from "@mindkid/db";
-import { NotFoundError } from "@mindkid/errors/common";
-import { eq } from "drizzle-orm";
 import { defineEventHandler, setHeader } from "h3";
-
+import { exportUserPersonalData } from "#server/services/account-lifecycle-service";
 import {
   enforceTwoAxisRateLimit,
   requireWebUserSession,
@@ -13,50 +10,10 @@ export default defineEventHandler(async (event) => {
   const userSession = requireWebUserSession(event);
   const userId = Number(userSession.user_id);
 
-  // Require reauth (≤ 5 min)
   requireReauth(event);
-
   await enforceTwoAxisRateLimit(event, "export:data", String(userId));
 
-  const db = getOwnerDb();
-  const [userRows, children, consents] = await Promise.all([
-    db
-      .select({
-        id: users.id,
-        uuid: users.uuid,
-        email: users.email,
-        displayName: users.displayName,
-        status: users.status,
-        createdAt: users.createdAt,
-      })
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1),
-    db
-      .select({
-        uuid: childProfiles.uuid,
-        displayName: childProfiles.displayName,
-        birthYear: childProfiles.birthYear,
-        avatarId: childProfiles.avatarId,
-        status: childProfiles.status,
-        createdAt: childProfiles.createdAt,
-      })
-      .from(childProfiles)
-      .where(eq(childProfiles.userId, userId)),
-    db
-      .select({
-        consentType: consentLogs.consentType,
-        action: consentLogs.action,
-        createdAt: consentLogs.createdAt,
-      })
-      .from(consentLogs)
-      .where(eq(consentLogs.userId, userId)),
-  ]);
-  const user = userRows[0];
-
-  if (!user) {
-    throw new NotFoundError("NOT_FOUND");
-  }
+  const payload = await exportUserPersonalData(userId);
 
   setHeader(event, "Content-Type", "application/json");
   setHeader(
@@ -65,27 +22,5 @@ export default defineEventHandler(async (event) => {
     'attachment; filename="mindkid-data-export.json"'
   );
 
-  return {
-    exported_at: new Date().toISOString(),
-    user: {
-      uuid: user.uuid,
-      email: user.email,
-      display_name: user.displayName,
-      status: user.status,
-      created_at: user.createdAt.toISOString(),
-    },
-    child_profiles: children.map((c) => ({
-      uuid: c.uuid,
-      display_name: c.displayName,
-      birth_year: c.birthYear,
-      avatar_id: c.avatarId,
-      status: c.status,
-      created_at: c.createdAt.toISOString(),
-    })),
-    consents: consents.map((cs) => ({
-      consent_type: cs.consentType,
-      action: cs.action,
-      created_at: cs.createdAt.toISOString(),
-    })),
-  };
+  return payload;
 });

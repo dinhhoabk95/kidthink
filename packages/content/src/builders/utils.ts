@@ -1,5 +1,53 @@
 import { createRng as createEngineRng } from "@mindkid/game-engine";
 import type { DatasetAsset, DatasetItem } from "@mindkid/shared";
+import {
+  isChildSafePrompt as checkSafePrompt,
+  sanitizeChildPrompt as cleanChildPrompt,
+  countPromptWords as countWords,
+  resolvePreschoolAgeGroup as mapPreschoolAgeGroup,
+  type PreschoolAgeGroup,
+  pickAgeBandPrompt as selectAgeBandPrompt,
+} from "#src/inventories/koguma-pedagogy";
+import {
+  resolveThemeContainers as mapThemeContainers,
+  type VnContainerPair,
+} from "#src/inventories/vn-preschool-culture";
+
+export function countPromptWords(text: string): number {
+  return countWords(text);
+}
+
+export function isChildSafePrompt(
+  text: string,
+  options?: { readonly forbidConjunctionVa?: boolean }
+): boolean {
+  return checkSafePrompt(text, options);
+}
+
+export function resolvePreschoolAgeGroup(band?: string): PreschoolAgeGroup {
+  return mapPreschoolAgeGroup(band);
+}
+
+export function pickAgeBandPrompt(
+  band: string | undefined,
+  prompts: Readonly<Record<PreschoolAgeGroup, string>>,
+  fallback: string,
+  options?: { readonly forbidConjunctionVa?: boolean }
+): string {
+  return selectAgeBandPrompt(band, prompts, fallback, options);
+}
+
+export function sanitizeChildPrompt(
+  candidate: string,
+  fallback: string,
+  options?: { readonly forbidConjunctionVa?: boolean }
+): string {
+  return cleanChildPrompt(candidate, fallback, options);
+}
+
+export function resolveThemeContainers(theme?: string): VnContainerPair {
+  return mapThemeContainers(theme);
+}
 
 export function createRng(seed: number): ReturnType<typeof createEngineRng> {
   return createEngineRng(seed);

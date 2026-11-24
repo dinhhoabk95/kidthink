@@ -3,14 +3,28 @@ import type { EmojiEntry } from "#src/types";
 export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   {
     emoji: "❤️",
+    slug: "red-heart",
+    svg_path: "/sprites/emoji/red-heart.svg",
     name: "Hình trái tim đỏ",
     categories: ["flag-symbol", "shape-color"],
     curriculum_themes: ["que_huong_dat_nuoc", "ban_than"],
-    keywords: ["red heart", "love", "trái tim", "yêu", "thương", "tim", "đỏ"],
+    keywords: [
+      "red heart",
+      "love",
+      "trái tim",
+      "yêu",
+      "thương",
+      "tim",
+      "đỏ",
+      "tim đỏ",
+      "hình trái tim đỏ",
+    ],
     age_min: 3,
   },
   {
     emoji: "⬆️",
+    slug: "up-arrow",
+    svg_path: "/sprites/emoji/up-arrow.svg",
     name: "Mũi tên lên",
     categories: ["flag-symbol", "shape-color", "number-symbol"],
     curriculum_themes: ["ban_than"],
@@ -19,6 +33,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⬇️",
+    slug: "down-arrow",
+    svg_path: "/sprites/emoji/down-arrow.svg",
     name: "Mũi tên xuống",
     categories: ["flag-symbol", "shape-color", "number-symbol"],
     curriculum_themes: ["ban_than"],
@@ -34,6 +50,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⬅️",
+    slug: "left-arrow",
+    svg_path: "/sprites/emoji/left-arrow.svg",
     name: "Mũi tên trái",
     categories: ["flag-symbol", "shape-color", "number-symbol"],
     curriculum_themes: ["ban_than"],
@@ -49,6 +67,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "➡️",
+    slug: "right-arrow",
+    svg_path: "/sprites/emoji/right-arrow.svg",
     name: "Mũi tên phải",
     categories: ["flag-symbol", "shape-color", "number-symbol"],
     curriculum_themes: ["ban_than"],
@@ -63,29 +83,9 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
     age_min: 3,
   },
   {
-    emoji: "⭐",
-    name: "Sao khen",
-    categories: ["school", "shape-color", "sky-space"],
-    curriculum_themes: [
-      "truong_mam_non",
-      "ban_than",
-      "nuoc_hien_tuong_tu_nhien",
-    ],
-    keywords: [
-      "star",
-      "reward",
-      "sao",
-      "khen thưởng",
-      "giỏi",
-      "gold star",
-      "ngôi sao",
-      "vàng",
-      "sáng",
-    ],
-    age_min: 3,
-  },
-  {
     emoji: "🔴",
+    slug: "red-circle",
+    svg_path: "/sprites/emoji/red-circle.svg",
     name: "Hình tròn đỏ",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -94,6 +94,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟠",
+    slug: "orange-circle",
+    svg_path: "/sprites/emoji/orange-circle.svg",
     name: "Hình tròn cam",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -102,6 +104,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟡",
+    slug: "yellow-circle",
+    svg_path: "/sprites/emoji/yellow-circle.svg",
     name: "Hình tròn vàng",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -110,6 +114,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟢",
+    slug: "green-circle",
+    svg_path: "/sprites/emoji/green-circle.svg",
     name: "Hình tròn xanh lá",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -118,6 +124,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔵",
+    slug: "blue-circle",
+    svg_path: "/sprites/emoji/blue-circle.svg",
     name: "Hình tròn xanh dương",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -126,6 +134,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟣",
+    slug: "purple-circle",
+    svg_path: "/sprites/emoji/purple-circle.svg",
     name: "Hình tròn tím",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -134,6 +144,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟤",
+    slug: "brown-circle",
+    svg_path: "/sprites/emoji/brown-circle.svg",
     name: "Hình tròn nâu",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -142,6 +154,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⚫",
+    slug: "black-circle",
+    svg_path: "/sprites/emoji/black-circle.svg",
     name: "Hình tròn đen",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -150,6 +164,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⚪",
+    slug: "white-circle",
+    svg_path: "/sprites/emoji/white-circle.svg",
     name: "Hình tròn trắng",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -158,6 +174,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟥",
+    slug: "red-square",
+    svg_path: "/sprites/emoji/red-square.svg",
     name: "Hình vuông đỏ",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -166,6 +184,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟧",
+    slug: "orange-square",
+    svg_path: "/sprites/emoji/orange-square.svg",
     name: "Hình vuông cam",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -174,6 +194,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟨",
+    slug: "yellow-square",
+    svg_path: "/sprites/emoji/yellow-square.svg",
     name: "Hình vuông vàng",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -182,6 +204,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟩",
+    slug: "green-square",
+    svg_path: "/sprites/emoji/green-square.svg",
     name: "Hình vuông xanh lá",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -190,6 +214,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟦",
+    slug: "blue-square",
+    svg_path: "/sprites/emoji/blue-square.svg",
     name: "Hình vuông xanh dương",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -198,6 +224,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟪",
+    slug: "purple-square",
+    svg_path: "/sprites/emoji/purple-square.svg",
     name: "Hình vuông tím",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -206,6 +234,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟫",
+    slug: "brown-square",
+    svg_path: "/sprites/emoji/brown-square.svg",
     name: "Hình vuông nâu",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -214,6 +244,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⬛",
+    slug: "dark-square",
+    svg_path: "/sprites/emoji/dark-square.svg",
     name: "Hình vuông đen",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -222,6 +254,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⬜",
+    slug: "white-square",
+    svg_path: "/sprites/emoji/white-square.svg",
     name: "Hình vuông trắng",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -230,6 +264,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔺",
+    slug: "red-triangle",
+    svg_path: "/sprites/emoji/red-triangle.svg",
     name: "Hình tam giác đỏ",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -238,6 +274,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔻",
+    slug: "down-red-triangle",
+    svg_path: "/sprites/emoji/down-red-triangle.svg",
     name: "Hình tam giác đỏ ngược",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -246,6 +284,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "💠",
+    slug: "diamond-flower",
+    svg_path: "/sprites/emoji/diamond-flower.svg",
     name: "Hình kim cương",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -254,6 +294,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔶",
+    slug: "orange-diamond",
+    svg_path: "/sprites/emoji/orange-diamond.svg",
     name: "Hình thoi cam",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -262,6 +304,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔷",
+    slug: "blue-diamond",
+    svg_path: "/sprites/emoji/blue-diamond.svg",
     name: "Hình thoi xanh",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -270,6 +314,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⭕",
+    slug: "hollow-ring",
+    svg_path: "/sprites/emoji/hollow-ring.svg",
     name: "Hình vòng tròn",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
@@ -278,6 +324,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "💎",
+    slug: "gem",
+    svg_path: "/sprites/emoji/gem.svg",
     name: "Viên kim cương",
     categories: ["shape-color", "tool"],
     curriculum_themes: ["ban_than"],
@@ -295,6 +343,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔘",
+    slug: "round-button",
+    svg_path: "/sprites/emoji/round-button.svg",
     name: "Nút chọn",
     categories: ["shape-color", "number-symbol"],
     curriculum_themes: ["ban_than"],
@@ -303,6 +353,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔁",
+    slug: "repeat-loop",
+    svg_path: "/sprites/emoji/repeat-loop.svg",
     name: "Lặp lại",
     categories: ["shape-color", "number-symbol"],
     curriculum_themes: ["ban_than"],
@@ -311,14 +363,25 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "💖",
+    slug: "sparkling-heart",
+    svg_path: "/sprites/emoji/sparkling-heart.svg",
     name: "Trái tim lấp lánh",
     categories: ["shape-color", "face-emotion"],
     curriculum_themes: ["gia_dinh"],
-    keywords: ["sparkling heart", "heart", "trái tim", "tim", "yêu thương"],
+    keywords: [
+      "sparkling heart",
+      "heart",
+      "trái tim",
+      "tim",
+      "yêu thương",
+      "trái tim lấp lánh",
+    ],
     age_min: 3,
   },
   {
     emoji: "▬",
+    slug: "wide-rectangle",
+    svg_path: "/sprites/emoji/wide-rectangle.svg",
     name: "Hình chữ nhật dài",
     categories: ["shape-color"],
     curriculum_themes: ["truong_mam_non"],
@@ -327,6 +390,8 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔲",
+    slug: "framed-square",
+    svg_path: "/sprites/emoji/framed-square.svg",
     name: "Ô vuông",
     categories: ["shape-color"],
     curriculum_themes: ["truong_mam_non"],
@@ -335,10 +400,22 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "〰️",
+    slug: "wavy-line",
+    svg_path: "/sprites/emoji/wavy-line.svg",
     name: "Đường lượn sóng",
     categories: ["shape-color"],
     curriculum_themes: ["truong_mam_non"],
     keywords: ["wavy dash", "lượn sóng", "đường cong"],
+    age_min: 3,
+  },
+  {
+    emoji: "🩷",
+    slug: "pink-heart",
+    svg_path: "/sprites/emoji/pink-heart.svg",
+    name: "Hình trái tim hồng",
+    categories: ["shape-color", "family"],
+    curriculum_themes: ["gia_dinh", "ban_than"],
+    keywords: ["pink heart", "màu hồng", "trái tim hồng", "yêu thương"],
     age_min: 3,
   },
 ];

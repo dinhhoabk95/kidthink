@@ -1,13 +1,16 @@
-import { curricula, getOwnerDb } from "@mindkid/db";
-import { and, desc, eq, type SQL, sql } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
+import { listManagerCurriculaCatalog } from "#server/services/curriculum-showcase-service";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const CurriculaListQuerySchema = z.object({
   search: z.string().optional(),
-  program_type: z.string().optional(),
-  access_tier: z.string().optional(),
+  program_type: z.enum(["age_based", "journey"]).optional(),
+  access_tier: z.enum(["free", "login", "standard", "premium"]).optional(),
+  is_koguma: z.enum(["true", "false"]).optional(),
+  koguma_track: z.enum(["core_12w", "year_36w"]).optional(),
+  koguma_stage: z.coerce.number().int().min(1).max(2).optional(),
+  koguma_variant: z.enum(["01", "02", "year-01", "year-02"]).optional(),
   page: z.coerce.number().optional(),
   limit: z.coerce.number().optional(),
 });
@@ -17,57 +20,19 @@ export default defineEventHandler(async (event) => {
   const parsedQuery = CurriculaListQuerySchema.safeParse(getQuery(event));
   const query = parsedQuery.success ? parsedQuery.data : {};
 
-  const search = query.search ? String(query.search).trim() : "";
-  const programType = query.program_type
-    ? String(query.program_type)
-    : undefined;
-  const accessTier = query.access_tier ? String(query.access_tier) : undefined;
-  const page = Math.max(1, Number(query.page) || 1);
-  const limit = Math.min(50, Math.max(1, Number(query.limit) || 20));
-  const offset = (page - 1) * limit;
-
-  const db = getOwnerDb();
-  const conditions: SQL[] = [];
-
-  if (search) {
-    conditions.push(
-      sql`(${curricula.code} ILIKE ${`%${search}%`} OR ${curricula.title} ILIKE ${`%${search}%`})`
-    );
-  }
-  if (
-    programType &&
-    (programType === "age_based" || programType === "journey")
-  ) {
-    conditions.push(eq(curricula.programType, programType));
-  }
-  if (accessTier) {
-    conditions.push(
-      eq(
-        curricula.accessTier,
-        accessTier as typeof curricula.$inferSelect.accessTier
-      )
-    );
-  }
-
-  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
-  const [countRow] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(curricula)
-    .where(whereClause);
-
-  const rows = await db
-    .select()
-    .from(curricula)
-    .where(whereClause)
-    .orderBy(desc(curricula.createdAt))
-    .limit(limit)
-    .offset(offset);
-
-  return {
-    items: rows,
-    total: countRow?.count ?? 0,
-    page,
-    limit,
-  };
+  return await listManagerCurriculaCatalog({
+    search: query.search,
+    programType: query.program_type,
+    accessTier: query.access_tier,
+    isKoguma:
+      query.is_koguma === undefined ? undefined : query.is_koguma === "true",
+    kogumaTrack: query.koguma_track,
+    kogumaStage:
+      query.koguma_stage === 1 || query.koguma_stage === 2
+        ? query.koguma_stage
+        : undefined,
+    kogumaVariant: query.koguma_variant,
+    page: query.page,
+    limit: query.limit,
+  });
 });

@@ -390,6 +390,27 @@
             </p>
           </div>
 
+          <div v-if="hasPassword && hasTwoFactorEnabled">
+            <label
+              class="mb-1 block font-medium text-sm text-surface-700"
+              for="indexPasswordModalTotp"
+            >
+              Mã xác thực hai lớp (TOTP) *
+            </label>
+            <input
+              autocomplete="one-time-code"
+              class="min-h-11 w-full rounded-xl border-2 border-surface-200 px-3.5 py-2.5 text-base font-mono tracking-widest text-surface-900 focus:border-brand-600 focus:outline-none"
+              data-testid="password-totp-input"
+              id="indexPasswordModalTotp"
+              inputmode="numeric"
+              maxlength="6"
+              placeholder="123456"
+              required
+              type="text"
+              v-model.trim="passwordTotp"
+            >
+          </div>
+
           <p
             class="rounded-xl border border-amber-200 bg-amber-50 p-3 font-medium text-amber-900 text-sm"
             data-testid="password-modal-error"
@@ -483,6 +504,27 @@
             </p>
           </div>
 
+          <div v-if="hasTwoFactorEnabled">
+            <label
+              class="mb-1 block font-medium text-sm text-surface-700"
+              for="indexEmailModalTotp"
+            >
+              Mã xác thực hai lớp (TOTP) *
+            </label>
+            <input
+              autocomplete="one-time-code"
+              class="min-h-11 w-full rounded-xl border-2 border-surface-200 px-3.5 py-2.5 text-base font-mono tracking-widest text-surface-900 focus:border-brand-600 focus:outline-none"
+              data-testid="email-totp-input"
+              id="indexEmailModalTotp"
+              inputmode="numeric"
+              maxlength="6"
+              placeholder="123456"
+              required
+              type="text"
+              v-model.trim="emailTotp"
+            >
+          </div>
+
           <p
             class="rounded-xl border border-amber-200 bg-amber-50 p-3 font-medium text-amber-900 text-sm"
             data-testid="email-modal-error"
@@ -548,6 +590,7 @@
   const isSavingProfile = ref(false);
   const isUnlinking = ref(false);
   const hasPassword = ref(true);
+  const hasTwoFactorEnabled = ref(false);
   const userEmail = ref("phuhuynh@example.com");
   const pendingEmail = ref("");
   const statusBanner = ref("");
@@ -557,6 +600,7 @@
   const isSubmittingPassword = ref(false);
   const passwordModalError = ref("");
   const passwordFieldErrors = ref<Record<string, string>>({});
+  const passwordTotp = ref("");
   const passwordForm = reactive({
     currentPassword: "",
     newPassword: "",
@@ -575,6 +619,7 @@
   const isSubmittingEmail = ref(false);
   const emailModalError = ref("");
   const emailFieldErrors = ref<Record<string, string>>({});
+  const emailTotp = ref("");
   const emailForm = reactive({
     currentPassword: "",
     newEmail: "",
@@ -596,7 +641,9 @@
   onMounted(async () => {
     try {
       const [user, prov, ident, notif] = await Promise.all([
-        api<UserSessionData>("/api/users/profile").catch(() => null),
+        api<UserSessionData & { two_factor_enabled?: boolean }>(
+          "/api/users/profile"
+        ).catch(() => null),
         api<{ providers: ProviderItem[] }>(
           "/api/guest/auth/oauth/providers"
         ).catch(() => null),
@@ -607,6 +654,7 @@
           "/api/users/notification-preferences"
         ).catch(() => null),
       ]);
+      hasTwoFactorEnabled.value = Boolean(user?.two_factor_enabled);
       syncSettingsInitialState(
         {
           userEmail,
@@ -695,6 +743,7 @@
   }
 
   function openPasswordModal(): void {
+    passwordTotp.value = "";
     resetPasswordModalState(
       passwordForm,
       passwordModalError,
@@ -725,9 +774,12 @@
     isSubmittingPassword.value = true;
     try {
       if (passwordForm.currentPassword) {
+        const trimmedTotp = passwordTotp.value.trim();
         await api("/api/users/auth/reauth", {
           method: "POST",
-          body: { password: passwordForm.currentPassword },
+          body: trimmedTotp
+            ? { password: passwordForm.currentPassword, totp: trimmedTotp }
+            : { password: passwordForm.currentPassword },
         });
       }
 
@@ -741,6 +793,7 @@
       );
 
       hasPassword.value = true;
+      passwordTotp.value = "";
       statusBanner.value = res.message || "Đã cập nhật mật khẩu thành công.";
       isPasswordModalOpen.value = false;
     } catch (err) {
@@ -752,6 +805,7 @@
   }
 
   function openEmailModal(): void {
+    emailTotp.value = "";
     resetEmailModalState(emailForm, emailModalError, emailFieldErrors);
     isEmailModalOpen.value = true;
   }
@@ -766,9 +820,12 @@
     isSubmittingEmail.value = true;
 
     try {
+      const trimmedTotp = emailTotp.value.trim();
       await api("/api/users/auth/reauth", {
         method: "POST",
-        body: { password: emailForm.currentPassword },
+        body: trimmedTotp
+          ? { password: emailForm.currentPassword, totp: trimmedTotp }
+          : { password: emailForm.currentPassword },
       });
 
       const res = await api<{
@@ -781,6 +838,7 @@
       });
 
       pendingEmail.value = res.pending_email;
+      emailTotp.value = "";
       statusBanner.value =
         res.message ||
         "Đã gửi liên kết xác nhận tới email mới. Vui lòng kiểm tra hộp thư.";

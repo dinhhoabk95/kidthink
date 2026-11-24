@@ -49,6 +49,66 @@ export type SendBufferedBatchFn = (
   events: readonly BufferedEvent[]
 ) => Promise<{ accepted?: number; skipped?: number }>;
 
+type ChunkSendResult =
+  | {
+      readonly ok: true;
+      readonly accepted: number;
+      readonly skipped: number;
+    }
+  | {
+      readonly ok: false;
+      readonly permanent: boolean;
+    };
+
+const PERMANENT_HTTP_STATUSES = new Set([400, 401, 403, 404, 409, 422]);
+
+interface HttpErrorCandidate {
+  readonly status?: number;
+  readonly statusCode?: number;
+  readonly response?: { readonly status?: number };
+  readonly data?: { readonly statusCode?: number; readonly status?: number };
+}
+
+function isObjectRecord(value: object | null): value is HttpErrorCandidate {
+  return typeof value === "object" && value !== null;
+}
+
+function readValidHttpStatus(candidate: number | undefined): number | null {
+  if (
+    typeof candidate === "number" &&
+    Number.isInteger(candidate) &&
+    candidate >= 100 &&
+    candidate <= 599
+  ) {
+    return candidate;
+  }
+  return null;
+}
+
+function extractHttpStatus(err: object | null): number | null {
+  if (!isObjectRecord(err)) {
+    return null;
+  }
+  const nestedResponse =
+    err.response && isObjectRecord(err.response) ? err.response : null;
+  const nestedData = err.data && isObjectRecord(err.data) ? err.data : null;
+
+  return (
+    readValidHttpStatus(err.statusCode) ??
+    readValidHttpStatus(err.status) ??
+    readValidHttpStatus(nestedResponse?.status) ??
+    readValidHttpStatus(nestedData?.statusCode) ??
+    readValidHttpStatus(nestedData?.status)
+  );
+}
+
+function isPermanentHttpStatus(status: number): boolean {
+  return (
+    PERMANENT_HTTP_STATUSES.has(status) ||
+    (status >= 400 && status < 500 && status !== 408 && status !== 429)
+  );
+}
+
 export interface OfflineEventBufferOptions {
   isGuest?: boolean;
   getCsrfToken?: () => string | null;
@@ -367,6 +427,12 @@ export class OfflineEventBuffer {
         sorted
       );
       if (!outcome.ok) {
+        if (outcome.permanent) {
+          await this.storage.clear(oldSessionUuid);
+          totalAccepted += outcome.accepted;
+          totalSkipped += outcome.skipped;
+          continue;
+        }
         await this.storage.save(
           sorted.filter((e) => !outcome.sentSeqs.has(e.seq)),
           oldSessionUuid
@@ -458,11 +524,12 @@ export class OfflineEventBuffer {
     sessionUuid: string,
     isGuest: boolean,
     chunk: readonly BufferedEvent[]
-  ): Promise<{ accepted: number; skipped: number } | null> {
+  ): Promise<ChunkSendResult> {
     try {
       if (this.sendBatch) {
         const data = await this.sendBatch(sessionUuid, isGuest, chunk);
         return {
+          ok: true,
           accepted: data.accepted ?? chunk.length,
           skipped: data.skipped ?? 0,
         };
@@ -483,10 +550,13 @@ export class OfflineEventBuffer {
       });
 
       if (!res.ok) {
+        const permanent = isPermanentHttpStatus(res.status);
         console.warn(
-          `[OFFLINE_BUFFER] Flush failed with status ${res.status}. Keeping events in buffer.`
+          permanent
+            ? `[OFFLINE_BUFFER] Permanent HTTP ${res.status} failure. Dropping batch.`
+            : `[OFFLINE_BUFFER] Flush failed with status ${res.status}. Keeping events in buffer.`
         );
-        return null;
+        return { ok: false, permanent };
       }
 
       const data = (await res.json()) as {
@@ -494,13 +564,22 @@ export class OfflineEventBuffer {
         skipped?: number;
       };
       return {
+        ok: true,
         accepted: data.accepted ?? chunk.length,
         skipped: data.skipped ?? 0,
       };
     } catch (err) {
       // Network error or offline -> Keep events in buffer (BR-ING-05 / BR-OFF-01)
-      console.warn("[OFFLINE_BUFFER] Network error flushing events:", err);
-      return null;
+      const errObj = typeof err === "object" && err !== null ? err : null;
+      const status = extractHttpStatus(errObj);
+      const permanent = status !== null && isPermanentHttpStatus(status);
+      console.warn(
+        permanent
+          ? `[OFFLINE_BUFFER] Permanent flush failure (status ${status}). Dropping batch.`
+          : "[OFFLINE_BUFFER] Network error flushing events:",
+        err
+      );
+      return { ok: false, permanent };
     }
   }
 
@@ -510,6 +589,7 @@ export class OfflineEventBuffer {
     sortedEvents: readonly BufferedEvent[]
   ): Promise<{
     ok: boolean;
+    permanent: boolean;
     accepted: number;
     skipped: number;
     sentSeqs: Set<number>;
@@ -525,8 +605,14 @@ export class OfflineEventBuffer {
     ) {
       const chunk = sortedEvents.slice(from, from + MAX_EVENTS_PER_BATCH);
       const res = await this.sendSingleChunk(sessionUuid, isGuest, chunk);
-      if (!res) {
-        return { ok: false, accepted, skipped, sentSeqs };
+      if (!res.ok) {
+        return {
+          ok: false,
+          permanent: res.permanent,
+          accepted,
+          skipped,
+          sentSeqs,
+        };
       }
       for (const ev of chunk) {
         sentSeqs.add(ev.seq);
@@ -535,7 +621,7 @@ export class OfflineEventBuffer {
       skipped += res.skipped;
     }
 
-    return { ok: true, accepted, skipped, sentSeqs };
+    return { ok: true, permanent: false, accepted, skipped, sentSeqs };
   }
 
   flushBeacon(): boolean {

@@ -25,8 +25,9 @@ const REGEX_MONTESSORI_CODE = /-0[1-9]\d{2}$/;
  * v12: #313 Phase 26 — GT-013 mê cung 3×3 (trần 3 cột, 4 hàng, `BR-E013-12`).
  * v13: #315 — Bản địa hoá sư phạm vật thật Koguma-kai (Jibutsu/Taiwa) & Văn hoá Mầm non Việt Nam.
  * v14: #317 — GT-001 Cuốn Sách Gỗ Pop-up 3 Chương, Thẻ Ngữ Cảnh Thông Minh (showcase) & CPA.
+ * v15: GT-000 Sổ Truyện Giấy Dó 2.5D, Cô Cú & 9 chế độ scene_board phủ trọn C1–C6.
  */
-export const GENERATED_LEVEL_CONTENT_VERSION = 14;
+export const GENERATED_LEVEL_CONTENT_VERSION = 15;
 
 /**
  * Chỗ trống trong `phrasing.prompt_template` mà bộ dựng level thay được.

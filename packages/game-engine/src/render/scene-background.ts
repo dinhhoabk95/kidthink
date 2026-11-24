@@ -66,7 +66,7 @@ export function drawSceneBackground(
     vignette.addColorStop(0, alpha(designTokens.colors.surface[0], 0));
     vignette.addColorStop(
       1,
-      alpha(designTokens.colors.montessori.woodBevel, 0.12)
+      alpha(designTokens.colors.vnMaterials.bamboo.stalk, 0.14)
     );
     setCachedGradient(
       ctx,

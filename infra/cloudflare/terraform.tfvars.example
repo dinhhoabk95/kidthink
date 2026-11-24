@@ -1,0 +1,8 @@
+# Mẫu biến cấu hình Terraform Cloudflare (CẤM commit terraform.tfvars chứa secret thật)
+cloudflare_account_id = "00000000000000000000000000000000"
+cloudflare_zone_id    = "00000000000000000000000000000000"
+domain                = "mindkid.vn"
+
+# Giai đoạn 1 (< 1.000 DAU, $0): "cloudflare"
+# Giai đoạn 2 (>= 1.000 DAU, chuyển về VPS PostgreSQL 18 + Garage S3): "vps"
+backend_mode          = "cloudflare"

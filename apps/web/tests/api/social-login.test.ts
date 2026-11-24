@@ -8,11 +8,15 @@ import {
   setAuthRedisClient,
 } from "@mindkid/auth";
 import {
+  AUTH_METHOD,
+  CONSENT_TYPE,
   consentLogs,
   consentRequirements,
   getOwnerDb,
+  NOTIFICATION_CHANNEL,
   notificationDeliveries,
   notifications,
+  USER_STATUS,
   userAccounts,
   userSessions,
   users,
@@ -74,7 +78,12 @@ async function readConsentMarkers(): Promise<{
   const rows = await db
     .select()
     .from(consentRequirements)
-    .where(inArray(consentRequirements.consentType, ["terms", "privacy"]));
+    .where(
+      inArray(consentRequirements.consentType, [
+        CONSENT_TYPE.TERMS,
+        CONSENT_TYPE.PRIVACY,
+      ])
+    );
 
   let termsRequirementAt: string | null = null;
   let privacyRequirementAt: string | null = null;
@@ -82,9 +91,9 @@ async function readConsentMarkers(): Promise<{
     const iso = row.reconsentRequiredAt
       ? row.reconsentRequiredAt.toISOString()
       : null;
-    if (row.consentType === "terms") {
+    if (row.consentType === CONSENT_TYPE.TERMS) {
       termsRequirementAt = iso;
-    } else if (row.consentType === "privacy") {
+    } else if (row.consentType === CONSENT_TYPE.PRIVACY) {
       privacyRequirementAt = iso;
     }
   }
@@ -323,7 +332,7 @@ describe("Task 3, 4 & 5 — Better Auth Social Login & Registration (BR-SCL-01..
     }
     createdUserIds.push(dbUser.id);
 
-    expect(dbUser.status).toBe("active");
+    expect(dbUser.status).toBe(USER_STATUS.ACTIVE);
     expect(dbUser.emailVerified).toBe(true);
     expect(dbUser.emailVerifiedAt).toBeInstanceOf(Date);
     expect(dbUser.passwordHash).toBeNull();
@@ -351,16 +360,15 @@ describe("Task 3, 4 & 5 — Better Auth Social Login & Registration (BR-SCL-01..
       .from(consentLogs)
       .where(eq(consentLogs.userId, dbUser.id));
     expect(consents).toHaveLength(2);
-    expect(consents.map((c) => c.consentType).sort()).toEqual([
-      "privacy",
-      "terms",
-    ]);
+    expect(consents.map((c) => c.consentType).sort((a, b) => a - b)).toEqual(
+      [CONSENT_TYPE.TERMS, CONSENT_TYPE.PRIVACY].sort((a, b) => a - b)
+    );
 
     const [sess] = await db
       .select()
       .from(userSessions)
       .where(eq(userSessions.userId, dbUser.id));
-    expect(sess?.authMethod).toBe("social");
+    expect(sess?.authMethod).toBe(AUTH_METHOD.SOCIAL);
   });
 
   it("BR-SCL-05 & BR-OAP-08: Facebook signup forces emailVerified false -> pending_verification + email_verification queued + tokens stripped", async () => {
@@ -401,7 +409,7 @@ describe("Task 3, 4 & 5 — Better Auth Social Login & Registration (BR-SCL-01..
     }
     createdUserIds.push(dbUser.id);
 
-    expect(dbUser.status).toBe("pending_verification");
+    expect(dbUser.status).toBe(USER_STATUS.PENDING_VERIFICATION);
     expect(dbUser.emailVerified).toBe(false);
     expect(dbUser.emailVerifiedAt).toBeNull();
 
@@ -430,7 +438,7 @@ describe("Task 3, 4 & 5 — Better Auth Social Login & Registration (BR-SCL-01..
         .from(notificationDeliveries)
         .where(eq(notificationDeliveries.notificationId, notif.id));
       expect(deliveries).toHaveLength(1);
-      expect(deliveries[0]?.channel).toBe("email");
+      expect(deliveries[0]?.channel).toBe(NOTIFICATION_CHANNEL.EMAIL);
     }
   });
 
@@ -442,7 +450,7 @@ describe("Task 3, 4 & 5 — Better Auth Social Login & Registration (BR-SCL-01..
         email,
         displayName: "Existing Parent",
         passwordHash: "$argon2id$v=19$m=19456,p=1,t=2$dummyhash",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
         emailVerified: true,
         emailVerifiedAt: new Date(),
       })

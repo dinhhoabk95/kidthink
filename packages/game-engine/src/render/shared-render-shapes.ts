@@ -9,6 +9,7 @@ import {
 } from "./cache.js";
 import { alpha } from "./color-utils.js";
 import { drawSlotItem } from "./shared-render.js";
+import { getEmojiSprite } from "./sprite-registry.js";
 import { applyEmojiFont } from "./type-scale.js";
 import type { ItemVisualState, RenderAsset, SceneBox } from "./types.js";
 
@@ -611,9 +612,16 @@ export function drawGramophone(
 
   // Nốt nhạc bay ra khi đang phát âm
   if (isPlaying) {
-    applyEmojiFont(ctx, 22);
-    ctx.fillText("🎵", cx + r * 0.65, cy - r * 0.6);
-    ctx.fillText("🎶", cx + r * 0.8, cy - r * 0.3);
+    const noteA = getEmojiSprite("🎵");
+    const noteB = getEmojiSprite("🎶");
+    if (noteA && noteB) {
+      ctx.drawImage(noteA, cx + r * 0.65 - 12, cy - r * 0.6 - 12, 24, 24);
+      ctx.drawImage(noteB, cx + r * 0.8 - 12, cy - r * 0.3 - 12, 24, 24);
+    } else {
+      applyEmojiFont(ctx, 22);
+      ctx.fillText("🎵", cx + r * 0.65, cy - r * 0.6);
+      ctx.fillText("🎶", cx + r * 0.8, cy - r * 0.3);
+    }
   }
   ctx.restore();
 }

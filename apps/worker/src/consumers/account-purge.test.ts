@@ -1,3 +1,5 @@
+import { getAuthRedisClient } from "@mindkid/auth";
+import { invalidateUserEntitlementsCache } from "@mindkid/cache";
 import { hardPurgeChildProfile, hardPurgeUser } from "@mindkid/db";
 import { alert } from "@mindkid/queue";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -15,27 +17,54 @@ const dueChildren: Array<{ id: number; uuid: string }> = [
   { id: 11, uuid: "child-11" },
 ];
 
-vi.mock("@mindkid/db", () => ({
-  getOwnerDb: () => ({
-    select: (fields: Record<string, string>) => ({
-      from: () => ({
-        where: () => ({
-          limit: () =>
-            Promise.resolve("uuid" in fields ? dueChildren : dueRows),
-        }),
-      }),
-    }),
-    insert: vi.fn(() => ({
-      values: vi.fn(() => ({
-        returning: vi.fn().mockResolvedValue([{ id: 1 }]),
-      })),
-    })),
+const mockFindUserSessions = vi.fn(
+  async (args: { readonly where: { readonly userId: number } }) => [
+    { id: args.where.userId * 100, token: `tok_${args.where.userId}` },
+  ]
+);
+
+const mockRedisDel = vi.fn(async (..._keys: string[]) => 1);
+
+vi.mock("@mindkid/auth", () => ({
+  getAuthRedisClient: () => ({
+    del: mockRedisDel,
   }),
-  hardPurgeUser: vi.fn(() => Promise.resolve({ purged: true })),
-  hardPurgeChildProfile: vi.fn(() => Promise.resolve()),
-  childProfiles: { id: "id", uuid: "uuid", status: "status", purgeAt: "pa" },
-  users: { id: "id", status: "status", purgeAt: "purge_at" },
-  auditLogs: { id: "id" },
+}));
+
+vi.mock("@mindkid/cache", () => ({
+  invalidateUserEntitlementsCache: vi.fn(async () => undefined),
+}));
+
+vi.mock("@mindkid/db", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@mindkid/db")>();
+  return {
+    ...actual,
+    getOwnerDb: () => ({
+      query: {
+        userSessions: {
+          findMany: mockFindUserSessions,
+        },
+      },
+      insert: vi.fn(() => ({
+        values: vi.fn(() => ({
+          returning: vi.fn().mockResolvedValue([{ id: 1 }]),
+        })),
+      })),
+    }),
+    hardPurgeUser: vi.fn(() => Promise.resolve({ purged: true })),
+    hardPurgeChildProfile: vi.fn(() => Promise.resolve()),
+  };
+});
+
+vi.mock("@mindkid/db/repositories", () => ({
+  createRepositories: () => ({
+    users: {
+      listDueForPurge: vi.fn(async () => dueRows),
+    },
+    childProfiles: {
+      listDueForPurge: vi.fn(async () => dueChildren),
+    },
+  }),
 }));
 
 vi.mock("@mindkid/queue", () => ({ alert: vi.fn() }));
@@ -51,18 +80,30 @@ function abortedSignal(): AbortSignal {
   return controller.signal;
 }
 
-describe("accountPurge — tôn trọng ctx.signal (job-queue.md §5)", () => {
+describe("accountPurge — tôn trọng ctx.signal & thu hồi AuthStore (job-queue.md §5)", () => {
   beforeEach(() => {
     vi.mocked(hardPurgeUser).mockReset();
     vi.mocked(hardPurgeUser).mockResolvedValue({ purged: true });
     vi.mocked(hardPurgeChildProfile).mockClear();
     vi.mocked(alert).mockClear();
+    mockFindUserSessions.mockClear();
+    mockRedisDel.mockClear();
+    vi.mocked(invalidateUserEntitlementsCache).mockClear();
   });
 
-  it("chạy hết danh sách khi signal còn sống", async () => {
+  it("chạy hết danh sách khi signal còn sống và thu hồi session AuthStore + cache quyền", async () => {
     const result = await accountPurge({}, ctx(new AbortController().signal));
 
     expect(hardPurgeUser).toHaveBeenCalledTimes(3);
+    expect(getAuthRedisClient().del).toHaveBeenCalledWith(
+      "ba:v1:user:active-sessions-1",
+      "ba:v1:user:tok_1",
+      "ba:v1:user:reauth:100"
+    );
+    expect(invalidateUserEntitlementsCache).toHaveBeenCalledTimes(3);
+    expect(invalidateUserEntitlementsCache).toHaveBeenCalledWith(1);
+    expect(invalidateUserEntitlementsCache).toHaveBeenCalledWith(2);
+    expect(invalidateUserEntitlementsCache).toHaveBeenCalledWith(3);
     expect(result).toEqual({
       purgedCount: 3,
       purgedChildren: 2,
@@ -71,13 +112,11 @@ describe("accountPurge — tôn trọng ctx.signal (job-queue.md §5)", () => {
   });
 
   it("ca âm: signal đã abort thì Cấm — NEVER xoá cứng thêm một tài khoản nào", async () => {
-    // Trước sửa đổi này vòng lặp không đọc signal: `runWithTimeout` đánh job
-    // `failed` và bắn alert `critical` "purge thất bại", trong khi vòng lặp vẫn
-    // tiếp tục xoá cứng dữ liệu người dùng — không job, không lock, không ghi
-    // lại nó dừng ở đâu.
     const result = await accountPurge({}, ctx(abortedSignal()));
 
     expect(hardPurgeUser).not.toHaveBeenCalled();
+    expect(mockRedisDel).not.toHaveBeenCalled();
+    expect(invalidateUserEntitlementsCache).not.toHaveBeenCalled();
     expect(result).toEqual({
       purgedCount: 0,
       purgedChildren: 0,

@@ -1,18 +1,15 @@
-import { getOwnerDb } from "@mindkid/db";
-import { defineEventHandler } from "h3";
 import { getUserCollections } from "#server/services/index.js";
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { defineApiRoute } from "#server/utils/define-api-route";
 
-export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
-  const userId = Number(user.user_id);
-  const db = getOwnerDb();
+export default defineApiRoute({
+  auth: "user",
+  async handler({ auth }) {
+    const collections = await getUserCollections(Number(auth.user_id));
 
-  const collections = await getUserCollections(db, userId);
-
-  return {
-    collections,
-    total: collections.length,
-    limit: 20,
-  };
+    return {
+      collections,
+      total: collections.length,
+      limit: 20,
+    };
+  },
 });

@@ -50,7 +50,7 @@ export const projectGT016: Projection<"GT-016"> = {
 
     return {
       content_pack: {
-        prompt: "Bé hãy xem đồng hồ chỉ mấy giờ nhé!",
+        prompt: "Đố bé kim đồng hồ đang chỉ mấy giờ nhỉ?",
         mode: "read" as const,
         target_time: targetTime,
         options,

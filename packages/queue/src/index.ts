@@ -1,10 +1,17 @@
+import { getQueueDriverKind } from "@mindkid/config";
 import type { Job } from "bullmq";
 import { getQueue } from "./connection.js";
+import {
+  dispatchWaitUntilIfPresent,
+  getCloudflareQueuePort,
+  type QueuedJobEnvelope,
+} from "./do-queue-driver.js";
 import { type JobName, type JobPayloads, requireJob } from "./jobs/index.js";
 import { buildDeterministicJobId } from "./registry.js";
 
 export * from "./alert.js";
 export * from "./connection.js";
+export * from "./do-queue-driver.js";
 export * from "./jobs/define.js";
 export * from "./jobs/index.js";
 export * from "./registry.js";
@@ -51,24 +58,92 @@ function resolveRetryOptions(name: JobName) {
  * nào parse, nên bốn route đẩy `email:send` với hình dạng consumer không đọc
  * được suốt nhiều tháng mà không cổng nào đỏ.
  */
-export function enqueue<T extends JobName>(
+function buildEnvelope<T extends JobName>(
   name: T,
   payload: JobPayloads[T],
   options?: EnqueueOptions
-): Promise<Job> {
-  const parsed = requireJob(name).parse(payload);
+): QueuedJobEnvelope {
+  const def = requireJob(name);
+  const parsed = def.parse(payload);
+  const resolvedId =
+    resolveJobId(name, parsed, options) ??
+    `${name}:${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  return {
+    jobId: resolvedId,
+    name,
+    payloadJson: JSON.stringify(parsed),
+    delayMs: options?.delay,
+    maxAttempts: def.retry.maxAttempts,
+    backoffType: def.retry.backoffType,
+    backoffDelayMs: def.retry.backoffDelayMs,
+    timeoutSeconds: def.timeoutSeconds,
+    alertOnFailImmediately: def.retry.alertOnFailImmediately,
+  };
+}
 
-  return getQueue().add(name, parsed, {
+export async function enqueue<T extends JobName>(
+  name: T,
+  payload: JobPayloads[T],
+  options?: EnqueueOptions
+): Promise<Job | { id: string; name: T }> {
+  const cfPort = getCloudflareQueuePort();
+  if (getQueueDriverKind() === "cloudflare-do" && cfPort) {
+    const envelope = buildEnvelope(name, payload, options);
+    await dispatchWaitUntilIfPresent(
+      cfPort.enqueueBatch([envelope]).then(() => undefined)
+    );
+    return { id: envelope.jobId, name };
+  }
+
+  const parsed = requireJob(name).parse(payload);
+  return await getQueue().add(name, parsed, {
     jobId: resolveJobId(name, parsed, options),
     delay: options?.delay,
     ...resolveRetryOptions(name),
   });
 }
 
-export function getWaitingCount(): Promise<number> {
-  return getQueue().getWaitingCount();
+export async function enqueueBatch(
+  items: readonly {
+    readonly name: JobName;
+    readonly payload: JobPayloads[JobName];
+    readonly options?: EnqueueOptions;
+  }[]
+): Promise<{ readonly accepted: number }> {
+  if (items.length === 0) {
+    return { accepted: 0 };
+  }
+  const cfPort = getCloudflareQueuePort();
+  if (getQueueDriverKind() === "cloudflare-do" && cfPort) {
+    const envelopes = items.map((item) =>
+      buildEnvelope(item.name, item.payload, item.options)
+    );
+    await dispatchWaitUntilIfPresent(
+      cfPort.enqueueBatch(envelopes).then(() => undefined)
+    );
+    return { accepted: envelopes.length };
+  }
+
+  for (const item of items) {
+    await enqueue(item.name, item.payload, item.options);
+  }
+  return { accepted: items.length };
 }
 
-export function getFailedCount(): Promise<number> {
-  return getQueue().getFailedCount();
+export async function getWaitingCount(): Promise<number> {
+  const cfPort = getCloudflareQueuePort();
+  if (getQueueDriverKind() === "cloudflare-do" && cfPort) {
+    const stats = await cfPort.getStats();
+    return stats.waiting;
+  }
+  return await getQueue().getWaitingCount();
+}
+
+export async function getFailedCount(): Promise<number> {
+  const cfPort = getCloudflareQueuePort();
+  if (getQueueDriverKind() === "cloudflare-do" && cfPort) {
+    const stats = await cfPort.getStats();
+    return stats.failed;
+  }
+  return await getQueue().getFailedCount();
 }

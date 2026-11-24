@@ -1,3 +1,4 @@
+import { canonicalizeRequestPath } from "@mindkid/shared";
 import { defineEventHandler, getRequestURL, setHeader } from "h3";
 
 /**
@@ -36,7 +37,10 @@ export default defineEventHandler((event) => {
     );
   }
 
-  if (isApiPath(getRequestURL(event).pathname)) {
+  const pathname = canonicalizeRequestPath(
+    event.path || getRequestURL(event).pathname
+  );
+  if (isApiPath(pathname)) {
     setHeader(event, "Content-Security-Policy", JSON_RESPONSE_CSP);
   }
 });

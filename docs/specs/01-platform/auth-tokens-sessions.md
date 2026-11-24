@@ -39,7 +39,7 @@ tuyệt đối tối đa **365 ngày** không sliding, đồng thời đồng b�
 `manager_sessions` (`storeSessionInDatabase: true`) để liệt kê và thu hồi từng thiết bị tức thì.
 Cửa sổ phiên tươi `freshAge: 300` (**5 phút**) kết hợp mốc `reauthAt` bảo vệ các thao tác nhạy cảm.
 
-Mật khẩu tiếp tục dùng **Argon2id** qua custom `emailAndPassword.password`; TOTP + Backup Codes dùng
+Mật khẩu dùng giao diện băm tương thích hai chiều: ở Giai đoạn 1 (`MINDKID_RUNTIME=cloudflare`) băm mới bằng **WebCrypto `PBKDF2-SHA256`** (`100.000` vòng lặp, định dạng `pbkdf2$100000$<salt>$<hash>`) để nằm gọn dưới trần `10ms` CPU của Workers Free; ở Giai đoạn 2 (`MINDKID_RUNTIME=vps`) băm mới bằng **Argon2id**, đồng thời `verifyPassword` xác thực mượt cả hai định dạng và tự động nâng cấp ngầm từ `PBKDF2` lên `Argon2id` khi đăng nhập trên VPS. Kho `secondaryStorage` (`ba:v1:user:*` và `ba:v1:manager:*`) chạy trên `AuthCoordinatorDO` (Durable Object SQLite nhất quán mạnh) ở Giai đoạn 1 và trên Valkey 9 ở Giai đoạn 2, cả hai đều **fail-closed**. TOTP + Backup Codes dùng
 plugin `twoFactor`; WebAuthn/Passkey dùng `@better-auth/passkey` cho cả User và Manager; OAuth
 Google/Facebook chỉ bật trên `userAuth` với `disableImplicitLinking: true` và
 `disableImplicitSignUp: true`. Nghỉ hưu hoàn toàn `nuxt-auth-utils`, `openid-client` và `otpauth`;

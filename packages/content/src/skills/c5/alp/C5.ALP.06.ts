@@ -220,5 +220,23 @@ export const C5_ALP_06_SEED: SkillSeed = {
       theme: "nature",
       rounds: 3,
     },
+    {
+      code: "GL-C5-ALP-INTRO-6006",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 3,
+      theme: "weather",
+      rounds: 3,
+      sequence_no: 61,
+    },
+    {
+      code: "GL-C5-ALP-TRC-6006",
+      template: "GT-024",
+      band: "5-6",
+      difficulty: 4,
+      theme: "job",
+      rounds: 3,
+      sequence_no: 63,
+    },
   ],
 };

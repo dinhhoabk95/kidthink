@@ -61,18 +61,15 @@
       </div>
     </main>
 
-    <PublicFooter />
-    <CookieNoticeBanner />
+    <LazyPublicFooter hydrate-on-visible />
+    <LazyCookieNoticeBanner hydrate-on-idle />
   </div>
 </template>
 
 <script lang="ts" setup>
   import { LEGAL_DOCUMENTS, type LegalDocument } from "@mindkid/shared/client";
   import { computed } from "vue";
-  import { useRoute } from "vue-router";
-  import { useHead, useSeoMeta } from "#imports";
-  import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
-  import PublicFooter from "~/components/public-footer.vue";
+  import { definePageMeta, useHead, useRoute, useSeoMeta } from "#imports";
   import PublicNavbar from "~/components/public-navbar.vue";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +

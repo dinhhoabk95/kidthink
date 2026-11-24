@@ -1,4 +1,9 @@
-import { gameLevelRounds, gameLevels, getOwnerDb } from "@mindkid/db";
+import {
+  ACCESS_TIER,
+  gameLevelRounds,
+  gameLevels,
+  getOwnerDb,
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { seedContentTags } from "#src/seed-master/content-tags";
@@ -52,7 +57,7 @@ describe("Game Schema Integration Tests", () => {
         title: "Level V1",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
 
@@ -66,7 +71,7 @@ describe("Game Schema Integration Tests", () => {
         title: "Level V2",
         contentPack: { test: true },
         difficultyParams: { speed: 2 },
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
     ).rejects.toThrow();
   });
@@ -83,7 +88,7 @@ describe("Game Schema Integration Tests", () => {
         title: "Original Title",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
     if (!gl) {

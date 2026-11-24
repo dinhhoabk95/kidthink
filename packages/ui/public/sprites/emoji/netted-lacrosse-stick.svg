@@ -1,0 +1,7 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cây vợt lưới bóng</title>
+  <path d="M26 98L64 58" stroke="#78350f" stroke-linecap="round" stroke-width="7" />
+    <ellipse cx="78" cy="40" fill="#fef3c7" rx="16" ry="22" stroke="#1d4ed8" stroke-width="4" transform="rotate(42 78 40)" />
+    <path d="M68 34L86 48M74 26L90 40M68 48L88 30" stroke="#64748b" stroke-width="2.2" />
+    <circle cx="38" cy="42" fill="#f97316" r="8" stroke="#7c2d12" stroke-width="3.2" />
+</svg>

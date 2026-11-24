@@ -1,8 +1,11 @@
 import {
+  ACCESS_TIER,
+  CONTENT_ENTITY_TYPE,
   competencies,
   contentSkillMap,
   gameLevels,
   getOwnerDb,
+  SKILL_TIER,
   skills,
   strands,
 } from "@mindkid/db";
@@ -104,7 +107,7 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
         ageMax: 5,
         difficulty: 1,
         thinkingProcesses: ["count"],
-        tier: "basic",
+        tier: SKILL_TIER.BASIC,
         position: 99,
       })
       .onConflictDoNothing()
@@ -140,7 +143,7 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
               title: "Level Published Test",
               contentPack: {},
               difficultyParams: {},
-              accessTier: "free",
+              accessTier: ACCESS_TIER.FREE,
             })
             .returning();
         }
@@ -163,7 +166,7 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
               title: "Level Second Test",
               contentPack: {},
               difficultyParams: {},
-              accessTier: "free",
+              accessTier: ACCESS_TIER.FREE,
             })
             .returning();
         }
@@ -171,13 +174,13 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
 
       await db.insert(contentSkillMap).values([
         {
-          entityType: "game_level",
+          entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
           entityId: pubLevel[0].id,
           skillId,
           weight: "1.00",
         },
         {
-          entityType: "game_level",
+          entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
           entityId: draftLevel[0].id,
           skillId,
           weight: "1.00",

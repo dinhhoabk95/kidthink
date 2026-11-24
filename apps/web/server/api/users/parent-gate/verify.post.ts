@@ -15,11 +15,15 @@ const ParentGateVerifySchema = z
   })
   .strict();
 
+type ParentGateRawBody = Record<
+  string,
+  string | number | boolean | null | undefined
+>;
+
 export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
-  const body =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const user = requireWebUserSession(event);
+  const eventBody = (event.context as { body?: ParentGateRawBody })?.body;
+  const body = eventBody || (await readBody<ParentGateRawBody>(event)) || {};
 
   const parsed = ParentGateVerifySchema.safeParse(body);
   if (!parsed.success) {
@@ -28,7 +32,7 @@ export default defineEventHandler(async (event) => {
   const { challenge_payload: challengePayload, answer } = parsed.data;
 
   const userId = Number(user.user_id);
-  const result = verifyParentGateChallenge(
+  const result = await verifyParentGateChallenge(
     challengePayload,
     answer,
     userId,

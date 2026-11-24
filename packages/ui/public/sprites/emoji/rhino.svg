@@ -1,88 +1,25 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <title>Tê giác con</title>
+  <title>Tê giác</title>
   <defs>
-    <radialGradient cx="38%" cy="30%" id="rhHide" r="70%">
-      <stop offset="0%" stop-color="#cbd5e1" />
-      <stop offset="58%" stop-color="#94a3b8" />
-      <stop offset="100%" stop-color="#64748b" />
-    </radialGradient>
-    <linearGradient id="rhHorn" x1="0%" x2="0%" y1="0%" y2="100%">
-      <stop offset="0%" stop-color="#fffbeb" />
-      <stop offset="100%" stop-color="#fde68a" />
-    </linearGradient>
+    <radialGradient cx="38%" cy="30%" id="g_rhino" r="70%"><stop offset="0%" stop-color="#cbd5e1" /><stop offset="55%" stop-color="#94a3b8" /><stop offset="100%" stop-color="#64748b" /></radialGradient>
   </defs>
-  <ellipse cx="56" cy="104" fill="#334155" opacity="0.24" rx="40" ry="6" />
-  <rect
-    fill="#64748b"
-    height="20"
-    rx="5"
-    stroke="#334155"
-    stroke-width="3.8"
-    width="11"
-    x="28"
-    y="80"
-  />
-  <rect
-    fill="#64748b"
-    height="20"
-    rx="5"
-    stroke="#334155"
-    stroke-width="3.8"
-    width="11"
-    x="58"
-    y="80"
-  />
-  <ellipse
-    cx="48"
-    cy="68"
-    fill="url(#rhHide)"
-    rx="29"
-    ry="21"
-    stroke="#334155"
-    stroke-width="4"
-  />
-  <path
-    d="M62 44C60 32 68 30 70 42"
-    fill="#cbd5e1"
-    stroke="#334155"
-    stroke-linecap="round"
-    stroke-width="3.8"
-  />
-  <ellipse
-    cx="78"
-    cy="60"
-    fill="url(#rhHide)"
-    rx="21"
-    ry="17"
-    stroke="#334155"
-    stroke-width="4"
-  />
-  <path
-    d="M90 50C94 34 104 34 103 50C102 55 94 56 90 50Z"
-    fill="url(#rhHorn)"
-    stroke="#78350f"
-    stroke-linejoin="round"
-    stroke-width="3.8"
-  />
-  <path
-    d="M81 48C83 40 89 40 88 49Z"
-    fill="url(#rhHorn)"
-    stroke="#78350f"
-    stroke-linejoin="round"
-    stroke-width="3.4"
-  />
-  <path
-    d="M38 52C36 62 36 72 39 82M58 50C60 60 60 72 57 82"
-    stroke="#334155"
-    stroke-linecap="round"
-    stroke-width="3.2"
-  />
-  <circle cx="77" cy="56" fill="#1c1917" r="2.8" />
-  <circle cx="76.2" cy="55" fill="#ffffff" r="1" />
-  <path
-    d="M78 68C83 71 89 70 92 67"
-    stroke="#334155"
-    stroke-linecap="round"
-    stroke-width="2.6"
-  />
+  <ellipse cx="62" cy="106" fill="#1e293b" opacity="0.22" rx="40" ry="5.5" />
+    
+    <!-- Far legs -->
+    <path d="M47 80L44 102H51L53 80ZM81 80L79 102H86L88 80Z" fill="#64748b" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.4" />
+    <path d="M44 98H51V103H44ZM79 98H86V103H79Z" fill="#e2e8f0" />
+    <!-- Torso & Neck -->
+    <path d="M35 61C41 50 32 48 64 48C96 48 100 63 96 73C92 86 38 86 34 71C30 63 31 71 35 61Z" fill="url(#g_rhino)" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M46 81C56 87 74 87 84 81" fill="#cbd5e1" opacity="0.85" />
+    <path d="M48 49C46 60 46 72 49 82M76 49C78 60 78 72 75 82" stroke="#334155" stroke-linecap="round" stroke-width="3.2" />
+    <!-- Near legs -->
+    <path d="M39 78L36 104H44L47 78ZM73 78L71 104H79L81 78Z" fill="url(#g_rhino)" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M36 99H44V104H36ZM71 99H79V104H71Z" fill="#e2e8f0" stroke="#1e293b" stroke-linejoin="round" stroke-width="2.2" />
+    <!-- Head -->
+    <ellipse cx="29" cy="55" fill="url(#g_rhino)" rx="16" ry="12" stroke="#1e293b" stroke-width="3.8" />
+    <ellipse cx="17" cy="59" fill="#cbd5e1" rx="7.5" ry="6" stroke="#1e293b" stroke-width="3.2" />
+    <circle cx="15" cy="58" fill="#1e293b" r="1.8" />
+    <path d="M15 62C18 64 21 63 22 61" stroke="#1e293b" stroke-linecap="round" stroke-width="2.2" />
+    <circle cx="27" cy="52" fill="#1c1917" r="2.7" /><circle cx="26.2" cy="51.2" fill="#ffffff" r="1" />
+    <path d="M14 52C9 38 14 33 19 46ZM21 50C19 42 23 40 25 48Z" fill="#fef3c7" stroke="#78350f" stroke-linejoin="round" stroke-width="3.2" /><ellipse cx="38" cy="42" fill="#94a3b8" rx="3.8" ry="6" stroke="#1e293b" stroke-width="3" />
 </svg>

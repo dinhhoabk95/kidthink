@@ -1,46 +1,50 @@
+import fs from "node:fs";
+import { createRequire } from "node:module";
+import os from "node:os";
 import path from "node:path";
-import { requireEnv } from "@mindkid/config";
-import {
-  databaseNameOf,
-  maintenanceDatabaseUrl,
-  TEST_DATABASE_SUFFIX,
-  testDatabaseUrls,
-} from "@mindkid/config/vitest/test-database";
-import { drizzle } from "drizzle-orm/postgres-js";
-import { migrate } from "drizzle-orm/postgres-js/migrator";
-import postgres from "postgres";
-
-/**
- * Vitest globalSetup cho packages/db — chạy đúng một lần trước mỗi `vitest run`,
- * không phải trước mỗi test/file.
- *
- * Fix D-BX (Task #15, gate P0.8): integration test insert
- * dữ liệu nhưng không dọn, nên mỗi lần `vitest run` cộng dồn vào database thay vì bắt
- * đầu sạch. Với các trường random trong keyspace nhỏ (vd. `seq` 1000-9999 ở
- * game.test.ts), số dòng rác tích luỹ đủ lớn thì random tự đụng độ — đúng lỗi đã đo
- * được 2026-08-09: `game_levels` có 456 dòng rác trước fix này, và
- * `game_levels_code_version_unique` báo duplicate key ở lần chạy tiếp theo.
- *
- * Dọn bằng TRUNCATE liệt kê rõ tên bảng (không dùng toàn schema). Database Docker local
- * được xem là disposable khi chạy test; guard BR-TST-05 từ chối mọi host không phải
- * loopback để không thể chạm DB từ xa. Ca âm nằm ở `tests/global-setup.test.ts`.
- *
- * Danh sách chép tay thì sẽ lệch: nó đứng yên ở 56 tên trong khi schema lên 78, nên 22
- * bảng thêm sau (`library_items`, `payment_transactions`, `error_logs`, …) chưa từng được
- * dọn — đúng lỗi D-BX tái diễn trên nhóm bảng mới, chỉ chưa ai đo. Danh sách vẫn viết tay
- * (giữ nguyên chủ ý "không TRUNCATE cả schema") nhưng nay có cổng:
- * `global-setup.test.ts` đối chiếu nó với `pg_tables` và đỏ ngay khi thiếu một tên.
- */
-
+import type { DatabaseSync as NodeDatabaseSync } from "node:sqlite";
+import { testDatabaseUrls } from "@mindkid/config/vitest/test-database";
 import { getTableName, is } from "drizzle-orm";
-import { PgTable } from "drizzle-orm/pg-core";
+import { SQLiteTable } from "drizzle-orm/sqlite-core";
+import { resolveSqliteDatabasePath } from "#src/drivers/sqlite-local-driver";
+import { applySquashedSqliteMigration } from "#src/drivers/sqlite-migration-runner";
 // biome-ignore lint/performance/noNamespaceImport: dynamically iterates all schema tables
 import * as schema from "#src/schema/index";
+
+interface NodeSqliteModule {
+  readonly DatabaseSync: typeof NodeDatabaseSync;
+}
+
+const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
+const SAFE_IDENT_REGEX = /^[a-zA-Z0-9_]+$/;
+const PREPARED_FLAG = "MINDKID_TEST_DB_PREPARED";
+const RUN_LOCK_KEY = "8314002";
+
+const REPO_ROOT = path.resolve(import.meta.dirname, "..", "..", "..");
+const TEST_SQLITE_FALLBACK_DIR = path.join(REPO_ROOT, ".data", "sqlite-test");
+
+const PROTECTED_TRIGGERS = [
+  "trg_prevent_consent_logs_update",
+  "trg_prevent_consent_logs_delete",
+  "trg_prevent_audit_logs_update",
+  "trg_prevent_audit_logs_delete",
+  "trg_prevent_completed_play_sessions_update",
+] as const;
+
+let cachedSqliteModule: NodeSqliteModule | undefined;
+
+function loadNodeSqlite(): NodeSqliteModule {
+  if (!cachedSqliteModule) {
+    const req = createRequire(import.meta.url);
+    cachedSqliteModule = req("node:sqlite") as NodeSqliteModule;
+  }
+  return cachedSqliteModule;
+}
 
 export function extractTableNamesFromSchema(schemaObj: object): string[] {
   const tableNames = new Set<string>();
   for (const value of Object.values(schemaObj)) {
-    if (is(value, PgTable)) {
+    if (is(value, SQLiteTable)) {
       tableNames.add(getTableName(value));
     }
   }
@@ -48,8 +52,6 @@ export function extractTableNamesFromSchema(schemaObj: object): string[] {
 }
 
 export const TABLES = extractTableNamesFromSchema(schema);
-
-const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
 
 /** BR-TST-05: destructive test cleanup may only target this machine. */
 export function assertDisposableDatabaseUrl(databaseUrl: string): void {
@@ -61,182 +63,155 @@ export function assertDisposableDatabaseUrl(databaseUrl: string): void {
   }
 }
 
-/**
- * `tables` cho phép test tiêm một danh sách bảng nhỏ, tách biệt để kiểm cơ chế mà
- * không đụng bảng chia sẻ với các integration test khác đang chạy song song. Mặc định
- * (không truyền) dùng đúng danh sách thật `TABLES` ở trên — đường chạy production.
- */
-export async function truncateAllTestTables(
-  databaseUrl?: string,
-  tables: readonly string[] = TABLES
-): Promise<void> {
-  const url =
-    databaseUrl === undefined ? requireEnv("DATABASE_URL") : databaseUrl;
-  assertDisposableDatabaseUrl(url);
-  const sql = postgres(url, { max: 1 });
-  try {
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      try {
-        await sql`truncate table ${sql(tables)} restart identity cascade`;
-        break;
-      } catch (err) {
-        const pgErr =
-          err instanceof Error ? (err as Error & { code?: string }) : null;
-        if (pgErr?.code === "40P01" && attempt < 3) {
-          await new Promise((resolve) => setTimeout(resolve, 100 * attempt));
-          continue;
-        }
-        throw err;
-      }
-    }
-  } finally {
-    await sql.end();
+export function assertDisposableSqliteDir(dataDir: string): void {
+  if (dataDir === ":memory:") {
+    return;
   }
-}
-
-/**
- * Dựng database test nếu chưa tồn tại, rồi chạy migration lên nó.
- *
- * `CREATE DATABASE` không chạy được trong transaction và không có dạng
- * `IF NOT EXISTS` trên mọi phiên bản, nên kiểm `pg_database` trước.
- */
-async function ensureTestDatabase(url: string): Promise<void> {
-  const name = databaseNameOf(url);
-  if (!name.endsWith(TEST_DATABASE_SUFFIX)) {
+  const resolved = path.resolve(dataDir);
+  const tmpRoot = path.resolve(os.tmpdir());
+  const isUnderTmp =
+    resolved === tmpRoot || resolved.startsWith(`${tmpRoot}${path.sep}`);
+  const isTestSqliteDir =
+    resolved === TEST_SQLITE_FALLBACK_DIR ||
+    resolved.includes("sqlite-test") ||
+    path.basename(resolved).includes("test");
+  if (!(isUnderTmp || isTestSqliteDir)) {
     throw new Error(
-      `Từ chối dựng database test: '${name}' không có hậu tố '${TEST_DATABASE_SUFFIX}'. ` +
-        "Đây là chốt chặn cuối để một lượt chạy test không TRUNCATE database dev."
+      `Từ chối dọn SQLite tại '${resolved}': không nằm trong thư mục test hợp lệ.`
     );
   }
-  const admin = postgres(maintenanceDatabaseUrl(url), {
-    max: 1,
-    onnotice: () => {
-      // Suppress noisy postgres notice dumps in tests
-    },
-  });
+}
+
+function resolveTargetSqliteDir(target?: string): string {
+  if (!target) {
+    return process.env.SQLITE_DATA_DIR || TEST_SQLITE_FALLBACK_DIR;
+  }
+  if (target.startsWith("postgres://") || target.startsWith("postgresql://")) {
+    assertDisposableDatabaseUrl(target);
+    return process.env.SQLITE_DATA_DIR || TEST_SQLITE_FALLBACK_DIR;
+  }
+  return target;
+}
+
+export function truncateAllTestTables(
+  target?: string,
+  tables: readonly string[] = TABLES
+): Promise<void> {
+  const targetDir = resolveTargetSqliteDir(target);
+  const resolved = resolveSqliteDatabasePath(targetDir);
+  if (!resolved.isMemory) {
+    assertDisposableSqliteDir(resolved.dataDir);
+    fs.mkdirSync(resolved.dataDir, { recursive: true });
+  }
+
+  const { DatabaseSync } = loadNodeSqlite();
+  const rawDb = new DatabaseSync(resolved.dbPath);
+  const touchesProtected =
+    tables.includes("audit_logs") ||
+    tables.includes("consent_logs") ||
+    tables.includes("play_sessions");
+
   try {
-    const rows = await admin`
-      select 1 from pg_database where datname = ${name}
-    `;
-    if (rows.length === 0) {
-      await admin.unsafe(`create database "${name}"`);
-      console.log(`[test-db] đã tạo database ${name}`);
+    rawDb.exec("PRAGMA busy_timeout = 5000;");
+    rawDb.exec("PRAGMA journal_mode = WAL;");
+    if (tables === TABLES) {
+      applySquashedSqliteMigration(rawDb);
+    }
+
+    rawDb.exec("PRAGMA foreign_keys = OFF;");
+    rawDb.exec("BEGIN IMMEDIATE;");
+    try {
+      if (touchesProtected) {
+        for (const trig of PROTECTED_TRIGGERS) {
+          rawDb.exec(`DROP TRIGGER IF EXISTS "${trig}";`);
+        }
+      }
+      for (const table of tables) {
+        if (!SAFE_IDENT_REGEX.test(table)) {
+          throw new Error(`Invalid SQLite table name: ${table}`);
+        }
+        rawDb.exec(`DELETE FROM "${table}";`);
+      }
+      const seqRow = rawDb
+        .prepare(
+          "SELECT 1 AS ok FROM sqlite_master WHERE type = 'table' AND name = 'sqlite_sequence';"
+        )
+        .get();
+      if (seqRow) {
+        rawDb.exec("DELETE FROM sqlite_sequence;");
+      }
+      rawDb.exec("COMMIT;");
+    } catch (err) {
+      rawDb.exec("ROLLBACK;");
+      throw err;
+    } finally {
+      rawDb.exec("PRAGMA foreign_keys = ON;");
+    }
+
+    if (touchesProtected) {
+      applySquashedSqliteMigration(rawDb);
     }
   } finally {
-    await admin.end();
+    rawDb.close();
   }
+  return Promise.resolve();
+}
 
-  const sql = postgres(url, {
-    max: 1,
-    onnotice: () => {
-      // Suppress noisy postgres notice dumps in tests
-    },
-  });
+function isPidAlive(pid: number): boolean {
+  if (!Number.isInteger(pid) || pid <= 0) {
+    return false;
+  }
   try {
-    await migrate(drizzle({ client: sql }), {
-      migrationsFolder: path.resolve(
-        import.meta.dirname,
-        "..",
-        "src",
-        "migrations"
-      ),
-    });
-
-    await sql.unsafe(`
-      DO $$
-      BEGIN
-        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'mindkid_app') THEN
-          CREATE ROLE mindkid_app WITH LOGIN PASSWORD 'mindkid_app_password';
-        END IF;
-      END
-      $$;
-      GRANT CONNECT ON DATABASE "${name}" TO mindkid_app;
-      GRANT USAGE ON SCHEMA public TO mindkid_app;
-      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO mindkid_app;
-      GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO mindkid_app;
-      ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO mindkid_app;
-      ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO mindkid_app;
-      REVOKE UPDATE, DELETE, TRUNCATE ON TABLE consent_logs FROM mindkid_app;
-      REVOKE UPDATE, DELETE, TRUNCATE ON TABLE audit_logs FROM mindkid_app;
-      REVOKE UPDATE, DELETE, TRUNCATE ON TABLE telemetry_events FROM mindkid_app;
-
-      CREATE OR REPLACE FUNCTION prevent_insert_only_mutation()
-      RETURNS TRIGGER AS $$
-      BEGIN
-        RAISE EXCEPTION 'BR-DM-05 / BR-SIB-06: Table % is INSERT-only; UPDATE and DELETE are forbidden', TG_TABLE_NAME;
-      END;
-      $$ LANGUAGE plpgsql;
-
-      CREATE OR REPLACE TRIGGER trg_prevent_consent_logs_mutation
-        BEFORE UPDATE OR DELETE ON consent_logs
-        FOR EACH ROW EXECUTE FUNCTION prevent_insert_only_mutation();
-
-      CREATE OR REPLACE TRIGGER trg_prevent_audit_logs_mutation
-        BEFORE UPDATE OR DELETE ON audit_logs
-        FOR EACH ROW EXECUTE FUNCTION prevent_insert_only_mutation();
-
-      CREATE OR REPLACE FUNCTION prevent_completed_play_session_update()
-      RETURNS TRIGGER AS $$
-      BEGIN
-        IF OLD.completion_status = 'completed' THEN
-          RAISE EXCEPTION 'BR-SPT-07: Cannot update completed play session';
-        END IF;
-        RETURN NEW;
-      END;
-      $$ LANGUAGE plpgsql;
-
-      CREATE OR REPLACE TRIGGER trg_prevent_completed_play_sessions
-        BEFORE UPDATE ON play_sessions
-        FOR EACH ROW EXECUTE FUNCTION prevent_completed_play_session_update();
-    `);
-  } finally {
-    await sql.end();
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
   }
 }
 
-/**
- * Cờ đánh dấu database test đã được dựng + dọn trong lượt chạy hiện tại.
- *
- * `globalSetup` được khai trong `defineWorkspaceTest`, nên nó gắn vào **mọi**
- * project vitest — `pnpm test` gọi hàm này 17 lần cho 17 project, và cả 17
- * cùng trỏ vào một database `mindkid_test`. Vitest chạy globalSetup của các
- * project trong cùng tiến trình chính nhưng không đợi hết mới bắt đầu test,
- * nên một `TRUNCATE` của project sau rơi vào giữa transaction của project
- * trước. Đo được 2026-08-31 trên `pnpm test`:
- *
- * ```
- * PostgresError: deadlock detected
- *   Process A waits for AccessShareLock on relation activities;
- *   Process B waits for AccessExclusiveLock on relation content_review_log.
- * ```
- *
- * Kèm theo là 4 phép thử khác đỏ vì hàng của chúng bị xoá giữa chừng
- * (`Key (user_id)=(3) is not present in table "users"`).
- *
- * Dọn **một lần cho cả lượt chạy** là đủ để giữ đúng hợp đồng "test bắt đầu từ
- * database sạch", và bỏ hẳn cửa sổ TRUNCATE-giữa-chừng. Cờ đi qua
- * `process.env` vì mọi globalSetup chia sẻ một tiến trình; nếu vitest đổi sang
- * chạy chúng ở tiến trình riêng thì cờ mất tác dụng và hành vi tụt về 17 lần
- * dọn — an toàn nhưng chậm, nên `global-setup.test.ts` chốt bằng ca âm.
- */
-const PREPARED_FLAG = "MINDKID_TEST_DB_PREPARED";
-
-/** Khoá advisory của cả lượt chạy test trên `mindkid_test` (số cố định, chỉ để loại trừ lẫn nhau). */
-const RUN_LOCK_KEY = 8_314_002;
-
-/** Chiếm khoá của lượt chạy (đợi nếu lượt khác đang giữ); trả hàm nhả khoá. */
 export async function acquireRunLock(
-  databaseUrl: string,
-  key: number = RUN_LOCK_KEY
-): Promise<() => Promise<void>> {
-  const lockConn = postgres(databaseUrl, { max: 1 });
-  await lockConn`select pg_advisory_lock(${key})`;
-  return async () => {
-    await lockConn.end({ timeout: 5 });
-  };
+  lockDirOrUrl: string = TEST_SQLITE_FALLBACK_DIR,
+  key: string | number = RUN_LOCK_KEY
+): Promise<() => void> {
+  const baseDir =
+    lockDirOrUrl.startsWith("postgres://") ||
+    lockDirOrUrl.startsWith("postgresql://") ||
+    lockDirOrUrl === ":memory:"
+      ? TEST_SQLITE_FALLBACK_DIR
+      : lockDirOrUrl;
+  fs.mkdirSync(baseDir, { recursive: true });
+  const lockPath = path.join(baseDir, `.vitest-run-${String(key)}.lock`);
+
+  while (true) {
+    try {
+      const fd = fs.openSync(lockPath, "wx");
+      fs.writeFileSync(fd, String(process.pid), "utf8");
+      fs.closeSync(fd);
+      return () => {
+        fs.rmSync(lockPath, { force: true });
+      };
+    } catch (err) {
+      const code = (err as { code?: string }).code;
+      if (code !== "EEXIST") {
+        throw err;
+      }
+      try {
+        const holderPid = Number.parseInt(
+          fs.readFileSync(lockPath, "utf8").trim(),
+          10
+        );
+        if (!isPidAlive(holderPid)) {
+          fs.rmSync(lockPath, { force: true });
+          continue;
+        }
+      } catch {
+        continue;
+      }
+      await new Promise<void>((resolve) => setImmediate(resolve));
+    }
+  }
 }
 
-/** Đúng một lần chuẩn bị cho mỗi `vitest run`, kể cả khi có nhiều project. */
 export function claimDatabasePreparation(
   env: NodeJS.ProcessEnv = process.env
 ): boolean {
@@ -247,54 +222,20 @@ export function claimDatabasePreparation(
   return true;
 }
 
-/**
- * Chạy một lần trước mỗi `vitest run` của **mọi** workspace.
- *
- * Trước 2026-08-30 hàm này chỉ dọn khi có `DB_TRUNCATE_ON_SETUP=1`, vì dọn mặc
- * định sẽ xoá database dev. Giờ test có database riêng
- * (`packages/config/vitest/test-database.ts`) nên dọn là mặc định, và cờ cũ
- * không còn ý nghĩa.
- */
-export default async function setup(): Promise<
-  (() => Promise<void>) | undefined
-> {
+export default async function setup(): Promise<(() => void) | undefined> {
   if (!claimDatabasePreparation()) {
     return;
   }
-  // `test.env` của vitest chỉ áp cho worker chạy test, KHÔNG áp cho tiến trình
-  // chạy `globalSetup`. Đọc `process.env.DATABASE_URL` ở đây sẽ lấy đúng
-  // database dev từ `.env` — nên URL phải suy lại từ cùng một hàm mà
-  // `defineWorkspaceTest` dùng.
   const url = testDatabaseUrls().owner;
-  try {
-    assertDisposableDatabaseUrl(url);
-    await ensureTestDatabase(url);
-    // Hai `vitest run` đồng thời (agent song song, ratchet + chạy tay) cùng dọn
-    // và ghi vào `mindkid_test` thì TRUNCATE của lượt sau xoá hàng của lượt
-    // trước — đo được: `child-stickers` và `taxonomy-master` đỏ lúc có,
-    // xanh lúc không có lượt chạy khác. Khoá advisory theo phiên giữ suốt
-    // lượt chạy; lượt sau đợi lượt trước xong.
-    const release = await acquireRunLock(url);
-    await truncateAllTestTables(url);
-    // Đếm được từ log: dòng này phải xuất hiện ĐÚNG một lần cho mỗi `pnpm test`.
-    console.log(
-      `[test-db] đã dọn ${databaseNameOf(url)} — một lần cho cả lượt chạy`
-    );
-    return release;
-  } catch (err) {
-    const errorObj = err as {
-      code?: string;
-      errors?: Array<{ code?: string }>;
-    };
-    if (
-      errorObj?.code === "ECONNREFUSED" ||
-      errorObj?.errors?.some((e) => e.code === "ECONNREFUSED")
-    ) {
-      console.warn(
-        "⚠️ Postgres not running on port 5433 — skipping global DB cleanup."
-      );
-      return;
-    }
-    throw err;
-  }
+  assertDisposableDatabaseUrl(url);
+
+  const targetDir = process.env.SQLITE_DATA_DIR || TEST_SQLITE_FALLBACK_DIR;
+  assertDisposableSqliteDir(targetDir);
+
+  const release = await acquireRunLock(targetDir);
+  await truncateAllTestTables(targetDir);
+  console.log(
+    `[test-db] đã dựng & dọn SQLite test tại ${resolveSqliteDatabasePath(targetDir).dbPath} (${TABLES.length} bảng)`
+  );
+  return release;
 }

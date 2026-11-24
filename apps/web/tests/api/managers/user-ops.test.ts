@@ -1,8 +1,12 @@
 import {
   auditLogs,
+  ENTITLEMENT_GROUP,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
@@ -59,7 +63,7 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
       .values({
         email: testEmail,
         displayName: "Suspend Validation User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -78,7 +82,7 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
       .select()
       .from(users)
       .where(eq(users.id, user.id));
-    expect(fetched.status).toBe("active");
+    expect(fetched.status).toBe(USER_STATUS.ACTIVE);
   });
 
   it("D-JE, BR-USM-04 & BR-USM-05: suspend revokes sessions (sessionVersion + 1), preserves entitlements, and reactivate restores access", async () => {
@@ -90,7 +94,9 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
       .values({
         email: testEmail,
         displayName: "Ops Pair User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
+        emailVerified: true,
+        emailVerifiedAt: new Date(),
         sessionVersion: 1,
       })
       .returning();
@@ -100,7 +106,7 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
       .insert(entitlementKeys)
       .values({
         key: "content.standard",
-        group: "content",
+        group: ENTITLEMENT_GROUP.CONTENT,
         label: "Nội dung chuẩn",
       })
       .onConflictDoNothing();
@@ -111,8 +117,8 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
       .values({
         userId: user.id,
         entitlementKey: "content.standard",
-        source: "manual_grant",
-        status: "active",
+        source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+        status: ENTITLEMENT_STATUS.ACTIVE,
         expiresAt: new Date(Date.now() + 30 * 86_400 * 1000),
       })
       .returning();
@@ -131,7 +137,7 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
       .select()
       .from(users)
       .where(eq(users.id, user.id));
-    expect(suspendedUser.status).toBe("suspended");
+    expect(suspendedUser.status).toBe(USER_STATUS.SUSPENDED);
     expect(suspendedUser.sessionVersion).toBe(2);
     expect(suspendedUser.suspendedReason).toBe(suspendReason);
 
@@ -140,7 +146,7 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
       .select()
       .from(entitlements)
       .where(eq(entitlements.id, entitlement.id));
-    expect(checkedEntitlement.status).toBe("active");
+    expect(checkedEntitlement.status).toBe(ENTITLEMENT_STATUS.ACTIVE);
     expect(checkedEntitlement.expiresAt?.getTime()).toBe(
       entitlement.expiresAt?.getTime()
     );
@@ -171,7 +177,47 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
       .select()
       .from(users)
       .where(eq(users.id, user.id));
-    expect(restoredUser.status).toBe("active");
+    expect(restoredUser.status).toBe(USER_STATUS.ACTIVE);
+    expect(restoredUser.suspendedReason).toBeNull();
+  });
+
+  it("BR-USM-04: suspend and reactivate unverified user (emailVerified: false, emailVerifiedAt: null) restores pending_verification", async () => {
+    const db = getOwnerDb();
+    const testEmail = `test_unverified_reactivate_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`;
+
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: testEmail,
+        displayName: "Unverified Ops User",
+        status: USER_STATUS.PENDING_VERIFICATION,
+        emailVerified: false,
+        emailVerifiedAt: null,
+        sessionVersion: 1,
+      })
+      .returning();
+
+    const suspendRes = await suspendHandler(
+      mockEvent("super_admin", user.uuid, {
+        reason: "Tạm khoá tài khoản chưa xác thực để rà soát",
+      })
+    );
+    expect(suspendRes.success).toBe(true);
+    expect(suspendRes.status).toBe("suspended");
+
+    const reactivateRes = await reactivateHandler(
+      mockEvent("super_admin", user.uuid, {
+        reason: "Mở khoá lại tài khoản chưa xác thực sau rà soát",
+      })
+    );
+    expect(reactivateRes.success).toBe(true);
+    expect(reactivateRes.status).toBe("pending_verification");
+
+    const [restoredUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, user.id));
+    expect(restoredUser.status).toBe(USER_STATUS.PENDING_VERIFICATION);
     expect(restoredUser.suspendedReason).toBeNull();
   });
 
@@ -184,7 +230,7 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
       .values({
         email: testEmail,
         displayName: "Reset Password Target",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -207,7 +253,7 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
       .values({
         email: testEmail,
         displayName: "Deleted User",
-        status: "deleted",
+        status: USER_STATUS.DELETED,
       })
       .returning();
 

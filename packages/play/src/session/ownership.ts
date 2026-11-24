@@ -1,6 +1,6 @@
-import { childProfiles, type playSessions } from "@mindkid/db";
+import { CHILD_STATUS, type PlaySessionEntity } from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import { NotFoundError } from "@mindkid/errors/common";
-import { and, eq } from "drizzle-orm";
 
 import type { DbOrTx } from "#src/types";
 
@@ -14,7 +14,7 @@ export interface IngestOptions {
 
 export async function checkUserSessionOwnership(
   db: DbOrTx,
-  session: typeof playSessions.$inferSelect,
+  session: PlaySessionEntity,
   options: IngestOptions
 ): Promise<void> {
   const callerAccountId = options.callerAccountId;
@@ -40,26 +40,23 @@ export async function checkUserSessionOwnership(
     throw new NotFoundError();
   }
 
-  const [ownedChild] = await db
-    .select({ id: childProfiles.id })
-    .from(childProfiles)
-    .where(
-      and(
-        eq(childProfiles.id, Number(session.childProfileId)),
-        eq(childProfiles.userId, callerAccountId),
-        eq(childProfiles.status, "active")
-      )
-    )
-    .limit(1);
+  const repos = createRepositories(db);
+  const ownedChild = await repos.childProfiles.findById(
+    Number(session.childProfileId)
+  );
 
-  if (!ownedChild) {
+  if (
+    !ownedChild ||
+    ownedChild.userId !== callerAccountId ||
+    ownedChild.status !== CHILD_STATUS.ACTIVE
+  ) {
     throw new NotFoundError();
   }
 }
 
 export async function checkSessionOwnership(
   db: DbOrTx,
-  session: typeof playSessions.$inferSelect,
+  session: PlaySessionEntity,
   options: IngestOptions
 ): Promise<void> {
   if (options.isUserCall) {

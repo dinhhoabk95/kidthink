@@ -1,0 +1,25 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con cừu sừng xoắn</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="g_hornedram" r="70%"><stop offset="0%" stop-color="#fffbeb" /><stop offset="55%" stop-color="#fef3c7" /><stop offset="100%" stop-color="#fde68a" /></radialGradient>
+  </defs>
+  <ellipse cx="62" cy="106" fill="#5c2d16" opacity="0.22" rx="40" ry="5.5" />
+    <circle cx="93" cy="64" fill="#fef3c7" r="6.5" stroke="#5c2d16" stroke-width="3.5" />
+    <!-- Far legs -->
+    <path d="M47 79L44 102H51L53 79ZM81 79L79 102H86L88 79Z" fill="#fde68a" stroke="#5c2d16" stroke-linejoin="round" stroke-width="3.4" />
+    <path d="M44 98H51V103H44ZM79 98H86V103H79Z" fill="#451a03" />
+    <!-- Torso & Neck -->
+    <path d="M36 52C42 49 36 47 64 47C92 47 96 62 92 72C88 85 42 85 38 70C34 62 32 62 36 52Z" fill="url(#g_hornedram)" stroke="#5c2d16" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M46 80C56 86 74 86 84 80" fill="#fde68a" opacity="0.85" />
+    <path d="M46 54C52 50 58 54 64 51C70 48 77 52 83 50" stroke="#d97706" stroke-linecap="round" stroke-opacity="0.45" stroke-width="3" />
+    <!-- Near legs -->
+    <path d="M39 77L36 104H44L47 77ZM73 77L71 104H79L81 77Z" fill="url(#g_hornedram)" stroke="#5c2d16" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M36 99H44V104H36ZM71 99H79V104H71Z" fill="#451a03" stroke="#5c2d16" stroke-linejoin="round" stroke-width="2.2" />
+    <!-- Head -->
+    <ellipse cx="30" cy="46" fill="url(#g_hornedram)" rx="13" ry="11" stroke="#5c2d16" stroke-width="3.8" />
+    <ellipse cx="21" cy="50" fill="#d6d3d1" rx="7.5" ry="6" stroke="#5c2d16" stroke-width="3.2" />
+    <circle cx="19" cy="49" fill="#5c2d16" r="1.8" />
+    <path d="M19 53C22 55 25 54 26 52" stroke="#5c2d16" stroke-linecap="round" stroke-width="2.2" />
+    <circle cx="28" cy="43" fill="#1c1917" r="2.7" /><circle cx="27.2" cy="42.2" fill="#ffffff" r="1" />
+    <path d="M32 37C35 24 50 24 50 37C50 46 40 48 37 42C36 39 39 36 42 38" fill="none" stroke="#92400e" stroke-linecap="round" stroke-width="5.2" /><path d="M32 37C35 24 50 24 50 37C50 46 40 48 37 42" fill="none" stroke="#fde68a" stroke-linecap="round" stroke-width="2" />
+</svg>

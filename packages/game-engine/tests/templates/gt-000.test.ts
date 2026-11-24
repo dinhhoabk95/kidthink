@@ -105,14 +105,26 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
     expect(action).toBeNull();
   });
 
-  it("M1: Bước present ưu tiên audio_path nếu có", () => {
+  it("M1: Bước present đọc trọn storyLine + narration_line rồi nối sang audio_path (không nuốt lời dẫn); bước không lời dẫn riêng ưu tiên thẳng audio_path", () => {
     const contentWithAudio: GT000Content = {
       ...fixture.content,
       assets: fixture.content.assets.map((a) =>
-        a.asset_id === "num_1"
-          ? { ...a, audio_path: "/audio/numbers/1.mp3" }
+        a.asset_id === "num_1" || a.asset_id === "num_2"
+          ? { ...a, audio_path: `/audio/numbers/${a.asset_id}.mp3` }
           : a
       ),
+      steps: [
+        {
+          action: "present",
+          target_asset_id: "num_1",
+          narration_line: "Đây là số một.",
+        },
+        {
+          action: "present",
+          target_asset_id: "num_2",
+        },
+        ...(fixture.content.steps?.slice(2) ?? []),
+      ],
     };
 
     const session = new GT000Session(contentWithAudio, fixture.difficulty);
@@ -121,12 +133,28 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
       .mockImplementation(() => {
         /* giả lập phát MP3 thành công */
       });
-    const speakSpy = vi.spyOn(session.audio, "speakPrompt");
+    const speakSpy = vi
+      .spyOn(session.audio, "speakPrompt")
+      .mockImplementation((_text, onEnd) => {
+        onEnd?.();
+        return true;
+      });
 
     session.prepareRound("3-4");
 
+    expect(speakSpy).toHaveBeenCalledTimes(1);
+    expect(speakSpy.mock.calls[0]?.[0]).toContain("Cô Cú");
+    expect(speakSpy.mock.calls[0]?.[0]).toContain("Đây là số một.");
+    expect(playPromptSpy).toHaveBeenCalledWith("/audio/numbers/num_1.mp3");
+    expect(session.lastTtsUsed).toBe(true);
+
+    // Sang bước 1 (không có narration_line riêng, không ở mở đầu phiên): phát thẳng audio_path
+    speakSpy.mockClear();
+    playPromptSpy.mockClear();
+    session.dispatch({ type: "commit", intent: "advance", timeMs: 10 });
+
     expect(playPromptSpy).toHaveBeenCalledWith(
-      "/audio/numbers/1.mp3",
+      "/audio/numbers/num_2.mp3",
       undefined,
       expect.any(Function)
     );

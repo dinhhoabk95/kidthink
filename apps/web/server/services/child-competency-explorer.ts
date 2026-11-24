@@ -1,21 +1,16 @@
 /**
  * Khám phá trò chơi theo năng lực cho trẻ — `child-competency-explorer.md`, `BR-CCE-01..08`.
- *
- * Lấy danh sách trò chơi theo mã năng lực C1..C6, xếp hạng ưu tiên trò chơi
- * đúng độ tuổi của trẻ (`BR-CCE-02`), tính quyền mở khoá theo entitlement gia đình,
- * kèm thông tin thành tích (số sao, số lượt chơi).
  */
 
-import { gameLevels, type getOwnerDb, playSessions } from "@mindkid/db";
+import { ACCESS_TIER_CODEC, type OwnerDb } from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import {
   type AccessTier,
   COMPETENCY_CATALOG,
   deriveAgeBand,
   getEffectiveTier,
 } from "@mindkid/shared";
-import { and, asc, eq, inArray, like, sql } from "drizzle-orm";
-
-type Db = ReturnType<typeof getOwnerDb>;
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 export interface CompetencyGameItem {
   code: string;
@@ -131,41 +126,36 @@ export function sortCompetencyLevels<
 }
 
 export async function fetchChildLevelStats(
-  db: Db,
   childId: number,
   levelIds: number[]
+): Promise<Map<number, LevelStat>>;
+export async function fetchChildLevelStats(
+  db: OwnerDb,
+  childId: number,
+  levelIds: number[]
+): Promise<Map<number, LevelStat>>;
+export async function fetchChildLevelStats(
+  dbOrChildId: OwnerDb | number,
+  childOrLevelIds: number | number[],
+  maybeLevelIds?: number[]
 ): Promise<Map<number, LevelStat>> {
-  const statsMap = new Map<number, LevelStat>();
+  const childId =
+    typeof dbOrChildId === "number" ? dbOrChildId : (childOrLevelIds as number);
+  const levelIds =
+    typeof dbOrChildId === "number"
+      ? (childOrLevelIds as number[])
+      : (maybeLevelIds ?? []);
+
   if (levelIds.length === 0) {
-    return statsMap;
+    return new Map();
   }
 
-  const rows = await db
-    .select({
-      gameLevelId: playSessions.gameLevelId,
-      bestStars:
-        sql<number>`COALESCE(MAX(${playSessions.starsEarned}), 0)`.mapWith(
-          Number
-        ),
-      playCount: sql<number>`COUNT(${playSessions.id})`.mapWith(Number),
-    })
-    .from(playSessions)
-    .where(
-      and(
-        eq(playSessions.childProfileId, childId),
-        inArray(playSessions.gameLevelId, levelIds)
-      )
-    )
-    .groupBy(playSessions.gameLevelId);
+  const { playSessions } =
+    typeof dbOrChildId === "number"
+      ? useOwnerRepositories()
+      : createRepositories(dbOrChildId);
 
-  for (const r of rows) {
-    statsMap.set(r.gameLevelId, {
-      bestStars: r.bestStars,
-      playCount: r.playCount,
-    });
-  }
-
-  return statsMap;
+  return await playSessions.mapLevelStatsForChild(childId, levelIds);
 }
 
 const DEFAULT_USER_CHILD_ALLOWED_TIERS: readonly AccessTier[] = [
@@ -203,7 +193,7 @@ export function buildCompetencyGames(
 
 export async function getChildCompetencyGames(
   input: GetChildCompetencyInput,
-  db: Db
+  db?: OwnerDb
 ): Promise<ChildCompetencyResponse | null> {
   const competency = resolveTargetCompetency(input.competencyCode);
   if (!competency) {
@@ -214,27 +204,22 @@ export async function getChildCompetencyGames(
   const ageBand = deriveAgeBand(input.birthYear, currentYear);
   const bounds = computeAgeBounds(ageBand);
 
-  // Lấy toàn bộ game_levels published của năng lực; tuổi chỉ dùng để xếp hạng (BR-CCE-02)
-  const rawLevels = await db
-    .select({
-      id: gameLevels.id,
-      code: gameLevels.code,
-      title: gameLevels.title,
-      thumbnailEmoji: gameLevels.thumbnailEmoji,
-      themeId: gameLevels.themeId,
-      accessTier: gameLevels.accessTier,
-      ageMin: gameLevels.ageMin,
-      ageMax: gameLevels.ageMax,
-    })
-    .from(gameLevels)
-    .where(like(gameLevels.code, `GL-${competency.code}-%`))
-    .orderBy(asc(gameLevels.code));
+  const repos = db ? createRepositories(db) : useOwnerRepositories();
+  const rawLevels = await repos.gameLevels.listByCompetencyPrefix(
+    competency.code
+  );
 
   const orderedLevels = sortCompetencyLevels(rawLevels, bounds);
   const levelIds = orderedLevels.map((l) => l.id);
-  const statsMap = await fetchChildLevelStats(db, input.childId, levelIds);
+  const statsMap = await repos.playSessions.mapLevelStatsForChild(
+    input.childId,
+    levelIds
+  );
   const games = buildCompetencyGames(
-    orderedLevels,
+    orderedLevels.map((lvl) => ({
+      ...lvl,
+      accessTier: ACCESS_TIER_CODEC.toLabel(lvl.accessTier),
+    })),
     statsMap,
     input.allowedTiers
   );

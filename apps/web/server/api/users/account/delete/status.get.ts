@@ -1,32 +1,8 @@
-import { getOwnerDb, users } from "@mindkid/db";
-import { NotFoundError } from "@mindkid/errors/common";
-import { eq } from "drizzle-orm";
 import { defineEventHandler } from "h3";
-
+import { getAccountDeletionStatus } from "#server/services/account-lifecycle-service";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const userSession = await requireWebUserSession(event);
-  const userId = Number(userSession.user_id);
-
-  const db = getOwnerDb();
-  const [account] = await db
-    .select({
-      id: users.id,
-      status: users.status,
-      purgeAt: users.purgeAt,
-    })
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1);
-
-  if (!account) {
-    throw new NotFoundError("NOT_FOUND");
-  }
-
-  return {
-    status: account.status,
-    purge_at: account.purgeAt ? account.purgeAt.toISOString() : null,
-    is_pending_deletion: account.status === "deleted",
-  };
+  return await getAccountDeletionStatus(Number(userSession.user_id));
 });

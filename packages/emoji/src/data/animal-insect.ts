@@ -3,8 +3,10 @@ import type { EmojiEntry } from "#src/types";
 export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   {
     emoji: "🦗",
-    name: "Dế",
-    categories: ["animal-bird", "animal-insect"],
+    slug: "cricket",
+    svg_path: "/sprites/emoji/cricket.svg",
+    name: "Con dế",
+    categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
       "sparrow",
@@ -20,6 +22,8 @@ export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦋",
+    slug: "butterfly",
+    svg_path: "/sprites/emoji/butterfly.svg",
     name: "Bướm",
     categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -28,6 +32,8 @@ export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐛",
+    slug: "caterpillar",
+    svg_path: "/sprites/emoji/caterpillar.svg",
     name: "Sâu",
     categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -36,6 +42,8 @@ export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐜",
+    slug: "ant",
+    svg_path: "/sprites/emoji/ant.svg",
     name: "Kiến",
     categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -44,6 +52,8 @@ export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐝",
+    slug: "bee",
+    svg_path: "/sprites/emoji/bee.svg",
     name: "Ong",
     categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -52,6 +62,8 @@ export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🪲",
+    slug: "green-beetle",
+    svg_path: "/sprites/emoji/green-beetle.svg",
     name: "Bọ cánh cứng",
     categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -60,6 +72,8 @@ export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐞",
+    slug: "ladybug",
+    svg_path: "/sprites/emoji/ladybug.svg",
     name: "Bọ rùa",
     categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -68,6 +82,8 @@ export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🪳",
+    slug: "brown-roach",
+    svg_path: "/sprites/emoji/brown-roach.svg",
     name: "Gián",
     categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -76,6 +92,8 @@ export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕷️",
+    slug: "spider",
+    svg_path: "/sprites/emoji/spider.svg",
     name: "Nhện",
     categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -84,6 +102,8 @@ export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕸️",
+    slug: "spider-web",
+    svg_path: "/sprites/emoji/spider-web.svg",
     name: "Mạng nhện",
     categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -92,14 +112,18 @@ export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦂",
+    slug: "scorpion",
+    svg_path: "/sprites/emoji/scorpion.svg",
     name: "Bọ cạp",
-    categories: ["animal-insect"],
+    categories: ["animal-insect", "animal-prehistoric"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["scorpion", "bọ cạp", "đuôi", "nguy hiểm"],
     age_min: 5,
   },
   {
     emoji: "🪰",
+    slug: "house-fly",
+    svg_path: "/sprites/emoji/house-fly.svg",
     name: "Ruồi",
     categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -108,6 +132,8 @@ export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦟",
+    slug: "mosquito",
+    svg_path: "/sprites/emoji/mosquito.svg",
     name: "Muỗi",
     categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -116,6 +142,8 @@ export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🪱",
+    slug: "earthworm",
+    svg_path: "/sprites/emoji/earthworm.svg",
     name: "Giun",
     categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -124,6 +152,8 @@ export const ANIMAL_INSECT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐌",
+    slug: "snail",
+    svg_path: "/sprites/emoji/snail.svg",
     name: "Ốc sên",
     categories: ["animal-insect"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],

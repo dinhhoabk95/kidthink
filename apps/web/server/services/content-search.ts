@@ -1,68 +1,79 @@
 import {
-  contentSkillMap,
-  gameLevels,
+  ACCESS_TIER_CODEC,
+  CONTENT_ENTITY_TYPE,
+  type GameLevelEntity,
+  type JsonRecord,
   type OwnerDb,
-  skills,
-  strands,
 } from "@mindkid/db";
+import {
+  createRepositories,
+  type MindKidRepositories,
+} from "@mindkid/db/repositories";
 import type { AccessTier } from "@mindkid/shared";
 import { AGE_BANDS, allowedTiers, getEffectiveTier } from "@mindkid/shared";
-import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
 import type { getQuery } from "h3";
 import { z } from "zod";
 import {
   ageBandLabel,
+  aggregateAgeAndBand,
+  aggregateCompetency,
+  aggregateStrand,
+  aggregateTier,
   buildGameLevelFacets,
   competencyFromCode,
+  type GameLevelFacets,
+  toFacetRows,
+  toSearchRepoFilter,
 } from "#server/services/content-search-facets";
+import {
+  useOwnerRepositories,
+  useRepositories,
+} from "#server/utils/repositories";
 
 export type SearchViewerRole = "guest" | "user" | "manager";
+export interface SearchViewer {
+  role: SearchViewerRole;
+  userPackage?: string;
+}
 export type RawSearchParamsInput =
   | ReturnType<typeof getQuery>
   | Record<string, string | number | boolean | undefined | string[]>
   | SearchParams
   | undefined;
 
-const VIETNAMESE_ACCENTED =
-  "àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ";
-const VIETNAMESE_UNACCENTED =
-  "aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyydAAAAAAAAAAAAAAAAAEEEEEEEEEEEIIIIIOOOOOOOOOOOOOOOOOUUUUUUUUUUUYYYYYD";
+const optionalTrimmedString = z
+  .string()
+  .trim()
+  .transform((val) => (val.length > 0 ? val : undefined))
+  .optional();
+
+const optionalBoundedTrimmedString = z
+  .string()
+  .trim()
+  .max(100)
+  .transform((val) => (val.length > 0 ? val : undefined))
+  .optional();
 
 export const SearchParamsSchema = z.object({
-  q: z.string().trim().max(100).optional(),
+  q: optionalBoundedTrimmedString,
   age_min: z.coerce.number().min(3).max(6).optional(),
   age_max: z.coerce.number().min(3).max(6).optional(),
-  /**
-   * Một tuổi cụ thể — `GAME-CATALOG-PUBLIC` §3 dùng `/games?competency=C1&age=4`.
-   *
-   * Khác `age_min`/`age_max`: hai tham số kia hỏi "band nằm gọn trong khoảng
-   * này", còn `age` hỏi "band có chứa tuổi này không". Dùng `age_min=4` cho
-   * một đứa trẻ 4 tuổi sẽ loại mọi level band 3–4 — đúng cú pháp, sai câu hỏi.
-   */
   age: z.coerce.number().min(3).max(6).optional(),
-  /**
-   * Một band trọn vẹn — `GAME-CATALOG-PUBLIC` §7.1 dùng `/games?age_band=4-5`.
-   *
-   * `age` Cấm — NEVER thay được cho nó: `age=4` hỏi "band có chứa tuổi 4",
-   * nên khớp cả 3-4 lẫn 4-5. Trang chủ hứa "trò chơi của Lớp Chồi" thì phải
-   * là band 4-5 đúng hai đầu. Trước task 165 schema không khai `age_band`
-   * và `z.object` loại nó trong im lặng — bộ lọc rơi, danh mục trả cả kho.
-   */
   age_band: z.enum(AGE_BANDS).optional(),
   competency: z.enum(["C1", "C2", "C3", "C4", "C5", "C6"]).optional(),
-  strand: z.string().trim().max(100).optional(),
-  skill: z.string().trim().max(100).optional(),
-  skill_code: z.string().trim().max(100).optional(),
-  learning_objective: z.string().optional(),
+  strand: optionalBoundedTrimmedString,
+  skill: optionalBoundedTrimmedString,
+  skill_code: optionalBoundedTrimmedString,
+  learning_objective: optionalTrimmedString,
   difficulty: z.coerce.number().min(1).max(5).optional(),
   duration_max: z.coerce.number().optional(),
-  what: z.string().optional(),
-  thinking: z.string().optional(),
-  mechanic: z.string().optional(),
-  theme: z.string().optional(),
+  what: optionalTrimmedString,
+  thinking: optionalTrimmedString,
+  mechanic: optionalTrimmedString,
+  theme: optionalTrimmedString,
   access_tier: z.enum(["free", "login", "standard", "premium"]).optional(),
-  template: z.string().optional(),
-  template_code: z.string().optional(),
+  template: optionalTrimmedString,
+  template_code: optionalTrimmedString,
   status: z
     .enum([
       "draft",
@@ -77,10 +88,39 @@ export const SearchParamsSchema = z.object({
     .enum(["relevance", "newest", "popular", "difficulty"])
     .default("relevance"),
   limit: z.coerce.number().min(1).optional(),
-  cursor: z.string().optional(),
+  cursor: optionalTrimmedString,
 });
 
 export type SearchParams = z.infer<typeof SearchParamsSchema>;
+
+export interface SearchGameLevelCard {
+  id: number;
+  entity_id: number;
+  code: string;
+  title: string;
+  description: string | null;
+  instruction: string | null;
+  thumbnail_emoji: string | null;
+  theme_id: string | null;
+  competency: string | null;
+  age_band: string | null;
+  age_min: number | null;
+  age_max: number | null;
+  difficulty: number | null;
+  access_tier: AccessTier;
+  status: string;
+  locked: boolean;
+  content_pack?: JsonRecord;
+  difficulty_params?: JsonRecord;
+}
+
+export interface SearchGameLevelsResponse {
+  items: SearchGameLevelCard[];
+  next_cursor: string | null;
+  total: number;
+  facets: GameLevelFacets;
+  no_store: boolean;
+}
 
 function removeVietnameseTones(str: string): string {
   return str
@@ -90,125 +130,31 @@ function removeVietnameseTones(str: string): string {
     .replace(/Đ/g, "D");
 }
 
-function escapeLikeWildcards(text: string): string {
-  return text.replace(/([%_\\])/g, "\\$1");
-}
-
-function buildBasicConditions(
-  params: SearchParams,
-  _viewerRole: SearchViewerRole
-): ReturnType<typeof sql>[] {
-  const conditions: ReturnType<typeof sql>[] = [];
-
-  if (params.status && params.status !== "published") {
-    conditions.push(sql`1 = 0`);
+function matchesVietnameseSearch(
+  row: GameLevelEntity,
+  rawQuery: string
+): boolean {
+  const trimmed = rawQuery.trim().toLowerCase();
+  if (!trimmed) {
+    return true;
   }
-
-  if (params.access_tier) {
-    conditions.push(eq(gameLevels.accessTier, params.access_tier));
-  }
-  const targetTemplate = params.template ?? params.template_code;
-  if (targetTemplate) {
-    conditions.push(eq(gameLevels.templateCode, targetTemplate));
-  }
-  if (params.age_min !== undefined) {
-    conditions.push(gte(gameLevels.ageMin, params.age_min));
-  }
-  if (params.age_max !== undefined) {
-    conditions.push(lte(gameLevels.ageMax, params.age_max));
-  }
-  if (params.age !== undefined) {
-    conditions.push(lte(gameLevels.ageMin, params.age));
-    conditions.push(gte(gameLevels.ageMax, params.age));
-  }
-  if (params.age_band) {
-    const [bandMin, bandMax] = params.age_band.split("-");
-    conditions.push(eq(gameLevels.ageMin, Number(bandMin)));
-    conditions.push(eq(gameLevels.ageMax, Number(bandMax)));
-  }
-  if (params.difficulty !== undefined) {
-    conditions.push(eq(gameLevels.difficulty, params.difficulty));
-  }
-  if (params.theme) {
-    conditions.push(eq(gameLevels.themeId, params.theme));
-  }
-  return conditions;
-}
-
-function buildSearchWhereConditions(
-  params: SearchParams,
-  viewerRole: SearchViewerRole
-): ReturnType<typeof sql>[] {
-  const conditions = buildBasicConditions(params, viewerRole);
-
-  if (params.competency) {
-    const compPattern = `GL-${params.competency}-%`;
-    conditions.push(sql`${gameLevels.code} LIKE ${compPattern}`);
-  }
-
-  if (params.strand) {
-    const rawStrand = params.strand.trim();
-    const escapedStrand = escapeLikeWildcards(rawStrand);
-    const suffixPattern = `%.${escapedStrand}`;
-    conditions.push(
-      sql`EXISTS (
-        SELECT 1 FROM ${contentSkillMap}
-        JOIN ${skills} ON ${contentSkillMap.skillId} = ${skills.id}
-        JOIN ${strands} ON ${skills.strandId} = ${strands.id}
-        WHERE ${contentSkillMap.entityType} = 'game_level'
-          AND ${contentSkillMap.entityId} = ${gameLevels.id}
-          AND (
-            ${strands.code} = ${rawStrand} OR 
-            ${strands.code} ILIKE ${suffixPattern} OR
-            ${strands.name} ILIKE ${escapedStrand}
-          )
-      )`
-    );
-  }
-
-  const rawSkill = (params.skill_code ?? params.skill)?.trim();
-  if (rawSkill) {
-    conditions.push(
-      sql`EXISTS (
-        SELECT 1 FROM ${contentSkillMap}
-        JOIN ${skills} ON ${contentSkillMap.skillId} = ${skills.id}
-        WHERE ${contentSkillMap.entityType} IN ('game_level', 'level')
-          AND ${contentSkillMap.entityId} = ${gameLevels.id}
-          AND ${skills.code} = ${rawSkill}
-      )`
-    );
-  }
-
-  if (params.q && params.q.trim().length > 0) {
-    const rawQuery = params.q.trim();
-    const normalizedQuery = removeVietnameseTones(rawQuery);
-    const patternRaw = `%${escapeLikeWildcards(rawQuery)}%`;
-    const patternNorm = `%${escapeLikeWildcards(normalizedQuery)}%`;
-    conditions.push(
-      sql`(
-        ${gameLevels.title} ILIKE ${patternRaw} OR
-        ${gameLevels.description} ILIKE ${patternRaw} OR
-        ${gameLevels.code} ILIKE ${patternRaw} OR
-        translate(${gameLevels.title}, ${VIETNAMESE_ACCENTED}, ${VIETNAMESE_UNACCENTED}) ILIKE ${patternNorm} OR
-        translate(coalesce(${gameLevels.description}, ''), ${VIETNAMESE_ACCENTED}, ${VIETNAMESE_UNACCENTED}) ILIKE ${patternNorm}
-      )`
-    );
-  }
-
-  if (params.cursor) {
-    const cursorId = Number.parseInt(params.cursor, 10);
-    if (!Number.isNaN(cursorId)) {
-      conditions.push(sql`${gameLevels.id} > ${cursorId}`);
+  const normalizedQuery = removeVietnameseTones(trimmed);
+  const fields = [row.title, row.description ?? "", row.code];
+  for (const field of fields) {
+    const lower = field.toLowerCase();
+    if (
+      lower.includes(trimmed) ||
+      removeVietnameseTones(lower).includes(normalizedQuery)
+    ) {
+      return true;
     }
   }
-
-  return conditions;
+  return false;
 }
 
-async function getViewerAllowedTiers(viewer: {
-  role: SearchViewerRole;
-  userPackage?: string;
-}): Promise<AccessTier[]> {
+async function getViewerAllowedTiers(
+  viewer: SearchViewer
+): Promise<AccessTier[]> {
   if (viewer.role === "manager") {
     return ["free", "login", "standard", "premium"];
   }
@@ -234,40 +180,21 @@ async function getViewerAllowedTiers(viewer: {
   return await allowedTiers({ kind: "guest" });
 }
 
-interface RawRow {
-  id: number;
-  entityId?: number;
-  code: string;
-  title: string;
-  description?: string | null;
-  instruction?: string | null;
-  thumbnailEmoji?: string | null;
-  themeId?: string | null;
-  ageMin?: number | null;
-  ageMax?: number | null;
-  difficulty?: number | null;
-  accessTier: string;
-  status?: string;
-  contentPack: (typeof gameLevels.$inferSelect)["contentPack"];
-  difficultyParams: (typeof gameLevels.$inferSelect)["difficultyParams"];
-  createdAt: Date;
-}
-
 function formatSearchItem(
-  row: RawRow,
+  row: GameLevelEntity,
   userAllowedTiers: AccessTier[],
-  viewerRole: SearchViewerRole = "user"
-) {
-  const effectiveTier = getEffectiveTier(row.accessTier as AccessTier, null, {
+  viewerRole: SearchViewerRole
+): SearchGameLevelCard {
+  const accessTier = ACCESS_TIER_CODEC.toLabel(row.accessTier);
+  const effectiveTier = getEffectiveTier(accessTier, null, {
     code: row.code,
     callerKind: viewerRole,
   });
-  const isAccessible = userAllowedTiers.includes(effectiveTier);
-  const isLocked = !isAccessible;
+  const isLocked = !userAllowedTiers.includes(effectiveTier);
 
-  const card = {
+  const card: SearchGameLevelCard = {
     id: row.id,
-    entity_id: row.entityId ?? row.id,
+    entity_id: row.id,
     code: row.code,
     title: row.title,
     description: row.description,
@@ -279,85 +206,195 @@ function formatSearchItem(
     age_min: row.ageMin,
     age_max: row.ageMax,
     difficulty: row.difficulty,
-    access_tier: row.accessTier,
-    status: row.status ?? "published",
+    access_tier: accessTier,
+    status: "published",
+    locked: isLocked,
   };
 
   if (isLocked) {
-    return { ...card, locked: true };
+    return card;
   }
 
   return {
     ...card,
-    locked: false,
     content_pack: row.contentPack,
     difficulty_params: row.difficultyParams,
   };
 }
 
-function resolveGameLevelOrder(params: SearchParams) {
+function sortGameLevelRows(
+  rows: GameLevelEntity[],
+  params: SearchParams
+): GameLevelEntity[] {
+  const copy = [...rows];
   if (!params.cursor && params.sort === "newest") {
-    return [desc(gameLevels.createdAt), asc(gameLevels.id)];
+    copy.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime() || a.id - b.id
+    );
+    return copy;
   }
   if (!params.cursor && params.sort === "difficulty") {
-    return [asc(gameLevels.difficulty), asc(gameLevels.id)];
+    copy.sort(
+      (a, b) => (a.difficulty ?? 0) - (b.difficulty ?? 0) || a.id - b.id
+    );
+    return copy;
   }
-  return [asc(gameLevels.id)];
+  copy.sort((a, b) => a.id - b.id);
+  return copy;
 }
 
-export async function searchGameLevels(
-  db: OwnerDb,
-  rawParams: RawSearchParamsInput,
-  viewer: { role: SearchViewerRole; userPackage?: string }
-) {
-  const params = SearchParamsSchema.parse(rawParams ?? {});
-  const maxLimit = viewer.role === "manager" ? 100 : 60;
-  const limit = Math.min(params.limit ?? 20, maxLimit);
+async function fetchAllCandidatesWithoutQuery(
+  repos: MindKidRepositories,
+  baseParams: SearchParams
+): Promise<GameLevelEntity[]> {
+  const collected: GameLevelEntity[] = [];
+  let cursorId: number | undefined;
+  const baseFilter = toSearchRepoFilter(baseParams, {
+    includeQuery: false,
+    includeCursor: false,
+  });
 
-  const conditions = buildSearchWhereConditions(params, viewer.role);
-  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-  const userAllowedTiers = await getViewerAllowedTiers(viewer);
+  while (true) {
+    const page = await repos.gameLevels.search({
+      ...baseFilter,
+      sort: "relevance",
+      limit: 100,
+      cursorId,
+    });
+    collected.push(...page.items);
+    if (!page.hasMore || page.items.length === 0) {
+      break;
+    }
+    const lastItem = page.items.at(-1);
+    if (!lastItem) {
+      break;
+    }
+    cursorId = lastItem.id;
+  }
 
-  const orderClauses = resolveGameLevelOrder(params);
+  return collected;
+}
 
-  const rawRows = await db
-    .select({
-      id: gameLevels.id,
-      code: gameLevels.code,
-      title: gameLevels.title,
-      description: gameLevels.description,
-      instruction: gameLevels.instruction,
-      thumbnailEmoji: gameLevels.thumbnailEmoji,
-      themeId: gameLevels.themeId,
-      ageMin: gameLevels.ageMin,
-      ageMax: gameLevels.ageMax,
-      difficulty: gameLevels.difficulty,
-      accessTier: gameLevels.accessTier,
-      contentPack: gameLevels.contentPack,
-      difficultyParams: gameLevels.difficultyParams,
-      createdAt: gameLevels.createdAt,
-    })
-    .from(gameLevels)
-    .where(whereClause)
-    .orderBy(...orderClauses)
-    .limit(limit + 1);
+async function computeAccentInsensitiveStrandFacets(
+  repos: MindKidRepositories,
+  params: SearchParams,
+  rawQuery: string
+): Promise<Record<string, number>> {
+  const withoutStrand = await fetchAllCandidatesWithoutQuery(repos, {
+    ...params,
+    strand: undefined,
+    cursor: undefined,
+  });
+  const matchedIds = new Set(
+    withoutStrand
+      .filter((row) => matchesVietnameseSearch(row, rawQuery))
+      .map((row) => row.id)
+  );
+  if (matchedIds.size === 0) {
+    return {};
+  }
 
-  const hasMore = rawRows.length > limit;
-  const pageRows = hasMore ? rawRows.slice(0, limit) : rawRows;
+  const [skillMaps, allSkills, allStrands] = await Promise.all([
+    repos.tagging.listSkillMaps(CONTENT_ENTITY_TYPE.GAME_LEVEL),
+    repos.taxonomy.listSkills(),
+    repos.taxonomy.listStrands(),
+  ]);
+  const skillToStrand = new Map(allSkills.map((s) => [s.id, s.strandId]));
+  const strandToCode = new Map(allStrands.map((st) => [st.id, st.code]));
+  const levelsPerStrand = new Map<string, Set<number>>();
+
+  for (const mapRow of skillMaps) {
+    if (!matchedIds.has(mapRow.entityId)) {
+      continue;
+    }
+    const strandId = skillToStrand.get(mapRow.skillId);
+    const strandCode = strandId ? strandToCode.get(strandId) : undefined;
+    if (!strandCode) {
+      continue;
+    }
+    const set = levelsPerStrand.get(strandCode) ?? new Set<number>();
+    set.add(mapRow.entityId);
+    levelsPerStrand.set(strandCode, set);
+  }
+
+  return aggregateStrand(
+    Array.from(levelsPerStrand.entries()).map(([code, set]) => ({
+      code,
+      count: set.size,
+    }))
+  );
+}
+
+async function searchWithVietnameseAccentFolding(
+  repos: MindKidRepositories,
+  params: SearchParams,
+  limit: number,
+  viewer: SearchViewer,
+  userAllowedTiers: AccessTier[]
+): Promise<SearchGameLevelsResponse> {
+  const rawQuery = params.q ?? "";
+  const cursorId = params.cursor
+    ? Number.parseInt(params.cursor, 10)
+    : Number.NaN;
+  const hasAgeFilter =
+    params.age !== undefined ||
+    params.age_min !== undefined ||
+    params.age_max !== undefined ||
+    params.age_band !== undefined;
+
+  const [
+    baseCandidates,
+    competencyCandidates,
+    ageCandidates,
+    tierCandidates,
+    strandFacets,
+  ] = await Promise.all([
+    fetchAllCandidatesWithoutQuery(repos, { ...params, cursor: undefined }),
+    params.competency === undefined
+      ? Promise.resolve(null)
+      : fetchAllCandidatesWithoutQuery(repos, {
+          ...params,
+          competency: undefined,
+          cursor: undefined,
+        }),
+    hasAgeFilter
+      ? fetchAllCandidatesWithoutQuery(repos, {
+          ...params,
+          age: undefined,
+          age_min: undefined,
+          age_max: undefined,
+          age_band: undefined,
+          cursor: undefined,
+        })
+      : Promise.resolve(null),
+    params.access_tier === undefined
+      ? Promise.resolve(null)
+      : fetchAllCandidatesWithoutQuery(repos, {
+          ...params,
+          access_tier: undefined,
+          cursor: undefined,
+        }),
+    computeAccentInsensitiveStrandFacets(repos, params, rawQuery),
+  ]);
+
+  const filterQ = (list: GameLevelEntity[]) =>
+    list.filter((row) => matchesVietnameseSearch(row, rawQuery));
+
+  const matchedTotal = filterQ(baseCandidates);
+  const sorted = sortGameLevelRows(matchedTotal, params);
+  const afterCursor = Number.isNaN(cursorId)
+    ? sorted
+    : sorted.filter((row) => row.id > cursorId);
+  const pageRows = afterCursor.slice(0, limit);
+  const hasMore = afterCursor.length > limit;
   const lastRow = pageRows.at(-1);
-  const nextCursor = hasMore && lastRow ? String(lastRow.id) : null;
 
   const items = pageRows.map((row) =>
     formatSearchItem(row, userAllowedTiers, viewer.role)
   );
 
   if (params.sort === "relevance") {
-    items.sort((a, b) => {
-      if (a.locked !== b.locked) {
-        return a.locked ? 1 : -1;
-      }
-      return 0;
-    });
+    items.sort((a, b) => Number(a.locked) - Number(b.locked));
   }
 
   const isPaidViewer =
@@ -369,16 +406,121 @@ export async function searchGameLevels(
     isPaidViewer ||
     items.some((item) => item.locked || item.access_tier !== "free");
 
-  const facets = await buildGameLevelFacets(
-    db,
-    params,
-    viewer.role,
-    buildSearchWhereConditions
+  const { age, age_band } = aggregateAgeAndBand(
+    toFacetRows(ageCandidates ? filterQ(ageCandidates) : matchedTotal)
   );
 
   return {
     items,
-    next_cursor: nextCursor,
+    next_cursor: hasMore && lastRow ? String(lastRow.id) : null,
+    total: matchedTotal.length,
+    facets: {
+      total: matchedTotal.length,
+      competency: aggregateCompetency(
+        toFacetRows(
+          competencyCandidates ? filterQ(competencyCandidates) : matchedTotal
+        )
+      ),
+      age,
+      age_band,
+      access_tier: aggregateTier(
+        toFacetRows(tierCandidates ? filterQ(tierCandidates) : matchedTotal)
+      ),
+      strand: strandFacets,
+    },
+    no_store: hasPaidOrLockedContent,
+  };
+}
+
+export async function searchGameLevels(
+  rawParams: RawSearchParamsInput,
+  viewer: SearchViewer
+): Promise<SearchGameLevelsResponse>;
+export async function searchGameLevels(
+  db: OwnerDb,
+  rawParams: RawSearchParamsInput,
+  viewer: SearchViewer
+): Promise<SearchGameLevelsResponse>;
+export async function searchGameLevels(
+  dbOrParams: OwnerDb | RawSearchParamsInput,
+  paramsOrViewer: RawSearchParamsInput | SearchViewer,
+  maybeViewer?: SearchViewer
+): Promise<SearchGameLevelsResponse> {
+  const hasExplicitDb = maybeViewer !== undefined;
+  const repos = hasExplicitDb
+    ? createRepositories(dbOrParams as OwnerDb)
+    : useOwnerRepositories();
+  const rawParams = (
+    hasExplicitDb ? paramsOrViewer : dbOrParams
+  ) as RawSearchParamsInput;
+  const viewer = hasExplicitDb ? maybeViewer : (paramsOrViewer as SearchViewer);
+
+  const params = SearchParamsSchema.parse(rawParams ?? {});
+  const maxLimit = viewer.role === "manager" ? 100 : 60;
+  const limit = Math.min(params.limit ?? 20, maxLimit);
+  const isPaidViewer =
+    viewer.userPackage === "PKG-premium" ||
+    viewer.userPackage === "premium" ||
+    viewer.userPackage === "PKG-standard" ||
+    viewer.userPackage === "standard";
+
+  if (params.status && params.status !== "published") {
+    return {
+      items: [],
+      next_cursor: null,
+      total: 0,
+      facets: {
+        total: 0,
+        competency: {},
+        age: {},
+        age_band: {},
+        access_tier: {},
+        strand: {},
+      },
+      no_store: isPaidViewer,
+    };
+  }
+
+  const userAllowedTiers = await getViewerAllowedTiers(viewer);
+
+  if (params.q && params.q.trim().length > 0) {
+    return await searchWithVietnameseAccentFolding(
+      repos,
+      params,
+      limit,
+      viewer,
+      userAllowedTiers
+    );
+  }
+
+  const repoFilter = {
+    ...toSearchRepoFilter(params, {
+      includeQuery: false,
+      includeCursor: true,
+    }),
+    limit,
+  };
+
+  const [searchResult, facets] = await Promise.all([
+    repos.gameLevels.search(repoFilter),
+    buildGameLevelFacets(repos.gameLevels, params),
+  ]);
+
+  const items = searchResult.items.map((row) =>
+    formatSearchItem(row, userAllowedTiers, viewer.role)
+  );
+
+  if (params.sort === "relevance") {
+    items.sort((a, b) => Number(a.locked) - Number(b.locked));
+  }
+
+  const hasPaidOrLockedContent =
+    isPaidViewer ||
+    items.some((item) => item.locked || item.access_tier !== "free");
+
+  return {
+    items,
+    next_cursor: searchResult.nextCursor,
     total: facets.total,
     facets,
     no_store: hasPaidOrLockedContent,
@@ -392,17 +534,25 @@ export async function searchContentPublished(
   query: string,
   options?: { limit?: number; userTier?: AccessTier }
 ) {
-  const db = (await import("@mindkid/db")).getDb();
+  const { gameLevels } = useRepositories();
   const limit = options?.limit ?? 10;
   const userTier = options?.userTier ?? "free";
-  const gameRes = await searchGameLevels(
-    db,
-    { q: query, limit, status: "published" },
-    { role: "user", userPackage: userTier }
-  );
+  const viewer: SearchViewer = { role: "user", userPackage: userTier };
+  const params = SearchParamsSchema.parse({
+    q: query,
+    limit,
+    status: "published",
+  });
+  const allowed = await getViewerAllowedTiers(viewer);
+
+  const candidates = await gameLevels.listPublished({ limit: 500 });
+  const matched = candidates
+    .filter((row) => matchesVietnameseSearch(row, params.q ?? ""))
+    .slice(0, params.limit ?? limit)
+    .map((row) => formatSearchItem(row, allowed, "user"));
 
   return {
-    items: gameRes.items.map((it) => ({
+    items: matched.map((it) => ({
       id: it.id,
       contentType: "game_level",
       code: it.code,

@@ -71,7 +71,7 @@ export const projectGT035: Projection<"GT-035"> = {
 
     return {
       content_pack: {
-        prompt: "Bé lập trình đường đi về đích nhé!",
+        prompt: "Đố bé xếp thẻ bước đi dẫn bạn về đích!",
         grid: { rows, cols },
         start,
         goal,

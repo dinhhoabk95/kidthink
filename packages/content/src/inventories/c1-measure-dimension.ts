@@ -12,6 +12,7 @@ export interface MeasureDimensionInventoryItem {
   readonly pole_less: string;
   readonly unit_kind: string;
   readonly group: string;
+  readonly vn_concrete_pair?: string;
 }
 
 export const C1_MEASURE_DIMENSION_INVENTORY: readonly MeasureDimensionInventoryItem[] =
@@ -23,6 +24,7 @@ export const C1_MEASURE_DIMENSION_INVENTORY: readonly MeasureDimensionInventoryI
       pole_less: "ngắn",
       unit_kind: "length",
       group: "C1.MEAS.01",
+      vn_concrete_pair: "Đôi đũa tre dài với chiếc thìa ngắn",
     },
     {
       id: "dim_height",
@@ -31,6 +33,7 @@ export const C1_MEASURE_DIMENSION_INVENTORY: readonly MeasureDimensionInventoryI
       pole_less: "thấp",
       unit_kind: "height",
       group: "C1.MEAS.02",
+      vn_concrete_pair: "Cây tre cao vút với khóm lúa non thấp",
     },
     {
       id: "dim_weight",
@@ -39,6 +42,7 @@ export const C1_MEASURE_DIMENSION_INVENTORY: readonly MeasureDimensionInventoryI
       pole_less: "nhẹ",
       unit_kind: "weight",
       group: "C1.MEAS.03",
+      vn_concrete_pair: "Quả dưa hấu nặng trĩu với chiếc lá sen nhẹ",
     },
     {
       id: "dim_size",
@@ -47,6 +51,7 @@ export const C1_MEASURE_DIMENSION_INVENTORY: readonly MeasureDimensionInventoryI
       pole_less: "nhỏ",
       unit_kind: "size",
       group: "C1.CMP.01",
+      vn_concrete_pair: "Chú trâu đồng to lớn với gà con nhỏ xíu",
     },
     {
       id: "dim_quantity",
@@ -55,6 +60,7 @@ export const C1_MEASURE_DIMENSION_INVENTORY: readonly MeasureDimensionInventoryI
       pole_less: "ít",
       unit_kind: "quantity",
       group: "C1.CMP.04",
+      vn_concrete_pair: "Rổ xoài chín đầy với đĩa nhãn ít quả",
     },
     {
       id: "dim_capacity",
@@ -63,5 +69,6 @@ export const C1_MEASURE_DIMENSION_INVENTORY: readonly MeasureDimensionInventoryI
       pole_less: "vơi",
       unit_kind: "capacity",
       group: "C1.MEAS.05",
+      vn_concrete_pair: "Bát canh đầy ắp với tách trà vơi nửa",
     },
   ] as const;

@@ -3,6 +3,8 @@ import type { EmojiEntry } from "#src/types";
 export const BODY_EMOJIS: EmojiEntry[] = [
   {
     emoji: "👀",
+    slug: "eyes",
+    svg_path: "/sprites/emoji/eyes.svg",
     name: "Mắt",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -11,6 +13,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👃",
+    slug: "little-nose",
+    svg_path: "/sprites/emoji/little-nose.svg",
     name: "Mũi",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -19,6 +23,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👂",
+    slug: "ear",
+    svg_path: "/sprites/emoji/ear.svg",
     name: "Tai",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -27,6 +33,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👄",
+    slug: "smiling-lips",
+    svg_path: "/sprites/emoji/smiling-lips.svg",
     name: "Miệng",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -35,6 +43,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👅",
+    slug: "pink-tongue",
+    svg_path: "/sprites/emoji/pink-tongue.svg",
     name: "Lưỡi",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -43,6 +53,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦷",
+    slug: "white-tooth",
+    svg_path: "/sprites/emoji/white-tooth.svg",
     name: "Răng",
     categories: ["body"],
     curriculum_themes: ["ban_than", "dinh_duong_suc_khoe"],
@@ -51,6 +63,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🧠",
+    slug: "smart-brain",
+    svg_path: "/sprites/emoji/smart-brain.svg",
     name: "Não",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -59,14 +73,18 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦴",
+    slug: "dog-bone",
+    svg_path: "/sprites/emoji/dog-bone.svg",
     name: "Xương",
-    categories: ["body"],
+    categories: ["body", "animal-prehistoric"],
     curriculum_themes: ["ban_than"],
     keywords: ["bone", "skeleton", "xương", "bộ xương"],
     age_min: 4,
   },
   {
     emoji: "🫀",
+    slug: "heart-organ",
+    svg_path: "/sprites/emoji/heart-organ.svg",
     name: "Tim",
     categories: ["body"],
     curriculum_themes: ["ban_than", "dinh_duong_suc_khoe"],
@@ -75,6 +93,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫁",
+    slug: "healthy-lungs",
+    svg_path: "/sprites/emoji/healthy-lungs.svg",
     name: "Phổi",
     categories: ["body"],
     curriculum_themes: ["ban_than", "dinh_duong_suc_khoe"],
@@ -83,6 +103,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦶",
+    slug: "bare-foot",
+    svg_path: "/sprites/emoji/bare-foot.svg",
     name: "Bàn chân",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -91,6 +113,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦵",
+    slug: "bent-leg",
+    svg_path: "/sprites/emoji/bent-leg.svg",
     name: "Chân",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -99,6 +123,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "💪",
+    slug: "strong-arm",
+    svg_path: "/sprites/emoji/strong-arm.svg",
     name: "Cơ bắp",
     categories: ["body"],
     curriculum_themes: ["ban_than", "dinh_duong_suc_khoe"],
@@ -107,6 +133,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👶",
+    slug: "baby",
+    svg_path: "/sprites/emoji/baby.svg",
     name: "Em bé",
     categories: ["body", "family"],
     curriculum_themes: ["ban_than", "gia_dinh"],
@@ -124,6 +152,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🧒",
+    slug: "child",
+    svg_path: "/sprites/emoji/child.svg",
     name: "Trẻ em",
     categories: ["body", "family"],
     curriculum_themes: ["ban_than", "gia_dinh"],
@@ -132,6 +162,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👦",
+    slug: "boy",
+    svg_path: "/sprites/emoji/boy.svg",
     name: "Bé trai",
     categories: ["body", "family"],
     curriculum_themes: ["ban_than", "gia_dinh"],
@@ -140,6 +172,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👧",
+    slug: "girl",
+    svg_path: "/sprites/emoji/girl.svg",
     name: "Bé gái",
     categories: ["body", "family"],
     curriculum_themes: ["ban_than", "gia_dinh"],
@@ -148,6 +182,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🧑",
+    slug: "grown-adult",
+    svg_path: "/sprites/emoji/grown-adult.svg",
     name: "Người",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -156,6 +192,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👁️",
+    slug: "single-eye",
+    svg_path: "/sprites/emoji/single-eye.svg",
     name: "Mắt đơn",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -164,6 +202,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫲",
+    slug: "leftward-palm",
+    svg_path: "/sprites/emoji/leftward-palm.svg",
     name: "Bàn tay trái",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -172,6 +212,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫱",
+    slug: "rightward-palm",
+    svg_path: "/sprites/emoji/rightward-palm.svg",
     name: "Bàn tay phải",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -180,6 +222,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦾",
+    slug: "bionic-arm",
+    svg_path: "/sprites/emoji/bionic-arm.svg",
     name: "Cánh tay máy",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -188,6 +232,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦿",
+    slug: "bionic-leg",
+    svg_path: "/sprites/emoji/bionic-leg.svg",
     name: "Chân giả",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -196,6 +242,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "💅",
+    slug: "painted-nails",
+    svg_path: "/sprites/emoji/painted-nails.svg",
     name: "Sơn móng",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -204,6 +252,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🤳",
+    slug: "selfie-arm",
+    svg_path: "/sprites/emoji/selfie-arm.svg",
     name: "Selfie",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -212,6 +262,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👤",
+    slug: "person-silhouette",
+    svg_path: "/sprites/emoji/person-silhouette.svg",
     name: "Bóng người",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -220,6 +272,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👥",
+    slug: "two-silhouettes",
+    svg_path: "/sprites/emoji/two-silhouettes.svg",
     name: "Hai bóng người",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -228,6 +282,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫂",
+    slug: "warm-hug",
+    svg_path: "/sprites/emoji/warm-hug.svg",
     name: "Ôm nhau",
     categories: ["body"],
     curriculum_themes: ["ban_than", "gia_dinh"],
@@ -236,6 +292,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦲",
+    slug: "smooth-head",
+    svg_path: "/sprites/emoji/smooth-head.svg",
     name: "Đầu trọc",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -244,6 +302,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦰",
+    slug: "red-haired-person",
+    svg_path: "/sprites/emoji/red-haired-person.svg",
     name: "Tóc đỏ",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -252,6 +312,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦱",
+    slug: "curly-haired-person",
+    svg_path: "/sprites/emoji/curly-haired-person.svg",
     name: "Tóc xoăn",
     categories: ["body"],
     curriculum_themes: ["ban_than"],
@@ -260,6 +322,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦳",
+    slug: "silver-haired-elder",
+    svg_path: "/sprites/emoji/silver-haired-elder.svg",
     name: "Tóc bạc",
     categories: ["body"],
     curriculum_themes: ["ban_than", "gia_dinh"],
@@ -268,6 +332,8 @@ export const BODY_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🧍",
+    slug: "standing-kid",
+    svg_path: "/sprites/emoji/standing-kid.svg",
     name: "Bạn nhỏ đứng thẳng",
     categories: ["body"],
     curriculum_themes: ["ban_than"],

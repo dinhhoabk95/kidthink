@@ -49,6 +49,36 @@ export const SENSITIVE_REAUTH_ROUTES: readonly SensitiveRouteDefinition[] = [
     phase: "P1.15",
     description: "Huỷ liên kết tài khoản mạng xã hội (BR-SLK-01)",
   },
+  {
+    method: "POST",
+    path: "/api/managers/orders/:uuid/approve",
+    phase: "P2",
+    description: "Phê duyệt đơn hàng thanh toán thủ công",
+  },
+  {
+    method: "POST",
+    path: "/api/managers/orders/:uuid/reject",
+    phase: "P2",
+    description: "Từ chối đơn hàng thanh toán thủ công",
+  },
+  {
+    method: "PATCH",
+    path: "/api/managers/feature-flags/:key",
+    phase: "P2",
+    description: "Thay đổi cấu hình feature flag",
+  },
+  {
+    method: "POST",
+    path: "/api/managers/subscriptions/:id/cancel",
+    phase: "P2",
+    description: "Huỷ gói thuê bao định kỳ từ quản trị",
+  },
+  {
+    method: "GET",
+    path: "/api/managers/audit-logs/export",
+    phase: "P2",
+    description: "Xuất nhật ký kiểm toán",
+  },
 ] as const;
 
 function matchRoutePath(pattern: string, actual: string): boolean {

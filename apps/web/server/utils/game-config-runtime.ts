@@ -1,11 +1,12 @@
 import { randomUUID } from "node:crypto";
 import {
-  childDailyStats,
-  childProfiles,
-  gameLevels,
-  getOwnerDb,
-  playSessions,
+  ACCESS_TIER_CODEC,
+  CHILD_STATUS,
+  type ChildProfileEntity,
+  type GameLevelEntity,
+  type JsonRecord,
 } from "@mindkid/db";
+import type { MindKidRepositories } from "@mindkid/db/repositories";
 import { isAppError, type JsonValue } from "@mindkid/errors/base";
 import { ChildNotFoundError } from "@mindkid/errors/child";
 import { PayloadTooLargeError } from "@mindkid/errors/common";
@@ -31,9 +32,10 @@ import {
   measureRoundSetPayloadBytes,
   resolveAssets,
 } from "@mindkid/shared";
-import { and, eq } from "drizzle-orm";
 import { type H3Event, setHeader } from "h3";
 import { checkLevelIntroRequired } from "#server/utils/concept-intro-runtime";
+import { requireCurrentConsent } from "#server/utils/consent-guard";
+import { useOwnerRepositories } from "#server/utils/repositories";
 import {
   loadRoundSet,
   RUNTIME_SCORING_MODE,
@@ -50,14 +52,14 @@ export interface GameConfigDeliveryOptions {
 }
 
 interface LevelTemplateRow {
-  level: typeof gameLevels.$inferSelect;
+  level: GameLevelEntity;
   template: GameTemplate;
 }
 
 async function resolveOwnedChild(
-  db: ReturnType<typeof getOwnerDb>,
+  repos: MindKidRepositories,
   caller: CallerIdentity
-): Promise<typeof childProfiles.$inferSelect | null> {
+): Promise<ChildProfileEntity | null> {
   if (caller.kind !== "user" || !caller.active_child_id) {
     return null;
   }
@@ -65,35 +67,22 @@ async function resolveOwnedChild(
   if (!Number.isInteger(userId) || userId <= 0) {
     throw new ChildNotFoundError();
   }
-  const [child] = await db
-    .select()
-    .from(childProfiles)
-    .where(
-      and(
-        eq(childProfiles.uuid, caller.active_child_id),
-        eq(childProfiles.userId, userId),
-        eq(childProfiles.status, "active")
-      )
-    )
-    .limit(1);
-  if (!child || child.status === "archived") {
+  const child = await repos.childProfiles.findByUuidForUser(
+    caller.active_child_id,
+    userId
+  );
+  if (child?.status !== CHILD_STATUS.ACTIVE) {
     throw new ChildNotFoundError(caller.active_child_id);
   }
+  await requireCurrentConsent(userId, "child_data");
   return child;
 }
 
 async function fetchLevelAndTemplate(
-  code: string,
-  _options: GameConfigDeliveryOptions
+  repos: MindKidRepositories,
+  code: string
 ): Promise<LevelTemplateRow> {
-  const db = getOwnerDb();
-  const rows = await db
-    .select()
-    .from(gameLevels)
-    .where(eq(gameLevels.code, code))
-    .limit(1);
-
-  const levelRow = rows[0];
+  const levelRow = await repos.gameLevels.findByCode(code);
   if (!levelRow) {
     throw new GameLevelNotFoundError(code);
   }
@@ -111,7 +100,7 @@ async function fetchLevelAndTemplate(
 function isExemptFromDailyPlayCap(
   options: GameConfigDeliveryOptions,
   template: GameTemplate,
-  ownedChild: typeof childProfiles.$inferSelect | null
+  ownedChild: ChildProfileEntity | null
 ): boolean {
   if (
     options.isManagerPreview ||
@@ -120,30 +109,20 @@ function isExemptFromDailyPlayCap(
   ) {
     return true;
   }
-  if (template.kind === "teach") {
-    return true;
-  }
-  return false;
+  return template.kind === "teach";
 }
 
-async function assertChildDailyPlayQuota(
-  ownedChild: typeof childProfiles.$inferSelect
+export async function assertChildDailyPlayQuota(
+  repos: MindKidRepositories,
+  ownedChild: ChildProfileEntity
 ): Promise<boolean> {
-  const db = getOwnerDb();
   const dateIct = getDateIct();
-  const [stats] = await db
-    .select()
-    .from(childDailyStats)
-    .where(
-      and(
-        eq(childDailyStats.childProfileId, ownedChild.id),
-        eq(childDailyStats.dateIct, dateIct)
-      )
-    )
-    .limit(1);
-
+  const stats = await repos.analyticsRollup.getChildDailyStat(
+    ownedChild.id,
+    dateIct
+  );
   const remainingSeconds = computeRemainingPlaySeconds(
-    stats ?? null,
+    stats,
     ownedChild.dailyPlayCapMinutes
   );
   if (remainingSeconds <= 0) {
@@ -153,11 +132,11 @@ async function assertChildDailyPlayQuota(
 }
 
 async function runContentAccessGuard(
-  level: typeof gameLevels.$inferSelect,
+  repos: MindKidRepositories,
+  level: GameLevelEntity,
   template: GameTemplate,
   options: GameConfigDeliveryOptions,
-  _event: H3Event,
-  ownedChild: typeof childProfiles.$inferSelect | null
+  ownedChild: ChildProfileEntity | null
 ): Promise<ContentAccessResult> {
   const effectiveChildAge =
     options.callerChildAge ??
@@ -172,7 +151,7 @@ async function runContentAccessGuard(
     return await assertContentAccess(
       {
         code: level.code,
-        access_tier: level.accessTier,
+        access_tier: ACCESS_TIER_CODEC.toLabel(level.accessTier),
         status: "published",
         age_min: level.ageMin ?? 3,
         age_max: level.ageMax ?? 6,
@@ -208,7 +187,7 @@ async function runContentAccessGuard(
           if (!ownedChild) {
             return true;
           }
-          return await assertChildDailyPlayQuota(ownedChild);
+          return await assertChildDailyPlayQuota(repos, ownedChild);
         },
       }
     );
@@ -225,13 +204,6 @@ export const PREVIEW_LAYOUT_SEED = 42;
 
 const LAYOUT_SEED_MAX = 0xff_ff_ff_ff;
 
-/**
- * Seed dựng bàn cho một lượt chơi.
- *
- * `BR-ETS-10`: bấm chơi lại đi qua `handleReplayGame()` → `fetchAndStartGame()` →
- * route config, nên **bàn mới** là thuộc tính của hàm này. Độ khó Cấm — NEVER
- * đi qua đây: nó đọc thẳng từ level, nên chơi lại không đổi độ khó.
- */
 export function createLayoutSeed(isManagerPreview: boolean): number {
   return isManagerPreview
     ? PREVIEW_LAYOUT_SEED
@@ -255,9 +227,9 @@ function resolveSessionGuestDeviceId(
 }
 
 async function createPlaySessionRecord(
-  db: ReturnType<typeof getOwnerDb>,
+  repos: MindKidRepositories,
   params: {
-    level: { id: number; accessTier: string };
+    level: Pick<GameLevelEntity, "id" | "accessTier">;
     templateCode: string;
     ownedChild: { id: number } | null;
     options: GameConfigDeliveryOptions;
@@ -273,7 +245,7 @@ async function createPlaySessionRecord(
   );
   const layoutSeed = createLayoutSeed(params.options.isManagerPreview === true);
 
-  await db.insert(playSessions).values({
+  await repos.playSessions.startSession({
     sessionUuid,
     childProfileId,
     guestDeviceId,
@@ -281,7 +253,6 @@ async function createPlaySessionRecord(
     templateCode: params.templateCode,
     layoutSeed,
     isPreview: params.isPreview,
-    completionStatus: "in_progress",
     accessTierAtStart: params.level.accessTier,
     startedAt,
   });
@@ -290,15 +261,14 @@ async function createPlaySessionRecord(
 }
 
 function validateLevelAndRounds(
-  _event: H3Event,
   templateCode: string,
   level: {
     code: string;
-    contentPack: typeof gameLevels.$inferSelect.contentPack;
+    contentPack: JsonRecord;
   },
   rounds: Array<{
     round_index: number;
-    content_pack: typeof gameLevels.$inferSelect.contentPack;
+    content_pack: JsonRecord;
   }>
 ): void {
   const validation = validateContentPack(templateCode, level.contentPack);
@@ -335,25 +305,9 @@ function validateLevelAndRounds(
   }
 }
 
-/**
- * `BR-CFG-08` và `BR-RSM-10` — trần 200 KB gzipped của **cả set**.
- *
- * Trước Task #167 trần này chỉ đo lúc duyệt nội dung, và chỗ duyệt đó lại tự tắt
- * (xem `checkRoundSetRules` ở `publish-checklist.ts`), nên không ai đo. Test
- * `BR-CFG-08` cũ đo chính fixture nhỏ của nó nên không bao giờ đỏ được.
- *
- * Đo **trước** khi tạo `play_sessions`: chặn sau khi tạo phiên để lại một hàng
- * `in_progress` mà không client nào đóng được, và đó đúng là loại rác mà Task
- * #167 đang dọn.
- *
- * Đo content pack chứ không đo payload cuối cùng, vì payload cuối cần
- * `layout_seed` và `session.uuid` — hai thứ chỉ có sau khi tạo phiên. Content
- * pack là phần người soạn kiểm soát và là phần duy nhất lớn lên theo số vòng;
- * asset chỉ thêm URL đã phân giải.
- */
 function assertPayloadWithinCap(
   levelCode: string,
-  contentPacks: readonly (typeof gameLevels.$inferSelect.contentPack)[]
+  contentPacks: readonly JsonRecord[]
 ): void {
   const bytes = measureRoundSetPayloadBytes(contentPacks);
   if (bytes <= MAX_PAYLOAD_BYTES_GZIPPED) {
@@ -365,16 +319,10 @@ function assertPayloadWithinCap(
   throw new PayloadTooLargeError();
 }
 
-function applyGameConfigCacheHeader(
-  event: H3Event,
-  accessTier: string,
-  callerKind: string
-): void {
-  if (accessTier === "free" && callerKind === "guest") {
-    setHeader(event, "Cache-Control", "public, max-age=300");
-  } else {
-    setHeader(event, "Cache-Control", "private, no-store");
-  }
+function applyGameConfigCacheHeader(event: H3Event): void {
+  // Mọi payload cấu hình bàn chơi đều chứa session.uuid (+ guest_device_id cookie),
+  // không được phép public cache trên CDN (BR-CFG-05).
+  setHeader(event, "Cache-Control", "private, no-store");
 }
 
 export async function deliverGameConfig(
@@ -382,39 +330,35 @@ export async function deliverGameConfig(
   code: string,
   options: GameConfigDeliveryOptions
 ) {
-  const db = getOwnerDb();
+  const repos = useOwnerRepositories();
   const [{ level, template }, ownedChild] = await Promise.all([
-    fetchLevelAndTemplate(code, options),
-    resolveOwnedChild(db, options.caller),
+    fetchLevelAndTemplate(repos, code),
+    resolveOwnedChild(repos, options.caller),
   ]);
 
   const accessResult = await runContentAccessGuard(
+    repos,
     level,
     template,
     options,
-    event,
     ownedChild
   );
 
-  // 3b. WP167.1: round set Cấm — NEVER rỗng (BR-RSM-09, BR-RSP-02)
-  const rounds = await loadRoundSet(db, level);
+  // WP167.1: round set Cấm — NEVER rỗng (BR-RSM-09, BR-RSP-02)
+  const rounds = await loadRoundSet(level);
 
-  // 3. Validate content_pack using Zod schema (BR-CFG-03 / D-FS)
-  validateLevelAndRounds(event, template.code, level, rounds);
+  // Validate content_pack using Zod schema (BR-CFG-03 / D-FS)
+  validateLevelAndRounds(template.code, level, rounds);
 
-  // 3c. WP167.0: trần payload đo trước khi tạo phiên (BR-CFG-08, BR-RSM-10)
-  //
-  // Đo cả `level.contentPack` **và** từng vòng, vì payload §7.1 mang cả hai.
-  // Với set một vòng dựng từ chính level thì round 0 trùng `level.contentPack`,
-  // và dây thật cũng chở nó hai lần — nên đếm hai lần là đúng, không phải lỗi.
+  // WP167.0: trần payload đo trước khi tạo phiên (BR-CFG-08, BR-RSM-10)
   assertPayloadWithinCap(level.code, [
     level.contentPack,
     ...rounds.map((r) => r.content_pack),
   ]);
 
-  // 4. Create minimum play_sessions row (D-FR, BR-RNG-06, BR-RNG-07)
+  // Create minimum play_sessions row (D-FR, BR-RNG-06, BR-RNG-07)
   const { sessionUuid, startedAt, layoutSeed } = await createPlaySessionRecord(
-    db,
+    repos,
     {
       level,
       templateCode: template.code,
@@ -424,7 +368,7 @@ export async function deliverGameConfig(
     }
   );
 
-  // 5. Resolve assets (BR-CFG-07)
+  // Resolve assets (BR-CFG-07)
   const allContentPacks = [
     level.contentPack,
     ...rounds
@@ -433,10 +377,8 @@ export async function deliverGameConfig(
   ];
   const assets = allContentPacks.flatMap((pack) => resolveAssets(pack));
 
-  // 6. Set Cache-Control header (BR-CFG-04 & BR-CFG-05 / D-FT)
-  applyGameConfigCacheHeader(event, level.accessTier, options.caller.kind);
+  applyGameConfigCacheHeader(event);
 
-  // 7. Construct payload §7.1
   return {
     level_code: level.code,
     content_version: 1,

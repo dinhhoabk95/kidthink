@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Giày trượt bốn bánh</title>
+  <defs>
+    <linearGradient id="qrsPink" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#f472b6" /><stop offset="100%" stop-color="#db2777" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#831843" opacity="0.22" rx="38" ry="5" />
+    <path d="M30 22H58V54L92 64C98 66 98 78 90 80H26V26C26 23 28 22 30 22Z" fill="url(#qrsPink)" stroke="#831843" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M52 32H64M52 42H64" stroke="#ffffff" stroke-linecap="round" stroke-width="3" />
+    <rect fill="#475569" height="8" rx="4" stroke="#1e293b" stroke-width="3" width="70" x="24" y="80" />
+    <circle cx="38" cy="95" fill="#38bdf8" r="9" stroke="#0c4a6e" stroke-width="3.6" /><circle cx="80" cy="95" fill="#38bdf8" r="9" stroke="#0c4a6e" stroke-width="3.6" />
+</svg>

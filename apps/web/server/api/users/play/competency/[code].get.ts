@@ -1,11 +1,11 @@
-import { getOwnerDb } from "@mindkid/db";
-import { NotFoundError } from "@mindkid/errors/common";
-import { allowedTiers } from "@mindkid/shared";
-import { getRouterParam } from "h3";
-import { getChildCompetencyGames } from "#server/services/index.js";
-import { requireOwnedActiveChild } from "#server/utils/active-child-runtime";
+import { NoActiveChildError } from "@mindkid/errors/child";
+import { deleteCookie, getCookie, getRouterParam } from "h3";
+import { z } from "zod";
+import { getChildCompetencyExplorerExperience } from "#server/services/play-experience-service";
+import { throwValidationError } from "#server/utils/api-error";
 import { defineApiRoute } from "#server/utils/define-api-route";
-import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
+
+const CodeParamSchema = z.string().trim().min(1);
 
 /**
  * Khám phá trò chơi theo năng lực cho trẻ — `child-competency-explorer.md`, `BR-CCE-01..08`.
@@ -13,35 +13,23 @@ import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtim
 export default defineApiRoute({
   auth: "user",
   async handler({ event, auth }) {
-    const code = getRouterParam(event, "code") ?? "";
-    const userId = Number(auth.user_id);
-    const db = getOwnerDb();
-    const child = await requireOwnedActiveChild(event, db, userId);
-
-    const caller = {
-      kind: "user" as const,
-      user_id: String(userId),
-      active_child_id: child.uuid,
-    };
-    const activeKeys = await resolveUserActiveEntitlements(userId);
-    const userAllowedTiers = await allowedTiers(caller, activeKeys);
-
-    const result = await getChildCompetencyGames(
-      {
-        childId: child.id,
-        childUuid: child.uuid,
-        childDisplayName: child.displayName,
-        birthYear: child.birthYear,
-        competencyCode: code,
-        allowedTiers: userAllowedTiers,
-      },
-      db
-    );
-
-    if (!result) {
-      throw new NotFoundError("Không tìm thấy nhóm năng lực hợp lệ.");
+    const parsedCode = CodeParamSchema.safeParse(getRouterParam(event, "code"));
+    if (!parsedCode.success) {
+      throwValidationError(parsedCode.error);
     }
 
-    return result;
+    const candidateUuid = getCookie(event, "active_child_id");
+    try {
+      return await getChildCompetencyExplorerExperience(
+        Number(auth.user_id),
+        candidateUuid,
+        parsedCode.data
+      );
+    } catch (err) {
+      if (err instanceof NoActiveChildError && candidateUuid) {
+        deleteCookie(event, "active_child_id", { path: "/" });
+      }
+      throw err;
+    }
   },
 });

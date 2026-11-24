@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quả bóng chày trắng</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="bsbWht" r="70%"><stop offset="0%" stop-color="#ffffff" /><stop offset="55%" stop-color="#f8fafc" /><stop offset="100%" stop-color="#e2e8f0" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.22" rx="32" ry="5" />
+    <circle cx="60" cy="58" fill="url(#bsbWht)" r="36" stroke="#334155" stroke-width="3.8" />
+    <path d="M35 32C48 46 48 70 35 84M85 32C72 46 72 70 85 84" fill="none" stroke="#dc2626" stroke-dasharray="5 4" stroke-linecap="round" stroke-width="3.4" />
+</svg>

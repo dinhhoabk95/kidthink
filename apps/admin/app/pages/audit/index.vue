@@ -20,7 +20,7 @@
           id="btn-export-csv"
           type="button"
           :disabled="isExporting"
-          @click="exportCsv"
+          @click="openExportModal"
         >
           <UIcon class="w-4 h-4 shrink-0" name="i-lucide-download" />
           <span>{{ isExporting ? "Đang xuất..." : "Xuất CSV" }}</span>
@@ -495,14 +495,116 @@
         </div>
       </div>
     </div>
+
+    <!-- Export CSV Modal (BR-ALV-06 + Reauth) -->
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
+      v-if="isExportModalOpen"
+    >
+      <div
+        aria-labelledby="audit-export-modal-title"
+        aria-modal="true"
+        class="w-full max-w-lg bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4"
+        role="dialog"
+      >
+        <div class="flex items-center justify-between gap-2">
+          <h2
+            class="text-lg font-bold text-surface-900 dark:text-white"
+            id="audit-export-modal-title"
+          >
+            Xuất nhật ký kiểm toán CSV
+          </h2>
+          <button
+            aria-label="Đóng hộp thoại xuất CSV"
+            class="min-w-11 min-h-11 inline-flex items-center justify-center rounded-xl text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700"
+            type="button"
+            @click="isExportModalOpen = false"
+          >
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
+          </button>
+        </div>
+
+        <p class="text-sm text-surface-600 dark:text-surface-300">
+          Mọi lượt xuất dữ liệu kiểm toán được ghi nhận vào nhật ký (tối đa 5
+          lượt/ngày). Bắt buộc nhập lý do tối thiểu 10 ký tự.
+        </p>
+
+        <form class="space-y-4" @submit.prevent="exportCsv">
+          <div>
+            <label
+              class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1.5"
+              for="audit-export-reason"
+            >
+              Lý do xuất dữ liệu *
+            </label>
+            <textarea
+              class="w-full min-h-24 p-3 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+              id="audit-export-reason"
+              minlength="10"
+              placeholder="Ví dụ: Kiểm tra đối soát sự kiện thanh toán định kỳ tháng này..."
+              required
+              rows="3"
+              v-model="exportReason"
+            />
+          </div>
+
+          <div>
+            <label
+              class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1.5"
+              for="audit-export-reauth-password"
+            >
+              Mật khẩu xác thực lại
+              <span v-if="!exportNeedsReauth">(nếu chưa xác thực gần đây)</span>
+              <span v-else>*</span>
+            </label>
+            <input
+              autocomplete="current-password"
+              class="w-full min-h-11 px-3.5 py-2.5 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+              id="audit-export-reauth-password"
+              placeholder="Nhập mật khẩu quản trị viên..."
+              type="password"
+              v-model="exportReauthPassword"
+              :required="exportNeedsReauth"
+            >
+          </div>
+
+          <p
+            class="text-sm text-danger-600 dark:text-danger-400 font-semibold"
+            role="alert"
+            v-if="exportError"
+          >
+            {{ exportError }}
+          </p>
+
+          <div class="flex items-center justify-end gap-3 pt-2">
+            <button
+              class="min-h-11 min-w-11 px-4 py-2.5 rounded-2xl text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-700 font-semibold text-sm inline-flex items-center justify-center"
+              type="button"
+              @click="isExportModalOpen = false"
+            >
+              Huỷ
+            </button>
+            <button
+              class="min-h-11 min-w-11 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-semibold text-sm inline-flex items-center justify-center"
+              type="submit"
+              :disabled="isExporting || exportReason.trim().length < 10 || (exportNeedsReauth && !exportReauthPassword.trim())"
+            >
+              {{ isExporting ? "Đang tải..." : "Xác nhận & Tải CSV" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+  import { isApiError, normalizeApiError } from "@mindkid/errors/client";
   import { computed, onMounted, ref, watch } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { definePageMeta, useHead } from "#imports";
-  import { apiFetch, apiUrl } from "~/composables/use-api-client";
+  import { useAdminAuth } from "~/composables/use-admin-auth";
+  import { apiFetch } from "~/composables/use-api-client";
 
   definePageMeta({
     layout: "manager",
@@ -586,9 +688,15 @@
 
   const route = useRoute();
   const router = useRouter();
+  const { reauth } = useAdminAuth();
   const logs = ref<AuditItem[]>([]);
   const isLoading = ref(true);
   const isExporting = ref(false);
+  const isExportModalOpen = ref(false);
+  const exportReason = ref("");
+  const exportReauthPassword = ref("");
+  const exportNeedsReauth = ref(false);
+  const exportError = ref("");
   const actorTypeFilter = ref(String(route.query.actor_type || ""));
   const actionFilter = ref(String(route.query.action || ""));
   const entityTypeFilter = ref(String(route.query.entity_type || ""));
@@ -739,32 +847,84 @@
     fetchLogs();
   }
 
-  function exportCsv() {
+  function openExportModal() {
+    exportReason.value = "";
+    exportReauthPassword.value = "";
+    exportNeedsReauth.value = false;
+    exportError.value = "";
+    isExportModalOpen.value = true;
+  }
+
+  async function exportCsv() {
+    const trimmedReason = exportReason.value.trim();
+    if (trimmedReason.length < 10) {
+      exportError.value =
+        "Lý do xuất dữ liệu bắt buộc tối thiểu 10 ký tự (BR-ALV-06).";
+      return;
+    }
+
     isExporting.value = true;
+    exportError.value = "";
     try {
-      const queryParams = new URLSearchParams();
-      if (actorTypeFilter.value) {
-        queryParams.set("actor_type", actorTypeFilter.value);
-      }
-      if (actionFilter.value) {
-        queryParams.set("action", actionFilter.value);
-      }
-      if (entityTypeFilter.value) {
-        queryParams.set("entity_type", entityTypeFilter.value);
-      }
-      if (entityIdFilter.value) {
-        queryParams.set("entity_id", entityIdFilter.value);
-      }
-      if (searchQuery.value) {
-        queryParams.set("q", searchQuery.value);
+      if (exportReauthPassword.value.trim()) {
+        await reauth(exportReauthPassword.value);
       }
 
-      const url = apiUrl(
-        `/api/managers/audit-logs/export?${queryParams.toString()}`
+      const queryObj: Record<string, string> = {
+        reason: trimmedReason,
+      };
+      if (actorTypeFilter.value) {
+        queryObj.actor_type = actorTypeFilter.value;
+      }
+      if (actionFilter.value) {
+        queryObj.action = actionFilter.value;
+      }
+      if (entityTypeFilter.value) {
+        queryObj.entity_type = entityTypeFilter.value;
+      }
+      if (entityIdFilter.value) {
+        queryObj.entity_id = entityIdFilter.value;
+      }
+      if (searchQuery.value) {
+        queryObj.q = searchQuery.value;
+      }
+
+      const csvContent = await apiFetch<string>(
+        "/api/managers/audit-logs/export",
+        {
+          query: queryObj,
+        }
       );
-      window.open(url, "_blank");
+
+      if (
+        typeof window !== "undefined" &&
+        typeof URL.createObjectURL === "function"
+      ) {
+        const blob = new Blob([csvContent], {
+          type: "text/csv;charset=utf-8",
+        });
+        const blobUrl = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = blobUrl;
+        anchor.download = `audit_logs_${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        URL.revokeObjectURL(blobUrl);
+      }
+
+      isExportModalOpen.value = false;
+      exportReauthPassword.value = "";
+      exportNeedsReauth.value = false;
     } catch (err) {
-      console.error("Failed to export audit logs", err);
+      if (isApiError(err, "REAUTH_REQUIRED")) {
+        exportNeedsReauth.value = true;
+        exportError.value =
+          "Phiên xác thực đã hết hạn. Vui lòng nhập mật khẩu quản trị viên để tiếp tục.";
+        return;
+      }
+      exportError.value =
+        normalizeApiError(err).message || "Không thể xuất nhật ký kiểm toán.";
     } finally {
       isExporting.value = false;
     }

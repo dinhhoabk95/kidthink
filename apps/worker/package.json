@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@mindkid/audit": "workspace:*",
+    "@mindkid/auth": "workspace:*",
+    "@mindkid/cache": "workspace:*",
     "@mindkid/config": "workspace:*",
     "@mindkid/db": "workspace:*",
     "@mindkid/export": "workspace:*",
@@ -23,8 +25,7 @@
     "argon2": "^0.45.2",
     "bullmq": "^6.7.6",
     "drizzle-orm": "1.0.0-rc.5",
-    "ioredis": "6.1.0-beta.1",
-    "postgres": "^4.1.1"
+    "ioredis": "6.1.0-beta.1"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Miếng thịt tươi</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="stkMeat" r="70%"><stop offset="0%" stop-color="#fb7185" /><stop offset="55%" stop-color="#e11d48" /><stop offset="100%" stop-color="#9f1239" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#881337" opacity="0.22" rx="40" ry="5.5" />
+    <path d="M22 58C22 36 44 26 70 30C92 34 102 48 98 68C94 86 72 94 46 90C28 87 22 74 22 58Z" fill="#fff1f2" stroke="#881337" stroke-width="3.8" />
+    <path d="M29 57C29 41 47 34 69 37C86 40 93 50 90 66C87 79 70 85 48 82C34 80 29 69 29 57Z" fill="url(#stkMeat)" stroke="#881337" stroke-width="3" />
+    <circle cx="52" cy="58" fill="#fff1f2" r="7" stroke="#881337" stroke-width="2.8" />
+    <path d="M59 58H82M52 65L44 77" stroke="#fff1f2" stroke-linecap="round" stroke-width="3" />
+</svg>

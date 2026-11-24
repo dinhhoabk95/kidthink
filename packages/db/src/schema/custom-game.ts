@@ -1,41 +1,37 @@
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import type { JsonRecord } from "#src/constants/json";
 import {
-  bigint,
-  index,
-  integer,
-  jsonb,
-  pgEnum,
-  pgTable,
-  smallint,
-  text,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
-import { idPk, timestamps } from "./columns.ts";
+  CUSTOM_GAME_STATUS,
+  type CustomGameStatus,
+} from "#src/constants/learning-enums";
+import { idPk, timestamps, uuidCol } from "./columns.ts";
 import { users } from "./identity.ts";
 
-export const customGameStatusEnum = pgEnum("custom_game_status", [
-  "draft",
-  "ready",
-]);
-
-export const customGames = pgTable(
+export const customGames = sqliteTable(
   "custom_games",
   {
     id: idPk(),
-    uuid: uuid("uuid").defaultRandom().notNull().unique(),
-    userId: bigint("user_id", { mode: "number" })
+    uuid: uuidCol("uuid").unique(),
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    templateId: varchar("template_id", { length: 32 }).notNull(),
-    title: varchar("title", { length: 200 }).notNull(),
+    templateId: text("template_id").notNull(),
+    title: text("title").notNull(),
     instruction: text("instruction").notNull(),
-    contentPack: jsonb("content_pack").notNull(),
-    difficultyParams: jsonb("difficulty_params").notNull(),
-    themeId: varchar("theme_id", { length: 50 }).notNull().default("farm"),
-    ageMin: smallint("age_min").notNull().default(3),
-    ageMax: smallint("age_max").notNull().default(6),
-    skillIds: jsonb("skill_ids").$type<number[]>(),
-    status: customGameStatusEnum("status").notNull().default("draft"),
+    contentPack: text("content_pack", { mode: "json" })
+      .$type<JsonRecord>()
+      .notNull(),
+    difficultyParams: text("difficulty_params", { mode: "json" })
+      .$type<JsonRecord>()
+      .notNull(),
+    themeId: text("theme_id").notNull().default("farm"),
+    ageMin: integer("age_min").notNull().default(3),
+    ageMax: integer("age_max").notNull().default(6),
+    skillIds: text("skill_ids", { mode: "json" }).$type<number[]>(),
+    status: integer("status")
+      .$type<CustomGameStatus>()
+      .notNull()
+      .default(CUSTOM_GAME_STATUS.DRAFT),
     version: integer("version").notNull().default(1),
     ...timestamps(),
   },

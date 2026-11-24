@@ -34,30 +34,40 @@
       </div>
 
       <button
-        class="min-h-16 px-5 rounded-2xl bg-white border-[3px] border-brand-300 shadow-[0_4px_0_var(--color-brand-300)] active:shadow-[0_1px_0_var(--color-brand-300)] active:translate-y-0.5 flex items-center gap-3 cursor-pointer transition-all"
+        class="min-h-16 min-w-16 px-5 rounded-2xl bg-warning-50 border-[3px] border-warning-400 shadow-[0_4px_0_var(--color-warning-400)] active:shadow-[0_1px_0_var(--color-warning-400)] active:translate-y-0.5 flex items-center gap-3 cursor-pointer transition-all"
         data-testid="toybox-tool-audio"
         type="button"
         v-if="activeTool"
         :aria-label="`Nghe hướng dẫn ${activeTool.title_vi}`"
         @click="speakToolIntro"
       >
-        <span aria-hidden="true" class="text-3xl kid-emoji">{{
-          activeTool.icon_emoji
-        }}</span>
+        <UIcon
+          class="w-7 h-7 text-warning-700 shrink-0"
+          name="i-lucide-sparkles"
+        />
         <span
-          class="font-heading font-bold text-lg sm:text-xl text-surface-900"
+          class="font-heading font-bold text-lg sm:text-xl text-surface-900 leading-relaxed"
         >
           {{ activeTool.title_vi }}
         </span>
-        <UIcon class="w-6 h-6 text-brand-600" name="i-lucide-volume-2" />
+        <UIcon
+          class="w-6 h-6 text-brand-700 shrink-0"
+          name="i-lucide-volume-2"
+        />
       </button>
     </header>
 
-    <!-- Bàn giáo cụ tương tác mở: 100% client-side, cô lập khỏi mastery_state (BR-TBX-01, BR-TBX-02) -->
+    <!-- Bàn giáo cụ cụ thể Jibutsu: thuần phía trình duyệt, cô lập khỏi mastery_state (BR-TBX-01, BR-TBX-02) -->
     <main class="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-center">
       <BalanceScaleToy v-if="activeToolSlug === 'balance-scale'" />
       <NumberRodsToy v-else-if="activeToolSlug === 'number-rods'" />
       <MirrorBlocksToy v-else-if="activeToolSlug === 'mirror-blocks'" />
+
+      <!-- Góc Ba Mẹ hỏi bé (Phương pháp Kuno Jibutsu & Taiwa) thu gọn 1 chạm -->
+      <ToyboxKunoParentCard
+        v-if="activeToolSlug"
+        :tool-slug="activeToolSlug"
+      />
     </main>
 
     <ParentGateModal
@@ -71,8 +81,8 @@
 
 <script lang="ts" setup>
   /**
-   * Bàn giáo cụ Montessori tương tác mở (`/play/toybox/[tool]`, `montessori-toybox.md`).
-   * Mã `tool` lạ sẽ tự chuyển êm về `/play/toybox` (spec §5), không báo lỗi cho trẻ.
+   * Bàn giáo cụ Montessori × Koguma tương tác mở (`/play/toybox/[tool]`, `montessori-toybox.md`).
+   * Mã `tool` lạ tự chuyển êm về `/play/toybox` (spec §5), không báo lỗi cho trẻ.
    */
   import {
     isToyboxToolSlug,
@@ -85,6 +95,7 @@
   import BalanceScaleToy from "~/components/kid/toybox/balance-scale-toy.vue";
   import MirrorBlocksToy from "~/components/kid/toybox/mirror-blocks-toy.vue";
   import NumberRodsToy from "~/components/kid/toybox/number-rods-toy.vue";
+  import ToyboxKunoParentCard from "~/components/kid/toybox/toybox-kuno-parent-card.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
   import { useKidSound } from "~/composables/play/use-kid-sound";
 

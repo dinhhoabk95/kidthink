@@ -1,11 +1,19 @@
 import { hashPassword } from "@mindkid/auth";
 import {
+  CHILD_RELATIONSHIP_CODEC,
+  CHILD_STATUS,
+  CONSENT_ACTION,
+  CONSENT_TYPE_CODEC,
   childProfiles,
   consentLogs,
   type DbExecutor,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlements,
+  MANAGER_ROLE_CODEC,
   managerAccounts,
   managers,
+  USER_STATUS,
   userAccounts,
   users,
 } from "@mindkid/db";
@@ -129,7 +137,7 @@ async function seedManagers(db: DatabaseClient): Promise<number> {
         passwordHash,
         displayName: mgr.displayName,
         emailVerified: true,
-        role: mgr.role,
+        role: MANAGER_ROLE_CODEC.toCode(mgr.role),
         mfaEnabled: mgr.mfaEnabled,
         isActive: mgr.isActive,
       })
@@ -164,18 +172,22 @@ async function ensureUserConsents(
 ): Promise<void> {
   const consentTypes = ["terms", "privacy", "child_data"] as const;
   for (const cType of consentTypes) {
+    const consentTypeCode = CONSENT_TYPE_CODEC.toCode(cType);
     const [existing] = await db
       .select({ id: consentLogs.id })
       .from(consentLogs)
       .where(
-        and(eq(consentLogs.userId, userId), eq(consentLogs.consentType, cType))
+        and(
+          eq(consentLogs.userId, userId),
+          eq(consentLogs.consentType, consentTypeCode)
+        )
       );
 
     if (!existing) {
       await db.insert(consentLogs).values({
         userId,
-        consentType: cType,
-        action: "accepted",
+        consentType: consentTypeCode,
+        action: CONSENT_ACTION.ACCEPTED,
         ipAddress: "127.0.0.1",
         userAgent: "Seed Initial Accounts",
       });
@@ -206,9 +218,9 @@ async function seedUserChildren(
         displayName: child.displayName,
         birthYear: child.birthYear,
         avatarId: child.avatarId,
-        relationship: child.relationship,
+        relationship: CHILD_RELATIONSHIP_CODEC.toCode(child.relationship),
         dailyPlayCapMinutes: child.dailyPlayCapMinutes,
-        status: "active",
+        status: CHILD_STATUS.ACTIVE,
       });
     }
     createdCount++;
@@ -247,8 +259,8 @@ async function seedUserEntitlements(
       await db.insert(entitlements).values({
         userId,
         entitlementKey: entKey as EntitlementKey,
-        source: "package_order",
-        status: "active",
+        source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+        status: ENTITLEMENT_STATUS.ACTIVE,
         grantedAt: now,
         expiresAt,
         grantReason: `Seed default package ${packageCode}`,
@@ -262,6 +274,9 @@ async function seedUserEntitlements(
 export async function seedInitialAccounts(
   db: DatabaseClient
 ): Promise<SeedAccountsStats> {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Refusing to seed default test accounts in production");
+  }
   const managerCount = await seedManagers(db);
 
   let userCount = 0;
@@ -281,7 +296,7 @@ export async function seedInitialAccounts(
         passwordHash,
         displayName: usr.displayName,
         emailVerified: true,
-        status: "active",
+        status: USER_STATUS.ACTIVE,
         emailVerifiedAt: now,
       })
       .onConflictDoNothing({ target: users.email });

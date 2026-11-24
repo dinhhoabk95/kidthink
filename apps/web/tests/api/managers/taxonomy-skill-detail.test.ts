@@ -2,6 +2,7 @@ import {
   competencies,
   getOwnerDb,
   learningObjectives,
+  SKILL_TIER,
   skillPrerequisites,
   skills,
   strands,
@@ -72,7 +73,15 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
       .onConflictDoNothing()
       .returning();
 
-    const compId = compRows[0]?.id || 1;
+    const existingComp = compRows[0]
+      ? compRows
+      : await db
+          .select({ id: competencies.id })
+          .from(competencies)
+          .where(eq(competencies.code, "C2"))
+          .limit(1);
+
+    const compId = existingComp[0]?.id ?? 1;
 
     const strandRows = await db
       .insert(strands)
@@ -104,7 +113,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
         difficulty: 1,
         thinkingProcesses: ["observe", "match"],
         whatAxis: ["geometry", "shape"],
-        tier: "basic",
+        tier: SKILL_TIER.BASIC,
         position: 98,
       })
       .onConflictDoNothing()
@@ -121,7 +130,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
         difficulty: 2,
         thinkingProcesses: ["compare", "sort"],
         whatAxis: ["geometry", "shape"],
-        tier: "basic",
+        tier: SKILL_TIER.BASIC,
         position: 99,
       })
       .onConflictDoNothing()

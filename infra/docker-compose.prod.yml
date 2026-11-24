@@ -55,8 +55,38 @@ services:
       timeout: 5s
       retries: 5
 
+  garage:
+    # Self-hosted S3-compatible object storage cho Giai đoạn 2 (>= 1.000 DAU):
+    # Viết bằng Rust (~40MB RAM), chỉ bind loopback 127.0.0.1:3900 (BR-SRV-03).
+    image: dxflrs/garage:v1.1.0
+    container_name: mindkid-garage-s3-prod
+    profiles: ["stage2-s3"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3900:3900"
+      - "127.0.0.1:3903:3903"
+    volumes:
+      - mindkid_garage_meta:/var/lib/garage/meta
+      - mindkid_garage_data:/var/lib/garage/data
+
+  cloudflared:
+    # Đường hầm Zero Trust nối outbound từ VPS ra Cloudflare Edge (Giai đoạn 2):
+    # Đóng kín 100% cổng inbound công khai (80/443/22) và giữ miễn phí WAF + CDN của Cloudflare.
+    image: cloudflare/cloudflared:2025.2.1
+    container_name: mindkid-cloudflared-prod
+    profiles: ["stage2-tunnel"]
+    restart: unless-stopped
+    network_mode: "host"
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
+
 volumes:
   mindkid_pg_data:
     name: mindkid_prod_pg_data
   mindkid_valkey_data:
     name: mindkid_prod_valkey_data
+  mindkid_garage_meta:
+    name: mindkid_prod_garage_meta
+  mindkid_garage_data:
+    name: mindkid_prod_garage_data

@@ -1,5 +1,9 @@
 import {
+  CHILD_STATUS,
   childProfiles,
+  ENTITLEMENT_GROUP,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
@@ -85,7 +89,7 @@ describe("P4.5 Custom Game Mastery Isolation (BR-CGB-06)", () => {
       .insert(entitlementKeys)
       .values({
         key: "create_custom_game",
-        group: "creator",
+        group: ENTITLEMENT_GROUP.CREATOR,
         label: "Tạo trò chơi tùy chỉnh",
         description: "Quyền tạo trò chơi tùy chỉnh",
         isMvp: false,
@@ -105,8 +109,8 @@ describe("P4.5 Custom Game Mastery Isolation (BR-CGB-06)", () => {
     await db.insert(entitlements).values({
       userId: userA.id,
       entitlementKey: "create_custom_game",
-      source: "manual_grant",
-      status: "active",
+      source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+      status: ENTITLEMENT_STATUS.ACTIVE,
     });
     invalidateUserEntitlementsCache(userA.id);
 
@@ -117,7 +121,7 @@ describe("P4.5 Custom Game Mastery Isolation (BR-CGB-06)", () => {
         displayName: "Bé An",
         birthYear: 2022,
         avatarId: "cat",
-        status: "active",
+        status: CHILD_STATUS.ACTIVE,
       })
       .returning();
     childA = cA;

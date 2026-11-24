@@ -1,7 +1,6 @@
 import {
   type ActionResult,
   type ActiveGestureVisualState,
-  type CommitIcon,
   type FeedbackPoint,
   FeedbackSystem,
   findHitEntity,
@@ -18,6 +17,54 @@ import {
 } from "@mindkid/game-engine";
 import type { AgeBand } from "@mindkid/shared/client";
 import { computed, type Ref, ref } from "vue";
+import {
+  acceptsPointerOver,
+  actionButtonOf,
+  adjustDeltaOf,
+  buildDragFlight,
+  buildTapFlight,
+  dispatchSessionGesture,
+  feedbackPointOf,
+  findDropTargetsInEntities,
+  HIDDEN_ACTION_BUTTON,
+  playWoodClackHoverCue,
+  playWoodPickupCue,
+  speakEntityKeyword,
+  speakSessionRetryVoice,
+  WRONG_COOLDOWN_MS,
+} from "~/composables/play/play-gesture-helpers";
+
+/** Nút hành động ở `zones.action` cho bàn phím và trình đọc màn hình (`BR-PSZ-05`). */
+export interface ActionButtonState {
+  readonly visible: boolean;
+  readonly enabled: boolean;
+  readonly label: string;
+}
+
+interface TouchingAwareSession {
+  setTouchingItem(itemId: string | null): void;
+}
+
+function acceptsTouchingItem(
+  candidate: GameSession
+): candidate is GameSession & TouchingAwareSession {
+  if (!("setTouchingItem" in candidate)) {
+    return false;
+  }
+  const fn = (candidate as Partial<TouchingAwareSession>).setTouchingItem;
+  return typeof fn === "function" && fn.length <= 1;
+}
+
+/**
+ * Ngưỡng (px CSS) để một cử động thành kéo thay vì chạm. Ngón tay trẻ 3 tuổi
+ * rung nhiều nên rộng hơn trẻ lớn (Task #313 B9).
+ */
+export function dragSlopCssPx(band: AgeBand): number {
+  if (band === "3-4") {
+    return 28;
+  }
+  return band === "4-5" ? 20 : 14;
+}
 
 export interface GestureOptions {
   readonly getEngine: () => GameEngine | null;
@@ -50,92 +97,6 @@ export interface GestureOptions {
   ) => void;
 }
 
-/** Session theo dõi vị trí ngón tay để bật trạng thái "đích đang nhận". */
-interface PointerAwareSession {
-  setPointerOver(x: number, y: number): void;
-}
-
-function acceptsPointerOver(
-  session: GameSession
-): session is GameSession & PointerAwareSession {
-  return (
-    typeof (session as Partial<PointerAwareSession>).setPointerOver ===
-    "function"
-  );
-}
-
-/** Nút hành động ở `zones.action` cho bàn phím và trình đọc màn hình (`BR-PSZ-05`). */
-export interface ActionButtonState {
-  readonly visible: boolean;
-  readonly enabled: boolean;
-  readonly label: string;
-}
-
-const ACTION_LABEL_BY_ICON: Readonly<Record<CommitIcon, string>> = {
-  check: "Xong",
-  play: "Chạy chương trình",
-  stop: "Dừng chương trình",
-  listen: "Nghe mẫu",
-};
-
-/**
- * Hai tap sai dồn dập trong khoảng này của trẻ nhỏ chỉ tính một miss, để
- * không nhảy hint L1/L3 (Task #313 B6).
- */
-const WRONG_COOLDOWN_MS = 400;
-
-/**
- * Ngưỡng (px CSS) để một cử động thành kéo thay vì chạm. Ngón tay trẻ 3 tuổi
- * rung nhiều nên rộng hơn trẻ lớn: 12px/14px cố định làm tap rung thành drop
- * rồi bị nuốt (Task #313 B9).
- */
-export function dragSlopCssPx(band: AgeBand): number {
-  if (band === "3-4") {
-    return 28;
-  }
-  return band === "4-5" ? 20 : 14;
-}
-
-/** Số logic px kéo tương ứng một bậc `adjust`. */
-const ADJUST_STEP_PX = 48;
-
-const HIDDEN_ACTION_BUTTON: ActionButtonState = {
-  visible: false,
-  enabled: false,
-  label: "",
-};
-
-function actionButtonOf(session: TemplateGameSession) {
-  if (!session.needsCommit) {
-    return HIDDEN_ACTION_BUTTON;
-  }
-  return {
-    visible: true,
-    enabled: session.canCommit?.() ?? true,
-    label: ACTION_LABEL_BY_ICON[session.commitIcon ?? "check"],
-  };
-}
-
-function dispatchSessionGesture(
-  session: TemplateGameSession,
-  gesture: Gesture,
-  entities: readonly ViewEntity[]
-): { verdict: ActionResult | null; tapped: ViewEntity | null } {
-  const tapped =
-    gesture.type === "tap"
-      ? findHitEntity(entities, gesture.x, gesture.y)
-      : null;
-  const stepBefore = (session as { currentStepIndex?: number })
-    .currentStepIndex;
-  const verdict = session.dispatch(gesture);
-  const stepAfter = (session as { currentStepIndex?: number }).currentStepIndex;
-  const stepAdvanced = stepBefore !== undefined && stepAfter !== stepBefore;
-  return {
-    verdict: verdict ?? null,
-    tapped: stepAdvanced ? null : tapped,
-  };
-}
-
 export function usePlayGesture(options: GestureOptions) {
   const { getEngine, canvasRef, onRoundWon, onRetryDisallowed, onVerdict } =
     options;
@@ -165,6 +126,23 @@ export function usePlayGesture(options: GestureOptions) {
   let didLiveMazeStep = false;
   let lastVerdictValid = false;
   let activeFlight: GestureTransitionFlight | null = null;
+  let touchingEntityId: string | null = null;
+
+  function syncTouchingItem(nextId: string | null): void {
+    touchingEntityId = nextId;
+    const engine = getEngine();
+    const active = engine?.activeSession;
+    if (!(active && acceptsTouchingItem(active))) {
+      return;
+    }
+    if (
+      nextId !== null &&
+      (!engine.acceptingInput || active.isAcceptingInput?.() === false)
+    ) {
+      return;
+    }
+    active.setTouchingItem(nextId);
+  }
 
   function nowClockMs(): number {
     return typeof performance === "undefined" ? Date.now() : performance.now();
@@ -235,96 +213,6 @@ export function usePlayGesture(options: GestureOptions) {
     );
   }
 
-  /**
-   * Đọc lại tên vật vừa chạm theo thang bậc của `play-narration.md` §7:
-   * mp3 của asset → TTS từ `spokenLabel` → không có tên thì im (Task #274 S7b).
-   * `onDone` gọi đúng một lần khi tên đọc xong (hoặc ngay khi không có gì để
-   * đọc), để lời nói kế tiếp không cắt ngang tên vật.
-   */
-  function speakKeyword(
-    engine: GameEngine,
-    entity: ViewEntity | null,
-    onDone?: () => void
-  ): void {
-    const label = entity?.spokenLabel;
-    const audioPath = entity?.spokenAudioPath;
-    if (!onDone) {
-      if (audioPath) {
-        engine.audio.playPromptAudio(audioPath, undefined, () => {
-          if (label) {
-            engine.audio.speakPrompt(label);
-          }
-        });
-        return;
-      }
-      if (label) {
-        engine.audio.speakPrompt(label);
-      }
-      return;
-    }
-    let done = false;
-    const finish = () => {
-      if (!done) {
-        done = true;
-        onDone();
-      }
-    };
-    if (audioPath) {
-      // `playPromptAudio` báo `onError` rồi `onEnd`: mp3 hỏng rơi xuống TTS và
-      // chỉ TTS mới được báo xong.
-      let fellBack = false;
-      engine.audio.playPromptAudio(
-        audioPath,
-        () => {
-          if (!fellBack) {
-            finish();
-          }
-        },
-        () => {
-          fellBack = true;
-          if (label) {
-            engine.audio.speakPrompt(label, finish);
-          } else {
-            finish();
-          }
-        }
-      );
-      return;
-    }
-    if (label) {
-      engine.audio.speakPrompt(label, finish);
-      return;
-    }
-    finish();
-  }
-
-  /**
-   * Lời nói khi chưa đúng (`BR-FBK-13`, `BR-PNR-12`): engine có pill Montessori
-   * thì đọc lời của pill (lý do cụ thể); không thì một câu khích lệ xoay vòng.
-   */
-  function speakRetryVoice(engine: GameEngine, session: GameSession): void {
-    const pillLine =
-      session instanceof TemplateGameSession
-        ? session.takePillNarration()
-        : null;
-    if (pillLine) {
-      engine.audio.speakPrompt(pillLine);
-      return;
-    }
-    engine.audio.speakEncouragement(retryVoice.getRetryEncouragementClip());
-  }
-
-  /** Điểm gắn phản hồi: chỗ chạm của `tap`/`commit`, chỗ thả của `drop`. */
-  function feedbackPointOf(gesture: Gesture): FeedbackPoint | null {
-    if (gesture.type === "drop") {
-      return { x: gesture.toX, y: gesture.toY };
-    }
-    if (gesture.type === "tap") {
-      return { x: gesture.x, y: gesture.y };
-    }
-    return null;
-  }
-
   function emitFeedback(kind: OverlayFeedbackKind, gesture: Gesture): void {
     const point = feedbackPointOf(gesture);
     if (point) {
@@ -343,6 +231,23 @@ export function usePlayGesture(options: GestureOptions) {
     }
   }
 
+  function handleSilentVerdict(
+    engine: GameEngine,
+    session: GameSession,
+    tapped: ViewEntity | null
+  ): void {
+    const wasSelected = tapped?.state === "selected";
+    syncView();
+    const isQuietUnselect =
+      wasSelected &&
+      tapped !== null &&
+      viewEntities.value.find((e) => e.id === tapped.id)?.state === "idle";
+    if (!isQuietUnselect) {
+      speakEntityKeyword(engine, tapped);
+    }
+    speakInvitation(engine, session);
+  }
+
   function handleVerdict(
     verdict: ActionResult,
     engine: GameEngine,
@@ -350,27 +255,20 @@ export function usePlayGesture(options: GestureOptions) {
     tapped: ViewEntity | null,
     gesture: Gesture
   ): void {
-    // Lời nói khi chưa đúng chỉ khi verdict sai được tính (ngoài cooldown) —
-    // tap sai dồn dập không chồng giọng lên nhau.
-    const speaksRetry =
-      verdict.feedback !== "none" &&
-      !verdict.valid &&
-      Date.now() - lastWrongAtMs >= WRONG_COOLDOWN_MS;
-    speakKeyword(
-      engine,
-      tapped,
-      speaksRetry ? () => speakRetryVoice(engine, session) : undefined
-    );
-
     if (verdict.feedback === "none") {
-      // Cử chỉ bị nuốt: ngoài mọi slot, trước khi cảnh dựng xong, hoặc vòng
-      // đã thắng (`BR-ETS-02`). Cấm — NEVER tính là lần sai — không phát âm
-      // mềm, không leo bậc trợ giúp. Tên vừa đọc ở trên (nếu có) là đường
-      // "chạm lại minh hoạ để nghe lại từ khoá", không phải một lượt trả lời.
-      syncView();
-      speakInvitation(engine, session);
+      handleSilentVerdict(engine, session, tapped);
       return;
     }
+
+    const speaksRetry =
+      !verdict.valid && Date.now() - lastWrongAtMs >= WRONG_COOLDOWN_MS;
+    speakEntityKeyword(
+      engine,
+      tapped,
+      speaksRetry
+        ? () => speakSessionRetryVoice(engine, session, retryVoice)
+        : undefined
+    );
 
     onVerdict?.(verdict.valid);
 
@@ -394,7 +292,6 @@ export function usePlayGesture(options: GestureOptions) {
     engine.audio.playSoftFeedbackSound();
     emitFeedback("retry", gesture);
     const now = Date.now();
-    // Tap sai dồn dập trong cooldown chỉ tính một miss; tap đúng vẫn được xử lý.
     if (now - lastWrongAtMs >= WRONG_COOLDOWN_MS) {
       engine.scaffolding?.onMiss();
     }
@@ -488,18 +385,7 @@ export function usePlayGesture(options: GestureOptions) {
   function findDropTargetsFor(
     dragged: ViewEntity | null
   ): readonly ViewEntity[] {
-    const all = viewEntities.value;
-    const targets = all.filter((e) => e.role === "target");
-    if (targets.length > 0 && dragged?.role === "source") {
-      return targets;
-    }
-    if (dragged?.role === "target") {
-      return all.filter((e) => e.role === "source" && e.state !== "correct");
-    }
-    if (dragged) {
-      return all.filter((e) => e.id !== dragged.id && e.state !== "correct");
-    }
-    return targets;
+    return findDropTargetsInEntities(viewEntities.value, dragged);
   }
 
   function stepLiveMazeCellIfLegal(pt: { x: number; y: number }): void {
@@ -511,8 +397,6 @@ export function usePlayGesture(options: GestureOptions) {
     if (!session) {
       return;
     }
-    // Bề mặt có khay thả sợi/vật vào ô (GT-033): chỉ đặt khi nhả, không đặt
-    // vật đang chọn lên mọi ô ngón tay lướt qua.
     if (session instanceof TemplateGameSession && session.needsTray) {
       return;
     }
@@ -567,12 +451,13 @@ export function usePlayGesture(options: GestureOptions) {
     currentLogicX = pt.x;
     currentLogicY = pt.y;
     activeDragEntity = findHitEntity(viewEntities.value, pt.x, pt.y);
+    syncTouchingItem(activeDragEntity?.id ?? null);
     hoveredTargetEntity = null;
     if (
       activeDragEntity?.role === "source" &&
       activeDragEntity.state !== "correct"
     ) {
-      getEngine()?.audio.play("wood_pickup");
+      playWoodPickupCue(getEngine());
     }
     trailPoints = [{ x: pt.x, y: pt.y }];
     lastMazeCellId = activeDragEntity?.id.startsWith("cell_")
@@ -590,21 +475,17 @@ export function usePlayGesture(options: GestureOptions) {
     const prevHoveredId = hoveredTargetEntity?.id ?? null;
     hoveredTargetEntity = findHitEntity(candidates, pt.x, pt.y);
     if (hoveredTargetEntity && hoveredTargetEntity.id !== prevHoveredId) {
-      getEngine()?.audio.play("wood_clack_snap");
+      playWoodClackHoverCue(getEngine());
     }
 
     if (viewEntities.value.some((ent) => ent.id.startsWith("cell_"))) {
       stepLiveMazeCellIfLegal(pt);
     }
 
-    // Đích sáng lên khi vật đủ gần — trạng thái "đích đang nhận" của hợp đồng
-    // vẽ. Không có đường này thì cờ hover trong session không ai bật.
     const session = getEngine()?.activeSession;
     if (session && acceptsPointerOver(session)) {
       session.setPointerOver(pt.x, pt.y);
     }
-    // Phản hồi theo ngón tay (sợi chỉ GT-033): chỉ khi đã vượt ngưỡng kéo
-    // (`BR-ENG-18`). Hook mặc định không làm gì nên engine khác không đổi.
     if (session instanceof TemplateGameSession) {
       session.onPointerMove(pt, { x: startLogicX, y: startLogicY });
     }
@@ -617,6 +498,12 @@ export function usePlayGesture(options: GestureOptions) {
     const pt = getLogicPoint(e);
     currentLogicX = pt.x;
     currentLogicY = pt.y;
+    if (
+      touchingEntityId !== null &&
+      findHitEntity(viewEntities.value, pt.x, pt.y)?.id !== touchingEntityId
+    ) {
+      syncTouchingItem(null);
+    }
     const dist = Math.hypot(e.clientX - startClientX, e.clientY - startClientY);
     if (dist > currentSlop()) {
       isDragging = true;
@@ -631,69 +518,11 @@ export function usePlayGesture(options: GestureOptions) {
 
   /** Nhả hoặc huỷ: báo session dọn phản hồi theo tay, sau khi gesture đã dispatch. */
   function releasePointerFeedback(): void {
+    syncTouchingItem(null);
     const session = getEngine()?.activeSession;
     if (session instanceof TemplateGameSession) {
       session.onPointerRelease();
     }
-  }
-
-  function buildTapReleaseFlight(
-    prevSelected: ViewEntity | null,
-    startMs: number
-  ): GestureTransitionFlight | null {
-    const hitTarget = findHitEntity(
-      viewEntities.value.filter((ent) => ent.role === "target"),
-      startLogicX,
-      startLogicY
-    );
-    if (!(lastVerdictValid && prevSelected && hitTarget)) {
-      return null;
-    }
-    return {
-      entity: prevSelected,
-      fromX: prevSelected.x,
-      fromY: prevSelected.y,
-      toX: hitTarget.x,
-      toY: hitTarget.y,
-      startMs,
-      durationMs: 200,
-      kind: "snap_to_target",
-    };
-  }
-
-  function buildDragReleaseFlight(
-    dragged: ViewEntity | null,
-    endPt: { x: number; y: number },
-    startMs: number
-  ): GestureTransitionFlight | null {
-    if (!(dragged && (dragged.glyph || dragged.label))) {
-      return null;
-    }
-    if (lastVerdictValid && hoveredTargetEntity) {
-      return {
-        entity: dragged,
-        fromX: endPt.x,
-        fromY: endPt.y,
-        toX: hoveredTargetEntity.x,
-        toY: hoveredTargetEntity.y,
-        startMs,
-        durationMs: 160,
-        kind: "snap_to_target",
-      };
-    }
-    if (!lastVerdictValid && dragged.role === "source") {
-      return {
-        entity: dragged,
-        fromX: endPt.x,
-        fromY: endPt.y,
-        toX: dragged.x,
-        toY: dragged.y,
-        startMs,
-        durationMs: 240,
-        kind: "spring_back",
-      };
-    }
-    return null;
   }
 
   function triggerPostReleaseFlight(
@@ -704,8 +533,20 @@ export function usePlayGesture(options: GestureOptions) {
   ): void {
     const startMs = nowClockMs();
     const nextFlight = wasTap
-      ? buildTapReleaseFlight(prevSelected, startMs)
-      : buildDragReleaseFlight(dragged, endPt, startMs);
+      ? buildTapFlight(
+          viewEntities.value,
+          prevSelected,
+          { x: startLogicX, y: startLogicY },
+          lastVerdictValid,
+          startMs
+        )
+      : buildDragFlight(
+          dragged,
+          hoveredTargetEntity,
+          endPt,
+          lastVerdictValid,
+          startMs
+        );
     if (nextFlight) {
       activeFlight = nextFlight;
     }
@@ -723,24 +564,8 @@ export function usePlayGesture(options: GestureOptions) {
   }
 
   /**
-   * Quy đổi một nét kéo thành `adjust`: mỗi `ADJUST_STEP_PX` kéo sang phải hoặc
-   * lên là +1 bậc (trái / xuống là -1), tối thiểu một bậc (Task #313 Phase 0).
-   */
-  function adjustDeltaOf(
-    from: { x: number; y: number },
-    to: { x: number; y: number }
-  ): number {
-    const dx = to.x - from.x;
-    const dy = from.y - to.y;
-    const signed = Math.abs(dx) >= Math.abs(dy) ? dx : dy;
-    const steps = Math.max(1, Math.round(Math.abs(signed) / ADJUST_STEP_PX));
-    return signed >= 0 ? steps : -steps;
-  }
-
-  /**
    * Nét kéo → một gesture mà session đọc được, theo thứ tự `stroke` (từ
    * `trailPoints`) → `drop` from→to → `adjust`; không ai đọc thì giữ `drop`.
-   * `toAction` thuần với các gesture này nên thăm dò không đổi state.
    */
   function buildDragGesture(
     from: { x: number; y: number },
@@ -796,8 +621,6 @@ export function usePlayGesture(options: GestureOptions) {
     const dragged = activeDragEntity;
     lastVerdictValid = false;
 
-    // Không đặt trần thời gian: trẻ 3 tuổi hay nhấn chậm, và một lần nhấn giữ
-    // không di chuyển mà không thành tap lẫn drop là im lặng (`BR-FBK-02`).
     if (!isDragging && dist <= currentSlop()) {
       dispatchGesture({
         type: "tap",
@@ -853,7 +676,6 @@ export function usePlayGesture(options: GestureOptions) {
     };
   }
 
-  /** Bước 2 của đường bàn phím: đã có nguồn đang chọn. */
   function handleTapWithStagedSource(
     staged: ViewEntity,
     entity: ViewEntity,
@@ -879,7 +701,6 @@ export function usePlayGesture(options: GestureOptions) {
         dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
         return;
       }
-      // Bỏ chọn, hoặc đổi nguồn đang chọn.
       stagedSourceEntity.value = entity.id === staged.id ? null : entity;
       return;
     }
@@ -906,11 +727,6 @@ export function usePlayGesture(options: GestureOptions) {
     dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
   }
 
-  /**
-   * Nút hành động bằng bàn phím (Tab + Enter/Space): cùng đường với chạm vào
-   * `zones.action` — chạm giữa vùng để verdict, âm thanh và phản hồi đi chung một
-   * lối (`BR-PSZ-05`). Chưa có vùng thì gửi thẳng `commit`.
-   */
   function pressActionButton(): void {
     const timeMs = Date.now();
     const zones = options.getStageZones?.();
@@ -927,6 +743,7 @@ export function usePlayGesture(options: GestureOptions) {
   }
 
   function destroy(): void {
+    syncTouchingItem(null);
     resetPointerTracking();
     activeFlight = null;
   }

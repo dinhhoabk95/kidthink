@@ -1,0 +1,7 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Trang giấy viết bài</title>
+  <ellipse cx="60" cy="105" fill="#334155" opacity="0.22" rx="32" ry="5" />
+    <path d="M30 18H90V78L72 98H30Z" fill="#ffffff" stroke="#334155" stroke-linejoin="round" stroke-width="3.8" />
+    <polygon fill="#cbd5e1" points="72,98 72,78 90,78" stroke="#334155" stroke-linejoin="round" stroke-width="3.2" />
+    <path d="M42 36H78M42 50H78M42 64H66" stroke="#64748b" stroke-linecap="round" stroke-width="3.5" />
+</svg>

@@ -1,0 +1,6 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đôi búa thợ rèn</title>
+  <path d="M28 94L88 34M92 94L32 34" stroke="#92400e" stroke-linecap="round" stroke-width="7" />
+    <rect fill="#64748b" height="16" rx="4" stroke="#1e293b" stroke-width="3.6" transform="rotate(45 84 36)" width="32" x="68" y="28" />
+    <rect fill="#64748b" height="16" rx="4" stroke="#1e293b" stroke-width="3.6" transform="rotate(-45 36 36)" width="32" x="20" y="28" />
+</svg>

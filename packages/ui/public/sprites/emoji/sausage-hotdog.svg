@@ -1,0 +1,10 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh mì xúc xích</title>
+  <defs>
+    <linearGradient id="hdBun" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#fde68a" /><stop offset="100%" stop-color="#d97706" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.22" rx="42" ry="5.5" />
+    <rect fill="url(#hdBun)" height="38" rx="19" stroke="#78350f" stroke-width="3.8" transform="rotate(-18 60 62)" width="84" x="18" y="43" />
+    <rect fill="#dc2626" height="18" rx="9" stroke="#7f1d1d" stroke-width="3.4" transform="rotate(-18 60 60)" width="92" x="14" y="51" />
+    <path d="M24 68C32 60 40 70 48 61C56 52 64 62 72 53C80 44 88 54 96 46" fill="none" stroke="#facc15" stroke-linecap="round" stroke-width="3" />
+</svg>

@@ -233,6 +233,27 @@
             >
           </div>
 
+          <div v-if="hasTwoFactorEnabled">
+            <label
+              class="mb-1 block font-medium text-sm text-surface-700"
+              for="withdrawReauthTotp"
+            >
+              Mã xác thực hai lớp (TOTP) *
+            </label>
+            <input
+              autocomplete="one-time-code"
+              class="min-h-11 w-full rounded-xl border-2 border-surface-200 px-3.5 py-2.5 text-base font-mono tracking-widest text-surface-900 focus:border-danger-600 focus:outline-none"
+              data-testid="withdraw-totp-input"
+              id="withdrawReauthTotp"
+              inputmode="numeric"
+              maxlength="6"
+              placeholder="123456"
+              required
+              type="text"
+              v-model.trim="withdrawModal.totp"
+            >
+          </div>
+
           <p
             class="rounded-xl border border-danger-200 bg-danger-50 p-3 font-medium text-danger-900 text-sm"
             data-testid="withdraw-modal-error"
@@ -320,6 +341,27 @@
               required
               type="password"
               v-model="exportModal.password"
+            >
+          </div>
+
+          <div v-if="hasTwoFactorEnabled">
+            <label
+              class="mb-1 block font-medium text-sm text-surface-700"
+              for="exportReauthTotp"
+            >
+              Mã xác thực hai lớp (TOTP) *
+            </label>
+            <input
+              autocomplete="one-time-code"
+              class="min-h-11 w-full rounded-xl border-2 border-surface-200 px-3.5 py-2.5 text-base font-mono tracking-widest text-surface-900 focus:border-brand-600 focus:outline-none"
+              data-testid="export-totp-input"
+              id="exportReauthTotp"
+              inputmode="numeric"
+              maxlength="6"
+              placeholder="123456"
+              required
+              type="text"
+              v-model.trim="exportModal.totp"
             >
           </div>
 
@@ -411,6 +453,7 @@
   const api = useApi();
   const statusMessage = ref("");
   const errorMessage = ref("");
+  const hasTwoFactorEnabled = ref(false);
   const isSubmittingWithdraw = ref(false);
   const isSubmittingExport = ref(false);
 
@@ -418,17 +461,20 @@
     isOpen: boolean;
     consentType: ConsentTypeKey;
     password: string;
+    totp: string;
     error: string;
   }>({
     isOpen: false,
     consentType: "child_data",
     password: "",
+    totp: "",
     error: "",
   });
 
   const exportModal = reactive({
     isOpen: false,
     password: "",
+    totp: "",
     error: "",
   });
 
@@ -478,8 +524,15 @@
     }
   }
 
-  onMounted(() => {
-    loadConsents();
+  onMounted(async () => {
+    await Promise.all([
+      loadConsents(),
+      api<{ two_factor_enabled?: boolean }>("/api/users/profile")
+        .then((profile) => {
+          hasTwoFactorEnabled.value = Boolean(profile?.two_factor_enabled);
+        })
+        .catch(() => undefined),
+    ]);
   });
 
   function formatDate(isoDate: string | null): string {
@@ -517,6 +570,7 @@
   function openWithdrawModal(item: ConsentItem): void {
     withdrawModal.consentType = item.consent_type;
     withdrawModal.password = "";
+    withdrawModal.totp = "";
     withdrawModal.error = "";
     withdrawModal.isOpen = true;
   }
@@ -532,9 +586,12 @@
     isSubmittingWithdraw.value = true;
 
     try {
+      const trimmedTotp = withdrawModal.totp.trim();
       await api("/api/users/auth/reauth", {
         method: "POST",
-        body: { password: withdrawModal.password },
+        body: trimmedTotp
+          ? { password: withdrawModal.password, totp: trimmedTotp }
+          : { password: withdrawModal.password },
       });
 
       const res = await api<WithdrawConsentResponse>(
@@ -549,6 +606,7 @@
       );
 
       withdrawModal.isOpen = false;
+      withdrawModal.totp = "";
       statusMessage.value = res.consequence || "Đã rút đồng ý thành công.";
       await loadConsents();
     } catch (err) {
@@ -562,6 +620,7 @@
 
   function openExportModal(): void {
     exportModal.password = "";
+    exportModal.totp = "";
     exportModal.error = "";
     exportModal.isOpen = true;
   }
@@ -597,14 +656,18 @@
     isSubmittingExport.value = true;
 
     try {
+      const trimmedTotp = exportModal.totp.trim();
       await api("/api/users/auth/reauth", {
         method: "POST",
-        body: { password: exportModal.password },
+        body: trimmedTotp
+          ? { password: exportModal.password, totp: trimmedTotp }
+          : { password: exportModal.password },
       });
 
       const exportData = await api<DataExportPayload>("/api/users/data-export");
       triggerJsonDownload(exportData);
       exportModal.isOpen = false;
+      exportModal.totp = "";
       statusMessage.value =
         "Đã chuẩn bị và tải về bản sao dữ liệu cá nhân (mindkid-data-export.json).";
     } catch (err) {

@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Máy bay hạ cánh</title>
+  <defs>
+    <linearGradient id="lndJet" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#f8fafc" /><stop offset="100%" stop-color="#cbd5e1" /></linearGradient>
+  </defs>
+  <path d="M14 98H106" stroke="#475569" stroke-linecap="round" stroke-width="5" />
+    <path d="M20 44L32 42L42 54L68 62L62 40L72 41L82 66L100 72C107 75 105 82 96 81L66 74L50 86L41 84L52 70L24 62Z" fill="url(#lndJet)" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.8" />
+    <circle cx="56" cy="89" fill="#1e293b" r="3.5" /><circle cx="82" cy="86" fill="#1e293b" r="3.5" />
+</svg>

@@ -257,5 +257,23 @@ export const C2_ORI_02_SEED: SkillSeed = {
       theme: "nature",
       rounds: 3,
     },
+    {
+      code: "GL-C2-ORI-INTRO-6501",
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 2,
+      theme: "vehicle",
+      rounds: 3,
+      sequence_no: 61,
+    },
+    {
+      code: "GL-C2-ORI-FLIP-6503",
+      template: "GT-020",
+      band: "3-4",
+      difficulty: 2,
+      theme: "body",
+      rounds: 3,
+      sequence_no: 63,
+    },
   ],
 };

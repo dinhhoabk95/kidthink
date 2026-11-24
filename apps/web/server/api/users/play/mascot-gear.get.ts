@@ -1,18 +1,23 @@
-import { getOwnerDb } from "@mindkid/db";
-import { getChildMascotGear } from "#server/services/index.js";
-import { requireOwnedActiveChild } from "#server/utils/active-child-runtime";
+import { NoActiveChildError } from "@mindkid/errors/child";
+import { deleteCookie, getCookie } from "h3";
+import { getChildMascotGearExperience } from "#server/services/play-experience-service";
 import { defineApiRoute } from "#server/utils/define-api-route";
 
 /** Đọc phụ kiện kỷ niệm Gấu Con của trẻ đang hoạt động — `mascot-playroom.md` §8. */
 export default defineApiRoute({
   auth: "user",
   async handler({ event, auth }) {
-    const db = getOwnerDb();
-    const child = await requireOwnedActiveChild(
-      event,
-      db,
-      Number(auth.user_id)
-    );
-    return await getChildMascotGear(db, child.id);
+    const candidateUuid = getCookie(event, "active_child_id");
+    try {
+      return await getChildMascotGearExperience(
+        Number(auth.user_id),
+        candidateUuid
+      );
+    } catch (err) {
+      if (err instanceof NoActiveChildError && candidateUuid) {
+        deleteCookie(event, "active_child_id", { path: "/" });
+      }
+      throw err;
+    }
   },
 });

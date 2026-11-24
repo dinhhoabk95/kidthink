@@ -1,71 +1,25 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Cừu bông</title>
   <defs>
-    <radialGradient cx="40%" cy="30%" id="woolCream" r="70%">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="65%" stop-color="#fafaf9" />
-      <stop offset="100%" stop-color="#e7e5e4" />
-    </radialGradient>
-    <radialGradient cx="40%" cy="35%" id="sheepFace" r="70%">
-      <stop offset="0%" stop-color="#ffedd5" />
-      <stop offset="100%" stop-color="#fdba74" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="g_sheep" r="70%"><stop offset="0%" stop-color="#ffffff" /><stop offset="55%" stop-color="#fefce8" /><stop offset="100%" stop-color="#fef08a" /></radialGradient>
   </defs>
-  <circle cx="60" cy="67" fill="#57534e" opacity="0.28" r="43" />
-  <path
-    d="M60 15C68 15 74 19 77 25C84 23 92 27 94 35C101 37 106 45 103 53C107 60 105 69 99 74C100 82 94 90 86 91C82 98 73 102 66 99C62 102 58 102 54 99C47 102 38 98 34 91C26 90 20 82 21 74C15 69 13 60 17 53C14 45 19 37 26 35C28 27 36 23 43 25C46 19 52 15 60 15Z"
-    fill="url(#woolCream)"
-    stroke="#57534e"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <ellipse
-    cx="28"
-    cy="60"
-    fill="url(#sheepFace)"
-    rx="11"
-    ry="6.5"
-    stroke="#78350f"
-    stroke-width="3.5"
-    transform="rotate(-22 28 60)"
-  />
-  <ellipse
-    cx="92"
-    cy="60"
-    fill="url(#sheepFace)"
-    rx="11"
-    ry="6.5"
-    stroke="#78350f"
-    stroke-width="3.5"
-    transform="rotate(22 92 60)"
-  />
-  <ellipse
-    cx="60"
-    cy="66"
-    fill="url(#sheepFace)"
-    rx="25"
-    ry="23"
-    stroke="#78350f"
-    stroke-width="3.8"
-  />
-  <path
-    d="M44 43C48 36 56 36 60 41C64 36 72 36 76 43C79 49 74 54 60 52C46 54 41 49 44 43Z"
-    fill="url(#woolCream)"
-    stroke="#57534e"
-    stroke-linejoin="round"
-    stroke-width="3.5"
-  />
-  <circle cx="49" cy="64" fill="#1c1917" r="4.2" />
-  <circle cx="47.8" cy="62.5" fill="#ffffff" r="1.6" />
-  <circle cx="71" cy="64" fill="#1c1917" r="4.2" />
-  <circle cx="69.8" cy="62.5" fill="#ffffff" r="1.6" />
-  <circle cx="42" cy="73" fill="#fb7185" fill-opacity="0.48" r="4.5" />
-  <circle cx="78" cy="73" fill="#fb7185" fill-opacity="0.48" r="4.5" />
-  <path
-    d="M56 73L60 77L64 73M60 77V81"
-    stroke="#78350f"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="2.8"
-  />
+  <ellipse cx="62" cy="106" fill="#5c2d16" opacity="0.22" rx="40" ry="5.5" />
+    <circle cx="93" cy="64" fill="#fffbeb" r="6" stroke="#5c2d16" stroke-width="3.5" />
+    <!-- Far legs -->
+    <path d="M47 80L44 102H51L53 80ZM81 80L79 102H86L88 80Z" fill="#fef08a" stroke="#5c2d16" stroke-linejoin="round" stroke-width="3.4" />
+    <path d="M44 98H51V103H44ZM79 98H86V103H79Z" fill="#451a03" />
+    <!-- Torso & Neck -->
+    <path d="M35 54C41 48 35 46 64 46C93 46 97 62 93 72C89 86 41 86 37 70C33 62 31 64 35 54Z" fill="url(#g_sheep)" stroke="#5c2d16" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M46 81C56 87 74 87 84 81" fill="#fef9c3" opacity="0.85" />
+    
+    <!-- Near legs -->
+    <path d="M39 78L36 104H44L47 78ZM73 78L71 104H79L81 78Z" fill="url(#g_sheep)" stroke="#5c2d16" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M36 99H44V104H36ZM71 99H79V104H71Z" fill="#451a03" stroke="#5c2d16" stroke-linejoin="round" stroke-width="2.2" />
+    <!-- Head -->
+    <ellipse cx="29" cy="48" fill="url(#g_sheep)" rx="13" ry="11" stroke="#5c2d16" stroke-width="3.8" />
+    <ellipse cx="20" cy="52" fill="#78716c" rx="7.5" ry="6" stroke="#5c2d16" stroke-width="3.2" />
+    <circle cx="18" cy="51" fill="#5c2d16" r="1.8" />
+    <path d="M18 55C21 57 24 56 25 54" stroke="#5c2d16" stroke-linecap="round" stroke-width="2.2" />
+    <circle cx="27" cy="45" fill="#1c1917" r="2.7" /><circle cx="26.2" cy="44.2" fill="#ffffff" r="1" />
+    <circle cx="31" cy="36" fill="#fffbeb" r="7" stroke="#5c2d16" stroke-width="3.4" /><ellipse cx="39" cy="46" fill="#57534e" rx="5.5" ry="2.8" stroke="#292524" stroke-width="2.8" />
 </svg>

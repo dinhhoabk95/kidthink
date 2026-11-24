@@ -1,6 +1,13 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "#src/index";
+import {
+  ACCESS_TIER,
+  CONTENT_ENTITY_TYPE,
+  CURRICULUM_PROGRESS_STATUS,
+  ENROLLMENT_STATUS,
+  getOwnerDb,
+  USER_STATUS,
+} from "#src/index";
 import { childProfiles } from "#src/schema/child";
 import {
   curricula,
@@ -51,7 +58,7 @@ describe("Curriculum Schema Integration Tests", () => {
       .values({
         code: curCode,
         title: "Lộ trình Test",
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
     if (!cur) {
@@ -65,7 +72,7 @@ describe("Curriculum Schema Integration Tests", () => {
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: 999_111_222,
       })
       .returning();
@@ -91,7 +98,7 @@ describe("Curriculum Schema Integration Tests", () => {
         title: "Version 1",
         contentPack: { v: 1 },
         difficultyParams: { speed: 1 },
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
     if (!gl) {
@@ -104,7 +111,7 @@ describe("Curriculum Schema Integration Tests", () => {
       .values({
         code: curCode,
         title: "Curriculum Direct Entity Test",
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
     if (!cur) {
@@ -118,7 +125,7 @@ describe("Curriculum Schema Integration Tests", () => {
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gl.id,
       })
       .returning();
@@ -162,7 +169,7 @@ describe("Curriculum Schema Integration Tests", () => {
       .values({
         email: `test-cur-enroll-${uid}@example.com`,
         displayName: "Parent Tester",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -187,7 +194,7 @@ describe("Curriculum Schema Integration Tests", () => {
       .values({
         code: curCode1,
         title: "Lộ trình 1",
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
     if (!cur1) {
@@ -199,7 +206,7 @@ describe("Curriculum Schema Integration Tests", () => {
       .values({
         code: curCode2,
         title: "Lộ trình 2",
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
     if (!cur2) {
@@ -210,7 +217,7 @@ describe("Curriculum Schema Integration Tests", () => {
     await db.insert(curriculumEnrollments).values({
       childId: child.id,
       curriculumId: cur1.id,
-      status: "active",
+      status: ENROLLMENT_STATUS.ACTIVE,
     });
 
     // Second active enrollment for same child fails (D-MB)
@@ -218,7 +225,7 @@ describe("Curriculum Schema Integration Tests", () => {
       db.insert(curriculumEnrollments).values({
         childId: child.id,
         curriculumId: cur2.id,
-        status: "active",
+        status: ENROLLMENT_STATUS.ACTIVE,
       })
     ).rejects.toThrow();
   });
@@ -233,7 +240,7 @@ describe("Curriculum Schema Integration Tests", () => {
       .values({
         email: `test-cur-prog-${uid}@example.com`,
         displayName: "Parent Progress Tester",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -258,7 +265,7 @@ describe("Curriculum Schema Integration Tests", () => {
       .values({
         code: curCode,
         title: "Lộ trình Tiến độ",
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
     if (!cur) {
@@ -272,7 +279,7 @@ describe("Curriculum Schema Integration Tests", () => {
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: uid + 2,
       })
       .returning();
@@ -285,7 +292,7 @@ describe("Curriculum Schema Integration Tests", () => {
       .values({
         childId: child.id,
         curriculumId: cur.id,
-        status: "active",
+        status: ENROLLMENT_STATUS.ACTIVE,
       })
       .returning();
     if (!enrollment) {
@@ -297,7 +304,7 @@ describe("Curriculum Schema Integration Tests", () => {
       enrollmentId: enrollment.id,
       childId: child.id,
       curriculumItemId: item.id,
-      status: "completed",
+      status: CURRICULUM_PROGRESS_STATUS.COMPLETED,
       completedAt: new Date(),
     });
 
@@ -307,7 +314,7 @@ describe("Curriculum Schema Integration Tests", () => {
         enrollmentId: enrollment.id,
         childId: child.id,
         curriculumItemId: item.id,
-        status: "completed",
+        status: CURRICULUM_PROGRESS_STATUS.COMPLETED,
         completedAt: new Date(),
       })
     ).rejects.toThrow();

@@ -42,7 +42,7 @@ server {
         include /etc/nginx/snippets/mindkid-proxy.conf;
     }
 
-    location ~* ^/api/(?:guest|users|managers)/auth/ {
+    location ~* ^/api/(?:auth/(?:users|managers)|(?:guest|users|managers)/auth)/ {
         limit_req zone=mindkid_auth burst=10 nodelay;
         proxy_pass http://127.0.0.1:3000;
         include /etc/nginx/snippets/mindkid-proxy.conf;

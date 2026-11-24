@@ -257,5 +257,12 @@ export const C2_ORI_09_SEED: SkillSeed = {
       theme: "family",
       rounds: 3,
     },
+    {
+      code: "GL-C2-ORI-INTRO-6009",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 2,
+      theme: "family",
+    },
   ],
 };

@@ -234,6 +234,16 @@ export const C2_SOL_02_SEED: SkillSeed = {
   dataset: C2_SOL_02_DATASET,
   levels: [
     {
+      code: "GL-C2-SOL-INTRO-7002",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "home",
+      rounds: 1,
+      sequence_no: 1,
+    },
+    {
       code: "GL-C2-SOL-TAP-0003",
       template: "GT-001",
       band: "3-4",

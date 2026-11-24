@@ -261,5 +261,12 @@ export const C2_GEO_07_SEED: SkillSeed = {
       theme: "space",
       rounds: 3,
     },
+    {
+      code: "GL-C2-GEO-INTRO-6007",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 2,
+      theme: "job",
+    },
   ],
 };

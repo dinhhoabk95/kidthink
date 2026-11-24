@@ -1,4 +1,10 @@
-import { gameLevels, getOwnerDb, playSessions } from "@mindkid/db";
+import {
+  ACCESS_TIER,
+  gameLevels,
+  getOwnerDb,
+  PLAY_COMPLETION_STATUS,
+  playSessions,
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 
@@ -27,7 +33,7 @@ async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
       instruction: "Instruction",
       contentPack: {},
       difficultyParams: {},
-      accessTier: "free",
+      accessTier: ACCESS_TIER.FREE,
     })
     .returning();
 
@@ -45,12 +51,12 @@ describe("Task P1.6 — Session State Machine & Invariance (BR-PSL-02, BR-PSL-08
         gameLevelId: glId,
         templateCode,
         guestDeviceId: "test-device-p16",
-        accessTierAtStart: "free",
-        completionStatus: "in_progress",
+        accessTierAtStart: ACCESS_TIER.FREE,
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       })
       .returning();
 
-    expect(session.accessTierAtStart).toBe("free");
+    expect(session.accessTierAtStart).toBe(ACCESS_TIER.FREE);
   });
 
   it("BR-PSL-02: gameLevelId and templateCode are pinned at creation", async () => {
@@ -63,7 +69,7 @@ describe("Task P1.6 — Session State Machine & Invariance (BR-PSL-02, BR-PSL-08
         gameLevelId: glId,
         templateCode,
         guestDeviceId: "test-device-version-pin",
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       })
       .returning();
 
@@ -87,14 +93,14 @@ describe("Task P1.6 — Session State Machine & Invariance (BR-PSL-02, BR-PSL-08
         gameLevelId: glId,
         templateCode,
         guestDeviceId: "test-device-terminal",
-        completionStatus: "completed",
+        completionStatus: PLAY_COMPLETION_STATUS.COMPLETED,
       })
       .returning();
 
     await expect(
       db
         .update(playSessions)
-        .set({ completionStatus: "in_progress" })
+        .set({ completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS })
         .where(eq(playSessions.id, session.id))
     ).rejects.toSatisfy((err: Error & { cause?: Error }) => {
       return (err.message + (err.cause?.message ?? "")).includes("BR-SPT-07");

@@ -1,0 +1,14 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tàu treo trên không</title>
+  <defs>
+    <linearGradient id="skyCab" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#bae6fd" /><stop offset="100%" stop-color="#38bdf8" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e293b" opacity="0.22" rx="36" ry="4.5" />
+    <rect fill="#64748b" height="9" rx="3" stroke="#1e293b" stroke-width="3.6" width="100" x="10" y="18" />
+    <path d="M42 27V44M78 27V44" stroke="#334155" stroke-width="4.5" />
+    <rect fill="#f8fafc" height="44" rx="10" stroke="#1e293b" stroke-width="3.8" width="76" x="22" y="44" />
+    <rect fill="url(#skyCab)" height="18" rx="4" stroke="#1e3a8a" stroke-width="3" width="20" x="30" y="52" />
+    <rect fill="url(#skyCab)" height="18" rx="4" stroke="#1e3a8a" stroke-width="3" width="20" x="54" y="52" />
+    <rect fill="url(#skyCab)" height="18" rx="4" stroke="#1e3a8a" stroke-width="3" width="16" x="78" y="52" />
+    <rect fill="#eab308" height="5" width="72" x="24" y="76" />
+</svg>

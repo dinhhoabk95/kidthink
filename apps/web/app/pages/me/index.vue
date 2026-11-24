@@ -1,11 +1,11 @@
 <template>
   <div
-    class="max-w-5xl mx-auto p-4 md:p-6 space-y-8"
+    class="max-w-5xl mx-auto p-4 md:p-6 space-y-8 min-w-0"
     data-testid="me-dashboard"
   >
     <!-- Header -->
     <div
-      class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4 border-surface-200 dark:border-surface-700"
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4 border-surface-200 dark:border-surface-700 print:hidden"
     >
       <div>
         <h1
@@ -66,7 +66,7 @@
       </button>
     </div>
 
-    <!-- Empty Child State (BR-MDB-01: No child -> create child CTA only) -->
+    <!-- Empty Child State (BR-MDB-01) -->
     <div
       class="p-8 rounded-3xl border-2 border-brand-200 bg-brand-50/40 dark:border-brand-800/60 dark:bg-brand-950/30 text-center space-y-4 max-w-lg mx-auto my-12"
       data-testid="empty-child-state"
@@ -97,10 +97,10 @@
     </div>
 
     <!-- Main Dashboard with 5 Blocks -->
-    <div class="space-y-8" v-else>
+    <div class="space-y-8 min-w-0" v-else>
       <!-- Khối 1: Việc cần xử lý -->
       <section
-        class="space-y-3"
+        class="space-y-3 print:hidden"
         data-testid="dashboard-todo-section"
         v-if="dashboardData.todo && dashboardData.todo.length > 0"
       >
@@ -136,8 +136,8 @@
         </div>
       </section>
 
-      <!-- Khối 2: Các bé (Child Profiles & Active Switcher) -->
-      <section class="space-y-4" data-testid="dashboard-children-section">
+      <!-- Khối 2: Các bé -->
+      <section class="space-y-4 print:hidden" data-testid="dashboard-children-section">
         <p
           class="p-3.5 rounded-2xl border-2 border-danger-200 bg-danger-50/60 dark:border-danger-800/60 dark:bg-danger-950/40 text-sm text-danger-800 dark:text-danger-200"
           role="alert"
@@ -185,7 +185,7 @@
               'p-5 rounded-3xl border-3 transition-all relative flex flex-col justify-between',
               viewedChildId === child.id
                 ? 'border-brand-600 bg-brand-50/20 dark:bg-brand-950/20 shadow-md ring-2 ring-brand-400/30'
-                : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-surface-300'
+                : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-surface-300',
             ]"
             :data-child-uuid="child.uuid"
           >
@@ -210,16 +210,17 @@
                   </span>
                 </div>
                 <p class="text-sm text-surface-600 dark:text-surface-300">
-                  {{ calculateAge(child.birth_year) }}
-                  tuổi (sinh năm {{ child.birth_year }})
+                  {{ calculateAge(child.birth_year) }} tuổi (sinh năm
+                  {{ child.birth_year }})
                 </p>
                 <p class="text-sm text-surface-600 dark:text-surface-300">
                   Đã chơi:
                   <span
                     class="font-bold text-surface-900 dark:text-surface-100 tabular-nums"
-                    >{{ child.days_played_7d }}
-                    ngày</span
                   >
+                    {{ child.days_played_7d }}
+                    ngày
+                  </span>
                   (7 ngày qua)
                 </p>
               </div>
@@ -272,7 +273,7 @@
       </section>
 
       <!-- Khối 3: Tiến độ gần đây -->
-      <section class="space-y-4" data-testid="dashboard-progress-section">
+      <section class="space-y-4 print:hidden" data-testid="dashboard-progress-section">
         <h2
           class="text-lg font-bold font-heading text-surface-900 dark:text-surface-50 flex items-center gap-2"
         >
@@ -301,7 +302,9 @@
                   class="text-sm font-normal text-surface-500 dark:text-surface-400 tabular-nums"
                 >
                   ({{ prog.days_played_7d }}
-                  ngày chơi · {{ prog.total_play_time_minutes_7d }} phút ·
+                  ngày chơi ·
+                  {{ prog.total_play_time_minutes_7d }}
+                  phút ·
                   {{ prog.levels_completed_7d }}
                   bài hoàn thành)
                 </span>
@@ -323,9 +326,9 @@
         </div>
       </section>
 
-      <!-- Khối 4: Chương trình đang học (Active Child's Curriculum) -->
+      <!-- Khối 4: Chương trình đang học & Vật thật Kuno hôm nay -->
       <section class="space-y-4" data-testid="dashboard-curriculum-section">
-        <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center justify-between gap-2 print:hidden">
           <h2
             class="text-lg font-bold font-heading text-surface-900 dark:text-surface-50 flex flex-wrap items-center gap-2"
           >
@@ -354,19 +357,34 @@
 
         <!-- Enrolled in Curriculum -->
         <div
-          class="p-6 rounded-3xl border-2 border-brand-200 dark:border-brand-800 bg-white dark:bg-surface-800 space-y-5"
+          class="p-6 rounded-3xl border-2 border-brand-200 dark:border-brand-800 bg-white dark:bg-surface-800 space-y-5 print:hidden"
           v-if="dashboardData.curriculum?.enrolled"
         >
           <div
             class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
           >
             <div class="space-y-1">
-              <span
-                class="text-sm font-bold text-brand-600 dark:text-brand-400 tracking-wider tabular-nums"
-              >
-                Tuần {{ dashboardData.curriculum.current_week }} /
-                {{ dashboardData.curriculum.duration_weeks }}
-              </span>
+              <div class="flex flex-wrap items-center gap-2">
+                <span
+                  class="text-sm font-bold text-brand-600 dark:text-brand-400 tracking-wider tabular-nums"
+                >
+                  Tuần {{ dashboardData.curriculum.current_week }} /
+                  {{ dashboardData.curriculum.duration_weeks }}
+                </span>
+                <span
+                  class="px-2.5 py-0.5 rounded-full bg-warning-100 dark:bg-warning-900/50 text-warning-900 dark:text-warning-200 text-sm font-bold tabular-nums"
+                  v-if="enrolledKogumaTrackLabel"
+                >
+                  {{ enrolledKogumaTrackLabel }}
+                </span>
+                <NuxtLink
+                  class="text-sm font-bold text-brand-600 dark:text-brand-400 hover:underline min-h-11 inline-flex items-center tabular-nums"
+                  v-if="enrolledWeekHref"
+                  :to="enrolledWeekHref"
+                >
+                  Xem đề cương tuần này →
+                </NuxtLink>
+              </div>
               <h3
                 class="text-xl font-bold font-heading text-surface-900 dark:text-surface-50"
               >
@@ -388,17 +406,17 @@
             </div>
           </div>
 
-          <!-- Progress Bar -->
           <div
             class="w-full bg-surface-100 dark:bg-surface-700 rounded-full h-3 overflow-hidden"
           >
             <div
               class="bg-brand-600 h-full rounded-full transition-all duration-200"
-              :style="{ width: `${Math.min(100, Math.round((dashboardData.curriculum.progress || 0) * 100))}%` }"
+              :style="{
+                width: `${Math.min(100, Math.round((dashboardData.curriculum.progress || 0) * 100))}%`,
+              }"
             />
           </div>
 
-          <!-- Week blocked alert if any -->
           <div
             class="p-3.5 rounded-2xl bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800 flex items-center gap-3 text-sm text-warning-800 dark:text-warning-200"
             v-if="dashboardData.curriculum.week_blocked_by_tier"
@@ -413,7 +431,6 @@
             </span>
           </div>
 
-          <!-- Next Step Action -->
           <div
             class="p-4 rounded-2xl bg-surface-50 dark:bg-surface-700/50 border border-surface-200 dark:border-surface-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             v-if="dashboardData.curriculum.next_item"
@@ -421,8 +438,9 @@
             <div class="space-y-0.5">
               <span
                 class="text-sm text-surface-500 dark:text-surface-400 font-medium"
-                >Bài học tiếp theo:</span
               >
+                Bài học tiếp theo:
+              </span>
               <h4
                 class="font-bold text-base text-surface-900 dark:text-surface-100 flex items-center gap-2"
               >
@@ -449,35 +467,70 @@
 
         <!-- Not Enrolled State -->
         <div
-          class="p-6 rounded-3xl border-2 border-dashed border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/60 text-center space-y-3"
+          class="p-6 rounded-3xl border-2 border-dashed border-warning-300 dark:border-warning-700 bg-surface-50 dark:bg-surface-800/60 text-center space-y-3 print:hidden"
           v-else
         >
           <UIcon
-            class="w-8 h-8 text-surface-400 mx-auto"
-            name="i-lucide-compass"
+            class="w-8 h-8 text-warning-600 dark:text-warning-400 mx-auto"
+            name="i-lucide-sparkles"
           />
-          <h3 class="font-bold text-base text-surface-900 dark:text-surface-50">
-            Bé chưa tham gia lộ trình học nào
+          <h3
+            class="font-bold text-base text-surface-900 dark:text-surface-50 leading-relaxed"
+          >
+            Gợi ý: Chương trình Tư duy Koguma-kai / Kuno 100 Học phần (Mầm ·
+            Chồi · Lá)
           </h3>
           <p
-            class="text-sm text-surface-600 dark:text-surface-300 max-w-md mx-auto"
+            class="text-base text-surface-600 dark:text-surface-300 max-w-xl mx-auto leading-relaxed"
           >
-            Lộ trình học theo tuần giúp bé phát triển tư duy toán học bài bản,
-            có hệ thống theo từng giai đoạn phát triển.
+            Chọn lộ trình 5 trụ cột Kuno bản địa hoá 10 chủ đề mầm non Việt Nam
+            phù hợp độ tuổi của bé (3–4 tuổi Mầm, 4–5 tuổi Chồi, 5–6 tuổi Lá).
           </p>
-          <NuxtLink
-            class="inline-flex items-center justify-center gap-2 min-h-11 px-5 py-2 bg-white dark:bg-surface-800 border-2 border-brand-300 dark:border-brand-700 text-brand-700 dark:text-brand-300 font-bold font-heading rounded-2xl hover:bg-brand-50 transition-colors text-sm"
-            data-testid="explore-curricula-link"
-            to="/curricula"
-          >
-            <span>Khám phá chương trình học</span>
-            <UIcon class="w-4 h-4" name="i-lucide-arrow-right" />
-          </NuxtLink>
+          <div class="flex flex-wrap items-center justify-center gap-3 pt-1">
+            <NuxtLink
+              class="inline-flex items-center justify-center gap-2 min-h-11 px-5 py-2 bg-white dark:bg-surface-800 border-2 border-brand-300 dark:border-brand-700 text-brand-700 dark:text-brand-300 font-bold font-heading rounded-2xl hover:bg-brand-50 transition-colors text-sm"
+              data-testid="explore-curricula-link"
+              to="/curricula"
+            >
+              <span>Chọn lộ trình cho bé</span>
+              <UIcon class="w-4 h-4" name="i-lucide-arrow-right" />
+            </NuxtLink>
+            <NuxtLink
+              class="inline-flex items-center justify-center gap-2 min-h-11 px-5 py-2 bg-warning-50 dark:bg-warning-950/40 border-2 border-warning-300 dark:border-warning-700 text-warning-900 dark:text-warning-200 font-bold font-heading rounded-2xl hover:bg-warning-100 transition-colors text-sm"
+              to="/programs"
+            >
+              <span>Xem 100 học phần Koguma-kai</span>
+            </NuxtLink>
+          </div>
         </div>
+
+        <!-- Hoạt động Vật thật hôm nay cùng Con (Phương pháp Kuno) + Quick 12w/36w Switch -->
+        <KogumaMeCompanionPanel
+          :active-child-birth-year="viewedChild?.birth_year ?? null"
+          :active-child-uuid="viewedChild?.uuid ?? null"
+          :api-koguma-unit="
+            dashboardData.curriculum?.current_koguma_unit ??
+            dashboardData.curriculum?.next_item?.koguma_unit ??
+            null
+          "
+          :children-list="dashboardData.children"
+          :current-curriculum-code="
+            dashboardData.curriculum?.curriculum_code ?? null
+          "
+          :current-curriculum-title="dashboardData.curriculum?.title ?? null"
+          :current-week="dashboardData.curriculum?.current_week ?? 1"
+          :is-enrolled="Boolean(dashboardData.curriculum?.enrolled)"
+          :next-entity-code="
+            dashboardData.curriculum?.next_item?.entity_code ??
+            viewedChild?.latest_level ??
+            null
+          "
+          @enrolled="() => refresh()"
+        />
       </section>
 
       <!-- Khối 5: Gói của bạn -->
-      <section class="space-y-4" data-testid="dashboard-subscription-section">
+      <section class="space-y-4 print:hidden" data-testid="dashboard-subscription-section">
         <h2
           class="text-lg font-bold font-heading text-surface-900 dark:text-surface-50 flex items-center gap-2"
         >
@@ -530,7 +583,6 @@
             </NuxtLink>
           </div>
 
-          <!-- Quota Indicator (BR-MDB-05: Only shown when > 80%) -->
           <div
             class="p-4 rounded-2xl bg-warning-50 dark:bg-warning-950/30 border border-warning-200 dark:border-warning-800 text-sm text-warning-900 dark:text-warning-200 space-y-1"
             v-if="dashboardData.subscription?.quota?.show_quota_indicator"
@@ -538,17 +590,17 @@
             <div
               class="flex items-center justify-between font-bold tabular-nums"
             >
-              <span
-                >Hồ sơ các bé:
+              <span>
+                Hồ sơ các bé:
                 {{ dashboardData.subscription.quota.children_count }}
                 /
-                {{ dashboardData.subscription.quota.max_children }}</span
-              >
-              <span
-                >{{
+                {{ dashboardData.subscription.quota.max_children }}
+              </span>
+              <span>
+                {{
                   Math.round(dashboardData.subscription.quota.usage_ratio * 100)
-                }}%</span
-              >
+                }}%
+              </span>
             </div>
             <p class="text-warning-700 dark:text-warning-300">
               Bạn đã sử dụng gần hết giới hạn hồ sơ bé cho phép trên tài khoản
@@ -569,10 +621,15 @@
 
 <script lang="ts" setup>
   import { isApiError, normalizeApiError } from "@mindkid/errors/client";
+  import { parseKogumaProgramMeta } from "@mindkid/taxonomy";
   import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { definePageMeta, useFetch } from "#imports";
+  import KogumaMeCompanionPanel, {
+    type MeDashboardChild,
+    type MeDashboardResponse,
+  } from "~/components/koguma-me-companion-panel.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
   import { useApi } from "~/composables/use-api";
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
@@ -589,108 +646,55 @@
     route.query.child_id ? Number(route.query.child_id) : null
   );
 
-  interface DashboardChild {
-    id: number;
-    uuid: string;
-    display_name: string;
-    birth_year: number;
-    avatar_id: string;
-    relationship: string | null;
-    days_played_7d?: number;
-    latest_level?: string | null;
-  }
-
-  interface DashboardRecentProgress {
-    child_id: number;
-    child_uuid: string;
-    display_name: string;
-    days_played_7d: number;
-    total_play_time_minutes_7d: number;
-    levels_completed_7d: number;
-    report_url: string;
-  }
-
-  interface DashboardNextItem {
-    entity_type: string;
-    entity_code: string;
-    title: string;
-    instruction?: string;
-    locked?: boolean;
-  }
-
-  interface DashboardCurriculum {
-    enrolled: boolean;
-    enrollment_id?: number;
-    curriculum_id?: number;
-    curriculum_code?: string;
-    title?: string;
-    duration_weeks?: number;
-    current_week?: number;
-    current_session?: number;
-    progress?: number;
-    week_progress?: number;
-    week_blocked_by_tier?: boolean;
-    is_completed?: boolean;
-    next_item?: DashboardNextItem | null;
-  }
-
-  interface DashboardSubscription {
-    package_name?: string;
-    status?: string;
-    expires_at?: string | null;
-    days_left?: number | null;
-    upgrade_cta?: { label: string; url?: string } | null;
-    quota?: {
-      show_quota_indicator: boolean;
-      children_count: number;
-      max_children: number;
-      usage_ratio: number;
-    };
-  }
-
-  interface DashboardResponse {
-    todo?: Array<{
-      type: string;
-      title: string;
-      message: string;
-      cta: string;
-    }>;
-    children?: DashboardChild[];
-    recent_progress?: DashboardRecentProgress[];
-    curriculum?: DashboardCurriculum | null;
-    subscription?: DashboardSubscription | null;
-    active_child_id?: number | null;
-    active_child_uuid?: string | null;
-  }
-
   const {
     data: dashboardData,
     pending,
     error: fetchError,
     refresh,
-  } = await useFetch<DashboardResponse>("/api/users/dashboard", {
+  } = await useFetch<MeDashboardResponse>("/api/users/dashboard", {
     query: computed(() => ({
       child_id: selectedChildId.value || undefined,
     })),
   });
 
-  // `selectedChildId` chỉ giữ lựa chọn tường minh (query/nhấn "Chọn xem") và là
-  // thứ duy nhất vào `query` của useFetch. Trẻ đang hoạt động do server trả về
-  // KHÔNG được ghi ngược vào đó: làm vậy đổi query ngay sau khi dữ liệu về, useFetch
-  // xoá `data` khi SSR, server vẽ nhánh "chưa có bé" còn client vẽ bảng điều khiển
-  // → "Hydration completed but contains mismatches".
+  // `selectedChildId` chỉ giữ lựa chọn tường minh để tránh hydration mismatch SSR.
   const viewedChildId = computed(
     () => selectedChildId.value ?? dashboardData.value?.active_child_id ?? null
   );
 
-  const activeChildName = computed(() => {
+  const viewedChild = computed<MeDashboardChild | null>(() => {
     if (!(dashboardData.value?.children && viewedChildId.value)) {
+      return dashboardData.value?.children?.[0] ?? null;
+    }
+    return (
+      dashboardData.value.children.find((c) => c.id === viewedChildId.value) ??
+      dashboardData.value.children[0] ??
+      null
+    );
+  });
+
+  const activeChildName = computed(
+    () => viewedChild.value?.display_name || null
+  );
+
+  const enrolledKogumaMeta = computed(() =>
+    parseKogumaProgramMeta(
+      dashboardData.value?.curriculum?.curriculum_code || "",
+      dashboardData.value?.curriculum?.duration_weeks
+    )
+  );
+
+  const enrolledKogumaTrackLabel = computed<string | null>(
+    () => enrolledKogumaMeta.value.koguma_track_label_vi
+  );
+
+  const enrolledWeekHref = computed<string | null>(() => {
+    const code = enrolledKogumaMeta.value.roadmap_code;
+    if (!code.startsWith("RM-")) {
       return null;
     }
-    const found = dashboardData.value.children.find(
-      (c) => c.id === viewedChildId.value
-    );
-    return found?.display_name || null;
+    const wk = dashboardData.value?.curriculum?.current_week || 1;
+    return `/programs/${code}#week-${wk}`;
   });
 
   function selectChild(childId?: number | null) {
@@ -699,11 +703,7 @@
     }
   }
 
-  // Cookie `active_child_id` mang **UUID** — `game-config-runtime.ts` tra
-  // `childProfiles.uuid` bằng đúng giá trị này. Ghi id số vào đây làm mọi level
-  // bậc ≥ login trả 404. Và chỉ `activate.post.ts` mới được ghi nó: nó kiểm
-  // ownership ở DB, ép Parent Gate khi đổi trẻ (`BR-PEN-01`), và huỷ phiên chơi
-  // dở của trẻ trước.
+  // Cookie `active_child_id` mang UUID và chỉ `activate.post.ts` được ghi (BR-PEN-01).
   const childSwitchError = ref<string | null>(null);
   const pendingChildUuid = ref<string | null>(null);
 
@@ -751,11 +751,8 @@
   }
 
   async function playNextCurriculumItem() {
-    const child = dashboardData.value?.children?.find(
-      (candidate) => candidate.id === viewedChildId.value
-    );
-    if (child) {
-      await activateChildThenPlay(child.uuid);
+    if (viewedChild.value) {
+      await activateChildThenPlay(viewedChild.value.uuid);
       return;
     }
     await router.push("/play");
@@ -782,3 +779,5 @@
     }
   }
 </script>
+
+<style scoped></style>

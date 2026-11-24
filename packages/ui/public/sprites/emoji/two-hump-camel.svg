@@ -1,46 +1,13 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <title>Lạc đà hai bướu</title>
+  <title>Con lạc đà</title>
   <defs>
-    <radialGradient cx="38%" cy="30%" id="thcSand" r="70%">
-      <stop offset="0%" stop-color="#fde68a" />
-      <stop offset="58%" stop-color="#f59e0b" />
-      <stop offset="100%" stop-color="#b45309" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="cmlTan" r="70%"><stop offset="0%" stop-color="#fde68a" /><stop offset="55%" stop-color="#d97706" /><stop offset="100%" stop-color="#92400e" /></radialGradient>
   </defs>
-  <ellipse cx="58" cy="104" fill="#78350f" opacity="0.24" rx="40" ry="6" />
-  <path
-    d="M34 76V100M45 78V100M68 76V100M79 78V100"
-    stroke="#78350f"
-    stroke-linecap="round"
-    stroke-width="4.2"
-  />
-  <path
-    d="M26 66C26 56 32 54 36 52C38 36 50 36 53 52C56 52 58 52 60 52C63 36 75 36 78 54C82 58 84 68 78 76H32C27 76 26 71 26 66Z"
-    fill="url(#thcSand)"
-    stroke="#78350f"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <path
-    d="M74 62C84 62 88 46 88 34C88 26 98 26 102 32C106 36 102 42 96 42C95 54 90 70 76 74"
-    fill="url(#thcSand)"
-    stroke="#78350f"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <circle cx="94" cy="32" fill="#1c1917" r="2.4" />
-  <path
-    d="M43 39L45 34L48 39M68 39L70 34L73 39"
-    stroke="#78350f"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="3.2"
-  />
-  <path
-    d="M26 62L18 72"
-    stroke="#78350f"
-    stroke-linecap="round"
-    stroke-width="3.6"
-  />
+  <ellipse cx="60" cy="107" fill="#451a03" opacity="0.22" rx="38" ry="5" />
+    <path d="M47 76L45 105H51L53 76ZM79 76L78 105H84L85 76Z" fill="#92400e" stroke="#451a03" stroke-linejoin="round" stroke-width="3.2" />
+    <!-- S-neck + TWO distinct humps + torso -->
+    <path d="M24 30C31 30 35 34 34 40C33 50 35 58 41 58C45 44 55 42 60 56C65 43 76 43 81 57C89 59 92 67 89 75C85 82 46 82 40 75C30 73 25 62 26 46L25 41C18 42 14 39 14 35C14 31 19 30 24 30Z" fill="url(#cmlTan)" stroke="#451a03" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M90 64C96 69 97 78 94 85" stroke="#451a03" stroke-linecap="round" stroke-width="3.2" />
+    <path d="M41 76L39 106H46L48 76ZM73 76L71 106H78L80 76Z" fill="url(#cmlTan)" stroke="#451a03" stroke-linejoin="round" stroke-width="3.5" />
+    <circle cx="22" cy="34" fill="#1c1917" r="2.2" /><circle cx="21.4" cy="33.3" fill="#ffffff" r="0.9" />
 </svg>

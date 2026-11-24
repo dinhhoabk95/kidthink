@@ -1,11 +1,11 @@
 import {
-  childProfiles,
+  type CreateTelemetryEventInput,
   getOwnerDb,
-  playSessions,
-  telemetryEvents,
+  PLAY_COMPLETION_STATUS,
+  type PlaySessionEntity,
 } from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import { NotFoundError } from "@mindkid/errors/common";
-import { desc, eq } from "drizzle-orm";
 import { cleanEventPayload } from "#src/events/sanitize";
 import {
   type IngestEventItem,
@@ -55,14 +55,14 @@ function resolveClientTimestamp(
 export async function insertIngestedEventsBatch(
   db: DbOrTx,
   sessionUuid: string,
-  session: typeof playSessions.$inferSelect,
+  session: PlaySessionEntity,
   childUuid: string | null,
   events: readonly IngestEventItem[],
   existingSeqs: Set<number>,
   initialMaxSeq: number
 ): Promise<{ accepted: number; skipped: number; newMaxSeq: number }> {
   const seenBatchSeqs = new Set<number>();
-  const toInsert: (typeof telemetryEvents.$inferInsert)[] = [];
+  const toInsert: CreateTelemetryEventInput[] = [];
   let skipped = 0;
   let newMaxSeq = initialMaxSeq;
 
@@ -109,16 +109,12 @@ export async function insertIngestedEventsBatch(
     return { accepted: 0, skipped, newMaxSeq };
   }
 
-  const insertedRows = await db
-    .insert(telemetryEvents)
-    .values(toInsert)
-    .onConflictDoNothing()
-    .returning({ seq: telemetryEvents.seq });
+  const repos = createRepositories(db);
+  const insertedSeqList =
+    await repos.telemetry.insertBatchReturningSeqs(toInsert);
 
-  const insertedSeqs = new Set<number>(
-    insertedRows.map((r: { seq: number }) => r.seq)
-  );
-  const accepted = insertedRows.length;
+  const insertedSeqs = new Set<number>(insertedSeqList);
+  const accepted = insertedSeqList.length;
   skipped += toInsert.length - accepted;
 
   for (const seq of insertedSeqs) {
@@ -142,33 +138,22 @@ export async function ingestPlayEvents(
   }
 
   const db = getOwnerDb();
-  const sessionRows = await db
-    .select()
-    .from(playSessions)
-    .where(eq(playSessions.sessionUuid, sessionUuid))
-    .limit(1);
-
-  const session = sessionRows[0];
+  const repos = createRepositories(db);
+  const session = await repos.playSessions.findByUuid(sessionUuid);
   if (!session) {
     throw new NotFoundError();
   }
 
   await checkSessionOwnership(db, session, options);
 
-  const existingEvents = await db
-    .select({ seq: telemetryEvents.seq })
-    .from(telemetryEvents)
-    .where(eq(telemetryEvents.sessionUuid, sessionUuid))
-    .orderBy(desc(telemetryEvents.seq));
+  const existingSeqList = await repos.telemetry.listSeqsBySession(sessionUuid);
 
-  const existingSeqs = new Set<number>(
-    existingEvents.map((e: { seq: number }) => e.seq)
-  );
-  const currentMaxSeq = existingEvents[0]?.seq ?? 0;
+  const existingSeqs = new Set<number>(existingSeqList);
+  const currentMaxSeq = existingSeqList[0] ?? 0;
 
   if (
-    session.completionStatus === "completed" ||
-    session.completionStatus === "abandoned"
+    session.completionStatus === PLAY_COMPLETION_STATUS.COMPLETED ||
+    session.completionStatus === PLAY_COMPLETION_STATUS.ABANDONED
   ) {
     return {
       accepted: 0,
@@ -181,13 +166,9 @@ export async function ingestPlayEvents(
 
   let childUuid: string | null = null;
   if (session.childProfileId) {
-    const cp = await db
-      .select({ uuid: childProfiles.uuid })
-      .from(childProfiles)
-      .where(eq(childProfiles.id, session.childProfileId))
-      .limit(1);
-    if (cp[0]) {
-      childUuid = cp[0].uuid;
+    const cp = await repos.childProfiles.findById(session.childProfileId);
+    if (cp) {
+      childUuid = cp.uuid;
     }
   }
 

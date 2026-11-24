@@ -1,11 +1,8 @@
-import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
-import { eq } from "drizzle-orm";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
 import { z } from "zod";
+import { getManagerLevelPreviewConfig } from "#server/services/catalog-service";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
-import { deliverGameConfig } from "#server/utils/game-config-runtime";
-import { issuePreviewToken } from "#server/utils/preview-token";
 
 const LevelConfigQuerySchema = z.object({
   version: z.union([z.string(), z.number()]).optional(),
@@ -29,37 +26,11 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Deliver game config in manager preview mode
-  const config = await deliverGameConfig(event, code, {
-    caller: {
-      kind: "manager",
-      manager_id: String(manager.manager_id),
-      role: manager.role,
-    },
+  return await getManagerLevelPreviewConfig({
+    event,
+    code,
     version,
-    isManagerPreview: true,
+    managerId: manager.manager_id,
+    managerRole: manager.role,
   });
-
-  const db = getOwnerDb();
-  const managerId = manager.manager_id;
-
-  const [level] = await db
-    .select({ id: gameLevels.id })
-    .from(gameLevels)
-    .where(eq(gameLevels.code, code))
-    .limit(1);
-
-  const previewToken = level
-    ? issuePreviewToken({
-        entityType: "game_level",
-        id: level.id,
-        version: 1,
-        managerId,
-      })
-    : undefined;
-
-  return {
-    ...config,
-    preview_token: previewToken,
-  };
 });

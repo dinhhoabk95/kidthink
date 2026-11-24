@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bóng bầu dục sọc</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="rgbBrn" r="70%"><stop offset="0%" stop-color="#f59e0b" /><stop offset="55%" stop-color="#b45309" /><stop offset="100%" stop-color="#78350f" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#451a03" opacity="0.22" rx="34" ry="5" />
+    <ellipse cx="60" cy="60" fill="url(#rgbBrn)" rx="40" ry="26" stroke="#451a03" stroke-width="3.8" transform="rotate(-32 60 60)" />
+    <path d="M34 48L52 76M68 44L86 72M48 68L72 52" stroke="#ffffff" stroke-linecap="round" stroke-width="3" />
+</svg>

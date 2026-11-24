@@ -61,7 +61,7 @@ export const projectGT029: Projection<"GT-029"> = {
 
     return {
       content_pack: {
-        prompt: `Bớt đi ${removeCount} thì còn lại mấy nhé?`,
+        prompt: `Có ${initialCount} vật, cất bớt ${removeCount} thì còn mấy nhỉ?`,
         initial_items,
         remove_count: removeCount,
         answer_options: shuffleDeterministic(answer_options, rng),

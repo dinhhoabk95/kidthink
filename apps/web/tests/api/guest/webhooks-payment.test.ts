@@ -1,6 +1,7 @@
 import {
   entitlementKeys,
   getOwnerDb,
+  PAYMENT_ORDER_STATUS,
   packages,
   paymentOrders,
   SEED_ENTITLEMENT_KEYS,
@@ -109,7 +110,7 @@ describe("POST /api/guest/webhooks/payments/[provider] (BR-APM-01..07)", () => {
         packageCode: "PKG-standard",
         offerCode: "annual",
         amountVnd: 299_000,
-        status: "pending",
+        status: PAYMENT_ORDER_STATUS.PENDING,
       })
       .returning();
 
@@ -146,7 +147,7 @@ describe("POST /api/guest/webhooks/payments/[provider] (BR-APM-01..07)", () => {
       .select()
       .from(paymentOrders)
       .where(eq(paymentOrders.id, order.id));
-    expect(updated.status).toBe("approved");
+    expect(updated.status).toBe(PAYMENT_ORDER_STATUS.APPROVED);
   });
   it("Scenario: rejects an unsigned webhook instead of approving the order", async () => {
     const db = getOwnerDb();
@@ -166,7 +167,7 @@ describe("POST /api/guest/webhooks/payments/[provider] (BR-APM-01..07)", () => {
         packageCode: "PKG-standard",
         offerCode: "annual",
         amountVnd: 299_000,
-        status: "pending",
+        status: PAYMENT_ORDER_STATUS.PENDING,
       })
       .returning();
 
@@ -194,7 +195,7 @@ describe("POST /api/guest/webhooks/payments/[provider] (BR-APM-01..07)", () => {
       .select()
       .from(paymentOrders)
       .where(eq(paymentOrders.id, order.id));
-    expect(unchanged.status).toBe("pending");
+    expect(unchanged.status).toBe(PAYMENT_ORDER_STATUS.PENDING);
   });
 
   it("Scenario: signature rejection carries the registered 401 error code", async () => {

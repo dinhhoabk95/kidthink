@@ -1,3 +1,7 @@
+import { getTableName, is } from "drizzle-orm";
+import { SQLiteTable } from "drizzle-orm/sqlite-core";
+import { dbTables } from "#src/schema/tables";
+
 export type PurgeClassification = "delete" | "anonymize" | "retain";
 
 export interface TablePurgeMetadata {
@@ -7,13 +11,21 @@ export interface TablePurgeMetadata {
   readonly legalBasis: string;
 }
 
-/**
- * D-IF & BR-ADL-01..10: Canonical 3-group classification for account purge.
- * Every table in DB schema must be categorized into exactly one group:
- * 1. 'delete': personal & transient operational records that must be hard deleted.
- * 2. 'anonymize': aggregated & historical records where PII identifiers are unlinked (e.g. child_uuid = NULL).
- * 3. 'retain': statutory/accounting logs and read-only taxonomy/content catalogs.
- */
+export function collectAllTables(): SQLiteTable[] {
+  const seen = new Set<string>();
+  const list: SQLiteTable[] = [];
+  for (const value of Object.values(dbTables)) {
+    if (is(value, SQLiteTable)) {
+      const name = getTableName(value);
+      if (!seen.has(name)) {
+        seen.add(name);
+        list.push(value);
+      }
+    }
+  }
+  return list;
+}
+
 export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
   // --- Group 1: DELETE ---
   {
@@ -222,7 +234,7 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     tableName: "users",
     classification: "anonymize",
     reason:
-      "Ẩn danh email (deleted+uuid@mindkid.invalid), tên hiển thị, xoá password_hash và đặt status = 'purged' (BR-ADL-09)",
+      "Ẩn danh email (deleted+uuid@mindkid.invalid), tên hiển thị, xoá password_hash và đặt status = DELETED (BR-ADL-09)",
     legalBasis: "BR-ADL-09 & Nghị định 13/2023",
   },
   {
@@ -306,12 +318,6 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     legalBasis: "BR-ADA-01",
   },
   {
-    tableName: "backup_log",
-    classification: "retain",
-    reason: "Nhật ký sao lưu và kiểm thử khôi phục cơ sở dữ liệu",
-    legalBasis: "BR-BAK-01",
-  },
-  {
     tableName: "entitlement_keys",
     classification: "retain",
     reason: "Danh mục khoá quyền hệ thống",
@@ -353,18 +359,6 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     classification: "retain",
     reason: "Bộ dữ liệu khái niệm kỹ năng sư phạm",
     legalBasis: "BR-SDS-01",
-  },
-  {
-    tableName: "feature_flags",
-    classification: "retain",
-    reason: "Cấu hình cờ tính năng toàn hệ thống",
-    legalBasis: "BR-FLG-01",
-  },
-  {
-    tableName: "error_logs",
-    classification: "retain",
-    reason: "Nhật ký lỗi vận hành hệ thống đã ẩn danh PII",
-    legalBasis: "BR-ERR-01",
   },
   {
     tableName: "competencies",
@@ -450,10 +444,6 @@ export const PURGE_TABLE_MAP: ReadonlyMap<string, TablePurgeMetadata> = new Map(
   PURGE_TABLE_CLASSIFICATIONS.map((entry) => [entry.tableName, entry])
 );
 
-/**
- * D-IF Gate: Validates that all active schema tables are explicitly classified.
- * Throws an error listing unclassified tables if any are detected.
- */
 export function validateSchemaTablesClassified(
   discoveredTableNames: readonly string[]
 ): {

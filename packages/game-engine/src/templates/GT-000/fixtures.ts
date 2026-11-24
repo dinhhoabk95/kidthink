@@ -231,4 +231,113 @@ export const GT000_FIXTURES: {
       speak_along: "tap",
     },
   },
+
+  // Fixture 4: Sách Giấy Dó CPA — Đếm và tách gộp quả táo vườn quê (C1.NCOMP.01)
+  {
+    content: {
+      concept: {
+        skill_code: "C1.NCOMP.01",
+        label: "Đếm và tách số 3",
+        teaches: ["C1.NCOMP.01"],
+        values: ["apple_2", "apple_3"],
+        sequence_no: 1,
+      },
+      story_context: {
+        theme_code: "farm",
+        guide_character: "owl_teacher",
+        hook_line: "Cô Cú mời bé ghé vườn táo chín đếm cùng Gấu Con nhé!",
+        resolution_line: "Giỏi lắm! Bé đã chia giỏ táo thật khéo!",
+      },
+      assets: [
+        {
+          asset_id: "apple_2",
+          kind: "glyph",
+          label: "Hai quả táo",
+          glyph: "2",
+          value: 2,
+          image_ref: { kind: "emoji", ref: "🍎" },
+          contrast_group: "apple_qty",
+          representation: { kind: "ten-frame", count: 2, max: 10 },
+        },
+        {
+          asset_id: "apple_3",
+          kind: "glyph",
+          label: "Ba quả táo",
+          glyph: "3",
+          value: 3,
+          image_ref: { kind: "emoji", ref: "🍎" },
+          contrast_group: "apple_qty",
+          representation: { kind: "ten-frame", count: 3, max: 10 },
+        },
+      ],
+      segments: [
+        {
+          segment_id: "seg_cpa_review",
+          asset_ids: ["apple_2", "apple_3"],
+          is_review: true,
+          scene_cue: "Mình mở trang sách xem trên cành có mấy quả táo nào!",
+          steps: [
+            {
+              action: "present",
+              target_asset_id: "apple_3",
+              narration_line: "Có ba quả táo đỏ xếp vào khung mười.",
+              interaction_hint: "tap_to_count",
+              scene_board: {
+                mode: "cpa_bridge",
+                count: 3,
+                rep_kind: "ten-frame",
+                concrete_glyph: "🍎",
+                interactive_count: true,
+              },
+            },
+            {
+              action: "present",
+              target_asset_id: "apple_2",
+              narration_line: "Tách ba quả táo thành hai quả và một quả.",
+              interaction_hint: "tap_to_split",
+              scene_board: {
+                mode: "part_whole",
+                whole_count: 3,
+                part_a_count: 2,
+                part_b_count: 1,
+                item_glyph: "🍎",
+                operation: "split",
+              },
+            },
+            {
+              action: "recognise",
+              target_asset_id: "apple_3",
+              distractor_asset_ids: ["apple_2"],
+              prompt_line: "Bé chạm vào thẻ ba quả táo nhé!",
+              scene_board: {
+                mode: "cpa_bridge",
+                count: 3,
+                rep_kind: "ten-frame",
+                concrete_glyph: "🍎",
+              },
+            },
+            {
+              action: "recall",
+              target_asset_id: "apple_3",
+              option_asset_ids: ["apple_2", "apple_3"],
+              prompt_line: "Khung mười này có mấy quả táo nhỉ?",
+              scene_board: {
+                mode: "cpa_bridge",
+                count: 3,
+                rep_kind: "ten-frame",
+                concrete_glyph: "🍎",
+              },
+            },
+          ],
+        },
+      ],
+      requires_reintro: false,
+    },
+    difficulty: {
+      hint_after_ms: 12_000,
+      allow_retry: true,
+      auto_play_audio: true,
+      speak_along: "off",
+    },
+  },
 ];

@@ -1,5 +1,7 @@
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import type { DbExecutor } from "#src/client";
+import { RECIPIENT_TYPE } from "#src/constants/billing-ops-enums";
+import { CHILD_STATUS, USER_STATUS } from "#src/constants/identity-enums";
 import { aiCreditBalance } from "#src/schema/ai-credit";
 import {
   entitlements,
@@ -44,7 +46,7 @@ export async function requestUserDeletion(
   await db
     .update(users)
     .set({
-      status: "deleted",
+      status: USER_STATUS.DELETED,
       purgeAt: scheduledPurgeAt,
       updatedAt: currentDate,
     })
@@ -52,9 +54,22 @@ export async function requestUserDeletion(
 
   await db
     .update(childProfiles)
-    .set({ status: "pending_deletion", updatedAt: currentDate })
+    .set({ status: CHILD_STATUS.PENDING_DELETION, updatedAt: currentDate })
     .where(
-      and(eq(childProfiles.userId, userId), eq(childProfiles.status, "active"))
+      and(
+        eq(childProfiles.userId, userId),
+        eq(childProfiles.status, CHILD_STATUS.ACTIVE)
+      )
+    );
+
+  await db
+    .update(recurringSubscriptions)
+    .set({ autoRenew: false, updatedAt: currentDate })
+    .where(
+      and(
+        eq(recurringSubscriptions.userId, userId),
+        eq(recurringSubscriptions.autoRenew, true)
+      )
     );
 
   return { scheduledPurgeAt };
@@ -64,19 +79,33 @@ export async function cancelUserDeletion(
   db: DbExecutor,
   userId: number
 ): Promise<void> {
+  const [account] = await db
+    .select({ emailVerified: users.emailVerified })
+    .from(users)
+    .where(and(eq(users.id, userId), eq(users.status, USER_STATUS.DELETED)));
+
+  if (!account) {
+    return;
+  }
+
   const now = new Date();
+  const restoredStatus = account.emailVerified
+    ? USER_STATUS.ACTIVE
+    : USER_STATUS.PENDING_VERIFICATION;
+
   await db
     .update(users)
-    .set({ status: "active", purgeAt: null, updatedAt: now })
-    .where(and(eq(users.id, userId), eq(users.status, "deleted")));
+    .set({ status: restoredStatus, purgeAt: null, updatedAt: now })
+    .where(and(eq(users.id, userId), eq(users.status, USER_STATUS.DELETED)));
 
   await db
     .update(childProfiles)
-    .set({ status: "active", updatedAt: now })
+    .set({ status: CHILD_STATUS.ACTIVE, purgeAt: null, updatedAt: now })
     .where(
       and(
         eq(childProfiles.userId, userId),
-        eq(childProfiles.status, "pending_deletion")
+        eq(childProfiles.status, CHILD_STATUS.PENDING_DELETION),
+        isNull(childProfiles.purgeAt)
       )
     );
 }
@@ -91,19 +120,18 @@ export async function hardPurgeUser(
     return { purged: false, reason: "RETENTION_PERIOD_ACTIVE" };
   }
 
-  const runPurge = async (tx: DbExecutor) => {
-    const [targetUser] = await tx
-      .select({ email: users.email })
-      .from(users)
-      .where(eq(users.id, userId));
+  await db.transaction(async (tx) => {
+    const targetUser = await tx.query.users.findFirst({
+      columns: { email: true },
+      where: { id: userId },
+    });
 
-    const children = await tx
-      .select({ id: childProfiles.id, uuid: childProfiles.uuid })
-      .from(childProfiles)
-      .where(eq(childProfiles.userId, userId));
+    const children = await tx.query.childProfiles.findMany({
+      columns: { id: true, uuid: true },
+      where: { userId },
+    });
 
     const childUuids = children.map((c) => c.uuid);
-
     if (childUuids.length > 0) {
       await tx
         .update(telemetryEvents)
@@ -125,7 +153,7 @@ export async function hardPurgeUser(
       .delete(notifications)
       .where(
         and(
-          eq(notifications.recipientType, "user"),
+          eq(notifications.recipientType, RECIPIENT_TYPE.USER),
           eq(notifications.recipientId, userId)
         )
       );
@@ -158,20 +186,12 @@ export async function hardPurgeUser(
         emailVerified: false,
         twoFactorEnabled: false,
         image: null,
-        status: "deleted",
+        status: USER_STATUS.DELETED,
         purgeAt: null,
         updatedAt: currentDate,
       })
       .where(eq(users.id, userId));
-  };
-
-  if (typeof db.transaction === "function") {
-    await db.transaction(async (tx) => {
-      await runPurge(tx);
-    });
-  } else {
-    await runPurge(db);
-  }
+  });
 
   return { purged: true };
 }
@@ -181,20 +201,12 @@ export async function hardPurgeChildProfile(
   childId: number,
   childUuid: string
 ): Promise<void> {
-  const runChildPurge = async (tx: DbExecutor) => {
+  await db.transaction(async (tx) => {
     await tx
       .update(telemetryEvents)
       .set({ childUuid: null })
       .where(eq(telemetryEvents.childUuid, childUuid));
 
     await tx.delete(childProfiles).where(eq(childProfiles.id, childId));
-  };
-
-  if (typeof db.transaction === "function") {
-    await db.transaction(async (tx) => {
-      await runChildPurge(tx);
-    });
-  } else {
-    await runChildPurge(db);
-  }
+  });
 }

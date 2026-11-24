@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { gameLevels, getOwnerDb } from "@mindkid/db";
+import { ACCESS_TIER, gameLevels, getOwnerDb } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 import getGuestRecommendationsHandler from "#server/api/guest/play/recommendations.get";
 
@@ -39,7 +39,7 @@ describe("Guest Play Recommendations API (BR-REC-04, BR-REC-06, D-MW)", () => {
       title: "Trò chơi khách",
       contentPack: {},
       difficultyParams: {},
-      accessTier: "free",
+      accessTier: ACCESS_TIER.FREE,
       ageMin: 3,
       ageMax: 5,
       difficulty: 1,
@@ -53,7 +53,7 @@ describe("Guest Play Recommendations API (BR-REC-04, BR-REC-06, D-MW)", () => {
       title: "Trò chơi khoá",
       contentPack: {},
       difficultyParams: {},
-      accessTier: "standard",
+      accessTier: ACCESS_TIER.STANDARD,
       ageMin: 3,
       ageMax: 5,
       difficulty: 2,

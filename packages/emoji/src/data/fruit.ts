@@ -3,6 +3,9 @@ import type { EmojiEntry } from "#src/types";
 export const FRUIT_EMOJIS: EmojiEntry[] = [
   {
     emoji: "🍎",
+    slug: "apple",
+    svg_path: "/sprites/emoji/apple.svg",
+    hero_webp_path: "/sprites/hero/apple.webp",
     name: "Quả táo đỏ",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -11,6 +14,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍏",
+    slug: "green-apple",
+    svg_path: "/sprites/emoji/green-apple.svg",
     name: "Quả táo xanh",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -19,6 +24,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍊",
+    slug: "orange",
+    svg_path: "/sprites/emoji/orange.svg",
     name: "Quả cam",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -27,6 +34,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍋",
+    slug: "lemon",
+    svg_path: "/sprites/emoji/lemon.svg",
     name: "Quả chanh",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -35,6 +44,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍌",
+    slug: "banana",
+    svg_path: "/sprites/emoji/banana.svg",
     name: "Quả chuối",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -43,6 +54,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍉",
+    slug: "watermelon",
+    svg_path: "/sprites/emoji/watermelon.svg",
     name: "Quả dưa hấu",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -51,6 +64,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍇",
+    slug: "grapes",
+    svg_path: "/sprites/emoji/grapes.svg",
     name: "Chùm nho",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -59,6 +74,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍓",
+    slug: "strawberry",
+    svg_path: "/sprites/emoji/strawberry.svg",
     name: "Quả dâu tây",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -67,6 +84,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫐",
+    slug: "blueberries",
+    svg_path: "/sprites/emoji/blueberries.svg",
     name: "Quả việt quất",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -75,6 +94,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍑",
+    slug: "peach",
+    svg_path: "/sprites/emoji/peach.svg",
     name: "Quả đào",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -83,6 +104,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥭",
+    slug: "mango",
+    svg_path: "/sprites/emoji/mango.svg",
     name: "Quả xoài",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -91,6 +114,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍍",
+    slug: "pineapple",
+    svg_path: "/sprites/emoji/pineapple.svg",
     name: "Quả dứa",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -99,8 +124,10 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥥",
+    slug: "coconut",
+    svg_path: "/sprites/emoji/coconut.svg",
     name: "Quả dừa",
-    categories: ["fruit"],
+    categories: ["fruit", "vn-culture"],
     curriculum_themes: [
       "thuc_vat",
       "dinh_duong_suc_khoe",
@@ -111,6 +138,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥝",
+    slug: "kiwi-fruit",
+    svg_path: "/sprites/emoji/kiwi-fruit.svg",
     name: "Quả kiwi",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -119,6 +148,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍐",
+    slug: "pear",
+    svg_path: "/sprites/emoji/pear.svg",
     name: "Quả lê",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -127,6 +158,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍈",
+    slug: "melon",
+    svg_path: "/sprites/emoji/melon.svg",
     name: "Quả dưa lưới",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -135,6 +168,9 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍒",
+    slug: "cherry",
+    svg_path: "/sprites/emoji/cherry.svg",
+    hero_webp_path: "/sprites/hero/cherry.webp",
     name: "Quả anh đào",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -143,6 +179,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫒",
+    slug: "green-olive",
+    svg_path: "/sprites/emoji/green-olive.svg",
     name: "Quả ô liu",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -151,6 +189,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥑",
+    slug: "avocado",
+    svg_path: "/sprites/emoji/avocado.svg",
     name: "Quả bơ",
     categories: ["fruit", "vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
@@ -159,6 +199,8 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍋‍🟩",
+    slug: "fresh-lime",
+    svg_path: "/sprites/emoji/fresh-lime.svg",
     name: "Quả chanh xanh",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],

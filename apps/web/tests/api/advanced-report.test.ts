@@ -1,15 +1,24 @@
 import {
+  ACCESS_TIER,
+  CONTENT_ENTITY_TYPE,
   childProfiles,
+  competencies,
   contentSkillMap,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlements,
   gameLevels,
   getOwnerDb,
   masteryState,
+  PLAY_COMPLETION_STATUS,
   playSessions,
+  SKILL_TIER,
   skills,
+  strands,
   users,
 } from "@mindkid/db";
 import { seed } from "@mindkid/db/seed";
+import { eq } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
 import getAdvancedReportHandler from "#server/api/users/children/[uuid]/reports/advanced.get";
 import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
@@ -54,6 +63,64 @@ function mockEvent(
 describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
   beforeAll(async () => {
     await seed();
+    const db = getOwnerDb();
+    const competencySeeds = [
+      { code: "C1", name: "Cảm nhận số", position: 1 },
+      { code: "C2", name: "Không gian & hình học", position: 2 },
+      { code: "C3", name: "Tư duy quy luật", position: 3 },
+      { code: "C4", name: "Đo lường & dữ liệu", position: 4 },
+      { code: "C5", name: "Ngôn ngữ tư duy", position: 5 },
+      { code: "C6", name: "Giải quyết vấn đề", position: 6 },
+    ];
+    for (const c of competencySeeds) {
+      await db
+        .insert(competencies)
+        .values({
+          code: c.code,
+          name: c.name,
+          colorToken: "brand",
+          icon: "i-lucide-sparkles",
+          position: c.position,
+        })
+        .onConflictDoNothing({ target: competencies.code });
+    }
+    const [c1] = await db
+      .select({ id: competencies.id })
+      .from(competencies)
+      .where(eq(competencies.code, "C1"))
+      .limit(1);
+    if (c1) {
+      await db
+        .insert(strands)
+        .values({
+          code: "C1.CNT",
+          competencyId: c1.id,
+          name: "Đếm và số lượng",
+          position: 1,
+        })
+        .onConflictDoNothing({ target: strands.code });
+      const [strand] = await db
+        .select({ id: strands.id })
+        .from(strands)
+        .where(eq(strands.code, "C1.CNT"))
+        .limit(1);
+      if (strand) {
+        await db
+          .insert(skills)
+          .values({
+            code: "C1.CNT.01",
+            strandId: strand.id,
+            name: "Đếm đến 5",
+            ageMin: 3,
+            ageMax: 4,
+            difficulty: 1,
+            thinkingProcesses: ["observe"],
+            tier: SKILL_TIER.BASIC,
+            position: 1,
+          })
+          .onConflictDoNothing({ target: skills.code });
+      }
+    }
   }, 60_000);
 
   it("Scenario: BR-ARP-02 & D-NB — returns 403 ENTITLEMENT_REQUIRED without child data when lacking entitlement", async () => {
@@ -89,14 +156,17 @@ describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
       const status = err.statusCode || err.status;
       expect(status).toBe(403);
       expect(err.data?.code || err.statusMessage).toBe("ENTITLEMENT_REQUIRED");
-      expect(err.data?.upgrade_package_codes).toEqual(["standard", "premium"]);
+      expect(err.data?.details?.required_entitlement).toBe(
+        "view_advanced_report"
+      );
+      expect(err.data?.details?.required_package).toBe("standard");
       // Verify NO child statistics leaked
       expect(err.data?.sections).toBeUndefined();
       expect(err.data?.mastery).toBeUndefined();
     }
   });
 
-  it("returns 404 CHILD_NOT_FOUND when requesting child of another user", async () => {
+  it("returns 404 NOT_FOUND when requesting child of another user", async () => {
     const db = getOwnerDb();
     const ts = Date.now();
 
@@ -117,8 +187,8 @@ describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
     await db.insert(entitlements).values({
       userId: caller.id,
       entitlementKey: "view_advanced_report",
-      status: "active",
-      source: "package_order",
+      status: ENTITLEMENT_STATUS.ACTIVE,
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
     });
     await invalidateUserEntitlementsCache(caller.id);
 
@@ -136,15 +206,15 @@ describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
 
     try {
       await getAdvancedReportHandler(event);
-      expect.fail("Should throw 404 CHILD_NOT_FOUND");
+      expect.fail("Should throw 404 NOT_FOUND");
     } catch (err: any) {
       const status = err.statusCode || err.status;
       expect(status).toBe(404);
-      expect(err.data?.code || err.statusMessage).toBe("CHILD_NOT_FOUND");
+      expect(err.data?.code || err.statusMessage).toBe("NOT_FOUND");
     }
   });
 
-  it("returns 422 INVALID_PERIOD when passing unsupported period (e.g. 7d)", async () => {
+  it("returns 422 VALIDATION_FAILED when passing unsupported period (e.g. 7d)", async () => {
     const db = getOwnerDb();
     const ts = Date.now();
 
@@ -159,8 +229,8 @@ describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "view_advanced_report",
-      status: "active",
-      source: "package_order",
+      status: ENTITLEMENT_STATUS.ACTIVE,
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
     });
     await invalidateUserEntitlementsCache(user.id);
 
@@ -183,11 +253,11 @@ describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
 
     try {
       await getAdvancedReportHandler(event);
-      expect.fail("Should throw 422 INVALID_PERIOD");
+      expect.fail("Should throw 422 VALIDATION_FAILED");
     } catch (err: any) {
       const status = err.statusCode || err.status;
       expect(status).toBe(422);
-      expect(err.data?.code || err.statusMessage).toBe("INVALID_PERIOD");
+      expect(err.data?.code || err.statusMessage).toBe("VALIDATION_FAILED");
     }
   });
 
@@ -203,8 +273,8 @@ describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "view_advanced_report",
-      status: "active",
-      source: "package_order",
+      status: ENTITLEMENT_STATUS.ACTIVE,
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
     });
     await invalidateUserEntitlementsCache(user.id);
 
@@ -262,8 +332,8 @@ describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "view_advanced_report",
-      status: "active",
-      source: "package_order",
+      status: ENTITLEMENT_STATUS.ACTIVE,
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
     });
     await invalidateUserEntitlementsCache(user.id);
 
@@ -287,7 +357,7 @@ describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
         title: "Bài tập đếm",
         contentPack: {},
         difficultyParams: {},
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
 
@@ -296,7 +366,7 @@ describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
     await db
       .insert(contentSkillMap)
       .values({
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: level.id,
         skillId: targetSkill.id,
         weight: "1.00",
@@ -326,7 +396,7 @@ describe("P3.7 Advanced Child Report API (BR-ARP-01..08, D-MY..D-NE)", () => {
         childProfileId: child.id,
         gameLevelId: level.id,
         templateCode,
-        completionStatus: "completed",
+        completionStatus: PLAY_COMPLETION_STATUS.COMPLETED,
         durationSeconds: 60,
         startedAt: new Date(now.getTime() - (i + 1) * 86_400_000),
       });

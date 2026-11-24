@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đèn giao thông ngang</title>
+  <defs>
+    <linearGradient id="htlBox" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#475569" /><stop offset="100%" stop-color="#1e293b" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#1e293b" opacity="0.22" rx="42" ry="5" />
+    <rect fill="url(#htlBox)" height="44" rx="22" stroke="#1e293b" stroke-width="4" width="96" x="12" y="38" />
+    <circle cx="34" cy="60" fill="#ef4444" r="12" stroke="#7f1d1d" stroke-width="3" />
+    <circle cx="60" cy="60" fill="#facc15" r="12" stroke="#78350f" stroke-width="3" />
+    <circle cx="86" cy="60" fill="#22c55e" r="12" stroke="#14532d" stroke-width="3" />
+</svg>

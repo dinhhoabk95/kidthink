@@ -1,48 +1,71 @@
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { passkey } from "@better-auth/passkey";
 import { type BetterAuthPlugin, betterAuth } from "better-auth";
-import { APIError, createAuthMiddleware, isAPIError } from "better-auth/api";
-import { expireCookie } from "better-auth/cookies";
-import { twoFactor } from "better-auth/plugins";
-import type { PgTable } from "drizzle-orm/pg-core";
 import {
-  alignSessionCookieMaxAge,
-  BoundedTtlMap,
+  APIError,
+  createAuthMiddleware,
+  getSessionFromCtx,
+  isAPIError,
+} from "better-auth/api";
+import { deleteSessionCookie } from "better-auth/cookies";
+import { twoFactor } from "better-auth/plugins";
+import type { SQLiteTable } from "drizzle-orm/sqlite-core";
+import {
   runBetterAuthCallback,
   wrapSecondaryStorageForBetterAuth,
 } from "./better-auth-error.js";
+import { DB_AUTH_METHOD, DB_MANAGER_ROLE } from "./enum-values.js";
 import { deriveInstanceSecret } from "./hmac-secret.js";
 import {
   MFA_LOCK_SECONDS,
   MFA_MAX_FAILURES,
   MfaAttemptGuard,
 } from "./mfa-lockout.js";
-import { hashPassword, verifyPassword } from "./password.js";
+import {
+  getDummyPasswordHash,
+  hashPassword,
+  verifyPassword,
+} from "./password.js";
 import {
   createRedisSecondaryStorage,
   type MinimalRedisClient,
 } from "./redis-secondary-storage.js";
-import { enforcePendingTwoFactorGuard } from "./user-auth-helpers.js";
 import {
+  alignNewSessionCookies,
+  clearPending2faAccountByCookie,
+  computeSessionReauthAt,
+  consumePending2faRemember,
+  enforcePasskeyMutationBeforeHook,
+  enforceTotpStepUpForSensitiveMfaAction,
+  handleTwoFactorVerifyBeforeHook,
+  issueTwoFactorChallengeAndRevokeSession,
+  readCookieFromHeader,
+  resolvePendingTwoFactorAccountId,
+  revokeOtherInstanceSessions,
+  setPending2faRemember,
+} from "./user-auth-helpers.js";
+import {
+  REAUTH_FRESH_AGE_SECONDS,
   REMEMBER_MAX_TTL_SECONDS,
   SESSION_DEFAULT_TTL_SECONDS,
 } from "./user-better-auth.js";
 
-const PENDING_MANAGER_META_TTL_MS = 10 * 60 * 1000;
-
 export interface ManagerAuthSchemaTables {
-  readonly managers: PgTable;
-  readonly managerAccounts: PgTable;
-  readonly managerSessions: PgTable;
-  readonly managerVerifications: PgTable;
-  readonly managerTwoFactors: PgTable;
-  readonly managerPasskeys: PgTable;
+  readonly managers: SQLiteTable;
+  readonly managerAccounts: SQLiteTable;
+  readonly managerSessions: SQLiteTable;
+  readonly managerVerifications: SQLiteTable;
+  readonly managerTwoFactors: SQLiteTable;
+  readonly managerPasskeys: SQLiteTable;
 }
 
 export interface ManagerStatusSnapshot {
   readonly id: number;
+  readonly uuid?: string;
   readonly isActive: boolean;
-  readonly role: string;
+  readonly role: string | number;
+  readonly sessionVersion?: number;
+  readonly mfaEnabled?: boolean;
 }
 
 export type ManagerAuditAction =
@@ -73,6 +96,16 @@ export interface ManagerAuthCallbacks {
     readonly ipAddress: string;
     readonly identifier?: string;
   }) => Promise<void>;
+  readonly verifySessionReauth?: (input: {
+    readonly managerId: number;
+    readonly sessionId: string;
+    readonly createdAt: Date;
+    readonly dbReauthAt: Date | null;
+  }) => Promise<void>;
+  readonly revokeOtherSessions?: (
+    managerId: number,
+    keepSessionToken: string
+  ) => Promise<void>;
 }
 
 export interface CreateMindKidManagerAuthDeps {
@@ -94,9 +127,6 @@ interface ManagerSignInBody {
   callbackURL?: string;
 }
 
-const DUMMY_MANAGER_HASH =
-  "$argon2id$v=19$m=19456,p=1,t=2$Zmx0piJSIcdd2b8oaF8ZUg$U60ArJk0sNteiIdlfZyr7G0shEXA+IqCyWIKs1La4WE";
-
 function extractIp(headers: Headers | undefined): string {
   const realIp = headers?.get("x-real-ip")?.trim();
   return realIp && realIp.length > 0 ? realIp : "127.0.0.1";
@@ -106,27 +136,10 @@ function extractUa(headers: Headers | undefined): string {
   return headers?.get("user-agent")?.trim() || "MindKid Admin Browser";
 }
 
-function readCookie(
-  headers: Headers | undefined,
-  cookieName: string
-): string | null {
-  const cookieHeader = headers?.get("cookie");
-  if (!cookieHeader) {
-    return null;
-  }
-  for (const pair of cookieHeader.split(";")) {
-    const eqIdx = pair.indexOf("=");
-    if (eqIdx > 0 && pair.slice(0, eqIdx).trim() === cookieName) {
-      return decodeURIComponent(pair.slice(eqIdx + 1).trim());
-    }
-  }
-  return null;
-}
-
 function hasDontRememberManagerCookie(headers: Headers | undefined): boolean {
   return Boolean(
-    readCookie(headers, "mindkid-manager.dont_remember") ||
-      readCookie(headers, "__Secure-mindkid-manager.dont_remember")
+    readCookieFromHeader(headers, "mindkid-manager.dont_remember") ||
+      readCookieFromHeader(headers, "__Secure-mindkid-manager.dont_remember")
   );
 }
 
@@ -144,20 +157,20 @@ function sanitizeManagerAccountTokens<T extends object>(
   return Promise.resolve({ data: sanitized as T });
 }
 
-function resolveManagerIsRemembered(
+async function resolveManagerIsRemembered(
   pathStr: string,
   userId: string,
   body: { rememberMe?: boolean } | null,
   headers: Headers | undefined,
-  pending2faRemember: BoundedTtlMap<boolean>
-): boolean {
+  redis: MinimalRedisClient
+): Promise<boolean> {
   if (pathStr === "/sign-in/email") {
     return body?.rememberMe === true;
   }
   if (!pathStr.startsWith("/two-factor/")) {
     return false;
   }
-  const stored = pending2faRemember.consume(userId);
+  const stored = await consumePending2faRemember(redis, "manager", userId);
   if (stored !== undefined) {
     return stored;
   }
@@ -172,7 +185,7 @@ async function handleManagerSignInBefore(
   ipAddress: string,
   userAgent: string,
   callbacks: ManagerAuthCallbacks | undefined,
-  pending2faRemember: BoundedTtlMap<boolean>
+  redis: MinimalRedisClient
 ) {
   const email = (body.email ?? "").trim().toLowerCase();
   await runBetterAuthCallback(async () => {
@@ -188,7 +201,7 @@ async function handleManagerSignInBefore(
     const getByEmail = callbacks.getManagerStatusByEmail;
     const snapshot = await runBetterAuthCallback(() => getByEmail(email));
     if (!snapshot) {
-      await verifyPassword(body.password ?? "", DUMMY_MANAGER_HASH);
+      await verifyPassword(body.password ?? "", getDummyPasswordHash());
       await runBetterAuthCallback(async () => {
         await callbacks.recordManagerAudit?.({
           action: "manager_login_failed",
@@ -209,7 +222,12 @@ async function handleManagerSignInBefore(
         message: "Tài khoản quản trị đang ngừng hoạt động.",
       });
     }
-    pending2faRemember.set(String(snapshot.id), normalizedRemember);
+    await setPending2faRemember(
+      redis,
+      "manager",
+      String(snapshot.id),
+      normalizedRemember
+    );
   }
 
   return {
@@ -223,7 +241,14 @@ async function handleManagerSignInBefore(
 }
 
 async function shouldInvalidateManagerGetSession(
-  returned: { user?: { id?: string | number; isActive?: boolean } } | null,
+  returned: {
+    user?: {
+      id?: string | number;
+      isActive?: boolean;
+      uuid?: string;
+      sessionVersion?: number | string;
+    };
+  } | null,
   callbacks: ManagerAuthCallbacks | undefined
 ): Promise<boolean> {
   if (!returned || isAPIError(returned) || !returned.user) {
@@ -234,9 +259,20 @@ async function shouldInvalidateManagerGetSession(
     const getById = callbacks.getManagerStatusById;
     const mgrIdNum = Number(returned.user.id);
     const live = await runBetterAuthCallback(() => getById(mgrIdNum));
-    if (live) {
-      activeFlag = live.isActive;
+    if (live === null) {
+      return true;
     }
+    if (returned.user.uuid && live.uuid && returned.user.uuid !== live.uuid) {
+      return true;
+    }
+    if (
+      returned.user.sessionVersion !== undefined &&
+      live.sessionVersion !== undefined &&
+      Number(returned.user.sessionVersion) !== Number(live.sessionVersion)
+    ) {
+      return true;
+    }
+    activeFlag = live.isActive;
   }
   return !activeFlag;
 }
@@ -287,12 +323,126 @@ export function createMindKidManagerAuth(deps: CreateMindKidManagerAuthDeps) {
     createRedisSecondaryStorage(deps.redis, "manager")
   );
   const mfaGuard = new MfaAttemptGuard(deps.redis);
-  const pending2faRemember = new BoundedTtlMap<boolean>(
-    PENDING_MANAGER_META_TTL_MS
-  );
-  const pending2faManagerByCookie = new BoundedTtlMap<number>(
-    PENDING_MANAGER_META_TTL_MS
-  );
+  const pendingAuth2faManagerByCtx = new WeakMap<object, number>();
+  const pendingMfaActivationByCtx = new WeakMap<object, number>();
+
+  const handleManagerVerify2faAfter = async (
+    ctx: Parameters<Parameters<typeof createAuthMiddleware>[0]>[0],
+    ipAddress: string,
+    userAgent: string
+  ) => {
+    const tfCookie = ctx.context.createAuthCookie("two_factor");
+    const rawTf = readCookieFromHeader(ctx.headers, tfCookie.name);
+    const pendingMgrId = await resolvePendingTwoFactorAccountId({
+      ctx,
+      namespace: "manager",
+      redis: deps.redis,
+      rawTf,
+      tfCookieName: tfCookie.name,
+      pendingAuthAccountByCtx: pendingAuth2faManagerByCtx,
+    });
+    const returnedIsError = isAPIError(ctx.context.returned);
+    const activeSession = ctx.context.newSession ?? ctx.context.session;
+    const verifiedMgrId =
+      !returnedIsError && activeSession?.user?.id
+        ? activeSession.user.id
+        : undefined;
+    await handleManagerTwoFactorAfter(
+      pendingMgrId,
+      verifiedMgrId,
+      returnedIsError,
+      ipAddress,
+      userAgent,
+      mfaGuard,
+      deps.callbacks
+    );
+
+    if (returnedIsError || !activeSession?.user?.id) {
+      return;
+    }
+    if (rawTf) {
+      await clearPending2faAccountByCookie(deps.redis, "manager", rawTf);
+    }
+    if (pendingMfaActivationByCtx.get(ctx.context) !== undefined) {
+      await revokeOtherInstanceSessions({
+        accountId: Number(activeSession.user.id),
+        keepSessionToken: activeSession.session.token,
+        internalAdapter: ctx.context.internalAdapter,
+        customRevokeOtherSessions: deps.callbacks?.revokeOtherSessions,
+      });
+    }
+  };
+
+  const handleManagerGetSessionAfter = async (
+    ctx: Parameters<Parameters<typeof createAuthMiddleware>[0]>[0]
+  ) => {
+    const returned = ctx.context.returned as {
+      user?: {
+        id?: string | number;
+        isActive?: boolean;
+        uuid?: string;
+        sessionVersion?: number | string;
+      };
+    } | null;
+    if (await shouldInvalidateManagerGetSession(returned, deps.callbacks)) {
+      deleteSessionCookie(ctx, true);
+      return ctx.json(null);
+    }
+    return undefined;
+  };
+
+  const handleManagerPostAuthMfaAfter = async (
+    ctx: Parameters<Parameters<typeof createAuthMiddleware>[0]>[0]
+  ) => {
+    const activeSession = ctx.context.newSession ?? ctx.context.session;
+    if (
+      ctx.path === "/two-factor/enable" &&
+      !isAPIError(ctx.context.returned) &&
+      activeSession?.session &&
+      activeSession.user?.id
+    ) {
+      const updatedMgr = (await ctx.context.internalAdapter
+        .findUserById(String(activeSession.user.id))
+        .catch(() => null)) as {
+        mfaEnabled?: boolean;
+        twoFactorEnabled?: boolean;
+      } | null;
+      if (
+        updatedMgr?.mfaEnabled === true ||
+        updatedMgr?.twoFactorEnabled === true
+      ) {
+        await revokeOtherInstanceSessions({
+          accountId: Number(activeSession.user.id),
+          keepSessionToken: activeSession.session.token,
+          internalAdapter: ctx.context.internalAdapter,
+          customRevokeOtherSessions: deps.callbacks?.revokeOtherSessions,
+        });
+      }
+      return undefined;
+    }
+
+    if (ctx.path === "/passkey/verify-authentication") {
+      const mgrFlags = ctx.context.newSession?.user as
+        | { mfaEnabled?: boolean; twoFactorEnabled?: boolean }
+        | undefined;
+      if (
+        mgrFlags?.mfaEnabled === true ||
+        mgrFlags?.twoFactorEnabled === true
+      ) {
+        await issueTwoFactorChallengeAndRevokeSession({
+          ctx,
+          namespace: "manager",
+          redis: deps.redis,
+          rememberMe: false,
+        });
+        return ctx.json({
+          twoFactorRedirect: true,
+          twoFactorMethods: ["totp"],
+        });
+      }
+    }
+    return undefined;
+  };
 
   const cookieAndAuditPlugin: BetterAuthPlugin = {
     id: "mindkid-manager-cookie-sync",
@@ -305,17 +455,9 @@ export function createMindKidManagerAuth(deps: CreateMindKidManagerAuthDeps) {
             const userAgent = extractUa(ctx.headers);
 
             if (ctx.path === "/get-session") {
-              const returned = ctx.context.returned as {
-                user?: { id?: string | number; isActive?: boolean };
-              } | null;
-              if (
-                await shouldInvalidateManagerGetSession(
-                  returned,
-                  deps.callbacks
-                )
-              ) {
-                expireCookie(ctx, ctx.context.authCookies.sessionToken);
-                return ctx.json(null);
+              const invalidated = await handleManagerGetSessionAfter(ctx);
+              if (invalidated !== undefined) {
+                return invalidated;
               }
             }
 
@@ -338,48 +480,36 @@ export function createMindKidManagerAuth(deps: CreateMindKidManagerAuthDeps) {
               ctx.path === "/two-factor/verify-totp" ||
               ctx.path === "/two-factor/verify-backup-code"
             ) {
-              const tfCookie = ctx.context.createAuthCookie("two_factor");
-              const rawTf = readCookie(ctx.headers, tfCookie.name);
-              const pendingMgrId = rawTf
-                ? pending2faManagerByCookie.consume(rawTf)
-                : undefined;
-              await handleManagerTwoFactorAfter(
-                pendingMgrId,
-                ctx.context.newSession?.user?.id,
-                isAPIError(ctx.context.returned),
-                ipAddress,
-                userAgent,
-                mfaGuard,
-                deps.callbacks
-              );
+              await handleManagerVerify2faAfter(ctx, ipAddress, userAgent);
             }
 
-            const newSession = ctx.context.newSession;
-            if (newSession?.session?.expiresAt) {
-              const ttlSeconds = Math.max(
-                1,
-                Math.round(
-                  (new Date(newSession.session.expiresAt).getTime() -
-                    Date.now()) /
-                    1000
-                )
-              );
-              alignSessionCookieMaxAge(
-                ctx.context.responseHeaders,
-                "mindkid-manager",
-                ttlSeconds
-              );
-              alignSessionCookieMaxAge(
-                ctx.responseHeaders,
-                "mindkid-manager",
-                ttlSeconds
-              );
+            const mfaRes = await handleManagerPostAuthMfaAfter(ctx);
+            if (mfaRes !== undefined) {
+              return mfaRes;
             }
+
+            alignNewSessionCookies(ctx, "mindkid-manager");
           }),
         },
       ],
     },
   };
+
+  const verifyManagerReauth = deps.callbacks?.verifySessionReauth
+    ? async (params: {
+        readonly accountId: number;
+        readonly sessionId: string;
+        readonly createdAt: Date;
+        readonly dbReauthAt: Date | null;
+      }) => {
+        await deps.callbacks?.verifySessionReauth?.({
+          managerId: params.accountId,
+          sessionId: params.sessionId,
+          createdAt: params.createdAt,
+          dbReauthAt: params.dbReauthAt,
+        });
+      }
+    : undefined;
 
   return betterAuth({
     appName: "MindKid Admin",
@@ -387,8 +517,18 @@ export function createMindKidManagerAuth(deps: CreateMindKidManagerAuthDeps) {
     basePath: "/api/auth/managers",
     secret: deriveInstanceSecret(deps.rootSecret, "manager"),
     trustedOrigins: [...deps.trustedOrigins],
+    disabledPaths: [
+      "/change-password",
+      "/verify-password",
+      "/update-user",
+      "/change-email",
+      "/delete-user",
+      "/delete-user/callback",
+      "/two-factor/get-totp-uri",
+      "/two-factor/disable",
+    ],
     database: drizzleAdapter(deps.db, {
-      provider: "pg",
+      provider: "sqlite",
       schema: {
         managers: deps.schema.managers,
         managerAccounts: deps.schema.managerAccounts,
@@ -401,6 +541,7 @@ export function createMindKidManagerAuth(deps: CreateMindKidManagerAuthDeps) {
     secondaryStorage,
     advanced: {
       cookiePrefix: "mindkid-manager",
+      ipAddress: { ipAddressHeaders: ["x-real-ip"] },
       database: { generateId: "serial" },
       defaultCookieAttributes: {
         httpOnly: true,
@@ -421,9 +562,9 @@ export function createMindKidManagerAuth(deps: CreateMindKidManagerAuthDeps) {
           input: false,
         },
         role: {
-          type: "string",
+          type: "number",
           required: true,
-          defaultValue: "super_admin",
+          defaultValue: DB_MANAGER_ROLE.CONTENT_REVIEWER,
           input: false,
         },
         isActive: {
@@ -448,9 +589,9 @@ export function createMindKidManagerAuth(deps: CreateMindKidManagerAuthDeps) {
       storeSessionInDatabase: true,
       additionalFields: {
         authMethod: {
-          type: "string",
+          type: "number",
           required: false,
-          defaultValue: "password",
+          defaultValue: DB_AUTH_METHOD.PASSWORD,
           input: false,
         },
         reauthAt: { type: "date", required: false, input: false },
@@ -489,6 +630,7 @@ export function createMindKidManagerAuth(deps: CreateMindKidManagerAuthDeps) {
         rpID: resolvedRpId,
         rpName: "MindKid Admin",
         origin: [...deps.trustedOrigins],
+        authenticatorSelection: { userVerification: "required" },
         schema: { passkey: { modelName: "managerPasskeys" } },
       }),
       cookieAndAuditPlugin,
@@ -505,14 +647,22 @@ export function createMindKidManagerAuth(deps: CreateMindKidManagerAuthDeps) {
             message: "Tài khoản quản trị không cho phép đăng ký công khai.",
           });
         }
-
+        if (
+          path === "/two-factor/get-totp-uri" ||
+          path === "/two-factor/disable"
+        ) {
+          throw new APIError("FORBIDDEN", {
+            code: "FORBIDDEN",
+            message: "Đường dẫn này đã bị vô hiệu hoá cho tài khoản quản trị.",
+          });
+        }
         if (path === "/sign-in/email") {
           return handleManagerSignInBefore(
             (ctx.body ?? {}) as ManagerSignInBody,
             ipAddress,
             userAgent,
             deps.callbacks,
-            pending2faRemember
+            deps.redis
           );
         }
 
@@ -528,18 +678,44 @@ export function createMindKidManagerAuth(deps: CreateMindKidManagerAuthDeps) {
           path === "/two-factor/verify-totp" ||
           path === "/two-factor/verify-backup-code"
         ) {
-          const tfCookie = ctx.context.createAuthCookie("two_factor");
-          await enforcePendingTwoFactorGuard({
+          await handleTwoFactorVerifyBeforeHook({
+            ctx,
+            path,
             namespace: "manager",
-            rawCookieVal: readCookie(ctx.headers, tfCookie.name),
-            signedTf: await ctx.getSignedCookie(
-              tfCookie.name,
-              ctx.context.secret
-            ),
-            findVerificationValue: (id) =>
-              ctx.context.internalAdapter.findVerificationValue(id),
-            pendingAccountByCookie: pending2faManagerByCookie,
+            redis: deps.redis,
             mfaGuard,
+            pendingAuthAccountByCtx: pendingAuth2faManagerByCtx,
+            pendingMfaActivationByCtx,
+          });
+          return;
+        }
+
+        if (path === "/two-factor/generate-backup-codes") {
+          const resolvedSession = await getSessionFromCtx(ctx, {
+            disableCookieCache: true,
+          });
+          await enforceTotpStepUpForSensitiveMfaAction({
+            ctx,
+            resolvedSession,
+            namespace: "manager",
+            rootSecret: deps.rootSecret,
+            freshAgeSeconds: REAUTH_FRESH_AGE_SECONDS,
+            mfaGuard,
+            verifySessionReauth: verifyManagerReauth,
+          });
+          return;
+        }
+
+        if (
+          path === "/passkey/generate-register-options" ||
+          path === "/passkey/verify-registration" ||
+          path === "/passkey/delete-passkey"
+        ) {
+          return await enforcePasskeyMutationBeforeHook({
+            path,
+            ctx,
+            freshAgeSeconds: REAUTH_FRESH_AGE_SECONDS,
+            customVerify: verifyManagerReauth,
           });
         }
       }),
@@ -582,42 +758,59 @@ export function createMindKidManagerAuth(deps: CreateMindKidManagerAuthDeps) {
       session: {
         create: {
           before: async (session, ctx) => {
+            let snapshotMfaEnabled = false;
             if (deps.callbacks?.getManagerStatusById) {
               const getById = deps.callbacks.getManagerStatusById;
               const snapshot = await runBetterAuthCallback(() =>
                 getById(Number(session.userId))
               );
-              if (snapshot && !snapshot.isActive) {
+              if (snapshot === null) {
+                throw new APIError("UNAUTHORIZED", {
+                  code: "UNAUTHENTICATED",
+                  message:
+                    "Tài khoản quản trị không tồn tại hoặc đã bị vô hiệu hoá.",
+                });
+              }
+              if (!snapshot.isActive) {
                 throw new APIError("FORBIDDEN", {
                   code: "ACCOUNT_SUSPENDED",
                   message: "Tài khoản quản trị đang ngừng hoạt động.",
                 });
               }
+              snapshotMfaEnabled = snapshot.mfaEnabled === true;
             }
 
             const now = new Date();
             const pathStr = ctx?.path ?? "";
             const body = (ctx?.body ?? null) as { rememberMe?: boolean } | null;
-            const isRemembered = resolveManagerIsRemembered(
+            const isRemembered = await resolveManagerIsRemembered(
               pathStr,
               String(session.userId),
               body,
               ctx?.headers,
-              pending2faRemember
+              deps.redis
             );
             const ttlSeconds = isRemembered
               ? REMEMBER_MAX_TTL_SECONDS
               : SESSION_DEFAULT_TTL_SECONDS;
             const authMethod = pathStr.includes("passkey")
-              ? "passkey"
-              : "password";
+              ? DB_AUTH_METHOD.PASSKEY
+              : DB_AUTH_METHOD.PASSWORD;
+
+            const reauthAt = await computeSessionReauthAt({
+              pathStr,
+              userId: session.userId,
+              snapshot2faEnabled: snapshotMfaEnabled,
+              ctx,
+              now,
+            });
 
             return {
               data: {
                 ...session,
                 expiresAt: new Date(now.getTime() + ttlSeconds * 1000),
                 authMethod,
-                reauthAt: now,
+                reauthAt,
               },
             };
           },

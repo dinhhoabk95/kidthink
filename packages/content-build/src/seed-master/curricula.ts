@@ -1,10 +1,13 @@
 import { ALL_ROADMAPS, type RoadmapSeed } from "@mindkid/content";
 import type { getOwnerDb } from "@mindkid/db";
 import {
+  ACCESS_TIER_CODEC,
+  CONTENT_ENTITY_TYPE,
   curricula,
   curriculumItems,
   curriculumWeeks,
   gameLevels,
+  PROGRAM_TYPE_CODEC,
 } from "@mindkid/db";
 import { eq, inArray } from "drizzle-orm";
 import type { ContentDemandLedger } from "#src/gates/content-demand";
@@ -46,14 +49,14 @@ async function upsertCurriculumRecord(
     .insert(curricula)
     .values({
       code: cfg.code,
-      programType: cfg.programType,
+      programType: PROGRAM_TYPE_CODEC.toCode(cfg.programType),
       targetAgeMin: cfg.targetAgeMin,
       targetAgeMax: cfg.targetAgeMax,
       durationWeeks: cfg.durationWeeks,
       sessionsPerWeek: cfg.sessionsPerWeek,
       title: cfg.title,
       description: cfg.description,
-      accessTier: cfg.accessTier,
+      accessTier: ACCESS_TIER_CODEC.toCode(cfg.accessTier),
     })
     .onConflictDoNothing()
     .returning({ id: curricula.id });
@@ -130,6 +133,7 @@ export async function writeItemsForCurriculum(
   items: readonly ResolvedCurriculumItem[]
 ): Promise<number> {
   for (const item of items) {
+    const entityType = CONTENT_ENTITY_TYPE.GAME_LEVEL;
     await db
       .insert(curriculumItems)
       .values({
@@ -137,7 +141,7 @@ export async function writeItemsForCurriculum(
         weekNo: item.weekNo,
         sessionNo: item.sessionNo,
         position: item.position,
-        entityType: item.entityType,
+        entityType,
         entityId: item.entityId,
         isRequired: item.isRequired,
       })
@@ -149,7 +153,7 @@ export async function writeItemsForCurriculum(
           curriculumItems.position,
         ],
         set: {
-          entityType: item.entityType,
+          entityType,
           entityId: item.entityId,
           isRequired: item.isRequired,
         },

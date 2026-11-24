@@ -1,16 +1,28 @@
 import { type AuditTx, writeAudit } from "@mindkid/audit";
+import { getAuthRedisClient } from "@mindkid/auth";
+import { invalidateUserEntitlementsCache } from "@mindkid/cache";
 import {
-  childProfiles,
   getOwnerDb,
   hardPurgeChildProfile,
   hardPurgeUser,
-  users,
+  type OwnerDb,
 } from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import { alert } from "@mindkid/queue";
-import { and, eq, inArray, lte } from "drizzle-orm";
 import { readErrorMessage } from "#src/errors";
 import { logJobDone } from "#src/log";
 import type { Consumer, JobContext } from "./types.js";
+
+interface PurgedUserSessionSnapshot {
+  readonly id: number;
+  readonly token: string;
+}
+
+export interface AccountPurgeSweepResult {
+  readonly purgedCount: number;
+  readonly purgedChildren: number;
+  readonly remaining: boolean;
+}
 
 export async function recordPurgeAudit(
   tx: AuditTx,
@@ -75,38 +87,51 @@ export async function recordPurgeAudit(
   });
 }
 
-/**
- * BR-ADL-01..10 & D-GY: tìm mọi tài khoản `deleted` có `purge_at <= now()`,
- * xoá cứng dữ liệu cá nhân, ẩn danh telemetry, giữ hồ sơ theo luật.
- *
- * `BR-ADL-08` / `BR-JOB-05`: fail thì alert ngay và không tự retry — job này
- * khai `maxAttempts: 1` cùng `alertOnFailImmediately` trong định nghĩa job.
- *
- * Trước Task này handler không được nối vào dispatcher, nên mọi job
- * `account:purge` rơi vào nhánh `default` và ném `Unknown job name`.
- */
 /** Trần mỗi lượt chạy: lượt sau sẽ vét tiếp phần còn lại. */
 const PURGE_BATCH_SIZE = 200;
+
+async function readUserSessionSnapshots(
+  db: OwnerDb,
+  userId: number
+): Promise<readonly PurgedUserSessionSnapshot[]> {
+  if (!db.query?.userSessions) {
+    return [];
+  }
+  return await db.query.userSessions.findMany({
+    columns: { id: true, token: true },
+    where: { userId },
+  });
+}
+
+async function revokePurgedUserRuntimeState(
+  userId: number,
+  sessions: readonly PurgedUserSessionSnapshot[]
+): Promise<void> {
+  const authKeys = [
+    `ba:v1:user:active-sessions-${userId}`,
+    ...sessions.flatMap((session) => [
+      `ba:v1:user:${session.token}`,
+      `ba:v1:user:reauth:${session.id}`,
+    ]),
+  ];
+
+  if (authKeys.length > 0) {
+    await getAuthRedisClient().del(...authKeys);
+  }
+  await invalidateUserEntitlementsCache(userId);
+}
 
 /**
  * Hồ sơ trẻ `pending_deletion` / `archived` đã quá `purge_at`. Hồ sơ của tài
  * khoản `deleted` đã được `hardPurgeUser` xoá ở bước 1 theo `users.purge_at`.
  */
 async function purgeDueChildProfiles(
-  db: ReturnType<typeof getOwnerDb>,
+  db: OwnerDb,
   now: Date,
   ctx: JobContext
 ): Promise<{ purged: number; batch: number }> {
-  const due = await db
-    .select({ id: childProfiles.id, uuid: childProfiles.uuid })
-    .from(childProfiles)
-    .where(
-      and(
-        inArray(childProfiles.status, ["pending_deletion", "archived"]),
-        lte(childProfiles.purgeAt, now)
-      )
-    )
-    .limit(PURGE_BATCH_SIZE);
+  const repos = createRepositories(db);
+  const due = await repos.childProfiles.listDueForPurge(now, PURGE_BATCH_SIZE);
 
   let purged = 0;
   for (const child of due) {
@@ -133,37 +158,36 @@ async function purgeDueChildProfiles(
   return { purged, batch: due.length };
 }
 
-export const accountPurge: Consumer<"account:purge"> = async (payload, ctx) => {
+export async function runAccountPurgeSweep(options?: {
+  readonly userId?: number;
+  readonly signal?: AbortSignal;
+  readonly jobId?: string;
+}): Promise<AccountPurgeSweepResult> {
   const db = getOwnerDb();
+  const repos = createRepositories(db);
   const now = new Date();
+  const ctx: JobContext = {
+    jobId: options?.jobId ?? "account:purge:sweep",
+    attempt: 1,
+    signal: options?.signal ?? new AbortController().signal,
+  };
 
-  // Điều kiện đi vào CÂU TRUY VẤN, và có trần. Bản cũ nạp toàn bộ tập đến hạn
-  // rồi mới lọc `payload.userId` trong JS: xoá một tài khoản vẫn quét và dựng
-  // mọi hàng đến hạn, và một tồn đọng lớn thì không thể xử hết trong 900s.
-  const conditions = [eq(users.status, "deleted"), lte(users.purgeAt, now)];
-  if (payload.userId) {
-    conditions.push(eq(users.id, payload.userId));
-  }
-
-  const targets = await db
-    .select({ id: users.id, purgeAt: users.purgeAt })
-    .from(users)
-    .where(and(...conditions))
-    .limit(PURGE_BATCH_SIZE);
+  const targets = await repos.users.listDueForPurge(now, {
+    userId: options?.userId,
+    limit: PURGE_BATCH_SIZE,
+  });
 
   let purgedCount = 0;
   for (const user of targets) {
-    // `runWithTimeout` chỉ abort signal rồi đánh job `failed` — nó Cấm — NEVER
-    // huỷ được promise đang chạy. Consumer nào không đọc signal thì vẫn chạy
-    // tiếp sau khi đã bị tuyên bố thất bại; ở đây nghĩa là tiếp tục xoá cứng dữ
-    // liệu người dùng mà không job nào còn theo dõi.
     if (ctx.signal.aborted) {
       break;
     }
 
     try {
+      const sessions = await readUserSessionSnapshots(db, user.id);
       const result = await hardPurgeUser(db, user.id, now, user.purgeAt ?? now);
       if (result.purged) {
+        await revokePurgedUserRuntimeState(user.id, sessions);
         await recordPurgeAudit(db, {
           entityType: "user",
           entityId: user.id,
@@ -172,10 +196,6 @@ export const accountPurge: Consumer<"account:purge"> = async (payload, ctx) => {
         purgedCount++;
       }
     } catch (error) {
-      // Thông điệp phải là HẰNG: `DeduplicatingAlertAdapter` gộp theo
-      // `severity:message` và Cấm — NEVER dọn cache. Nhét `user.id` vào thông
-      // điệp làm cửa sổ gộp 15 phút vô tác dụng (200 user hỏng = 200 alert) và
-      // để lại 200 khoá vĩnh viễn trong Map của một tiến trình chạy hàng tuần.
       await alert("error", "Account purge job failed", {
         jobId: ctx.jobId,
         userId: user.id,
@@ -185,18 +205,11 @@ export const accountPurge: Consumer<"account:purge"> = async (payload, ctx) => {
     }
   }
 
-  // Bước 2 (UC-019, UC-027 BR-001): hồ sơ trẻ đã quá `purge_at`.
-  const children = payload.userId
+  const children = options?.userId
     ? { purged: 0, batch: 0 }
     : await purgeDueChildProfiles(db, now, ctx);
   const purgedChildren = children.purged;
 
-  logJobDone("account:purge", ctx, {
-    purged: purgedCount,
-    batch: targets.length,
-    purgedChildren,
-  });
-  // `remaining` báo còn tồn đọng để lượt sau vét tiếp.
   return {
     purgedCount,
     purgedChildren,
@@ -204,4 +217,23 @@ export const accountPurge: Consumer<"account:purge"> = async (payload, ctx) => {
       targets.length === PURGE_BATCH_SIZE ||
       children.batch === PURGE_BATCH_SIZE,
   };
+}
+
+/**
+ * BR-ADL-01..10 & D-GY: tìm mọi tài khoản `deleted` có `purge_at <= now()`,
+ * xoá cứng dữ liệu cá nhân, thu hồi phiên AuthStore, ẩn danh telemetry, giữ hồ sơ theo luật.
+ */
+export const accountPurge: Consumer<"account:purge"> = async (payload, ctx) => {
+  const result = await runAccountPurgeSweep({
+    userId: payload.userId,
+    signal: ctx.signal,
+    jobId: ctx.jobId,
+  });
+
+  logJobDone("account:purge", ctx, {
+    purged: result.purgedCount,
+    purgedChildren: result.purgedChildren,
+  });
+
+  return result;
 };

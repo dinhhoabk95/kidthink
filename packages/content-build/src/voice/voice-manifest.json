@@ -1,7 +1,7 @@
 {
   "profile": "teacher-v1",
-  "updated_at": "2026-11-19T15:28:58.489Z",
-  "total_generated": 17,
+  "updated_at": "2026-11-21T01:36:35.097Z",
+  "total_generated": 34,
   "entries": {
     "14f76591f0449d12": {
       "hash": "14f76591f0449d12",
@@ -189,6 +189,193 @@
       "duration_ms": 3585,
       "file_size_bytes": 29301,
       "updated_at": "2026-11-19T15:28:58.444Z"
+    },
+    "0559d75868bb3e6c": {
+      "hash": "0559d75868bb3e6c",
+      "relative_audio_path": "/audio/voice/teacher-v1/05/0559d75868bb3e6c.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Cả nhà quây quần vui vẻ, bé chọn hết món đồ đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3551,
+      "file_size_bytes": 28883,
+      "updated_at": "2026-11-21T01:35:51.331Z"
+    },
+    "1238629146f439d2": {
+      "hash": "1238629146f439d2",
+      "relative_audio_path": "/audio/voice/teacher-v1/12/1238629146f439d2.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Khay gỗ sắc màu mở rồi, bé chọn hết hình đẹp đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3490,
+      "file_size_bytes": 28465,
+      "updated_at": "2026-11-21T01:35:51.332Z"
+    },
+    "2f0d6936385b80af": {
+      "hash": "2f0d6936385b80af",
+      "relative_audio_path": "/audio/voice/teacher-v1/2f/2f0d6936385b80af.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mẹt gỗ bày sẵn, bé chọn đủ hình đúng rồi bấm xong nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3597,
+      "file_size_bytes": 29301,
+      "updated_at": "2026-11-21T01:35:55.137Z"
+    },
+    "1f9bea87d2ccd60b": {
+      "hash": "1f9bea87d2ccd60b",
+      "relative_audio_path": "/audio/voice/teacher-v1/1f/1f9bea87d2ccd60b.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mâm vui ngày hội bày ra, bé chọn hết lộc xuân đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3521,
+      "file_size_bytes": 28674,
+      "updated_at": "2026-11-21T01:35:58.194Z"
+    },
+    "5b41bd8c67935c65": {
+      "hash": "5b41bd8c67935c65",
+      "relative_audio_path": "/audio/voice/teacher-v1/5b/5b41bd8c67935c65.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Đôi mắt tinh anh nhìn kỹ, bé chọn hết hình mẫu đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3482,
+      "file_size_bytes": 28465,
+      "updated_at": "2026-11-21T01:36:02.005Z"
+    },
+    "553cae1a0e77185b": {
+      "hash": "553cae1a0e77185b",
+      "relative_audio_path": "/audio/voice/teacher-v1/55/553cae1a0e77185b.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mẹt tre chợ quê bày sẵn, bé chọn hết món ngon đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3592,
+      "file_size_bytes": 29301,
+      "updated_at": "2026-11-21T01:36:05.142Z"
+    },
+    "6a8829806d09ef4f": {
+      "hash": "6a8829806d09ef4f",
+      "relative_audio_path": "/audio/voice/teacher-v1/6a/6a8829806d09ef4f.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mây trời trong xanh mát rượi, bé gom hết giọt nắng đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3541,
+      "file_size_bytes": 28883,
+      "updated_at": "2026-11-21T01:36:08.067Z"
+    },
+    "826623a6bff98f64": {
+      "hash": "826623a6bff98f64",
+      "relative_audio_path": "/audio/voice/teacher-v1/82/826623a6bff98f64.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Khay gỗ lớp học mở rồi, bé chọn hết hình đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3308,
+      "file_size_bytes": 27002,
+      "updated_at": "2026-11-21T01:36:09.107Z"
+    },
+    "84215d6dc7f7555f": {
+      "hash": "84215d6dc7f7555f",
+      "relative_audio_path": "/audio/voice/teacher-v1/84/84215d6dc7f7555f.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Khay gỗ bếp ấm bày sẵn, bé chọn hết đồ đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3319,
+      "file_size_bytes": 27211,
+      "updated_at": "2026-11-21T01:36:12.935Z"
+    },
+    "9f3978df1dbc11e4": {
+      "hash": "9f3978df1dbc11e4",
+      "relative_audio_path": "/audio/voice/teacher-v1/9f/9f3978df1dbc11e4.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Bé thả lưới bắt cá nhé! Chọn hết cá đúng rồi kéo lưới.",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 4426,
+      "file_size_bytes": 35988,
+      "updated_at": "2026-11-21T01:36:13.956Z"
+    },
+    "a469e52c67afd01c": {
+      "hash": "a469e52c67afd01c",
+      "relative_audio_path": "/audio/voice/teacher-v1/a4/a469e52c67afd01c.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Dạo chơi rừng xanh vui quá, bé tìm hết bạn đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3413,
+      "file_size_bytes": 27838,
+      "updated_at": "2026-11-21T01:36:16.851Z"
+    },
+    "c3bedf64884db87b": {
+      "hash": "c3bedf64884db87b",
+      "relative_audio_path": "/audio/voice/teacher-v1/c3/c3bedf64884db87b.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mẹt mây vườn xuân mở rồi, bé hái hết hoa lá đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3606,
+      "file_size_bytes": 29510,
+      "updated_at": "2026-11-21T01:36:18.895Z"
+    },
+    "ca1277519e556e0d": {
+      "hash": "ca1277519e556e0d",
+      "relative_audio_path": "/audio/voice/teacher-v1/ca/ca1277519e556e0d.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Tàu nhỏ du hành ngân hà, bé gom hết ngôi sao đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3602,
+      "file_size_bytes": 29301,
+      "updated_at": "2026-11-21T01:36:21.359Z"
+    },
+    "d2b603c8258d3213": {
+      "hash": "d2b603c8258d3213",
+      "relative_audio_path": "/audio/voice/teacher-v1/d2/d2b603c8258d3213.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Bến xe nhộn nhịp mở rồi, bé chọn hết chiếc xe đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3515,
+      "file_size_bytes": 28674,
+      "updated_at": "2026-11-21T01:36:22.097Z"
+    },
+    "ea259121e24f08a4": {
+      "hash": "ea259121e24f08a4",
+      "relative_audio_path": "/audio/voice/teacher-v1/ea/ea259121e24f08a4.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Quê hương tươi đẹp rạng ngời, bé chọn hết biểu tượng đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3577,
+      "file_size_bytes": 29092,
+      "updated_at": "2026-11-21T01:36:26.818Z"
+    },
+    "e798dc051a24a708": {
+      "hash": "e798dc051a24a708",
+      "relative_audio_path": "/audio/voice/teacher-v1/e7/e798dc051a24a708.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Hộp đồ nghề quý mở rồi, bé chọn hết dụng cụ đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3575,
+      "file_size_bytes": 29092,
+      "updated_at": "2026-11-21T01:36:27.655Z"
+    },
+    "eae2eed0bb770c53": {
+      "hash": "eae2eed0bb770c53",
+      "relative_audio_path": "/audio/voice/teacher-v1/ea/eae2eed0bb770c53.mp3",
+      "category": "kid_ui",
+      "spoken_script_vi": "Mẹt tre nông trại mở rồi, bé thu hoạch hết món đúng nhé!",
+      "engine_id": "edge-hoaimy-teacher",
+      "speed": 1,
+      "duration_ms": 3542,
+      "file_size_bytes": 28883,
+      "updated_at": "2026-11-21T01:36:35.046Z"
     }
   }
 }

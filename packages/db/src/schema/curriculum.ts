@@ -1,59 +1,50 @@
 import { sql } from "drizzle-orm";
 import {
-  bigint,
-  boolean,
   index,
-  pgEnum,
-  pgTable,
-  smallint,
+  integer,
+  sqliteTable,
   text,
-  timestamp,
   unique,
   uniqueIndex,
-  varchar,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/sqlite-core";
+import {
+  type AccessTier,
+  type ContentEntityType,
+  CURRICULUM_PROGRESS_STATUS,
+  type CurriculumProgressStatus,
+  ENROLLMENT_STATUS,
+  type EnrollmentStatus,
+  PROGRAM_TYPE,
+  type ProgramType,
+} from "#src/constants/learning-enums";
 import { childProfiles } from "./child.ts";
-import { idPk, timestamps } from "./columns.ts";
-import { accessTierEnum } from "./game.ts";
-import { contentEntityTypeEnum } from "./tagging.ts";
+import { idPk, nowTimestampMs, timestampMs, timestamps } from "./columns.ts";
 
-export const programTypeEnum = pgEnum("program_type", ["age_based", "journey"]);
-
-export const enrollmentStatusEnum = pgEnum("curriculum_enrollment_status", [
-  "active",
-  "completed",
-  "paused",
-  "withdrawn",
-  "dropped",
-]);
-
-export const curriculumProgressStatusEnum = pgEnum(
-  "curriculum_progress_status",
-  ["not_started", "in_progress", "completed", "skipped"]
-);
-
-export const curricula = pgTable("curricula", {
+export const curricula = sqliteTable("curricula", {
   id: idPk(),
-  code: varchar("code", { length: 50 }).notNull().unique(),
-  programType: programTypeEnum("program_type").notNull().default("age_based"),
-  targetAgeMin: smallint("target_age_min"),
-  targetAgeMax: smallint("target_age_max"),
-  durationWeeks: smallint("duration_weeks").notNull().default(8),
-  sessionsPerWeek: smallint("sessions_per_week").notNull().default(3),
-  title: varchar("title", { length: 200 }).notNull(),
+  code: text("code").notNull().unique(),
+  programType: integer("program_type")
+    .$type<ProgramType>()
+    .notNull()
+    .default(PROGRAM_TYPE.AGE_BASED),
+  targetAgeMin: integer("target_age_min"),
+  targetAgeMax: integer("target_age_max"),
+  durationWeeks: integer("duration_weeks").notNull().default(8),
+  sessionsPerWeek: integer("sessions_per_week").notNull().default(3),
+  title: text("title").notNull(),
   description: text("description"),
-  accessTier: accessTierEnum("access_tier").notNull(),
+  accessTier: integer("access_tier").$type<AccessTier>().notNull(),
   ...timestamps(),
 });
 
-export const curriculumWeeks = pgTable(
+export const curriculumWeeks = sqliteTable(
   "curriculum_weeks",
   {
     id: idPk(),
-    curriculumId: bigint("curriculum_id", { mode: "number" })
+    curriculumId: integer("curriculum_id")
       .notNull()
       .references(() => curricula.id, { onDelete: "cascade" }),
-    weekNo: smallint("week_no").notNull(),
+    weekNo: integer("week_no").notNull(),
     goal: text("goal").notNull(),
     ...timestamps(),
   },
@@ -65,23 +56,24 @@ export const curriculumWeeks = pgTable(
   ]
 );
 
-export const curriculumItems = pgTable(
+export const curriculumItems = sqliteTable(
   "curriculum_items",
   {
     id: idPk(),
-    curriculumId: bigint("curriculum_id", { mode: "number" })
+    curriculumId: integer("curriculum_id")
       .notNull()
       .references(() => curricula.id, { onDelete: "cascade" }),
-    weekNo: smallint("week_no").notNull(),
-    sessionNo: smallint("session_no").notNull(),
-    position: smallint("position").notNull(),
-    entityType: contentEntityTypeEnum("entity_type").notNull(),
-    entityId: bigint("entity_id", { mode: "number" }).notNull(),
-    isRequired: boolean("is_required").notNull().default(true),
+    weekNo: integer("week_no").notNull(),
+    sessionNo: integer("session_no").notNull(),
+    position: integer("position").notNull(),
+    entityType: integer("entity_type").$type<ContentEntityType>().notNull(),
+    entityId: integer("entity_id").notNull(),
+    isRequired: integer("is_required", { mode: "boolean" })
+      .notNull()
+      .default(true),
     ...timestamps(),
   },
   (table) => [
-    // Cặp đa hình: index, không khoá ngoại (BR-DM-04).
     index("idx_curriculum_items_entity").on(table.entityType, table.entityId),
     unique("curriculum_items_curriculum_week_session_pos_unique").on(
       table.curriculumId,
@@ -92,26 +84,27 @@ export const curriculumItems = pgTable(
   ]
 );
 
-export const curriculumEnrollments = pgTable(
+export const curriculumEnrollments = sqliteTable(
   "curriculum_enrollments",
   {
     id: idPk(),
-    childId: bigint("child_id", { mode: "number" })
+    childId: integer("child_id")
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
-    curriculumId: bigint("curriculum_id", { mode: "number" })
+    curriculumId: integer("curriculum_id")
       .notNull()
       .references(() => curricula.id, { onDelete: "restrict" }),
-    enrolledAt: timestamp("enrolled_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    status: enrollmentStatusEnum("status").notNull().default("active"),
+    enrolledAt: nowTimestampMs("enrolled_at"),
+    status: integer("status")
+      .$type<EnrollmentStatus>()
+      .notNull()
+      .default(ENROLLMENT_STATUS.ACTIVE),
     ...timestamps(),
   },
   (table) => [
     uniqueIndex("idx_curriculum_enrollments_child_active_unique")
       .on(table.childId)
-      .where(sql`${table.status} = 'active'`),
+      .where(sql.raw(`"status" = ${ENROLLMENT_STATUS.ACTIVE}`)),
     index("idx_curriculum_enrollments_child_status").on(
       table.childId,
       table.status
@@ -120,23 +113,24 @@ export const curriculumEnrollments = pgTable(
   ]
 );
 
-export const curriculumItemProgress = pgTable(
+export const curriculumItemProgress = sqliteTable(
   "curriculum_item_progress",
   {
     id: idPk(),
-    enrollmentId: bigint("enrollment_id", { mode: "number" })
+    enrollmentId: integer("enrollment_id")
       .notNull()
       .references(() => curriculumEnrollments.id, { onDelete: "cascade" }),
-    childId: bigint("child_id", { mode: "number" })
+    childId: integer("child_id")
       .notNull()
       .references(() => childProfiles.id, { onDelete: "cascade" }),
-    curriculumItemId: bigint("curriculum_item_id", { mode: "number" })
+    curriculumItemId: integer("curriculum_item_id")
       .notNull()
       .references(() => curriculumItems.id, { onDelete: "cascade" }),
-    status: curriculumProgressStatusEnum("status")
+    status: integer("status")
+      .$type<CurriculumProgressStatus>()
       .notNull()
-      .default("not_started"),
-    completedAt: timestamp("completed_at", { withTimezone: true }),
+      .default(CURRICULUM_PROGRESS_STATUS.NOT_STARTED),
+    completedAt: timestampMs("completed_at"),
     ...timestamps(),
   },
   (table) => [

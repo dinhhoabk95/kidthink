@@ -1,186 +1,43 @@
-import { getCached, setCached } from "@mindkid/cache";
-import { getOwnerDb } from "@mindkid/db";
-import {
-  COMPETENCY_CATALOG,
-  type FaqItem,
-  FEATURED_GUEST_LEVELS,
-  PACKAGE_CATALOG,
-} from "@mindkid/shared";
+import type { FaqItem } from "@mindkid/shared";
 import { defineEventHandler, setHeader } from "h3";
+import { buildHomeShowcasePayload } from "#server/services/catalog-service";
 import {
   countPublishedLevels,
   listPublishedFaqItems,
   type PublishedLevelCounts,
-  roundedLibrarySize,
 } from "#server/services/index.js";
-
-const HOME_CACHE_KEY = "guest:home:data:v1";
-const HOME_CACHE_TTL_SECONDS = 300;
+import {
+  GUEST_SEO_TTL,
+  withGuestSeoCache,
+} from "#server/utils/guest-seo-cache";
 
 interface CachedHomeData {
   counts: PublishedLevelCounts;
   faqItems: FaqItem[];
 }
 
-async function resolveHomeData(): Promise<CachedHomeData> {
-  try {
-    const cached = await getCached<CachedHomeData>(HOME_CACHE_KEY);
-    if (cached?.counts && Array.isArray(cached.faqItems)) {
-      return cached;
-    }
-  } catch {
-    // Valkey unavailable — fallback cleanly to DB
-  }
-
-  const db = getOwnerDb();
-  const [counts, faqItems] = await Promise.all([
-    countPublishedLevels(db),
-    listPublishedFaqItems(db),
-  ]);
-  const data: CachedHomeData = { counts, faqItems };
-
-  try {
-    await setCached(HOME_CACHE_KEY, data, HOME_CACHE_TTL_SECONDS);
-  } catch {
-    // Non-blocking cache write
-  }
-
-  return data;
+function resolveHomeData(): Promise<CachedHomeData> {
+  return withGuestSeoCache<CachedHomeData>({
+    namespace: "home",
+    key: "data",
+    ttlSeconds: GUEST_SEO_TTL.SHORT,
+    fetcher: async () => {
+      const [counts, faqItems] = await Promise.all([
+        countPublishedLevels(),
+        listPublishedFaqItems(),
+      ]);
+      return { counts, faqItems };
+    },
+  });
 }
 
-/** Thứ tự ba lớp mầm non — trùng với band tuổi của `game_levels`. */
-const PROGRAM_BANDS = [
-  {
-    age_band: "3-4",
-    title: "Lớp Mầm (3–4 tuổi)",
-    focus:
-      "Làm quen số lượng 1–5, nhận biết hình phẳng cơ bản, cảm nhận không gian và phân loại đồ vật thân quen.",
-  },
-  {
-    age_band: "4-5",
-    title: "Lớp Chồi (4–5 tuổi)",
-    focus:
-      "Đếm và so sánh lượng đến 10, chuỗi quy luật 2–3 yếu tố, hình khối không gian, đo lường ước lượng.",
-  },
-  {
-    age_band: "5-6",
-    title: "Lớp Lá (5–6 tuổi)",
-    focus:
-      "Tách gộp số trong phạm vi 10, chuỗi logic đa thuộc tính, tư duy không gian xoay chiều, tiền đề vào lớp 1.",
-  },
-] as const;
-
-/** Gói Tiêu chuẩn mở tới `standard`; `premium` là phần còn lại. */
-const STANDARD_TIERS = ["free", "login", "standard"];
-
 export default defineEventHandler(async (event) => {
-  // Cache-Control header public 300s
   setHeader(
     event,
     "Cache-Control",
     "public, max-age=300, stale-while-revalidate=600"
   );
 
-  /**
-   * `BR-LND-09` — mọi số lượng nội dung trên trang chủ đến từ DB.
-   *
-   * Ba số cứng 24 · 48 · 48 ở đây từng lệch thật (60 · 84 · 95) và người lớn
-   * bấm sang danh mục là thấy ngay.
-   */
-  const { counts, faqItems } = await resolveHomeData();
-  const standardCount = STANDARD_TIERS.reduce(
-    (sum, tier) => sum + (counts.by_access_tier[tier] ?? 0),
-    0
-  );
-  const librarySize = roundedLibrarySize(counts.total);
-
-  const programs = PROGRAM_BANDS.map((band) => ({
-    ...band,
-    levels_count: counts.by_age_band[band.age_band] ?? 0,
-  }));
-
-  const standardPkg = PACKAGE_CATALOG["PKG-standard"];
-  const premiumPkg = PACKAGE_CATALOG["PKG-premium"];
-
-  const packages = [
-    {
-      sku: "standard",
-      name: standardPkg?.name || "Gói Tiêu chuẩn",
-      price_vnd: standardPkg?.offers[0]?.price_vnd ?? 0,
-      duration_months: 12,
-      description:
-        standardPkg?.description ||
-        "Dành cho người dùng theo dõi tiến độ của 3 trẻ",
-      features: [
-        `Toàn bộ ${standardCount} trò chơi rèn luyện 6 năng lực tư duy`,
-        "Lộ trình học thích ứng theo độ tuổi",
-        "Báo cáo tiến độ chơi cơ bản hằng tuần",
-        "Tối đa 3 hồ sơ bé trên cùng tài khoản",
-      ],
-      cta_text: "Đăng ký Gói Tiêu chuẩn",
-    },
-    {
-      sku: "premium",
-      name: premiumPkg?.name || "Gói Premium",
-      price_vnd: premiumPkg?.offers[0]?.price_vnd ?? 0,
-      duration_months: 12,
-      description:
-        premiumPkg?.description ||
-        "Mở khoá toàn bộ game, lộ trình nâng cao và tối đa 5 trẻ",
-      features: [
-        `Toàn bộ ${counts.total} trò chơi nâng cao và bài học mở rộng`,
-        "Thuật toán thích ứng ZPD cá nhân hoá từng kỹ năng",
-        "Phân tích chuyên sâu 6 năng lực tư duy cho người lớn",
-        "Hỗ trợ ưu tiên và cập nhật liên tục trò chơi mới",
-      ],
-      cta_text: "Đăng ký Gói Premium",
-    },
-  ];
-
-  return {
-    hero: {
-      title: "Phát triển tư duy cho trẻ 3–6 tuổi qua trò chơi tương tác",
-      subtitle: `MindKid giúp bé rèn luyện 6 năng lực tư duy nền tảng qua ${librarySize} trò chơi kiến tạo sư phạm trực quan.`,
-      cta_primary: {
-        text: "Cho bé chơi thử ngay",
-        url: "/games/GL-C1-CNT-CARD-0001",
-      },
-      cta_secondary: {
-        text: "Khám phá 6 năng lực",
-        url: "/#competencies",
-      },
-    },
-    competencies: COMPETENCY_CATALOG.map((entry) => ({
-      code: entry.code,
-      name: entry.name,
-      emoji: entry.emoji,
-      description: entry.tagline,
-    })),
-    library_size: librarySize,
-    total_levels: counts.total,
-    how_it_works: [
-      {
-        step: 1,
-        title: "Chọn hồ sơ cho bé",
-        description:
-          "Tạo hồ sơ với tên gọi thân mật và độ tuổi (3–6 tuổi), không cần thông tin cá nhân nhạy cảm.",
-      },
-      {
-        step: 2,
-        title: "Bé chơi vui và tương tác",
-        description:
-          "Bé tự chọn trò chơi hoặc theo lộ trình thích ứng có hướng dẫn bằng giọng thuyết minh tiếng Việt chuẩn.",
-      },
-      {
-        step: 3,
-        title: "Người lớn theo dõi tiến bộ",
-        description:
-          "Xem báo cáo trực quan về mức độ thuần thục của bé ở từng năng lực mà không có điểm số áp lực.",
-      },
-    ],
-    featured_levels: FEATURED_GUEST_LEVELS,
-    programs,
-    packages,
-    faq: faqItems.slice(0, 6),
-  };
+  const data = await resolveHomeData();
+  return buildHomeShowcasePayload(data);
 });

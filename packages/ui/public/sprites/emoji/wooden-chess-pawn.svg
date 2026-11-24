@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Quân cờ vua gỗ</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="cpwWood" r="70%"><stop offset="0%" stop-color="#fde68a" /><stop offset="55%" stop-color="#d97706" /><stop offset="100%" stop-color="#92400e" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#451a03" opacity="0.22" rx="30" ry="5" />
+    <circle cx="60" cy="30" fill="url(#cpwWood)" r="13" stroke="#451a03" stroke-width="3.8" />
+    <rect fill="url(#cpwWood)" height="8" rx="4" stroke="#451a03" stroke-width="3.4" width="28" x="46" y="43" />
+    <path d="M50 51H70L78 88H42Z" fill="url(#cpwWood)" stroke="#451a03" stroke-linejoin="round" stroke-width="3.8" />
+    <rect fill="url(#cpwWood)" height="12" rx="6" stroke="#451a03" stroke-width="3.8" width="52" x="34" y="88" />
+</svg>

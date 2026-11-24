@@ -1,6 +1,11 @@
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Socket } from "node:net";
-import { getOwnerDb, levelDailyStats, managers } from "@mindkid/db";
+import {
+  getOwnerDb,
+  levelDailyStats,
+  MANAGER_ROLE,
+  managers,
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { createEvent, type H3Event } from "h3";
 import { describe, expect, it } from "vitest";
@@ -49,7 +54,7 @@ describe("Task 7 — GET /api/managers/analytics/levels (BR-TLM-01, BR-PRF-06)",
         email,
         passwordHash: "scrypt$mockhash",
         displayName: "Analytics Manager",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
       })
       .returning();
 

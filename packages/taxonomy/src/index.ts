@@ -17,12 +17,50 @@ import type {
   StrandCode,
   StrandTier,
   ThinkingProcess,
-} from "@mindkid/shared";
+} from "@mindkid/shared/client";
 import {
   COMPETENCIES as INTERNAL_COMPETENCIES,
   STRANDS as INTERNAL_STRANDS,
 } from "./types.js";
 
+export {
+  ageYearsToKogumaBand,
+  computeKogumaPillarDistribution,
+  getKogumaDomainByCode,
+  getKogumaSiblingTracksForBand,
+  getKogumaUnit,
+  getKogumaUnitByCode,
+  getKogumaUnitByLevelOrSkillCode,
+  getKogumaUnitBySkillCode,
+  getKogumaUnitSchedule,
+  getKogumaUnitsForBand,
+  getKogumaUnitsForMoetTheme,
+  getKogumaUnitsForPillar,
+  getMoetThemeById,
+  getMoetThemeForWeek,
+  getPublicMoetThemesForTrack,
+  inferKogumaMetaFromTitleOrCode,
+  isKogumaAgeBand,
+  isKogumaProgramCode,
+  KOGUMA_100_UNITS,
+  normalizeCurriculumRoadmapCode,
+  parseKogumaProgramMeta,
+  resolveKogumaUnitSummaryForItem,
+  toKogumaUnitSummary,
+  toPublicMoetTheme,
+} from "./koguma-catalog.js";
+export type * from "./koguma-schedules.js";
+export { KOGUMA_UNIT_SCHEDULES } from "./koguma-schedules.js";
+export type * from "./koguma-types.js";
+export {
+  hydrateKogumaUnit,
+  KOGUMA_DOMAINS,
+  KOGUMA_PILLARS,
+  MOET_PRESCHOOL_THEMES,
+} from "./koguma-types.js";
+export { KOGUMA_CHOI_UNITS } from "./koguma-units-choi.js";
+export { KOGUMA_LA_UNITS } from "./koguma-units-la.js";
+export { KOGUMA_MAM_UNITS } from "./koguma-units-mam.js";
 export type * from "./types.js";
 export { COMPETENCIES, STRANDS } from "./types.js";
 

@@ -1,76 +1,55 @@
 import { sql } from "drizzle-orm";
 import {
-  bigint,
-  boolean,
-  customType,
   index,
   integer,
-  pgEnum,
-  pgTable,
+  sqliteTable,
   text,
-  timestamp,
   unique,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
-import { idPk, insertOnlyTimestamps, timestamps } from "./columns.ts";
+} from "drizzle-orm/sqlite-core";
+import {
+  AUTH_METHOD,
+  type AuthMethod,
+  CONSENT_ACTION,
+  type ConsentAction,
+  type ConsentType,
+  type ManagerRole,
+  MFA_RECOVERY_STATUS,
+  type MfaRecoveryStatus,
+  USER_STATUS,
+  type UserStatus,
+} from "#src/constants/identity-enums";
+import {
+  citext,
+  idPk,
+  insertOnlyTimestamps,
+  timestampMs,
+  timestamps,
+  uuidCol,
+} from "./columns.ts";
 
-export const citext = customType<{ data: string }>({
-  dataType() {
-    return "citext";
-  },
-});
-
-export const userStatusEnum = pgEnum("user_status", [
-  "pending_verification",
-  "active",
-  "suspended",
-  "deleted",
-]);
-
-export const managerRoleEnum = pgEnum("manager_role", ["super_admin"]);
-
-export const accountTypeEnum = pgEnum("account_type", ["user", "manager"]);
-
-export const authMethodEnum = pgEnum("auth_method", ["password", "social"]);
-
-export const verificationPurposeEnum = pgEnum("verification_purpose", [
-  "email_verify",
-  "password_reset",
-]);
-
-export const socialProviderEnum = pgEnum("social_provider", [
-  "google",
-  "facebook",
-]);
-
-export const consentTypeEnum = pgEnum("consent_type", [
-  "terms",
-  "privacy",
-  "child_data",
-]);
-
-export const consentActionEnum = pgEnum("consent_action", [
-  "accepted",
-  "withdrawn",
-]);
-
-export const users = pgTable(
+export const users = sqliteTable(
   "users",
   {
     id: idPk(),
-    uuid: uuid("uuid").defaultRandom().notNull().unique(),
+    uuid: uuidCol("uuid").unique(),
     email: citext("email").notNull().unique(),
     passwordHash: text("password_hash"),
-    displayName: varchar("display_name", { length: 60 }).notNull(),
-    emailVerified: boolean("email_verified").notNull().default(false),
+    displayName: text("display_name").notNull(),
+    emailVerified: integer("email_verified", { mode: "boolean" })
+      .notNull()
+      .default(false),
     image: text("image"),
-    twoFactorEnabled: boolean("two_factor_enabled").notNull().default(false),
-    status: userStatusEnum("status").notNull().default("pending_verification"),
-    emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
+    twoFactorEnabled: integer("two_factor_enabled", { mode: "boolean" })
+      .notNull()
+      .default(false),
+    status: integer("status")
+      .$type<UserStatus>()
+      .notNull()
+      .default(USER_STATUS.PENDING_VERIFICATION),
+    emailVerifiedAt: timestampMs("email_verified_at"),
     sessionVersion: integer("session_version").notNull().default(0),
     suspendedReason: text("suspended_reason"),
-    purgeAt: timestamp("purge_at", { withTimezone: true }),
+    purgeAt: timestampMs("purge_at"),
     ...timestamps(),
   },
   (table) => [
@@ -80,43 +59,45 @@ export const users = pgTable(
   ]
 );
 
-export const managers = pgTable("managers", {
+export const managers = sqliteTable("managers", {
   id: idPk(),
-  uuid: uuid("uuid").defaultRandom().notNull().unique(),
+  uuid: uuidCol("uuid").unique(),
   email: citext("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
-  displayName: varchar("display_name", { length: 60 }).notNull(),
-  emailVerified: boolean("email_verified").notNull().default(true),
+  displayName: text("display_name").notNull(),
+  emailVerified: integer("email_verified", { mode: "boolean" })
+    .notNull()
+    .default(true),
   image: text("image"),
-  role: managerRoleEnum("role").notNull(),
-  mfaEnabled: boolean("mfa_enabled").notNull().default(false),
+  role: integer("role").$type<ManagerRole>().notNull(),
+  mfaEnabled: integer("mfa_enabled", { mode: "boolean" })
+    .notNull()
+    .default(false),
   sessionVersion: integer("session_version").notNull().default(0),
-  isActive: boolean("is_active").notNull().default(true),
+  isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
   ...timestamps(),
 });
 
-export const userAccounts = pgTable(
+export const userAccounts = sqliteTable(
   "user_accounts",
   {
     id: idPk(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
-    userId: bigint("user_id", { mode: "number" })
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     accessToken: text("access_token"),
     refreshToken: text("refresh_token"),
     idToken: text("id_token"),
-    accessTokenExpiresAt: timestamp("access_token_expires_at", {
-      withTimezone: true,
-    }),
-    refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
-      withTimezone: true,
-    }),
+    accessTokenExpiresAt: timestampMs("access_token_expires_at"),
+    refreshTokenExpiresAt: timestampMs("refresh_token_expires_at"),
     scope: text("scope"),
     password: text("password_hash"),
     emailAtProvider: citext("email_at_provider"),
-    emailVerifiedAtProvider: boolean("email_verified_at_provider")
+    emailVerifiedAtProvider: integer("email_verified_at_provider", {
+      mode: "boolean",
+    })
       .notNull()
       .default(false),
     ...timestamps(),
@@ -134,48 +115,51 @@ export const userAccounts = pgTable(
   ]
 );
 
-export const userSessions = pgTable(
+export const userSessions = sqliteTable(
   "user_sessions",
   {
     id: idPk(),
-    userId: bigint("user_id", { mode: "number" })
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     token: text("token").notNull().unique(),
-    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    expiresAt: timestampMs("expires_at").notNull(),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
-    authMethod: text("auth_method").notNull().default("password"),
-    reauthAt: timestamp("reauth_at", { withTimezone: true }),
+    authMethod: integer("auth_method")
+      .$type<AuthMethod>()
+      .notNull()
+      .default(AUTH_METHOD.PASSWORD),
+    reauthAt: timestampMs("reauth_at"),
     ...timestamps(),
   },
   (table) => [index("idx_user_sessions_user_id").on(table.userId)]
 );
 
-export const userVerifications = pgTable(
+export const userVerifications = sqliteTable(
   "user_verifications",
   {
     id: idPk(),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
-    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    expiresAt: timestampMs("expires_at").notNull(),
     ...timestamps(),
   },
   (table) => [index("idx_user_verifications_identifier").on(table.identifier)]
 );
 
-export const userTwoFactors = pgTable(
+export const userTwoFactors = sqliteTable(
   "user_two_factors",
   {
     id: idPk(),
-    userId: bigint("user_id", { mode: "number" })
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     secret: text("secret").notNull(),
     backupCodes: text("backup_codes").notNull(),
-    verified: boolean("verified").default(true),
+    verified: integer("verified", { mode: "boolean" }).default(true),
     failedVerificationCount: integer("failed_verification_count").default(0),
-    lockedUntil: timestamp("locked_until", { withTimezone: true }),
+    lockedUntil: timestampMs("locked_until"),
     ...timestamps(),
   },
   (table) => [
@@ -184,19 +168,21 @@ export const userTwoFactors = pgTable(
   ]
 );
 
-export const userPasskeys = pgTable(
+export const userPasskeys = sqliteTable(
   "user_passkeys",
   {
     id: idPk(),
     name: text("name"),
     publicKey: text("public_key").notNull(),
-    userId: bigint("user_id", { mode: "number" })
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     credentialID: text("credential_id").notNull().unique(),
     counter: integer("counter").notNull().default(0),
     deviceType: text("device_type").notNull(),
-    backedUp: boolean("backed_up").notNull().default(false),
+    backedUp: integer("backed_up", { mode: "boolean" })
+      .notNull()
+      .default(false),
     transports: text("transports"),
     aaguid: text("aaguid"),
     ...timestamps(),
@@ -204,24 +190,20 @@ export const userPasskeys = pgTable(
   (table) => [index("idx_user_passkeys_user_id").on(table.userId)]
 );
 
-export const managerAccounts = pgTable(
+export const managerAccounts = sqliteTable(
   "manager_accounts",
   {
     id: idPk(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
-    userId: bigint("manager_id", { mode: "number" })
+    userId: integer("manager_id")
       .notNull()
       .references(() => managers.id, { onDelete: "cascade" }),
     accessToken: text("access_token"),
     refreshToken: text("refresh_token"),
     idToken: text("id_token"),
-    accessTokenExpiresAt: timestamp("access_token_expires_at", {
-      withTimezone: true,
-    }),
-    refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
-      withTimezone: true,
-    }),
+    accessTokenExpiresAt: timestampMs("access_token_expires_at"),
+    refreshTokenExpiresAt: timestampMs("refresh_token_expires_at"),
     scope: text("scope"),
     password: text("password_hash"),
     ...timestamps(),
@@ -239,31 +221,34 @@ export const managerAccounts = pgTable(
   ]
 );
 
-export const managerSessions = pgTable(
+export const managerSessions = sqliteTable(
   "manager_sessions",
   {
     id: idPk(),
-    userId: bigint("manager_id", { mode: "number" })
+    userId: integer("manager_id")
       .notNull()
       .references(() => managers.id, { onDelete: "cascade" }),
     token: text("token").notNull().unique(),
-    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    expiresAt: timestampMs("expires_at").notNull(),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
-    authMethod: text("auth_method").notNull().default("password"),
-    reauthAt: timestamp("reauth_at", { withTimezone: true }),
+    authMethod: integer("auth_method")
+      .$type<AuthMethod>()
+      .notNull()
+      .default(AUTH_METHOD.PASSWORD),
+    reauthAt: timestampMs("reauth_at"),
     ...timestamps(),
   },
   (table) => [index("idx_manager_sessions_manager_id").on(table.userId)]
 );
 
-export const managerVerifications = pgTable(
+export const managerVerifications = sqliteTable(
   "manager_verifications",
   {
     id: idPk(),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
-    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    expiresAt: timestampMs("expires_at").notNull(),
     ...timestamps(),
   },
   (table) => [
@@ -271,18 +256,18 @@ export const managerVerifications = pgTable(
   ]
 );
 
-export const managerTwoFactors = pgTable(
+export const managerTwoFactors = sqliteTable(
   "manager_two_factors",
   {
     id: idPk(),
-    userId: bigint("manager_id", { mode: "number" })
+    userId: integer("manager_id")
       .notNull()
       .references(() => managers.id, { onDelete: "cascade" }),
     secret: text("secret").notNull(),
     backupCodes: text("backup_codes").notNull(),
-    verified: boolean("verified").default(true),
+    verified: integer("verified", { mode: "boolean" }).default(true),
     failedVerificationCount: integer("failed_verification_count").default(0),
-    lockedUntil: timestamp("locked_until", { withTimezone: true }),
+    lockedUntil: timestampMs("locked_until"),
     ...timestamps(),
   },
   (table) => [
@@ -291,19 +276,21 @@ export const managerTwoFactors = pgTable(
   ]
 );
 
-export const managerPasskeys = pgTable(
+export const managerPasskeys = sqliteTable(
   "manager_passkeys",
   {
     id: idPk(),
     name: text("name"),
     publicKey: text("public_key").notNull(),
-    userId: bigint("manager_id", { mode: "number" })
+    userId: integer("manager_id")
       .notNull()
       .references(() => managers.id, { onDelete: "cascade" }),
     credentialID: text("credential_id").notNull().unique(),
     counter: integer("counter").notNull().default(0),
     deviceType: text("device_type").notNull(),
-    backedUp: boolean("backed_up").notNull().default(false),
+    backedUp: integer("backed_up", { mode: "boolean" })
+      .notNull()
+      .default(false),
     transports: text("transports"),
     aaguid: text("aaguid"),
     ...timestamps(),
@@ -311,15 +298,18 @@ export const managerPasskeys = pgTable(
   (table) => [index("idx_manager_passkeys_manager_id").on(table.userId)]
 );
 
-export const consentLogs = pgTable(
+export const consentLogs = sqliteTable(
   "consent_logs",
   {
     id: idPk(),
-    userId: bigint("user_id", { mode: "number" })
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
-    consentType: consentTypeEnum("consent_type").notNull(),
-    action: consentActionEnum("action").notNull().default("accepted"),
+    consentType: integer("consent_type").$type<ConsentType>().notNull(),
+    action: integer("action")
+      .$type<ConsentAction>()
+      .notNull()
+      .default(CONSENT_ACTION.ACCEPTED),
     ipAddress: text("ip_address").notNull(),
     userAgent: text("user_agent").notNull(),
     ...insertOnlyTimestamps(),
@@ -334,49 +324,39 @@ export const consentLogs = pgTable(
   ]
 );
 
-export const consentRequirements = pgTable("consent_requirements", {
-  consentType: consentTypeEnum("consent_type").primaryKey(),
-  reconsentRequiredAt: timestamp("reconsent_required_at", {
-    withTimezone: true,
-  }),
-  notice: varchar("notice", { length: 500 }),
+export const consentRequirements = sqliteTable("consent_requirements", {
+  consentType: integer("consent_type").$type<ConsentType>().primaryKey(),
+  reconsentRequiredAt: timestampMs("reconsent_required_at"),
+  notice: text("notice"),
   ...timestamps(),
 });
 
-export const mfaRecoveryStatusEnum = pgEnum("mfa_recovery_status", [
-  "pending_verification",
-  "waiting",
-  "completed",
-  "cancelled",
-  "expired",
-]);
-
-export const mfaRecoveryRequests = pgTable(
+export const mfaRecoveryRequests = sqliteTable(
   "mfa_recovery_requests",
   {
     id: idPk(),
-    uuid: uuid("uuid").defaultRandom().notNull().unique(),
-    userId: bigint("user_id", { mode: "number" })
+    uuid: uuidCol("uuid").unique(),
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    status: mfaRecoveryStatusEnum("status")
+    status: integer("status")
+      .$type<MfaRecoveryStatus>()
       .notNull()
-      .default("pending_verification"),
-    requestedByManagerId: bigint("requested_by_manager_id", { mode: "number" })
+      .default(MFA_RECOVERY_STATUS.PENDING_VERIFICATION),
+    requestedByManagerId: integer("requested_by_manager_id")
       .notNull()
       .references(() => managers.id, { onDelete: "restrict" }),
     reason: text("reason").notNull(),
     verificationTokenHash: text("verification_token_hash"),
-    verificationTokenExpiresAt: timestamp("verification_token_expires_at", {
-      withTimezone: true,
-    }),
-    emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
-    eligibleAt: timestamp("eligible_at", { withTimezone: true }).notNull(),
-    completedAt: timestamp("completed_at", { withTimezone: true }),
-    completedByManagerId: bigint("completed_by_manager_id", {
-      mode: "number",
-    }).references(() => managers.id, { onDelete: "set null" }),
-    cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
+    verificationTokenExpiresAt: timestampMs("verification_token_expires_at"),
+    emailVerifiedAt: timestampMs("email_verified_at"),
+    eligibleAt: timestampMs("eligible_at").notNull(),
+    completedAt: timestampMs("completed_at"),
+    completedByManagerId: integer("completed_by_manager_id").references(
+      () => managers.id,
+      { onDelete: "set null" }
+    ),
+    cancelledAt: timestampMs("cancelled_at"),
     ...timestamps(),
   },
   (table) => [

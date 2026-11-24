@@ -75,7 +75,7 @@ tự thoát không nổi.
 
 | `action` | Màn dựng gì | Trẻ thao tác | Đúng thì | Sai thì |
 |---|---|---|---|---|
-| `present` | **Một** chất liệu giữa màn. `glyph` và `word` hiện mặt chữ; `word` đọc chậm từng `syllables` | Chạm bất kỳ đâu | Sang step kế | Không có nhánh sai — `BR-CIR-04` |
+| `present` | Chất liệu mục tiêu trên trang Sách Giấy Dó (đơn lẻ ở `single_card` hoặc trong ngữ cảnh CPA của `scene_board`). `glyph` và `word` hiện mặt chữ; `word` đọc chậm từng `syllables` và tô sáng tuần tự hộp tiếng | Chạm vào chất liệu/giáo cụ để nghe lại hoặc chạm khám phá đếm một–một (gảy nốt ngũ cung, tách nhóm theo `interaction_hint`); chạm nút Tiếp tục để đi tiếp | Chạm giáo cụ: nảy đàn hồi + phát tiếng tại chỗ; chạm nút Tiếp tục: sang step kế | Không có nhánh sai — `BR-CIR-04`, `BR-E000-14` |
 | `echo` | **Một** chất liệu giữa màn, nhịp sóng âm chạy trong lúc phát mẫu rồi dừng. Hiện nút "Bé nói theo" và nút nghe lại | Nói theo thành tiếng, rồi chạm nút đi tiếp. Nghe lại được tối đa `repeat_count` lần | Sang step kế | Không có nhánh sai — máy Cấm — **NEVER** nghe, `BR-CIR-23` |
 | `recognise` | Target cùng `distractors`, xáo vị trí | Chạm chất liệu đúng | Âm mừng ngắn, sang step kế | Chạy lại `present` của **chính target** rồi hỏi lại step này |
 | `link` | Target một bên, `pair_with` cùng 1–2 mồi nhử bên kia | Kéo hoặc chạm nối hai bên | Nối sáng lên, sang step kế | Như `recognise` — nhắc lại rồi hỏi lại |
@@ -107,7 +107,7 @@ tự thoát không nổi.
 | `BR-CIR-19` (giới thiệu phải nghe được) | Mỗi `present` BẮT BUỘC phát tiếng **trước khi** nhận chạm: `audio_path` của chất liệu nếu có, không thì bộ đọc `vi-VN` đọc `label`. Cấm — **NEVER** chỉ vẽ lời dẫn ra chữ | Đo 2026-09-05: `narration_line` và `prompt_line` chỉ được vẽ bằng `drawPromptText`, không đường mã nào gọi bộ đọc từ trong session. Bài dạy bằng kênh tai đang câm |
 | `BR-CIR-20` (`tts_used` là kết quả thật) | Trường `tts_used` trong payload event BẮT BUỘC là kết quả trả về của lần phát. Cấm — **NEVER** là hằng số | Đo 2026-09-05: `session.ts` ghi cứng `tts_used: true` trong `intro_item_presented` dù session không hề phát tiếng. Số liệu phủ audio đọc từ đúng trường này |
 | `BR-CIR-21` (tên event đã đăng ký) | Mọi tên event runner phát BẮT BUỘC có trong danh mục event chung **và** trong danh sách `events` của khuôn | Đo 2026-09-05: session phát bốn tên không có trong danh mục; tầng nhận ném cả lô, nên bước đóng phiên không chạy và mọi lượt làm quen treo ở `in_progress` |
-| `BR-CIR-04` (`present` không có đáp án) | `present` Cấm — **NEVER** có đáp án đúng/sai | Đây là định nghĩa của bước giới thiệu. Biến nó thành câu hỏi là bỏ mất bước dạy và chỉ còn bước kiểm — đúng cái lỗi của 36 engine kia |
+| `BR-CIR-04` (`present` không có đáp án) | `present` Cấm — **NEVER** có đáp án đúng/sai và Cấm — **NEVER** tự đẩy sang bước kế khi trẻ chạm vào giáo cụ để ngắm hoặc đếm thử (`BR-E000-14` ở [`engines/GT-000.md`](../01-platform/engines/GT-000.md) — luật điều khiển lỗi và tiến bước của `GT-000`). Chạm vào chất liệu ở `present` phát lại nhãn hoặc nốt ngũ cung đếm một–một tại chỗ; quyền sang bước kế nằm ở nút Tiếp tục | Đây là định nghĩa của bước giới thiệu. Biến nó thành câu hỏi là bỏ mất bước dạy, còn chạm vào thẻ mà nhảy bước ngay làm trẻ 3 tuổi mất cơ hội nghe lại và chạm đếm khám phá |
 | `BR-CIR-05` (sai thì nhắc lại chính nó) | Sai ở `recognise` hoặc `link` dẫn tới **chạy lại `present` của chính target**, rồi hỏi lại **chính step đó** | Trẻ sai nghĩa là chưa nghe rõ hoặc chưa nhớ. Thứ nó cần là nghe lại đúng thứ đó, không phải một câu hỏi khác |
 | `BR-CIR-06` (Cấm âm báo sai) | Cấm — **NEVER** âm buzzer, rung, màu đỏ, hay mặt buồn | `BR-SCF-08` và `BR-CIM-09`. Đây là lần đầu trẻ gặp khái niệm |
 | `BR-CIR-07` (`recall` không chặn) | Trả lời sai ở `recall` **không** dừng bài và **không** làm bài phải chạy lại | `recall` là phép đo, không phải cửa. Điều kiện của cổng là **đã đi hết**, không phải **đã đúng** — `D-206-04` |
@@ -241,10 +241,13 @@ Scenario: BR-CIR-22 — nút đi tiếp của echo không bị khoá theo đồn
   When trẻ chạm nút đi tiếp ngay lập tức
   Then runner sang step kế
 
-Scenario: BR-CIR-04 — present không có đáp án sai
-  Given trẻ chạm vào chỗ bất kỳ ở một step present
-  Then bài sang step kế
+Scenario: BR-CIR-04 — present cho phép chạm khám phá không nhánh sai và đi tiếp bằng nút Tiếp tục
+  Given trẻ đang ở một step present trên trang sách làm quen
+  When trẻ chạm vào chất liệu hoặc giáo cụ đang giới thiệu
+  Then chất liệu phát lại tiếng hoặc nốt đếm khám phá tại chỗ mà không đổi sang step kế
   And không phản hồi nào mang nghĩa đúng hoặc sai
+  When trẻ chạm nút Tiếp tục
+  Then bài sang step kế
 
 Scenario: BR-CIR-05 — sai ở recognise thì được nghe lại chính chất liệu đó
   Given step recognise đang hỏi chữ "m"

@@ -259,5 +259,23 @@ export const C2_ROT_04_SEED: SkillSeed = {
       difficulty: 1,
       theme: "farm",
     },
+    {
+      code: "GL-C2-ROT-INTRO-6002",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 3,
+      theme: "ocean",
+      rounds: 3,
+      sequence_no: 61,
+    },
+    {
+      code: "GL-C2-ROT-CHO-6004",
+      template: "GT-011",
+      band: "5-6",
+      difficulty: 4,
+      theme: "vehicle",
+      rounds: 3,
+      sequence_no: 63,
+    },
   ],
 };

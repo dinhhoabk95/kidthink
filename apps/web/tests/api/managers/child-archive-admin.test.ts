@@ -1,4 +1,11 @@
-import { auditLogs, childProfiles, getOwnerDb, users } from "@mindkid/db";
+import {
+  auditLogs,
+  CHILD_STATUS,
+  childProfiles,
+  getOwnerDb,
+  USER_STATUS,
+  users,
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import handler from "#server/api/managers/children/[uuid]/archive.post";
@@ -66,7 +73,7 @@ describe("Task 5 — POST /api/managers/children/[uuid]/archive (BR-CPA-07, D-IG
       .values({
         email: `archive_test_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Archive Parent",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -77,7 +84,7 @@ describe("Task 5 — POST /api/managers/children/[uuid]/archive (BR-CPA-07, D-IG
         displayName: "Bé Cún",
         birthYear: 2021,
         avatarId: "avatar-preset-04",
-        status: "active",
+        status: CHILD_STATUS.ACTIVE,
       })
       .returning();
 
@@ -96,7 +103,7 @@ describe("Task 5 — POST /api/managers/children/[uuid]/archive (BR-CPA-07, D-IG
       .select()
       .from(childProfiles)
       .where(eq(childProfiles.id, child.id));
-    expect(fetched.status).toBe("active");
+    expect(fetched.status).toBe(CHILD_STATUS.ACTIVE);
   });
 
   it("BR-CPA-07 & D-IG: archives child profile with valid reason and records audit log", async () => {
@@ -106,7 +113,7 @@ describe("Task 5 — POST /api/managers/children/[uuid]/archive (BR-CPA-07, D-IG
       .values({
         email: `archive_valid_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Archive Valid Parent",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -117,7 +124,7 @@ describe("Task 5 — POST /api/managers/children/[uuid]/archive (BR-CPA-07, D-IG
         displayName: "Bé Miu",
         birthYear: 2020,
         avatarId: "avatar-preset-05",
-        status: "active",
+        status: CHILD_STATUS.ACTIVE,
       })
       .returning();
 
@@ -136,7 +143,7 @@ describe("Task 5 — POST /api/managers/children/[uuid]/archive (BR-CPA-07, D-IG
       .select()
       .from(childProfiles)
       .where(eq(childProfiles.id, child.id));
-    expect(updatedChild.status).toBe("archived");
+    expect(updatedChild.status).toBe(CHILD_STATUS.ARCHIVED);
 
     // Verify audit log recorded
     const [auditLog] = await db
@@ -159,7 +166,7 @@ describe("Task 5 — POST /api/managers/children/[uuid]/archive (BR-CPA-07, D-IG
       .values({
         email: `archive_del_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@example.com`,
         displayName: "Deletion Parent",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -170,7 +177,7 @@ describe("Task 5 — POST /api/managers/children/[uuid]/archive (BR-CPA-07, D-IG
         displayName: "Bé Thỏ",
         birthYear: 2020,
         avatarId: "avatar-preset-06",
-        status: "pending_deletion",
+        status: CHILD_STATUS.PENDING_DELETION,
         purgeAt: new Date(Date.now() + 30 * 86_400 * 1000),
       })
       .returning();

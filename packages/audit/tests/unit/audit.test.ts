@@ -82,14 +82,10 @@ describe("@mindkid/audit unit tests", () => {
 
   it("BR-AUD-01 & BR-AUD-02 (#305 S2): routes user/child/order/entitlement mutations through writeAudit without direct auditLogs insert", () => {
     const auditedFiles = [
-      "apps/web/server/api/managers/users/[uuid]/suspend.post.ts",
-      "apps/web/server/api/managers/users/[uuid]/reactivate.post.ts",
-      "apps/web/server/api/managers/children/[uuid]/archive.post.ts",
-      "apps/web/server/api/users/children/[uuid]/archive.post.ts",
-      "apps/web/server/api/users/children/[uuid]/index.delete.ts",
-      "apps/web/server/api/users/account/delete.post.ts",
-      "apps/web/server/api/managers/orders/[uuid]/approve.post.ts",
-      "apps/web/server/api/managers/orders/[uuid]/reject.post.ts",
+      "apps/web/server/services/identity-manager-service.ts",
+      "apps/web/server/services/account-lifecycle-service.ts",
+      "apps/web/server/services/order-review-service.ts",
+      "apps/web/server/services/child-service.ts",
       "apps/web/server/utils/entitlements-runtime.ts",
       "apps/worker/src/consumers/account-purge.ts",
     ];

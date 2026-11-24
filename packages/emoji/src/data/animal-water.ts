@@ -3,6 +3,9 @@ import type { EmojiEntry } from "#src/types";
 export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   {
     emoji: "🐟",
+    slug: "fish",
+    svg_path: "/sprites/emoji/fish.svg",
+    hero_webp_path: "/sprites/hero/fish.webp",
     name: "Con cá",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -11,6 +14,8 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐠",
+    slug: "tropical-fish",
+    svg_path: "/sprites/emoji/tropical-fish.svg",
     name: "Con cá nhiệt đới",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -19,6 +24,8 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐡",
+    slug: "pufferfish",
+    svg_path: "/sprites/emoji/pufferfish.svg",
     name: "Con cá nóc",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -35,6 +42,8 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦈",
+    slug: "friendly-shark",
+    svg_path: "/sprites/emoji/friendly-shark.svg",
     name: "Con cá mập",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -51,6 +60,9 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐳",
+    slug: "spouting-whale",
+    svg_path: "/sprites/emoji/spouting-whale.svg",
+    hero_webp_path: "/sprites/hero/spouting-whale.webp",
     name: "Con cá voi",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -59,6 +71,8 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐋",
+    slug: "humpback-whale",
+    svg_path: "/sprites/emoji/humpback-whale.svg",
     name: "Con cá voi",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -67,6 +81,8 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐬",
+    slug: "dolphin",
+    svg_path: "/sprites/emoji/dolphin.svg",
     name: "Con cá heo",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -75,6 +91,8 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦭",
+    slug: "harbor-seal",
+    svg_path: "/sprites/emoji/harbor-seal.svg",
     name: "Con hải cẩu",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -83,6 +101,9 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐙",
+    slug: "octopus",
+    svg_path: "/sprites/emoji/octopus.svg",
+    hero_webp_path: "/sprites/hero/octopus.webp",
     name: "Con bạch tuộc",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -99,6 +120,8 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦑",
+    slug: "squid",
+    svg_path: "/sprites/emoji/squid.svg",
     name: "Con mực",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -107,6 +130,8 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦐",
+    slug: "shrimp",
+    svg_path: "/sprites/emoji/shrimp.svg",
     name: "Con tôm",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat", "dinh_duong_suc_khoe"],
@@ -123,6 +148,8 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦞",
+    slug: "lobster",
+    svg_path: "/sprites/emoji/lobster.svg",
     name: "Con tôm hùm",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -131,6 +158,8 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦀",
+    slug: "crab",
+    svg_path: "/sprites/emoji/crab.svg",
     name: "Con cua",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -147,8 +176,10 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐚",
+    slug: "seashell",
+    svg_path: "/sprites/emoji/seashell.svg",
     name: "Vỏ ốc",
-    categories: ["animal-water"],
+    categories: ["animal-water", "animal-prehistoric"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
       "shell",
@@ -163,6 +194,8 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🪸",
+    slug: "reef-coral",
+    svg_path: "/sprites/emoji/reef-coral.svg",
     name: "San hô",
     categories: ["animal-water"],
     curriculum_themes: [
@@ -175,6 +208,8 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐸",
+    slug: "frog",
+    svg_path: "/sprites/emoji/frog.svg",
     name: "Con ếch",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -193,6 +228,8 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🪼",
+    slug: "jellyfish",
+    svg_path: "/sprites/emoji/jellyfish.svg",
     name: "Con sứa",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
@@ -201,43 +238,12 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦪",
+    slug: "pearl-oyster",
+    svg_path: "/sprites/emoji/pearl-oyster.svg",
     name: "Con hàu",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["oyster", "hàu", "sò", "hải sản"],
     age_min: 5,
-  },
-  {
-    emoji: "🐊",
-    name: "Con cá sấu",
-    categories: ["animal-water", "animal-wild"],
-    curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
-    keywords: ["crocodile", "cá sấu", "nước", "sông", "alligator", "nguy hiểm"],
-    age_min: 4,
-  },
-  {
-    emoji: "🦦",
-    name: "Con rái cá",
-    categories: ["animal-water", "animal-wild"],
-    curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
-    keywords: ["otter", "rái cá", "bơi", "dễ thương"],
-    age_min: 3,
-  },
-  {
-    emoji: "🐢",
-    name: "Con rùa",
-    categories: ["animal-water", "animal-wild"],
-    curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
-    keywords: [
-      "sea turtle",
-      "rùa biển",
-      "rùa",
-      "bơi",
-      "turtle",
-      "tortoise",
-      "con rùa",
-      "chậm",
-    ],
-    age_min: 3,
   },
 ];

@@ -1,78 +1,34 @@
-import { childProfiles, getOwnerDb } from "@mindkid/db";
 import { NoActiveChildError } from "@mindkid/errors/child";
-import { allowedTiers } from "@mindkid/shared";
-import { and, eq } from "drizzle-orm";
-import { defineEventHandler, deleteCookie, getCookie, getQuery } from "h3";
+import { deleteCookie, getCookie } from "h3";
 import { z } from "zod";
-import { getRecommendationsForChild } from "#server/services/index.js";
-
-import { requireWebUserSession } from "#server/utils/auth-runtime";
-import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
+import { getChildPlayRecommendationsExperience } from "#server/services/play-experience-service";
+import { defineApiRoute } from "#server/utils/define-api-route";
 
 const UserRecommendationsQuerySchema = z.object({
   limit: z.coerce.number().optional(),
 });
 
-export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
-  const candidateUuid = getCookie(event, "active_child_id");
+export default defineApiRoute({
+  auth: "user",
+  query: UserRecommendationsQuerySchema,
+  async handler({ event, auth, query }) {
+    const candidateUuid = getCookie(event, "active_child_id");
+    const rawLimit = Number(query.limit ?? Number.NaN);
+    const limit = Number.isFinite(rawLimit)
+      ? Math.max(1, Math.min(rawLimit, 5))
+      : 5;
 
-  if (!candidateUuid) {
-    throw new NoActiveChildError(
-      "Vui lòng chọn hồ sơ trẻ trước khi lấy gợi ý chơi."
-    );
-  }
-
-  const userId = Number(user.user_id);
-  const db = getOwnerDb();
-
-  // 1. Verify child profile ownership and active status (BR-PEN-02) & resolve entitlements in parallel
-  const [[activeChild], activeKeys] = await Promise.all([
-    db
-      .select()
-      .from(childProfiles)
-      .where(
-        and(
-          eq(childProfiles.uuid, candidateUuid),
-          eq(childProfiles.userId, userId),
-          eq(childProfiles.status, "active")
-        )
-      ),
-    resolveUserActiveEntitlements(userId),
-  ]);
-
-  if (!activeChild) {
-    deleteCookie(event, "active_child_id", { path: "/" });
-    throw new NoActiveChildError(
-      "Hồ sơ trẻ không tồn tại hoặc đã bị lưu trữ. Vui lòng chọn lại."
-    );
-  }
-
-  // 2. Parse query parameters (clamped limit <= 5)
-  const parsedQuery = UserRecommendationsQuerySchema.safeParse(getQuery(event));
-  const rawLimit = Number(
-    parsedQuery.success ? parsedQuery.data.limit : Number.NaN
-  );
-  const limit = Number.isFinite(rawLimit)
-    ? Math.max(1, Math.min(rawLimit, 5))
-    : 5;
-
-  // 3. Resolve allowed tiers
-  const userAllowedTiers = await allowedTiers(
-    {
-      kind: "user",
-      user_id: String(userId),
-      active_child_id: String(activeChild.id),
-    },
-    activeKeys
-  );
-
-  // 4. Compute 7-tier rule-based recommendations (BR-REC-01..08, D-MQ..D-MV)
-  const recommendations = await getRecommendationsForChild(db, {
-    childId: Number(activeChild.id),
-    allowedTiers: userAllowedTiers,
-    limit,
-  });
-
-  return recommendations;
+    try {
+      return await getChildPlayRecommendationsExperience(
+        Number(auth.user_id),
+        candidateUuid,
+        limit
+      );
+    } catch (err) {
+      if (err instanceof NoActiveChildError && candidateUuid) {
+        deleteCookie(event, "active_child_id", { path: "/" });
+      }
+      throw err;
+    }
+  },
 });

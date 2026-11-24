@@ -3,6 +3,8 @@ import type { EmojiEntry } from "#src/types";
 export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   {
     emoji: "⭐",
+    slug: "star",
+    svg_path: "/sprites/emoji/star.svg",
     name: "Sao khen",
     categories: ["school", "shape-color", "sky-space"],
     curriculum_themes: [
@@ -20,19 +22,24 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
       "ngôi sao",
       "vàng",
       "sáng",
+      "sao khen",
     ],
     age_min: 3,
   },
   {
     emoji: "🌍",
+    slug: "earth-globe",
+    svg_path: "/sprites/emoji/earth-globe.svg",
     name: "Trái đất",
-    categories: ["sky-space"],
+    categories: ["sky-space", "science-lab"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
     keywords: ["earth", "globe", "trái đất", "thế giới", "hành tinh"],
     age_min: 3,
   },
   {
     emoji: "🌎",
+    slug: "americas-globe",
+    svg_path: "/sprites/emoji/americas-globe.svg",
     name: "Trái đất châu Mỹ",
     categories: ["sky-space"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
@@ -41,6 +48,8 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌏",
+    slug: "asia-globe",
+    svg_path: "/sprites/emoji/asia-globe.svg",
     name: "Trái đất châu Á",
     categories: ["sky-space"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien", "que_huong_dat_nuoc"],
@@ -49,6 +58,8 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌙",
+    slug: "crescent-moon",
+    svg_path: "/sprites/emoji/crescent-moon.svg",
     name: "Trăng lưỡi liềm",
     categories: ["sky-space"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -57,6 +68,8 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌝",
+    slug: "smiling-full-moon",
+    svg_path: "/sprites/emoji/smiling-full-moon.svg",
     name: "Trăng tròn mặt",
     categories: ["sky-space"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -65,6 +78,8 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌕",
+    slug: "full-moon",
+    svg_path: "/sprites/emoji/full-moon.svg",
     name: "Trăng tròn",
     categories: ["sky-space"],
     curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
@@ -73,6 +88,8 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌟",
+    slug: "glowing-star",
+    svg_path: "/sprites/emoji/glowing-star.svg",
     name: "Sao sáng",
     categories: ["sky-space"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
@@ -81,6 +98,8 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "💫",
+    slug: "orbit-star",
+    svg_path: "/sprites/emoji/orbit-star.svg",
     name: "Sao băng nhỏ",
     categories: ["sky-space"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
@@ -89,6 +108,8 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "✨",
+    slug: "sparkles",
+    svg_path: "/sprites/emoji/sparkles.svg",
     name: "Lấp lánh",
     categories: ["sky-space"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
@@ -97,6 +118,8 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "☄️",
+    slug: "comet",
+    svg_path: "/sprites/emoji/comet.svg",
     name: "Sao chổi",
     categories: ["sky-space"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
@@ -104,23 +127,9 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
     age_min: 5,
   },
   {
-    emoji: "🚀",
-    name: "Tên lửa",
-    categories: ["sky-space", "vehicle-water"],
-    curriculum_themes: ["nuoc_hien_tuong_tu_nhien", "phuong_tien"],
-    keywords: ["rocket", "tên lửa", "phóng", "vũ trụ", "tàu", "nhanh"],
-    age_min: 3,
-  },
-  {
-    emoji: "🛸",
-    name: "UFO",
-    categories: ["sky-space", "vehicle-air"],
-    curriculum_themes: ["nuoc_hien_tuong_tu_nhien", "phuong_tien"],
-    keywords: ["flying saucer", "UFO", "đĩa bay", "ngoài hành tinh"],
-    age_min: 4,
-  },
-  {
     emoji: "🌑",
+    slug: "dark-moon",
+    svg_path: "/sprites/emoji/dark-moon.svg",
     name: "Trăng non",
     categories: ["sky-space"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
@@ -129,6 +138,8 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌓",
+    slug: "half-moon",
+    svg_path: "/sprites/emoji/half-moon.svg",
     name: "Trăng bán nguyệt",
     categories: ["sky-space"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
@@ -137,6 +148,8 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌠",
+    slug: "shooting-star",
+    svg_path: "/sprites/emoji/shooting-star.svg",
     name: "Sao băng",
     categories: ["sky-space"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
@@ -145,6 +158,8 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🪐",
+    slug: "ringed-planet",
+    svg_path: "/sprites/emoji/ringed-planet.svg",
     name: "Hành tinh",
     categories: ["sky-space"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
@@ -153,6 +168,8 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🌌",
+    slug: "starry-galaxy",
+    svg_path: "/sprites/emoji/starry-galaxy.svg",
     name: "Dải ngân hà",
     categories: ["sky-space"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
@@ -161,14 +178,18 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🛰️",
+    slug: "satellite",
+    svg_path: "/sprites/emoji/satellite.svg",
     name: "Vệ tinh",
-    categories: ["sky-space"],
+    categories: ["sky-space", "science-lab"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
     keywords: ["satellite", "vệ tinh", "vũ trụ", "không gian"],
     age_min: 4,
   },
   {
     emoji: "🌜",
+    slug: "moon-face-left",
+    svg_path: "/sprites/emoji/moon-face-left.svg",
     name: "Trăng khuyết",
     categories: ["sky-space"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],

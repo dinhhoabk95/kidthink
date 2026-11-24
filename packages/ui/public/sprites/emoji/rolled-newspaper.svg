@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cuộn báo giấy</title>
+  <defs>
+    <linearGradient id="rnpRoll" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#ffffff" /><stop offset="100%" stop-color="#cbd5e1" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#334155" opacity="0.22" rx="34" ry="5" />
+    <rect fill="url(#rnpRoll)" height="26" rx="13" stroke="#334155" stroke-width="3.8" transform="rotate(-32 60 60)" width="88" x="16" y="47" />
+    <path d="M54 48L66 72" stroke="#dc2626" stroke-linecap="round" stroke-width="4.5" />
+</svg>

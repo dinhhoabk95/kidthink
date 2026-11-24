@@ -6,13 +6,7 @@ import {
   SKILL_CODE_REGEX,
   STRAND_CODE_REGEX,
 } from "@mindkid/shared";
-
-/**
- * Domain validators thay thế toàn bộ DB `CHECK` constraints (`BR-DM-14`).
- *
- * Giữ một nguồn kiểm tra duy nhất ở tầng TypeScript để vừa báo lỗi thân thiện
- * kèm mã chuẩn, vừa đổi quy tắc miền nghiệp vụ không cần khoá bảng `ALTER TABLE`.
- */
+import { ACTOR_TYPE, type ActorType } from "#src/constants/billing-ops-enums";
 
 const CURRICULUM_DB_CODE_REGEX = /^CUR-[A-Za-z0-9_-]+$/;
 const MAX_UINT32_SEED = 4_294_967_295;
@@ -164,13 +158,13 @@ export function assertExportJobPageCount(pageCount?: number | null): void {
 }
 
 export function assertAuditActorInvariant(input: {
-  actorType: "user" | "manager" | "system";
+  actorType: ActorType;
   actorId?: number | null;
 }): void {
-  if (input.actorType === "system" && input.actorId != null) {
+  if (input.actorType === ACTOR_TYPE.SYSTEM && input.actorId != null) {
     throw new ValidationError("Nhật ký hệ thống không được gắn actor_id.");
   }
-  if (input.actorType !== "system" && input.actorId == null) {
+  if (input.actorType !== ACTOR_TYPE.SYSTEM && input.actorId == null) {
     throw new ValidationError(
       "Nhật ký của người dùng hoặc quản trị viên bắt buộc có actor_id."
     );

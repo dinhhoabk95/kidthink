@@ -235,5 +235,14 @@ export const C5_TMK_03_SEED: SkillSeed = {
       theme: "food",
       rounds: 3,
     },
+    {
+      code: "GL-C5-TMK-BEAT-6004",
+      template: "GT-034",
+      band: "5-6",
+      difficulty: 3,
+      theme: "farm",
+      rounds: 3,
+      sequence_no: 61,
+    },
   ],
 };

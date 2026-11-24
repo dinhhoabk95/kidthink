@@ -6,28 +6,30 @@ import type {
   SkillDataset,
 } from "@mindkid/shared";
 import {
+  countPromptWords,
   createRng,
   resolveItemAsset,
   safeGetItem,
+  sanitizeChildPrompt,
   shuffleDeterministic,
 } from "./utils.js";
 
-const WHITESPACE_SPLIT_REGEX = /\s+/;
-
 function buildGT030Prompt(unitLabel: string): string {
-  const candidate1 = `Đồ vật này dài bằng mấy lần ${unitLabel} nhé?`;
-  if (
-    candidate1.trim().split(WHITESPACE_SPLIT_REGEX).filter(Boolean).length <= 12
-  ) {
-    return candidate1;
+  const candidate1 = `Đố bé vật này dài bằng mấy lần ${unitLabel} nhỉ?`;
+  if (countPromptWords(candidate1) <= 12) {
+    return sanitizeChildPrompt(
+      candidate1,
+      "Đố bé vật này dài bằng mấy đơn vị nhỉ?"
+    );
   }
-  const candidate2 = `Vật này dài bằng mấy lần ${unitLabel} nhé?`;
-  if (
-    candidate2.trim().split(WHITESPACE_SPLIT_REGEX).filter(Boolean).length <= 12
-  ) {
-    return candidate2;
+  const candidate2 = `Vật này dài bằng mấy ${unitLabel} nhỉ?`;
+  if (countPromptWords(candidate2) <= 12) {
+    return sanitizeChildPrompt(
+      candidate2,
+      "Đố bé vật này dài bằng mấy đơn vị nhỉ?"
+    );
   }
-  return "Đồ vật này dài bằng mấy đơn vị nhé?";
+  return "Đố bé vật này dài bằng mấy đơn vị nhỉ?";
 }
 
 function buildAnswerOptions(

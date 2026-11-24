@@ -101,6 +101,8 @@ export interface GameSession {
   mascotMood?(): MascotPose | null;
   /** Câu bối cảnh đọc một lần ở vòng đầu (`BR-FBK-16`). */
   storyLine?(): string | null;
+  /** Phát lại lời dẫn của bước hiện tại khi trẻ bấm Loa HUD / `PromptZone` (`BR-PNR-07`, `BR-E000-14`). */
+  replayStepAudio?(): void;
 }
 
 /** Trần hàng đợi cue — lượt chạm dồn dập không xếp hàng vô hạn (`BR-FBK-14`). */

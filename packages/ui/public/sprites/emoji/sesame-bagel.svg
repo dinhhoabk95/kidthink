@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh mì vòng</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="bglCrust" r="70%"><stop offset="0%" stop-color="#fde68a" /><stop offset="55%" stop-color="#d97706" /><stop offset="100%" stop-color="#92400e" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#451a03" opacity="0.22" rx="38" ry="5.5" />
+    <path d="M60 22C82 22 98 37 98 58C98 79 82 94 60 94C38 94 22 79 22 58C22 37 38 22 60 22ZM60 46C52 46 46 51 46 58C46 65 52 70 60 70C68 70 74 65 74 58C74 51 68 46 60 46Z" fill="url(#bglCrust)" fill-rule="evenodd" stroke="#5c2d16" stroke-width="3.8" />
+    <circle cx="44" cy="36" fill="#fffbeb" r="2" /><circle cx="60" cy="31" fill="#fffbeb" r="2" /><circle cx="77" cy="38" fill="#fffbeb" r="2" /><circle cx="84" cy="56" fill="#fffbeb" r="2" /><circle cx="36" cy="56" fill="#fffbeb" r="2" />
+</svg>

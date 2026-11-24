@@ -1,17 +1,23 @@
 import {
   auditLogs,
   childProfiles,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
+  MANAGER_ROLE,
   managers,
   notifications,
+  PAYMENT_ORDER_STATUS,
   packages,
   paymentOrders,
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
+import { PENDING_PRICE_VND } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -26,6 +32,9 @@ import userOrderGetHandler from "#server/api/users/orders/[uuid]/index.get";
 import userOrderCreateHandler from "#server/api/users/orders/index.post";
 
 const TRANSFER_NOTE_REGEX = /^TM[0-9A-F]{8}$/;
+const TEST_SELLABLE_VND = 599_000;
+const TEST_PREMIUM_ANNUAL_VND = 899_000;
+const TEST_PREMIUM_LIFETIME_VND = 1_999_000;
 
 describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
   const db = getOwnerDb();
@@ -37,9 +46,9 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
 
   function mockUserEvent(
     method: string,
-    body?: any,
+    body?: Record<string, string | number | boolean | null | object>,
     params: Record<string, string> = {},
-    query: Record<string, any> = {}
+    query: Record<string, string | number | boolean> = {}
   ): H3Event {
     const queryString = Object.entries(query)
       .map(
@@ -76,15 +85,16 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
       },
       _body: body,
       body,
-    } as unknown as H3Event;
+    } as never;
   }
 
   function mockManagerEvent(
     role: "super_admin" | "content_reviewer",
     method: string,
-    body?: any,
+    body?: Record<string, string | number | boolean | null | object>,
     params: Record<string, string> = {},
-    query: Record<string, any> = {}
+    query: Record<string, string | number | boolean> = {},
+    reauthAt: Date | null = new Date()
   ): H3Event {
     const queryString = Object.entries(query)
       .map(
@@ -101,6 +111,7 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
           display_name: "Test Manager",
           role,
           session_id: "test-session",
+          ...(reauthAt ? { reauth_at: reauthAt } : {}),
         },
         params,
         body,
@@ -127,7 +138,7 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
       },
       _body: body,
       body,
-    } as unknown as H3Event;
+    } as never;
   }
 
   beforeAll(async () => {
@@ -146,7 +157,7 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
       .values({
         email: `manager-e2e-${Date.now()}@example.com`,
         displayName: "Payment Super Admin",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
         passwordHash: "hash-superadmin-123456",
       })
       .returning();
@@ -175,13 +186,47 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
       await db.insert(packages).values(pkg).onConflictDoNothing();
     }
 
+    await db
+      .update(packages)
+      .set({
+        offers: [
+          {
+            offer_code: "annual",
+            billing_period: "1 năm",
+            price_vnd: TEST_SELLABLE_VND,
+            duration_days: 365,
+          },
+        ],
+      })
+      .where(eq(packages.code, "PKG-standard"));
+
+    await db
+      .update(packages)
+      .set({
+        offers: [
+          {
+            offer_code: "annual",
+            billing_period: "1 năm",
+            price_vnd: TEST_PREMIUM_ANNUAL_VND,
+            duration_days: 365,
+          },
+          {
+            offer_code: "lifetime",
+            billing_period: "trọn đời",
+            price_vnd: TEST_PREMIUM_LIFETIME_VND,
+            duration_days: null,
+          },
+        ],
+      })
+      .where(eq(packages.code, "PKG-premium"));
+
     const [user] = await db
       .insert(users)
       .values({
         email: `parent-e2e-${Date.now()}@example.com`,
         displayName: "Payment Parent E2E",
         passwordHash: "hash-user-123456",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     testUser = user;
@@ -195,6 +240,14 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
   });
 
   afterAll(async () => {
+    for (const pkg of SEED_PACKAGES) {
+      if (pkg.code === "PKG-standard" || pkg.code === "PKG-premium") {
+        await db
+          .update(packages)
+          .set({ offers: pkg.offers })
+          .where(eq(packages.code, pkg.code));
+      }
+    }
     if (testUser?.id) {
       await db
         .delete(notifications)
@@ -232,6 +285,7 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
     });
     const created = (await userOrderCreateHandler(createEv)) as any;
     expect(created.uuid).toBeDefined();
+    expect(created.amount_vnd).toBe(TEST_SELLABLE_VND);
     expect(created.status).toBe("pending");
     expect(created.transfer_note).toMatch(TRANSFER_NOTE_REGEX);
     expect(created.qr_image_url).toContain("vietqr.io");
@@ -268,7 +322,7 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
         offerCode: "annual",
         amountVnd: 599_000,
         currency: "VND",
-        status: "submitted",
+        status: PAYMENT_ORDER_STATUS.SUBMITTED,
         transferNote: `TMABC${randSuffix}`,
         bankTxnRef: `FT240814E2E${randSuffix}`,
         proofPath: "proofs/test-proof.jpg",
@@ -341,7 +395,7 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
       .select()
       .from(paymentOrders)
       .where(eq(paymentOrders.uuid, order.uuid));
-    expect(dbOrder.status).toBe("approved");
+    expect(dbOrder.status).toBe(PAYMENT_ORDER_STATUS.APPROVED);
 
     // Verify user received notification
     const [notif] = await db
@@ -366,7 +420,7 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
       offerCode: "annual",
       amountVnd: 599_000,
       currency: "VND",
-      status: "submitted",
+      status: PAYMENT_ORDER_STATUS.SUBMITTED,
       transferNote: `TMREJECT${rejSuffix}`,
       bankTxnRef: `FT240814REJ${rejSuffix}`,
       submittedAt: new Date(),
@@ -375,9 +429,9 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
     await db.insert(entitlements).values({
       userId: testUser.id,
       entitlementKey: "play_standard_games",
-      source: "package_order",
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
       sourceRef: orderUuid,
-      status: "soft_unlock",
+      status: ENTITLEMENT_STATUS.SOFT_UNLOCK,
       expiresAt: new Date(Date.now() + 3 * 24 * 3600 * 1000),
     });
 
@@ -403,5 +457,135 @@ describe("Payment Flow Full E2E & Boundary Tests (P2.3)", () => {
     expect(userOrderDetail.rejection_reason).not.toContain(
       "biên lai không hợp lệ"
     ); // Internal note not leaked
+  });
+
+  it("User Lifecycle: rejects order creation with 422 when package offer price_vnd is 0", async () => {
+    await db
+      .update(packages)
+      .set({
+        offers: [
+          {
+            offer_code: "annual",
+            billing_period: "1 năm",
+            price_vnd: PENDING_PRICE_VND,
+            duration_days: 365,
+          },
+        ],
+      })
+      .where(eq(packages.code, "PKG-standard"));
+
+    const createEv = mockUserEvent("POST", {
+      package_code: "PKG-standard",
+      offer_code: "annual",
+    });
+
+    await expect(userOrderCreateHandler(createEv)).rejects.toMatchObject({
+      statusCode: 422,
+      code: "VALIDATION_FAILED",
+    });
+  });
+
+  it("Manager Approve & Reject: rejects missing or expired reauth_at (> 300s) with 428 REAUTH_REQUIRED", async () => {
+    const suffix = Math.floor(Math.random() * 900_000 + 100_000).toString();
+    const orderUuid = crypto.randomUUID();
+    await db.insert(paymentOrders).values({
+      uuid: orderUuid,
+      userId: testUser.id,
+      packageCode: "PKG-standard",
+      offerCode: "annual",
+      amountVnd: TEST_SELLABLE_VND,
+      currency: "VND",
+      status: PAYMENT_ORDER_STATUS.SUBMITTED,
+      transferNote: `TMREAUTH${suffix}`,
+      bankTxnRef: `FT240814REAUTH${suffix}`,
+      proofPath: "proofs/test-reauth.jpg",
+      submittedAt: new Date(),
+    });
+
+    const approveBody = {
+      admin_note: "Đã đối soát chứng từ khớp hoàn toàn sao kê MB Bank.",
+      checklist: {
+        amount_matches: true,
+        transfer_note_present: true,
+        bank_ref_unused: true,
+        transfer_time_valid: true,
+        proof_legible: true,
+      },
+      bonus_days: 0,
+    };
+
+    await expect(
+      managerApproveHandler(
+        mockManagerEvent(
+          "super_admin",
+          "POST",
+          approveBody,
+          { uuid: orderUuid },
+          {},
+          null
+        )
+      )
+    ).rejects.toMatchObject({
+      statusCode: 428,
+      code: "REAUTH_REQUIRED",
+    });
+
+    await expect(
+      managerApproveHandler(
+        mockManagerEvent(
+          "super_admin",
+          "POST",
+          approveBody,
+          { uuid: orderUuid },
+          {},
+          new Date(Date.now() - 301 * 1000)
+        )
+      )
+    ).rejects.toMatchObject({
+      statusCode: 428,
+      code: "REAUTH_REQUIRED",
+    });
+
+    const rejectBody = {
+      admin_note: "Từ chối đơn hàng do chứng từ không hợp lệ.",
+    };
+
+    await expect(
+      managerRejectHandler(
+        mockManagerEvent(
+          "super_admin",
+          "POST",
+          rejectBody,
+          { uuid: orderUuid },
+          {},
+          null
+        )
+      )
+    ).rejects.toMatchObject({
+      statusCode: 428,
+      code: "REAUTH_REQUIRED",
+    });
+
+    await expect(
+      managerRejectHandler(
+        mockManagerEvent(
+          "super_admin",
+          "POST",
+          rejectBody,
+          { uuid: orderUuid },
+          {},
+          new Date(Date.now() - 301 * 1000)
+        )
+      )
+    ).rejects.toMatchObject({
+      statusCode: 428,
+      code: "REAUTH_REQUIRED",
+    });
+
+    const [dbOrder] = await db
+      .select()
+      .from(paymentOrders)
+      .where(eq(paymentOrders.uuid, orderUuid));
+    expect(dbOrder?.status).toBe(PAYMENT_ORDER_STATUS.SUBMITTED);
   });
 });

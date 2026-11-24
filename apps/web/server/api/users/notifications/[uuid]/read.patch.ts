@@ -1,9 +1,6 @@
-import { getOwnerDb, notificationReads, notifications } from "@mindkid/db";
-import { NotificationNotFoundError } from "@mindkid/errors/account";
 import { ValidationError } from "@mindkid/errors/common";
-import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
-
+import { markUserNotificationRead } from "#server/services/notification-service";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
@@ -15,46 +12,5 @@ export default defineEventHandler(async (event) => {
     throw new ValidationError("Thiếu notification UUID");
   }
 
-  const db = getOwnerDb();
-
-  // Query notification belonging to user
-  const [notif] = await db
-    .select()
-    .from(notifications)
-    .where(
-      and(
-        eq(notifications.uuid, uuidParam),
-        eq(notifications.recipientType, "user"),
-        eq(notifications.recipientId, userId)
-      )
-    );
-
-  if (!notif) {
-    // BR-NIB-02: 404 for cross-user or missing notification to prevent IDOR
-    throw new NotificationNotFoundError("Thông báo không tồn tại");
-  }
-
-  // Check existing read row
-  const [existingRead] = await db
-    .select()
-    .from(notificationReads)
-    .where(eq(notificationReads.notificationId, notif.id));
-
-  let readAt = existingRead?.readAt;
-
-  if (!readAt) {
-    readAt = new Date();
-    await db
-      .insert(notificationReads)
-      .values({
-        notificationId: notif.id,
-        readAt,
-      })
-      .onConflictDoNothing();
-  }
-
-  return {
-    uuid: notif.uuid,
-    read_at: readAt.toISOString(),
-  };
+  return await markUserNotificationRead(userId, uuidParam);
 });

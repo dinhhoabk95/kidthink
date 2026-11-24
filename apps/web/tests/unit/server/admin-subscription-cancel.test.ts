@@ -1,9 +1,12 @@
 import {
   auditLogs,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
   packages,
+  RECURRING_SUBSCRIPTION_STATUS,
   recurringSubscriptions,
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
@@ -67,8 +70,8 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "play_standard_games",
-      source: "package_order",
-      status: "active",
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+      status: ENTITLEMENT_STATUS.ACTIVE,
       expiresAt: sub.currentPeriodEnd,
     });
 
@@ -85,7 +88,7 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
     if (!dbSub) {
       throw new Error("dbSub not found");
     }
-    expect(dbSub.status).toBe("cancelled");
+    expect(dbSub.status).toBe(RECURRING_SUBSCRIPTION_STATUS.CANCELLED);
     expect(dbSub.autoRenew).toBe(false);
     expect(dbSub.cancelledBy).toBe("user");
 
@@ -97,7 +100,7 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
     if (!dbEntitlement) {
       throw new Error("dbEntitlement not found");
     }
-    expect(dbEntitlement.status).toBe("active");
+    expect(dbEntitlement.status).toBe(ENTITLEMENT_STATUS.ACTIVE);
     expect(dbEntitlement.expiresAt).toBeDefined();
     expect(new Date(dbEntitlement.expiresAt ?? "").getTime()).toBe(
       sub.currentPeriodEnd.getTime()
@@ -137,8 +140,8 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "play_standard_games",
-      source: "package_order",
-      status: "active",
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+      status: ENTITLEMENT_STATUS.ACTIVE,
       expiresAt: sub.currentPeriodEnd,
     });
 
@@ -164,7 +167,7 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
     if (!dbEntitlement) {
       throw new Error("dbEntitlement not found");
     }
-    expect(dbEntitlement.status).toBe("active");
+    expect(dbEntitlement.status).toBe(ENTITLEMENT_STATUS.ACTIVE);
 
     // Audit log written
     const [audit] = await db
@@ -216,8 +219,8 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "play_standard_games",
-      source: "package_order",
-      status: "active",
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+      status: ENTITLEMENT_STATUS.ACTIVE,
       expiresAt: sub.currentPeriodEnd,
     });
 
@@ -243,7 +246,7 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
     if (!dbEntitlement) {
       throw new Error("dbEntitlement not found");
     }
-    expect(dbEntitlement.status).toBe("cancelled");
+    expect(dbEntitlement.status).toBe(ENTITLEMENT_STATUS.CANCELLED);
   });
 
   it("Scenario: BR-ASC-03 — rejects admin cancel when note is too short (< 20 chars)", async () => {
@@ -282,7 +285,7 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
         billingPeriod: "monthly",
         priceVnd: 49_000,
         autoRenew: true,
-        status: "past_due",
+        status: RECURRING_SUBSCRIPTION_STATUS.PAST_DUE,
         currentPeriodStart: pastDate,
         currentPeriodEnd: pastDate,
         nextBillingAt: pastDate,
@@ -297,8 +300,8 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "play_standard_games",
-      source: "package_order",
-      status: "grace_period",
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+      status: ENTITLEMENT_STATUS.GRACE_PERIOD,
       expiresAt: new Date(Date.now() + 86_400_000),
     });
 
@@ -315,7 +318,7 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
     if (!updatedSub) {
       throw new Error("updatedSub not found");
     }
-    expect(updatedSub.status).toBe("cancelled");
+    expect(updatedSub.status).toBe(RECURRING_SUBSCRIPTION_STATUS.CANCELLED);
 
     // Grace period entitlement is cancelled
     const [updatedEntitlement] = await db
@@ -325,6 +328,6 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
     if (!updatedEntitlement) {
       throw new Error("updatedEntitlement not found");
     }
-    expect(updatedEntitlement.status).toBe("cancelled");
+    expect(updatedEntitlement.status).toBe(ENTITLEMENT_STATUS.CANCELLED);
   });
 });

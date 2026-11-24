@@ -234,6 +234,16 @@ export const C2_ORI_04_SEED: SkillSeed = {
   dataset: C2_ORI_04_DATASET,
   levels: [
     {
+      code: "GL-C2-ORI-INTRO-7004",
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "home",
+      rounds: 1,
+      sequence_no: 1,
+    },
+    {
       code: "GL-C2-ORI-DIR-0001",
       template: "GT-005",
       band: "4-5",

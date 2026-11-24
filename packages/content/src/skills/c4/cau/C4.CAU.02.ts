@@ -237,6 +237,16 @@ export const C4_CAU_02_SEED: SkillSeed = {
   dataset: C4_CAU_02_DATASET,
   levels: [
     {
+      code: "GL-C4-CAU-INTRO-7002",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "nature",
+      rounds: 1,
+      sequence_no: 1,
+    },
+    {
       code: "GL-C4-CAU-PAIR-0003",
       template: "GT-004",
       band: "4-5",

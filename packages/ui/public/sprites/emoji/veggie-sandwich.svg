@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh mì kẹp rau</title>
+  <defs>
+    <linearGradient id="sndBread" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#fef3c7" /><stop offset="100%" stop-color="#fcd34d" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.22" rx="40" ry="5.5" />
+    <polygon fill="#d97706" points="20,76 96,76 82,92 20,92" stroke="#78350f" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M18 72C28 66 38 76 48 70C58 64 68 76 78 70C88 64 94 72 98 70" fill="none" stroke="#15803d" stroke-linecap="round" stroke-width="6" />
+    <rect fill="#dc2626" height="6" rx="3" stroke="#7f1d1d" stroke-width="2.2" width="70" x="23" y="63" />
+    <polygon fill="url(#sndBread)" points="20,64 62,24 98,64" stroke="#78350f" stroke-linejoin="round" stroke-width="3.8" />
+</svg>

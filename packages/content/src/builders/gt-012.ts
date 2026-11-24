@@ -7,6 +7,7 @@ import type {
 } from "@mindkid/shared";
 import {
   createRng,
+  pickAgeBandPrompt,
   resolveItemAsset,
   safeGetItem,
   shuffleDeterministic,
@@ -59,9 +60,19 @@ export const projectGT012: Projection<"GT-012"> = {
 
     const shuffledOptions = shuffleDeterministic(options, rng);
 
+    const prompt = pickAgeBandPrompt(
+      opts.band,
+      {
+        mam: "Bé nhìn nhanh có mấy bạn vừa hiện nhé!",
+        choi: "Đố bé vừa thoáng qua mấy đồ vật nhỉ?",
+        la: "Tinh mắt nhớ xem vừa hiện mấy vật nhé!",
+      },
+      "Đố bé vừa thoáng qua mấy đồ vật nhỉ?"
+    );
+
     return {
       content_pack: {
-        prompt: "Bé hãy nhớ có bao nhiêu đồ vật vừa xuất hiện nhé!",
+        prompt,
         flash_items: flashItems,
         arrangement: "dice" as const,
         options: shuffledOptions,

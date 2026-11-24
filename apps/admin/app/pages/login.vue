@@ -229,6 +229,13 @@
           "Đăng nhập bằng Passkey không thành công hoặc đã bị huỷ.";
         return;
       }
+      const data = res.data as SignInDataWithTwoFactor | null;
+      if (data?.twoFactorRedirect) {
+        totpCode.value = "";
+        isRecoveryMode.value = false;
+        authState.value = "mfa";
+        return;
+      }
       await finishLoginAndRedirect();
     } catch {
       errorMessage.value =

@@ -1,4 +1,10 @@
-import { childProfiles, getOwnerDb, users } from "@mindkid/db";
+import {
+  CHILD_STATUS,
+  childProfiles,
+  getOwnerDb,
+  USER_STATUS,
+  users,
+} from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 import handler from "#server/api/managers/users/index.get";
 
@@ -74,7 +80,7 @@ describe("Task 2 — GET /api/managers/users (BR-USM-01, BR-USM-02, BR-USM-06, D
       .values({
         email: testEmail,
         displayName: "Test Parent User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -84,7 +90,7 @@ describe("Task 2 — GET /api/managers/users (BR-USM-01, BR-USM-02, BR-USM-06, D
       displayName: "Bé An Bí Mật",
       birthYear: 2020,
       avatarId: "avatar-preset-01",
-      status: "active",
+      status: CHILD_STATUS.ACTIVE,
     });
 
     const event = mockEvent(

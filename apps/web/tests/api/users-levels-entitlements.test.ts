@@ -1,4 +1,13 @@
-import { entitlementKeys, entitlements, getOwnerDb, users } from "@mindkid/db";
+import {
+  ENTITLEMENT_GROUP,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
+  entitlementKeys,
+  entitlements,
+  getOwnerDb,
+  USER_STATUS,
+  users,
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -64,7 +73,7 @@ describe("GET /api/users/levels — Entitlements Resolution Regression (T.4)", (
       .insert(entitlementKeys)
       .values({
         key: "play_standard_games",
-        group: "content",
+        group: ENTITLEMENT_GROUP.CONTENT,
         label: "Chơi game tiêu chuẩn",
         description: "Mở khoá game bậc tiêu chuẩn",
         isMvp: true,
@@ -77,7 +86,7 @@ describe("GET /api/users/levels — Entitlements Resolution Regression (T.4)", (
       .values({
         email: testEmail,
         displayName: "Entitlement Test User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning({ id: users.id });
 
@@ -87,8 +96,8 @@ describe("GET /api/users/levels — Entitlements Resolution Regression (T.4)", (
         {
           userId: testUserId,
           entitlementKey: "play_standard_games",
-          source: "package_order",
-          status: "active",
+          source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+          status: ENTITLEMENT_STATUS.ACTIVE,
           startsAt: new Date(Date.now() - 10_000),
           expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         },

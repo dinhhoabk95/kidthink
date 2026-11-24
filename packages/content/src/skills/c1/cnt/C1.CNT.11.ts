@@ -171,6 +171,16 @@ export const C1_CNT_11_SEED: SkillSeed = {
   dataset: C1_CNT_11_DATASET,
   levels: [
     {
+      code: "GL-C1-CNT-INTRO-7011",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "farm",
+      rounds: 1,
+      sequence_no: 1,
+    },
+    {
       code: "GL-C1-SUB-FAST-0019",
       template: "GT-012",
       band: "5-6",

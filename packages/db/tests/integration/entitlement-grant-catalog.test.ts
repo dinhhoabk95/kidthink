@@ -1,9 +1,14 @@
 import {
+  ACTOR_TYPE,
   auditLogs,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
+  MANAGER_ROLE,
   managers,
+  PAYMENT_ORDER_STATUS,
   packages,
   paymentOrders,
   SEED_ENTITLEMENT_KEYS,
@@ -65,7 +70,7 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
       }
 
       await db.insert(auditLogs).values({
-        actorType: "manager",
+        actorType: ACTOR_TYPE.MANAGER,
         actorId: 1,
         action: "entitlement_granted",
         entityType: "user",
@@ -134,8 +139,8 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
         .values({
           userId: u.id,
           entitlementKey: "play_standard_games",
-          source: "manual_grant",
-          status: "active",
+          source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+          status: ENTITLEMENT_STATUS.ACTIVE,
         })
         .returning();
       if (!ent) {
@@ -144,7 +149,7 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
 
       await db
         .update(entitlements)
-        .set({ status: "cancelled", updatedAt: new Date() })
+        .set({ status: ENTITLEMENT_STATUS.CANCELLED, updatedAt: new Date() })
         .where(eq(entitlements.id, ent.id));
 
       const [updated] = await db
@@ -155,7 +160,7 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
         throw new Error("Failed to find updated");
       }
 
-      expect(updated.status).toBe("cancelled");
+      expect(updated.status).toBe(ENTITLEMENT_STATUS.CANCELLED);
     });
 
     it("Scenario: BR-EGR-07 — granting additional entitlement extends duration from max(now, expires_at)", () => {
@@ -197,8 +202,8 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
       await db.insert(entitlements).values({
         userId: u.id,
         entitlementKey: "play_standard_games",
-        source: "manual_grant",
-        status: "active",
+        source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+        status: ENTITLEMENT_STATUS.ACTIVE,
       });
 
       // Assert 0 payment orders
@@ -217,7 +222,7 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
         .values({
           email: `mgr_egr09_${Date.now()}@example.com`,
           displayName: "Super Admin EGR-09",
-          role: "super_admin",
+          role: MANAGER_ROLE.SUPER_ADMIN,
           passwordHash: "mock-pwd-hash",
         })
         .returning();
@@ -225,7 +230,7 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
         throw new Error("Failed to insert mgr");
       }
 
-      expect(mgr.role).toBe("super_admin");
+      expect(mgr.role).toBe(MANAGER_ROLE.SUPER_ADMIN);
       expect(mgr.email).toBeDefined();
     });
   });
@@ -266,15 +271,18 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
       await db.insert(entitlements).values({
         userId: u.id,
         entitlementKey: "play_standard_games",
-        source: "package_order",
-        status: "active",
+        source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+        status: ENTITLEMENT_STATUS.ACTIVE,
       });
 
       const activeEnts = await db
         .select()
         .from(entitlements)
         .where(
-          and(eq(entitlements.userId, u.id), eq(entitlements.status, "active"))
+          and(
+            eq(entitlements.userId, u.id),
+            eq(entitlements.status, ENTITLEMENT_STATUS.ACTIVE)
+          )
         );
 
       expect(activeEnts.length).toBeGreaterThanOrEqual(1);
@@ -338,14 +346,14 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
           packageCode: "PKG-standard",
           offerCode: "annual",
           amountVnd: 299_000,
-          status: "approved",
+          status: PAYMENT_ORDER_STATUS.APPROVED,
         },
         {
           userId: u.id,
           packageCode: "PKG-premium",
           offerCode: "annual",
           amountVnd: 490_000,
-          status: "rejected",
+          status: PAYMENT_ORDER_STATUS.REJECTED,
         },
       ]);
 
@@ -360,7 +368,7 @@ describe("P2.4 Entitlement Grant, Package Catalog Admin & Subscription View Inva
     it("Scenario: BR-SBV-04 — hides internal admin notes from user-facing payment order history", () => {
       const orderDbRow = {
         id: 1,
-        status: "rejected",
+        status: PAYMENT_ORDER_STATUS.REJECTED,
         adminNote: JSON.stringify({
           fraud_alert: true,
           secret_note: "Ghi chú nội bộ bí mật",

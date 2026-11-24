@@ -1,5 +1,5 @@
 import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
-import { getOwnerDb, managers } from "@mindkid/db";
+import { getOwnerDb, MANAGER_ROLE, managers } from "@mindkid/db";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   getManagerAuth,
@@ -27,7 +27,7 @@ async function createAndSignInManager(tag: string) {
       email,
       passwordHash,
       displayName: `Manager ${tag}`,
-      role: "super_admin",
+      role: MANAGER_ROLE.SUPER_ADMIN,
       isActive: true,
       mfaEnabled: false,
     })

@@ -1,0 +1,7 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bộ búa và cờ-lê</title>
+  <path d="M28 92L86 34" stroke="#92400e" stroke-linecap="round" stroke-width="7" />
+    <rect fill="#64748b" height="16" rx="4" stroke="#1e293b" stroke-width="3.6" transform="rotate(45 84 36)" width="30" x="69" y="28" />
+    <path d="M90 92L38 40" stroke="#475569" stroke-linecap="round" stroke-width="8" />
+    <circle cx="34" cy="36" fill="#cbd5e1" r="12" stroke="#1e293b" stroke-width="3.6" />
+</svg>

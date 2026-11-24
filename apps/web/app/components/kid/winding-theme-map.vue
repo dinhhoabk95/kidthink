@@ -22,39 +22,81 @@
     </svg>
 
     <section
-      class="trail-land-card relative z-10 bg-white border-4 rounded-3xl p-5 sm:p-6 transition-all overflow-hidden"
+      class="trail-land-card relative z-10 bg-surface-50 border-4 rounded-3xl p-5 sm:p-6 transition-all overflow-hidden"
       data-testid="play-map-week-card"
       v-for="(w, weekIdx) in weeks"
       :key="w.week_no"
       :aria-label="`Tuần ${w.week_no}: ${w.theme_title}`"
       :class="getWeekCardClass(w)"
     >
-      <!-- Đồi cỏ trang trí góc thẻ -->
+      <!-- Đồi cỏ & khóm tre làng Việt trang trí góc thẻ -->
       <div
         aria-hidden="true"
         class="land-hill-decor pointer-events-none"
         :class="`land-hill-decor--${weekIdx % 3}`"
       />
+      <svg
+        aria-hidden="true"
+        class="land-bamboo-motif pointer-events-none"
+        viewBox="0 0 80 100"
+      >
+        <path
+          class="land-bamboo-stroke"
+          d="M 56 100 L 56 18 M 36 100 L 36 42"
+          fill="none"
+          stroke-linecap="round"
+          stroke-width="5"
+        />
+        <path
+          class="land-bamboo-leaf"
+          d="M 56 36 Q 74 26, 75 40 Q 62 44, 56 36 Z M 36 58 Q 20 50, 18 62 Q 30 66, 36 58 Z"
+        />
+      </svg>
 
-      <!-- Tiêu đề Tuần & Chủ đề (không hiện phân số x/y — BR-WTM-08, BR-PRG-02) -->
+      <!-- Tiêu đề Tuần & Vùng đất chủ đề Mầm non Việt Nam (không hiện phân số x/y — BR-WTM-08, BR-PRG-02) -->
       <div
         class="relative z-10 flex flex-wrap items-center justify-between gap-3 mb-6"
       >
         <div class="flex items-center gap-3 min-w-0">
           <span
             aria-hidden="true"
-            class="w-14 h-14 shrink-0 rounded-2xl bg-warning-50 border-2 border-warning-300 flex items-center justify-center text-3xl"
+            class="w-14 h-14 shrink-0 rounded-2xl bg-warning-100 border-2 border-warning-400 shadow-[0_3px_0_var(--color-warning-300)] flex items-center justify-center text-3xl"
           >
             <BrandEmoji :emoji="w.theme_emoji" />
           </span>
           <div class="min-w-0">
-            <span
-              class="font-heading font-bold text-base text-brand-600 block tabular-nums"
-            >
-              Tuần {{ w.week_no }}
-            </span>
+            <div class="flex flex-wrap items-center gap-2">
+              <span
+                class="font-heading font-bold text-base text-brand-700 leading-relaxed tabular-nums"
+              >
+                Tuần {{ w.week_no }}
+              </span>
+              <span
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-warning-100 border border-warning-300 text-base font-semibold text-warning-800 leading-relaxed"
+              >
+                <UIcon
+                  class="w-4 h-4 text-warning-700 shrink-0"
+                  name="i-lucide-trees"
+                />
+                <span>{{
+                  resolveVietnameseLandName(w.theme_title, weekIdx)
+                }}</span>
+              </span>
+              <span
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-brand-50 border border-brand-200 text-base font-semibold text-brand-800 leading-relaxed"
+                data-testid="play-map-moet-theme-pill"
+              >
+                <UIcon
+                  class="w-4 h-4 text-brand-600 shrink-0"
+                  name="i-lucide-sprout"
+                />
+                <span
+                  >Chủ đề: {{ resolveMoetThemeLabel(w, weeks.length) }}</span
+                >
+              </span>
+            </div>
             <h2
-              class="font-heading font-bold text-xl sm:text-2xl text-surface-900 break-words"
+              class="font-heading font-bold text-xl sm:text-2xl text-surface-900 break-words leading-relaxed"
             >
               {{ w.theme_title }}
             </h2>
@@ -171,6 +213,11 @@
 </template>
 
 <script lang="ts" setup>
+  import {
+    getMoetThemeById,
+    getMoetThemeForWeek,
+    type KogumaUnitSummary,
+  } from "@mindkid/taxonomy";
   import BrandEmoji from "@mindkid/ui/brand-emoji";
   import KidMascot from "~/components/kid/mascot.vue";
 
@@ -180,6 +227,7 @@
     readonly thumbnail_emoji: string;
     readonly status: "not_started" | "in_progress" | "completed";
     readonly is_current: boolean;
+    readonly koguma_unit?: KogumaUnitSummary | null;
   }
 
   export interface WindingThemeWeek {
@@ -189,6 +237,8 @@
     readonly goal: string;
     readonly is_current: boolean;
     readonly is_completed: boolean;
+    readonly moet_theme_id?: string | null;
+    readonly moet_theme_title?: string | null;
     readonly lessons: WindingLessonNode[];
   }
 
@@ -199,6 +249,94 @@
   const emit = defineEmits<{
     selectLesson: [lessonCode: string];
   }>();
+
+  interface VietnameseThemeLand {
+    readonly label: string;
+    readonly keywords: readonly string[];
+  }
+
+  /** 10 vùng đất chủ đề Giáo dục Mầm non Việt Nam (Tuổi thơ Việt × Giấy Gỗ Mộc). */
+  const VIETNAMESE_THEME_LANDS: readonly VietnameseThemeLand[] = [
+    {
+      label: "Hành Trang Lớp Một",
+      keywords: ["lớp một", "tiểu học"],
+    },
+    {
+      label: "Ngôi Trường Tre Xanh",
+      keywords: ["trường", "mầm non", "lớp học"],
+    },
+    {
+      label: "Đôi Tay Xinh Xắn",
+      keywords: ["bản thân", "cơ thể", "giác quan"],
+    },
+    {
+      label: "Mái Nhà Thân Thương",
+      keywords: ["gia đình", "nhà", "tổ ấm"],
+    },
+    {
+      label: "Xưởng Mộc và Nghề Quê",
+      keywords: ["nghề", "bác sĩ", "nông dân", "thợ"],
+    },
+    {
+      label: "Đồng Cỏ và Biển Xanh",
+      keywords: ["động vật", "thú", "chim", "cá", "biển", "nông trại"],
+    },
+    {
+      label: "Vườn Quê Bốn Mùa",
+      keywords: ["thực vật", "cây", "vườn", "hoa", "quả", "bánh", "ẩm thực"],
+    },
+    {
+      label: "Chuyến Xe Qua Phố",
+      keywords: ["giao thông", "xe", "tàu", "phố"],
+    },
+    {
+      label: "Nắng Vàng và Mưa Hạ",
+      keywords: ["hiện tượng", "thời tiết", "bầu trời", "vũ trụ", "nước"],
+    },
+    {
+      label: "Quê Hương và Lễ Hội",
+      keywords: [
+        "quê hương",
+        "lễ hội",
+        "tết",
+        "trung thu",
+        "nghệ thuật",
+        "nhạc",
+      ],
+    },
+  ];
+
+  function resolveMoetThemeLabel(
+    week: WindingThemeWeek,
+    totalWeeks: number
+  ): string {
+    if (week.moet_theme_title) {
+      return week.moet_theme_title;
+    }
+    if (week.moet_theme_id) {
+      const byId = getMoetThemeById(week.moet_theme_id);
+      if (byId) {
+        return byId.title_vi;
+      }
+    }
+    return getMoetThemeForWeek(week.week_no, totalWeeks).title_vi;
+  }
+
+  function resolveVietnameseLandName(
+    themeTitle: string,
+    weekIndex: number
+  ): string {
+    const lower = themeTitle.toLowerCase();
+    const matched = VIETNAMESE_THEME_LANDS.find((land) =>
+      land.keywords.some((kw) => lower.includes(kw))
+    );
+    if (matched) {
+      return matched.label;
+    }
+    const fallback =
+      VIETNAMESE_THEME_LANDS[weekIndex % VIETNAMESE_THEME_LANDS.length];
+    return fallback ? fallback.label : "Vườn Quê Tuổi Thơ";
+  }
 
   function getWeekCardClass(w: {
     is_current: boolean;
@@ -281,6 +419,23 @@
 
   .land-hill-decor--2 {
     background-color: var(--color-success-50);
+  }
+
+  .land-bamboo-motif {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0;
+    width: 4.5rem;
+    height: 5.5rem;
+    opacity: 0.35;
+  }
+
+  .land-bamboo-stroke {
+    stroke: var(--color-success-500);
+  }
+
+  .land-bamboo-leaf {
+    fill: var(--color-brand-500);
   }
 
   .mascot-station-marker {

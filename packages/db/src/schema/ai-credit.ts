@@ -1,43 +1,34 @@
 import { sql } from "drizzle-orm";
 import {
-  bigint,
   index,
   integer,
-  pgEnum,
-  pgTable,
+  sqliteTable,
   text,
   uniqueIndex,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
-import { idPk, timestamps } from "./columns.ts";
+} from "drizzle-orm/sqlite-core";
+import type { AiCreditReason } from "#src/constants/billing-ops-enums";
+import { idPk, timestamps, uuidCol } from "./columns.ts";
 import { managers, users } from "./identity.ts";
 
-export const aiCreditReasonEnum = pgEnum("ai_credit_reason", [
-  "purchase",
-  "usage",
-  "manual_grant",
-  "refund",
-]);
-
-export const aiCreditLedger = pgTable(
+export const aiCreditLedger = sqliteTable(
   "ai_credit_ledger",
   {
     id: idPk(),
-    uuid: uuid("uuid").defaultRandom().notNull().unique(),
-    userId: bigint("user_id", { mode: "number" })
+    uuid: uuidCol("uuid").unique(),
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
     delta: integer("delta").notNull(),
-    reason: aiCreditReasonEnum("reason").notNull(),
-    refType: varchar("ref_type", { length: 60 }),
-    refId: varchar("ref_id", { length: 100 }),
-    feature: varchar("feature", { length: 60 }),
-    grantedByManagerId: bigint("granted_by_manager_id", {
-      mode: "number",
-    }).references(() => managers.id, { onDelete: "set null" }),
+    reason: integer("reason").$type<AiCreditReason>().notNull(),
+    refType: text("ref_type"),
+    refId: text("ref_id"),
+    feature: text("feature"),
+    grantedByManagerId: integer("granted_by_manager_id").references(
+      () => managers.id,
+      { onDelete: "set null" }
+    ),
     grantReason: text("grant_reason"),
-    idempotencyKey: varchar("idempotency_key", { length: 128 }),
+    idempotencyKey: text("idempotency_key"),
     ...timestamps(),
   },
   (table) => [
@@ -55,9 +46,9 @@ export const aiCreditLedger = pgTable(
   ]
 );
 
-export const aiCreditBalance = pgTable("ai_credit_balance", {
+export const aiCreditBalance = sqliteTable("ai_credit_balance", {
   id: idPk(),
-  userId: bigint("user_id", { mode: "number" })
+  userId: integer("user_id")
     .notNull()
     .unique()
     .references(() => users.id, { onDelete: "cascade" }),

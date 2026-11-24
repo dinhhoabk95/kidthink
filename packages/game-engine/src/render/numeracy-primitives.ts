@@ -4,6 +4,7 @@ import type { RenderSystem } from "#src/systems/render-system";
 import { drawNumberRod, drawRekenrek } from "./bead-rods.js";
 import { alpha } from "./color-utils.js";
 import { drawNumberLine } from "./number-line.js";
+import { getEmojiSprite } from "./sprite-registry.js";
 import { applyCanvasFontAtSize, applyEmojiFont } from "./type-scale.js";
 import type { QuantityRepConfig, SceneBox } from "./types.js";
 
@@ -220,6 +221,16 @@ export function drawDotPattern(
   }
 
   if (options?.glyph) {
+    const sprite = getEmojiSprite(options.glyph);
+    if (sprite) {
+      const size = Math.round(r * 2.4);
+      const half = size / 2;
+      for (const dot of dots) {
+        ctx.drawImage(sprite, dot.x - half, dot.y - half, size, size);
+      }
+      ctx.restore();
+      return;
+    }
     applyEmojiFont(ctx, Math.round(r * 2.2));
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";

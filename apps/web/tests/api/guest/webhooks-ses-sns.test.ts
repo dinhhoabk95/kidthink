@@ -1,8 +1,11 @@
 import { createSign, generateKeyPairSync } from "node:crypto";
 import {
   getOwnerDb,
+  NOTIFICATION_CHANNEL,
+  NOTIFICATION_STATUS,
   notificationDeliveries,
   notifications,
+  RECIPIENT_TYPE,
   users,
 } from "@mindkid/db";
 import { buildSnsStringToSign, type SnsMessage } from "@mindkid/notification";
@@ -77,7 +80,7 @@ async function seedQueuedDelivery(providerMessageId: string) {
   const [notification] = await db
     .insert(notifications)
     .values({
-      recipientType: "user",
+      recipientType: RECIPIENT_TYPE.USER,
       recipientId: user.id,
       templateCode: "email_verification",
     })
@@ -87,8 +90,8 @@ async function seedQueuedDelivery(providerMessageId: string) {
     .insert(notificationDeliveries)
     .values({
       notificationId: notification.id,
-      channel: "email",
-      status: "queued",
+      channel: NOTIFICATION_CHANNEL.EMAIL,
+      status: NOTIFICATION_STATUS.QUEUED,
       providerMessageId,
     })
     .returning();
@@ -96,7 +99,7 @@ async function seedQueuedDelivery(providerMessageId: string) {
   return { user, delivery };
 }
 
-async function readStatus(deliveryId: number): Promise<string> {
+async function readStatus(deliveryId: number): Promise<number> {
   const db = getOwnerDb();
   const [row] = await db
     .select()
@@ -127,7 +130,7 @@ describe("POST /api/guest/webhooks/ses-sns (BR-NOT-11, BR-NOT-12)", () => {
     msg.Signature = Buffer.from("forged").toString("base64");
 
     await expect(sesSnsHandler(mockSnsEvent(msg))).rejects.toThrow();
-    expect(await readStatus(delivery.id)).toBe("queued");
+    expect(await readStatus(delivery.id)).toBe(NOTIFICATION_STATUS.QUEUED);
   });
 
   it("rejects an unsigned payload that carries no SNS envelope (BR-NOT-11)", async () => {
@@ -148,7 +151,7 @@ describe("POST /api/guest/webhooks/ses-sns (BR-NOT-11, BR-NOT-12)", () => {
         })
       )
     ).rejects.toThrow();
-    expect(await readStatus(delivery.id)).toBe("queued");
+    expect(await readStatus(delivery.id)).toBe(NOTIFICATION_STATUS.QUEUED);
   });
 
   it("rejects a cert URL outside the AWS SNS domain (BR-NOT-11)", async () => {
@@ -172,7 +175,7 @@ describe("POST /api/guest/webhooks/ses-sns (BR-NOT-11, BR-NOT-12)", () => {
     );
 
     await expect(sesSnsHandler(mockSnsEvent(msg))).rejects.toThrow();
-    expect(await readStatus(delivery.id)).toBe("queued");
+    expect(await readStatus(delivery.id)).toBe(NOTIFICATION_STATUS.QUEUED);
   });
 
   it("rejects a TopicArn outside the allow-list (BR-NOT-11)", async () => {
@@ -197,7 +200,7 @@ describe("POST /api/guest/webhooks/ses-sns (BR-NOT-11, BR-NOT-12)", () => {
     );
 
     await expect(sesSnsHandler(mockSnsEvent(msg))).rejects.toThrow();
-    expect(await readStatus(delivery.id)).toBe("queued");
+    expect(await readStatus(delivery.id)).toBe(NOTIFICATION_STATUS.QUEUED);
   });
 
   it("rejects an expired Timestamp beyond anti-replay window (BR-NOT-11)", async () => {
@@ -222,7 +225,7 @@ describe("POST /api/guest/webhooks/ses-sns (BR-NOT-11, BR-NOT-12)", () => {
     );
 
     await expect(sesSnsHandler(mockSnsEvent(msg))).rejects.toThrow();
-    expect(await readStatus(delivery.id)).toBe("queued");
+    expect(await readStatus(delivery.id)).toBe(NOTIFICATION_STATUS.QUEUED);
   });
 
   it("marks the delivery dispatched when the signature verifies (BR-NOT-11, BR-NOT-12)", async () => {
@@ -247,7 +250,7 @@ describe("POST /api/guest/webhooks/ses-sns (BR-NOT-11, BR-NOT-12)", () => {
     const res = await sesSnsHandler(mockSnsEvent(msg));
 
     expect(res.status).toBe("processed");
-    expect(await readStatus(delivery.id)).toBe("dispatched");
+    expect(await readStatus(delivery.id)).toBe(NOTIFICATION_STATUS.DISPATCHED);
   });
 
   it("records a bounce as failed when the signature verifies (BR-NOT-11, BR-NOT-12)", async () => {
@@ -275,6 +278,6 @@ describe("POST /api/guest/webhooks/ses-sns (BR-NOT-11, BR-NOT-12)", () => {
 
     await sesSnsHandler(mockSnsEvent(msg));
 
-    expect(await readStatus(delivery.id)).toBe("failed");
+    expect(await readStatus(delivery.id)).toBe(NOTIFICATION_STATUS.FAILED);
   });
 });

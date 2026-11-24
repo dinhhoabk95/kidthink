@@ -1,0 +1,14 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Nhà khoa học</title>
+  <defs>
+    <linearGradient id="nw_labscientist" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#ffffff" /><stop offset="100%" stop-color="#e2e8f0" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#334155" opacity="0.22" rx="34" ry="5" />
+    <path d="M28 98C28 74 42 64 60 64C78 64 92 74 92 98Z" fill="url(#nw_labscientist)" stroke="#334155" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M40 36C40 22 49 16 60 16C71 16 80 22 80 36Z" fill="#44403c" stroke="#1c1917" stroke-width="3.6" />
+    <circle cx="60" cy="44" fill="#fde68a" r="18" stroke="#78350f" stroke-width="3.8" />
+    <circle cx="53" cy="43" fill="#1c1917" r="2.6" /><circle cx="67" cy="43" fill="#1c1917" r="2.6" />
+    <path d="M54 51C57 54 63 54 66 51" stroke="#78350f" stroke-linecap="round" stroke-width="2.4" />
+    <rect fill="#bae6fd" height="9" rx="4" stroke="#1e3a8a" stroke-width="2.8" width="32" x="44" y="38" />
+    <path d="M84 68L94 90H74Z" fill="#4ade80" stroke="#14532d" stroke-linejoin="round" stroke-width="3.2" />
+</svg>

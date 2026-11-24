@@ -168,28 +168,25 @@ function measureCase(
   }
 }
 
-describe.each(MIGRATED_CODES.filter((c) => c !== "GT-000"))(
-  "%s — vùng chạm trùng chỗ vẽ",
-  (code) => {
-    beforeAll(async () => {
-      await preloadGameSession(code);
-    });
+describe.each(MIGRATED_CODES)("%s — vùng chạm trùng chỗ vẽ", (code) => {
+  beforeAll(async () => {
+    await preloadGameSession(code);
+  });
 
-    it.each(FRAMES)("$name", (frame) => {
-      const found: string[] = [];
-      for (const testCase of casesFor(code)) {
-        const result = measureCase(code, testCase, frame);
-        for (const v of result) {
-          found.push(`${testCase.band} ${testCase.name}: ${v}`);
-        }
+  it.each(FRAMES)("$name", (frame) => {
+    const found: string[] = [];
+    for (const testCase of casesFor(code)) {
+      const result = measureCase(code, testCase, frame);
+      for (const v of result) {
+        found.push(`${testCase.band} ${testCase.name}: ${v}`);
       }
-      expect(
-        found.slice(0, MAX_REPORTED),
-        `${found.length} vi phạm: ${found.slice(0, MAX_REPORTED).join(" ; ")}`
-      ).toEqual([]);
-    });
-  }
-);
+    }
+    expect(
+      found.slice(0, MAX_REPORTED),
+      `${found.length} vi phạm: ${found.slice(0, MAX_REPORTED).join(" ; ")}`
+    ).toEqual([]);
+  });
+});
 
 describe("quét vùng chạm trùng chỗ vẽ — ca âm", () => {
   it.each(FRAMES)(

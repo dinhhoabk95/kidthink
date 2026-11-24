@@ -3,6 +3,7 @@ import { defineNuxtConfig } from "nuxt/config";
 import { env } from "./env";
 
 const isDevelopment = env.NODE_ENV === "development";
+const isCloudflareTarget = process.env.MINDKID_RUNTIME === "cloudflare";
 
 const allowedOrigins = env.NUXT_ALLOWED_ORIGINS.split(",")
   .map((origin) => origin.trim())
@@ -19,17 +20,32 @@ export default defineNuxtConfig({
   },
   modules: ["nuxt-security"],
   nitro: {
-    alias: {
-      "#server": fileURLToPath(new URL("./server", import.meta.url)),
-    },
-    externals: {
-      // argon2 là native addon phát bằng CommonJS + node-gyp-build. Rollup bundle
-      // nó vào output ESM của Nitro thì thân CJS giữ nguyên `__dirname`, và server
-      // build chết ngay lúc khởi động: "__dirname is not defined in ES module
-      // scope". Nó tới qua @mindkid/auth (workspace package nên bị inline mặc
-      // định), vì vậy phải khai external tường minh.
-      external: ["argon2", "sharp"],
-    },
+    preset: isCloudflareTarget ? "cloudflare_module" : undefined,
+    alias: isCloudflareTarget
+      ? {
+          "#server": fileURLToPath(new URL("./server", import.meta.url)),
+          argon2: fileURLToPath(
+            new URL(
+              "./server/utils/cloudflare-empty-addon-stub.ts",
+              import.meta.url
+            )
+          ),
+          sharp: fileURLToPath(
+            new URL(
+              "./server/utils/cloudflare-empty-addon-stub.ts",
+              import.meta.url
+            )
+          ),
+        }
+      : {
+          "#server": fileURLToPath(new URL("./server", import.meta.url)),
+        },
+    externals: isCloudflareTarget
+      ? undefined
+      : {
+          // argon2 là native addon phát bằng CommonJS + node-gyp-build (chỉ dùng khi MINDKID_RUNTIME=vps).
+          external: ["argon2", "sharp"],
+        },
     // ERROR-CODES §4 + §8: chỗ duy nhất dựng body lỗi cho `/api/*`.
     // Nitro nối handler mặc định vào cuối chuỗi, nên trang lỗi Nuxt (SSR, 404
     // trang) vẫn do Nitro xử lý như trước — `server/error.ts` return sớm cho
@@ -121,6 +137,15 @@ export default defineNuxtConfig({
   },
   // BR-SEO2-01: Bề mặt tài khoản và bề mặt trẻ không được index
   routeRules: {
+    ...(isCloudflareTarget
+      ? {
+          "/": { prerender: true },
+          "/guide": { prerender: true },
+          "/terms": { prerender: true },
+          "/privacy": { prerender: true },
+          "/child-privacy": { prerender: true },
+        }
+      : {}),
     "/me": {
       headers: { "X-Robots-Tag": "noindex, nofollow" },
     },

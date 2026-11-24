@@ -1,19 +1,21 @@
 import type { RecommendationItem } from "@mindkid/adaptive";
 import {
-  collections,
-  curricula,
-  gameLevels,
-  type getOwnerDb,
-  libraryItems,
+  ACCESS_TIER_CODEC,
+  CONTENT_ENTITY_TYPE,
+  CONTENT_ENTITY_TYPE_CODEC,
+  type ContentEntityType,
+  type DbExecutor,
 } from "@mindkid/db";
+import {
+  createRepositories,
+  type MindKidRepositories,
+} from "@mindkid/db/repositories";
 import { QuotaExceededError } from "@mindkid/errors/billing";
 import { NotFoundError } from "@mindkid/errors/common";
 import { CodeAlreadyExistsError } from "@mindkid/errors/content";
 import { type AccessTier, TIER_ORDER, TIER_RANK } from "@mindkid/shared";
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { useOwnerRepositories } from "#server/utils/repositories";
 import { getGuestRecommendations } from "./recommendation.ts";
-
-type LibraryDatabase = ReturnType<typeof getOwnerDb>;
 
 export interface GetLibraryOptions {
   userId: number;
@@ -41,34 +43,62 @@ export interface LibraryItemPayload {
   tags?: string[];
 }
 
-export async function getUserCollections(db: LibraryDatabase, userId: number) {
-  const [userCols, counts] = await Promise.all([
-    db
-      .select({
-        id: collections.id,
-        name: collections.name,
-        position: collections.position,
-        createdAt: collections.createdAt,
-      })
-      .from(collections)
-      .where(eq(collections.userId, userId))
-      .orderBy(collections.position, collections.createdAt),
-    db
-      .select({
-        collectionId: libraryItems.collectionId,
-        count: sql<number>`count(*)::int`,
-      })
-      .from(libraryItems)
-      .where(eq(libraryItems.userId, userId))
-      .groupBy(libraryItems.collectionId),
-  ]);
+interface ResolvedEntityMeta {
+  code: string;
+  title: string;
+  thumbnailEmoji?: string;
+  accessTier: string;
+  isArchived: boolean;
+}
 
-  const countMap = new Map<number, number>();
-  for (const c of counts) {
-    if (c.collectionId !== null) {
-      countMap.set(c.collectionId, c.count);
-    }
+function isRepositories(
+  target: DbExecutor | MindKidRepositories
+): target is MindKidRepositories {
+  return "library" in target;
+}
+
+function toRepositories(
+  target?: DbExecutor | MindKidRepositories
+): MindKidRepositories {
+  if (!target) {
+    return useOwnerRepositories();
   }
+  return isRepositories(target) ? target : createRepositories(target);
+}
+
+export async function getUserCollections(userId: number): Promise<
+  Array<{
+    id: number;
+    name: string;
+    position: number;
+    item_count: number;
+    created_at: string;
+  }>
+>;
+export async function getUserCollections(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  userId: number
+): Promise<
+  Array<{
+    id: number;
+    name: string;
+    position: number;
+    item_count: number;
+    created_at: string;
+  }>
+>;
+export async function getUserCollections(
+  first: DbExecutor | MindKidRepositories | number,
+  maybeUserId?: number
+) {
+  const isLegacyCall = typeof first !== "number";
+  const repos = isLegacyCall ? toRepositories(first) : useOwnerRepositories();
+  const userId = isLegacyCall ? (maybeUserId as number) : first;
+
+  const [userCols, countMap] = await Promise.all([
+    repos.library.listCollectionsByUser(userId),
+    repos.library.countItemsByCollectionForUser(userId),
+  ]);
 
   return userCols.map((col) => ({
     id: col.id,
@@ -80,16 +110,37 @@ export async function getUserCollections(db: LibraryDatabase, userId: number) {
 }
 
 export async function createCollection(
-  db: LibraryDatabase,
   userId: number,
   name: string
+): Promise<{
+  id: number;
+  name: string;
+  position: number;
+  item_count: number;
+  created_at: string;
+}>;
+export async function createCollection(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  userId: number,
+  name: string
+): Promise<{
+  id: number;
+  name: string;
+  position: number;
+  item_count: number;
+  created_at: string;
+}>;
+export async function createCollection(
+  first: DbExecutor | MindKidRepositories | number,
+  second: number | string,
+  third?: string
 ) {
-  const [existingCount] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(collections)
-    .where(eq(collections.userId, userId));
+  const isLegacyCall = typeof first !== "number";
+  const repos = isLegacyCall ? toRepositories(first) : useOwnerRepositories();
+  const userId = isLegacyCall ? (second as number) : first;
+  const name = isLegacyCall ? (third as string) : (second as string);
 
-  const currentCount = existingCount?.count ?? 0;
+  const currentCount = await repos.library.countCollectionsByUser(userId);
   if (currentCount >= 20) {
     throw new QuotaExceededError(
       {
@@ -101,61 +152,63 @@ export async function createCollection(
     );
   }
 
-  const [created] = await db
-    .insert(collections)
-    .values({
-      userId,
-      name: name.trim(),
-      position: currentCount,
-    })
-    .returning({
-      id: collections.id,
-      name: collections.name,
-      position: collections.position,
-      createdAt: collections.createdAt,
-    });
+  const created = await repos.library.createCollection({
+    userId,
+    name: name.trim(),
+    position: currentCount,
+  });
 
   return {
-    id: created?.id,
-    name: created?.name,
-    position: created?.position,
+    id: created.id,
+    name: created.name,
+    position: created.position,
     item_count: 0,
-    created_at: created?.createdAt.toISOString(),
+    created_at: created.createdAt.toISOString(),
   };
 }
 
-export async function updateCollection(
-  db: LibraryDatabase,
-  params: {
-    userId: number;
-    collectionId: number;
-    name?: string;
-    position?: number;
-  }
-) {
-  const patch: { name?: string; position?: number } = {};
-  if (params.name !== undefined) {
-    patch.name = params.name.trim();
-  }
-  if (params.position !== undefined) {
-    patch.position = params.position;
-  }
+export interface UpdateCollectionParams {
+  userId: number;
+  collectionId: number;
+  name?: string;
+  position?: number;
+}
 
-  const [updated] = await db
-    .update(collections)
-    .set(patch)
-    .where(
-      and(
-        eq(collections.id, params.collectionId),
-        eq(collections.userId, params.userId)
-      )
-    )
-    .returning({
-      id: collections.id,
-      name: collections.name,
-      position: collections.position,
-      createdAt: collections.createdAt,
-    });
+export async function updateCollection(
+  params: UpdateCollectionParams
+): Promise<{
+  id: number;
+  name: string;
+  position: number;
+  created_at: string;
+}>;
+export async function updateCollection(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  params: UpdateCollectionParams
+): Promise<{
+  id: number;
+  name: string;
+  position: number;
+  created_at: string;
+}>;
+export async function updateCollection(
+  first: DbExecutor | MindKidRepositories | UpdateCollectionParams,
+  maybeParams?: UpdateCollectionParams
+) {
+  const isLegacyCall = maybeParams !== undefined;
+  const repos = isLegacyCall
+    ? toRepositories(first as DbExecutor | MindKidRepositories)
+    : useOwnerRepositories();
+  const params = isLegacyCall ? maybeParams : (first as UpdateCollectionParams);
+
+  const updated = await repos.library.updateCollection(
+    params.collectionId,
+    params.userId,
+    {
+      name: params.name,
+      position: params.position,
+    }
+  );
 
   if (!updated) {
     throw new NotFoundError("Không tìm thấy bộ sưu tập.");
@@ -169,19 +222,32 @@ export async function updateCollection(
   };
 }
 
+export interface DeleteCollectionParams {
+  userId: number;
+  collectionId: number;
+}
+
 export async function deleteCollection(
-  db: LibraryDatabase,
-  params: { userId: number; collectionId: number }
+  params: DeleteCollectionParams
+): Promise<{ success: boolean }>;
+export async function deleteCollection(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  params: DeleteCollectionParams
+): Promise<{ success: boolean }>;
+export async function deleteCollection(
+  first: DbExecutor | MindKidRepositories | DeleteCollectionParams,
+  maybeParams?: DeleteCollectionParams
 ) {
-  const [deleted] = await db
-    .delete(collections)
-    .where(
-      and(
-        eq(collections.id, params.collectionId),
-        eq(collections.userId, params.userId)
-      )
-    )
-    .returning({ id: collections.id });
+  const isLegacyCall = maybeParams !== undefined;
+  const repos = isLegacyCall
+    ? toRepositories(first as DbExecutor | MindKidRepositories)
+    : useOwnerRepositories();
+  const params = isLegacyCall ? maybeParams : (first as DeleteCollectionParams);
+
+  const deleted = await repos.library.deleteCollection(
+    params.collectionId,
+    params.userId
+  );
 
   if (!deleted) {
     throw new NotFoundError("Không tìm thấy bộ sưu tập.");
@@ -191,7 +257,7 @@ export async function deleteCollection(
 }
 
 async function resolveEntityIdByCode(
-  db: LibraryDatabase,
+  repos: MindKidRepositories,
   entityType: "game_level" | "curriculum",
   code: string
 ): Promise<number | null> {
@@ -200,36 +266,47 @@ async function resolveEntityIdByCode(
     return null;
   }
   if (entityType === "game_level") {
-    const [row] = await db
-      .select({ id: gameLevels.id })
-      .from(gameLevels)
-      .where(eq(gameLevels.code, normalizedCode))
-      .limit(1);
-    return row?.id ?? null;
+    const level = await repos.gameLevels.findByCode(normalizedCode);
+    return level?.id ?? null;
   }
-  const [row] = await db
-    .select({ id: curricula.id })
-    .from(curricula)
-    .where(eq(curricula.code, normalizedCode))
-    .limit(1);
-  return row?.id ?? null;
+  const curr = await repos.curricula.findByCode(normalizedCode);
+  return curr?.id ?? null;
+}
+
+export interface AddLibraryItemParams {
+  userId: number;
+  entityType: "game_level" | "curriculum";
+  entityId?: number;
+  code?: string;
+  collectionId?: number | null;
+  note?: string | null;
 }
 
 export async function addLibraryItem(
-  db: LibraryDatabase,
-  params: {
-    userId: number;
-    entityType: "game_level" | "curriculum";
-    entityId?: number;
-    code?: string;
-    collectionId?: number | null;
-    note?: string | null;
-  }
+  params: AddLibraryItemParams
+): Promise<
+  Awaited<ReturnType<MindKidRepositories["library"]["addLibraryItem"]>>
+>;
+export async function addLibraryItem(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  params: AddLibraryItemParams
+): Promise<
+  Awaited<ReturnType<MindKidRepositories["library"]["addLibraryItem"]>>
+>;
+export async function addLibraryItem(
+  first: DbExecutor | MindKidRepositories | AddLibraryItemParams,
+  maybeParams?: AddLibraryItemParams
 ) {
+  const isLegacyCall = maybeParams !== undefined;
+  const repos = isLegacyCall
+    ? toRepositories(first as DbExecutor | MindKidRepositories)
+    : useOwnerRepositories();
+  const params = isLegacyCall ? maybeParams : (first as AddLibraryItemParams);
+
   let resolvedEntityId = params.entityId;
   if (resolvedEntityId === undefined && params.code) {
     const foundId = await resolveEntityIdByCode(
-      db,
+      repos,
       params.entityType,
       params.code
     );
@@ -241,190 +318,133 @@ export async function addLibraryItem(
     throw new NotFoundError("Không tìm thấy nội dung cần lưu vào thư viện.");
   }
 
-  const [existing] = await db
-    .select({
-      id: libraryItems.userId,
-    })
-    .from(libraryItems)
-    .where(
-      and(
-        eq(libraryItems.userId, params.userId),
-        eq(libraryItems.entityType, params.entityType),
-        eq(libraryItems.entityId, resolvedEntityId)
-      )
+  if (params.collectionId !== undefined && params.collectionId !== null) {
+    const ownedCollection = await repos.library.findCollectionByIdForUser(
+      params.collectionId,
+      params.userId
     );
+    if (!ownedCollection) {
+      throw new NotFoundError("Không tìm thấy bộ sưu tập.");
+    }
+  }
 
-  if (existing) {
+  const entityTypeCode = CONTENT_ENTITY_TYPE_CODEC.toCode(params.entityType);
+  const existing = await repos.library.listLibraryItems({
+    userId: params.userId,
+    entityType: entityTypeCode,
+    entityId: resolvedEntityId,
+    limit: 1,
+  });
+
+  if (existing.length > 0) {
     throw new CodeAlreadyExistsError("Mục này đã tồn tại trong thư viện.");
   }
 
-  const [created] = await db
-    .insert(libraryItems)
-    .values({
-      userId: params.userId,
-      entityType: params.entityType,
-      entityId: resolvedEntityId,
-      collectionId: params.collectionId ?? null,
-      note: params.note?.trim() ?? null,
-    })
-    .returning();
-
-  return created;
+  return await repos.library.addLibraryItem({
+    userId: params.userId,
+    entityType: entityTypeCode,
+    entityId: resolvedEntityId,
+    collectionId: params.collectionId ?? null,
+    note: params.note?.trim() ?? null,
+  });
 }
 
 export const saveLibraryItem = addLibraryItem;
 
+export interface RemoveLibraryItemParams {
+  userId: number;
+  entityType: "game_level" | "curriculum";
+  entityId: number;
+}
+
 export async function removeLibraryItem(
-  db: LibraryDatabase,
-  params: {
-    userId: number;
-    entityType: "game_level" | "curriculum";
-    entityId: number;
-  }
+  params: RemoveLibraryItemParams
+): Promise<void>;
+export async function removeLibraryItem(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  params: RemoveLibraryItemParams
+): Promise<void>;
+export async function removeLibraryItem(
+  first: DbExecutor | MindKidRepositories | RemoveLibraryItemParams,
+  maybeParams?: RemoveLibraryItemParams
 ) {
-  await db
-    .delete(libraryItems)
-    .where(
-      and(
-        eq(libraryItems.userId, params.userId),
-        eq(libraryItems.entityType, params.entityType),
-        eq(libraryItems.entityId, params.entityId)
-      )
-    );
+  const isLegacyCall = maybeParams !== undefined;
+  const repos = isLegacyCall
+    ? toRepositories(first as DbExecutor | MindKidRepositories)
+    : useOwnerRepositories();
+  const params = isLegacyCall
+    ? maybeParams
+    : (first as RemoveLibraryItemParams);
+
+  await repos.library.removeLibraryItem(
+    params.userId,
+    CONTENT_ENTITY_TYPE_CODEC.toCode(params.entityType),
+    params.entityId
+  );
 }
 
-interface ResolvedEntityMeta {
-  code: string;
-  title: string;
-  thumbnailEmoji?: string;
-  accessTier: string;
-  isArchived: boolean;
-}
-
-async function resolveGameLevelMeta(
-  db: LibraryDatabase,
-  entityId: number
-): Promise<ResolvedEntityMeta> {
-  const [active] = await db
-    .select({
-      code: gameLevels.code,
-      title: gameLevels.title,
-      thumbnailEmoji: gameLevels.thumbnailEmoji,
-      accessTier: gameLevels.accessTier,
-    })
-    .from(gameLevels)
-    .where(eq(gameLevels.id, entityId));
-
-  return {
-    code: active?.code ?? `game_level-${entityId}`,
-    title: active?.title ?? `Trò chơi #${entityId}`,
-    thumbnailEmoji: active?.thumbnailEmoji ?? undefined,
-    accessTier: active?.accessTier ?? "free",
-    isArchived: !active,
-  };
-}
-
-async function resolveCurriculumMeta(
-  db: LibraryDatabase,
-  entityId: number
-): Promise<ResolvedEntityMeta> {
-  const [active] = await db
-    .select({
-      code: curricula.code,
-      title: curricula.title,
-      accessTier: curricula.accessTier,
-    })
-    .from(curricula)
-    .where(eq(curricula.id, entityId));
-
-  return {
-    code: active?.code ?? `curriculum-${entityId}`,
-    title: active?.title ?? `Chương trình #${entityId}`,
-    accessTier: active?.accessTier ?? "free",
-    isArchived: !active,
-  };
-}
-
-function resolveEntityMeta(
-  db: LibraryDatabase,
+function resolveDefaultMeta(
   entityType: string,
   entityId: number
-): Promise<ResolvedEntityMeta> {
-  switch (entityType) {
-    case "game_level":
-      return resolveGameLevelMeta(db, entityId);
-    case "curriculum":
-      return resolveCurriculumMeta(db, entityId);
-    default:
-      return Promise.resolve({
-        code: `${entityType}-${entityId}`,
-        title: `Nội dung #${entityId}`,
-        accessTier: "free",
-        isArchived: true,
-      });
+): ResolvedEntityMeta {
+  if (entityType === "game_level") {
+    return {
+      code: `game_level-${entityId}`,
+      title: `Trò chơi #${entityId}`,
+      accessTier: "free",
+      isArchived: true,
+    };
   }
-}
-
-function populateMetaGroup<
-  T extends {
-    id: number;
-    code: string;
-    title: string;
-    accessTier: string;
-    thumbnailEmoji?: string | null;
-  },
->(metaMap: Map<string, ResolvedEntityMeta>, rows: T[], type: string): void {
-  for (const r of rows) {
-    metaMap.set(`${type}_${r.id}`, {
-      code: r.code,
-      title: r.title,
-      thumbnailEmoji: r.thumbnailEmoji ?? undefined,
-      accessTier: r.accessTier,
-      isArchived: false,
-    });
+  if (entityType === "curriculum") {
+    return {
+      code: `curriculum-${entityId}`,
+      title: `Chương trình #${entityId}`,
+      accessTier: "free",
+      isArchived: true,
+    };
   }
+  return {
+    code: `${entityType}-${entityId}`,
+    title: `Nội dung #${entityId}`,
+    accessTier: "free",
+    isArchived: true,
+  };
 }
 
 async function buildBulkMetaMap(
-  db: LibraryDatabase,
-  items: Array<{ entityType: string; entityId: number }>
+  repos: MindKidRepositories,
+  items: ReadonlyArray<{ entityType: ContentEntityType; entityId: number }>
 ): Promise<Map<string, ResolvedEntityMeta>> {
   const gameLevelIds = items
-    .filter((i) => i.entityType === "game_level")
+    .filter((i) => i.entityType === CONTENT_ENTITY_TYPE.GAME_LEVEL)
     .map((i) => i.entityId);
   const currIds = items
-    .filter((i) => i.entityType === "curriculum")
+    .filter((i) => i.entityType === CONTENT_ENTITY_TYPE.CURRICULUM)
     .map((i) => i.entityId);
 
-  const [rawGameLevels, rawCurricula] = await Promise.all([
-    gameLevelIds.length > 0
-      ? db
-          .select({
-            id: gameLevels.id,
-            code: gameLevels.code,
-            title: gameLevels.title,
-            thumbnailEmoji: gameLevels.thumbnailEmoji,
-            accessTier: gameLevels.accessTier,
-          })
-          .from(gameLevels)
-          .where(inArray(gameLevels.id, gameLevelIds))
-      : Promise.resolve([]),
-    currIds.length > 0
-      ? db
-          .select({
-            id: curricula.id,
-            code: curricula.code,
-            title: curricula.title,
-            accessTier: curricula.accessTier,
-          })
-          .from(curricula)
-          .where(inArray(curricula.id, currIds))
-      : Promise.resolve([]),
+  const [levelMap, curriculumMap] = await Promise.all([
+    repos.gameLevels.mapByIds(gameLevelIds),
+    repos.curricula.mapByIds(currIds),
   ]);
 
   const metaMap = new Map<string, ResolvedEntityMeta>();
-  populateMetaGroup(metaMap, rawGameLevels, "game_level");
-  populateMetaGroup(metaMap, rawCurricula, "curriculum");
+  for (const r of levelMap.values()) {
+    metaMap.set(`game_level_${r.id}`, {
+      code: r.code,
+      title: r.title,
+      thumbnailEmoji: r.thumbnailEmoji ?? undefined,
+      accessTier: ACCESS_TIER_CODEC.toLabel(r.accessTier),
+      isArchived: false,
+    });
+  }
+  for (const r of curriculumMap.values()) {
+    metaMap.set(`curriculum_${r.id}`, {
+      code: r.code,
+      title: r.title,
+      accessTier: ACCESS_TIER_CODEC.toLabel(r.accessTier),
+      isArchived: false,
+    });
+  }
   return metaMap;
 }
 
@@ -441,31 +461,37 @@ function matchesLibraryQuery(
   );
 }
 
+export async function getUserLibrary(options: GetLibraryOptions): Promise<{
+  items: LibraryItemPayload[];
+  total: number;
+  recommendations: RecommendationItem[];
+}>;
 export async function getUserLibrary(
-  db: LibraryDatabase,
+  dbOrRepos: DbExecutor | MindKidRepositories,
   options: GetLibraryOptions
+): Promise<{
+  items: LibraryItemPayload[];
+  total: number;
+  recommendations: RecommendationItem[];
+}>;
+export async function getUserLibrary(
+  first: DbExecutor | MindKidRepositories | GetLibraryOptions,
+  maybeOptions?: GetLibraryOptions
 ) {
-  const conditions = [eq(libraryItems.userId, options.userId)];
+  const isLegacyCall = maybeOptions !== undefined;
+  const repos = isLegacyCall
+    ? toRepositories(first as DbExecutor | MindKidRepositories)
+    : useOwnerRepositories();
+  const options = isLegacyCall ? maybeOptions : (first as GetLibraryOptions);
 
-  if (options.entityType) {
-    conditions.push(eq(libraryItems.entityType, options.entityType));
-  }
-  if (options.collectionId !== undefined) {
-    conditions.push(eq(libraryItems.collectionId, options.collectionId));
-  }
-
-  const items = await db
-    .select({
-      entityType: libraryItems.entityType,
-      entityId: libraryItems.entityId,
-      collectionId: libraryItems.collectionId,
-      note: libraryItems.note,
-      createdAt: libraryItems.createdAt,
-    })
-    .from(libraryItems)
-    .where(and(...conditions))
-    .orderBy(desc(libraryItems.createdAt))
-    .limit(Math.min(options.limit ?? 100, 100));
+  const items = await repos.library.listLibraryItems({
+    userId: options.userId,
+    entityType: options.entityType
+      ? CONTENT_ENTITY_TYPE_CODEC.toCode(options.entityType)
+      : undefined,
+    collectionId: options.collectionId,
+    limit: Math.min(options.limit ?? 100, 100),
+  });
 
   const highestTier: AccessTier = options.activeTier ?? "free";
   const accessibleTiers = TIER_ORDER.filter(
@@ -473,12 +499,13 @@ export async function getUserLibrary(
   );
   const result: LibraryItemPayload[] = [];
   const qLower = options.q?.toLowerCase().trim();
-  const metaMap = await buildBulkMetaMap(db, items);
+  const metaMap = await buildBulkMetaMap(repos, items);
 
   for (const item of items) {
+    const entityTypeLabel = CONTENT_ENTITY_TYPE_CODEC.toLabel(item.entityType);
     const meta =
-      metaMap.get(`${item.entityType}_${item.entityId}`) ??
-      (await resolveEntityMeta(db, item.entityType, item.entityId));
+      metaMap.get(`${entityTypeLabel}_${item.entityId}`) ??
+      resolveDefaultMeta(entityTypeLabel, item.entityId);
 
     if (!matchesLibraryQuery(meta, qLower)) {
       continue;
@@ -489,7 +516,7 @@ export async function getUserLibrary(
     );
 
     result.push({
-      entity_type: item.entityType,
+      entity_type: entityTypeLabel,
       entity_id: item.entityId,
       code: meta.code,
       title: meta.title,
@@ -506,7 +533,7 @@ export async function getUserLibrary(
 
   let recommendations: RecommendationItem[] = [];
   if (result.length === 0 && !options.collectionId && !options.q) {
-    const recs = await getGuestRecommendations(db, { limit: 5 });
+    const recs = await getGuestRecommendations(repos, { limit: 5 });
     recommendations = recs.primary
       ? [recs.primary, ...recs.alternatives]
       : recs.alternatives;

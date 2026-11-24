@@ -3,6 +3,8 @@ import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   assertExportJobPageCount,
+  EXPORT_JOB_KIND,
+  EXPORT_JOB_STATUS,
   exportJobs,
   getOwnerDb,
   users,
@@ -34,7 +36,7 @@ describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-0
       .insert(exportJobs)
       .values({
         userId: testUserId,
-        kind: "curriculum_plan",
+        kind: EXPORT_JOB_KIND.CURRICULUM_PLAN,
         refId: "plan-uuid-12345",
       })
       .returning();
@@ -42,9 +44,9 @@ describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-0
     expect(job?.id).toBeDefined();
     expect(job?.uuid).toBeDefined();
     expect(job?.userId).toBe(testUserId);
-    expect(job?.kind).toBe("curriculum_plan");
+    expect(job?.kind).toBe(EXPORT_JOB_KIND.CURRICULUM_PLAN);
     expect(job?.refId).toBe("plan-uuid-12345");
-    expect(job?.status).toBe("queued");
+    expect(job?.status).toBe(EXPORT_JOB_STATUS.QUEUED);
     expect(job?.filePath).toBeNull();
     expect(job?.pageCount).toBeNull();
     expect(job?.expiresAt).toBeNull();
@@ -57,7 +59,7 @@ describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-0
       .insert(exportJobs)
       .values({
         userId: testUserId,
-        kind: "curriculum_plan",
+        kind: EXPORT_JOB_KIND.CURRICULUM_PLAN,
         refId: "plan-1",
         pageCount: 1,
       })
@@ -69,7 +71,7 @@ describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-0
       .insert(exportJobs)
       .values({
         userId: testUserId,
-        kind: "curriculum_plan",
+        kind: EXPORT_JOB_KIND.CURRICULUM_PLAN,
         refId: "plan-20",
         pageCount: 20,
       })
@@ -88,7 +90,7 @@ describe("Task P4.2 — Database Schema & Invariants Integration Tests (BR-PDF-0
       .insert(exportJobs)
       .values({
         userId: testUserId,
-        kind: "curriculum_plan",
+        kind: EXPORT_JOB_KIND.CURRICULUM_PLAN,
         refId: "plan-del",
       })
       .returning();

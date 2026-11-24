@@ -19,6 +19,7 @@ Tuyệt đối không sao chép nguyên văn hợp đồng kỹ thuật sang tà
 | [`04-iconography.md`](04-iconography.md) | Biểu tượng SVG hệ thống, ranh giới emoji nội dung và bản đặc tả 12 ảnh đại diện |
 | [`05-motion-and-surface.md`](05-motion-and-surface.md) | Thang thời lượng chuyển động, độ nổi bề mặt, hiệu ứng nhiễu và thông số vẽ canvas |
 | [`06-voice.md`](06-voice.md) | Giọng văn và quy chuẩn nội dung hiển thị tiếng Việt |
+| [`vn-preschool-identity.md`](vn-preschool-identity.md) | Bản sắc "Tuổi thơ Việt × Giấy Gỗ Mộc", 10 chủ đề GDMN, âm sắc ngũ cung và lời thoại đồng dao cho bề mặt Trẻ |
 
 ## 3. Ngăn xếp công nghệ
 

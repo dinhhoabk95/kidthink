@@ -1,14 +1,19 @@
 import { and, eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
+  ACCESS_TIER,
   assertCurriculumCode,
+  CONTENT_ENTITY_TYPE,
+  CURRICULUM_PROGRESS_STATUS,
   childProfiles,
   curricula,
   curriculumEnrollments,
   curriculumItemProgress,
   curriculumItems,
   curriculumWeeks,
+  ENROLLMENT_STATUS,
   getOwnerDb,
+  PROGRAM_TYPE,
   users,
 } from "#src/index";
 
@@ -57,14 +62,14 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
       .insert(curricula)
       .values({
         code: testCurriculumCode,
-        programType: "age_based",
+        programType: PROGRAM_TYPE.AGE_BASED,
         targetAgeMin: 3,
         targetAgeMax: 4,
         durationWeeks: 8,
         sessionsPerWeek: 3,
         title: "Chương Trình Bé 3 Tuổi",
         description: "Dành cho bé 3-4 tuổi phát triển tư duy toán học",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
       })
       .returning();
     if (!curr) {
@@ -106,7 +111,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
 
       expect(row).toBeDefined();
       expect(row.code).toBe(testCurriculumCode);
-      expect(row.programType).toBe("age_based");
+      expect(row.programType).toBe(PROGRAM_TYPE.AGE_BASED);
       expect(row.targetAgeMin).toBe(3);
       expect(row.targetAgeMax).toBe(4);
       expect(row.durationWeeks).toBe(8);
@@ -160,7 +165,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: 1001,
         isRequired: true,
       });
@@ -176,7 +181,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
       expect(item.weekNo).toBe(1);
       expect(item.sessionNo).toBe(1);
       expect(item.position).toBe(1);
-      expect(item.entityType).toBe("game_level");
+      expect(item.entityType).toBe(CONTENT_ENTITY_TYPE.GAME_LEVEL);
       expect(item.entityId).toBe(1001);
       expect(item.isRequired).toBe(true);
     });
@@ -187,7 +192,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: 1001,
         isRequired: true,
       });
@@ -198,7 +203,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
           weekNo: 1,
           sessionNo: 1,
           position: 1,
-          entityType: "game_level",
+          entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
           entityId: 2001,
           isRequired: false,
         })
@@ -213,14 +218,14 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         .values({
           childId: testChildId,
           curriculumId: testCurriculumId,
-          status: "active",
+          status: ENROLLMENT_STATUS.ACTIVE,
         })
         .returning();
       if (!enrollment) {
         throw new Error("Failed to insert enrollment");
       }
 
-      expect(enrollment.status).toBe("active");
+      expect(enrollment.status).toBe(ENROLLMENT_STATUS.ACTIVE);
       expect(enrollment.childId).toBe(testChildId);
       expect(enrollment.curriculumId).toBe(testCurriculumId);
 
@@ -229,7 +234,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         db.insert(curriculumEnrollments).values({
           childId: testChildId,
           curriculumId: testCurriculumId,
-          status: "active",
+          status: ENROLLMENT_STATUS.ACTIVE,
         })
       ).rejects.toThrow();
     });
@@ -240,7 +245,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         .values({
           childId: testChildId,
           curriculumId: testCurriculumId,
-          status: "active",
+          status: ENROLLMENT_STATUS.ACTIVE,
         })
         .returning();
       if (!enrollment) {
@@ -254,7 +259,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
           weekNo: 1,
           sessionNo: 1,
           position: 1,
-          entityType: "game_level",
+          entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
           entityId: 1001,
           isRequired: true,
         })
@@ -269,7 +274,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
           enrollmentId: enrollment.id,
           childId: testChildId,
           curriculumItemId: item.id,
-          status: "completed",
+          status: CURRICULUM_PROGRESS_STATUS.COMPLETED,
           completedAt: new Date(),
         })
         .returning();
@@ -277,7 +282,7 @@ describe("P3.3 Database Schema & Invariants Integration Tests (Task 2)", () => {
         throw new Error("Failed to insert progress");
       }
 
-      expect(progress.status).toBe("completed");
+      expect(progress.status).toBe(CURRICULUM_PROGRESS_STATUS.COMPLETED);
       expect(progress.completedAt).toBeDefined();
     });
   });

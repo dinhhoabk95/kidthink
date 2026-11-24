@@ -5,6 +5,7 @@ import { defineEventHandler, getRouterParam } from "h3";
 import { z } from "zod";
 import { adminCancelSubscription } from "#server/services/index.js";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
+import { requireReauth } from "#server/utils/reauth-runtime";
 import { readRequestBody } from "#server/utils/request-body";
 
 const RawCancelBodySchema = z.object({
@@ -15,6 +16,7 @@ const RawCancelBodySchema = z.object({
 
 export default defineEventHandler(async (event) => {
   const managerSession = requireSuperAdminSession(event);
+  requireReauth(event);
 
   const idParam = getRouterParam(event, "id");
   const subscriptionId = Number(idParam);

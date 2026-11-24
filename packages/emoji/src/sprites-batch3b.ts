@@ -3,7 +3,8 @@
  * Bao gồm 246 Vector Craft SVG + 8 Tier-3 Soft Clay Hero WebP hoàn tất 100% catalog & repo.
  */
 
-import { type EmojiSpriteMeta, hero, sprite } from "./sprites-batch2";
+import { hero, sprite } from "#src/sprite-helpers";
+import type { EmojiSpriteMeta } from "#src/types";
 
 export const BATCH_3B_SPRITES: readonly EmojiSpriteMeta[] = [
   // Phân mảnh 3B-1 (63 mục: index 662..724)

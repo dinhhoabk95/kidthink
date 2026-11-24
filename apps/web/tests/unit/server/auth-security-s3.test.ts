@@ -1,10 +1,13 @@
+import { IncomingMessage, ServerResponse } from "node:http";
+import { Socket } from "node:net";
 import {
+  hashPassword,
   InMemoryRedisClient,
   MfaAttemptGuard,
   setAuthRedisClient,
 } from "@mindkid/auth";
 import { hashRateLimitIdentifier } from "@mindkid/cache";
-import { getOwnerDb, userAccounts, users } from "@mindkid/db";
+import { getOwnerDb, USER_STATUS, userAccounts, users } from "@mindkid/db";
 import { resolveRateLimitRouteClass } from "@mindkid/shared";
 import { createEvent, type H3Event } from "h3";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -99,8 +102,34 @@ describe("Security Remediation Slice S3 — Better Auth Architecture", () => {
     });
   });
 
-  it("[H-04] User reauth supports OAuth-only account via social method", async () => {
+  it("[H-04] User reauth rejects social method and requires TOTP when 2FA is enabled", async () => {
     const db = getOwnerDb();
+    const buildReauthEvent = (
+      userId: number,
+      displayName: string,
+      body: Record<string, string>
+    ): H3Event => {
+      const socket = new Socket();
+      Object.defineProperty(socket, "remoteAddress", { value: "127.0.0.1" });
+      const req = new IncomingMessage(socket);
+      req.method = "POST";
+      req.url = "/api/users/auth/reauth";
+      req.headers = {
+        host: "localhost:3000",
+        origin: "http://localhost:3000",
+        "sec-fetch-site": "same-origin",
+      };
+      const res = new ServerResponse(req);
+      const event = createEvent(req, res);
+      event.context.user = {
+        user_id: userId,
+        display_name: displayName,
+        session_id: "999",
+      };
+      event.context.body = body;
+      return event;
+    };
+
     const email = `oauth-reauth-${Date.now()}-${Math.floor(Math.random() * 100_000)}@mindkid.test`;
     const [oauthUser] = await db
       .insert(users)
@@ -108,7 +137,7 @@ describe("Security Remediation Slice S3 — Better Auth Architecture", () => {
         email,
         passwordHash: null,
         displayName: "OAuth Only Parent",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning({ id: users.id });
     if (!oauthUser) {
@@ -121,33 +150,57 @@ describe("Security Remediation Slice S3 — Better Auth Architecture", () => {
       accountId: `google-sub-${oauthUser.id}`,
     });
 
-    const event = createEvent(
-      {
-        method: "POST",
-        url: "/api/users/auth/reauth",
-        headers: {
-          host: "localhost:3000",
-          origin: "http://localhost:3000",
-          "sec-fetch-site": "same-origin",
-        },
-        socket: { remoteAddress: "127.0.0.1" },
-      } as never,
-      {
-        statusCode: 200,
-        getHeader: () => undefined,
-        setHeader: () => undefined,
-      } as never
-    ) as H3Event;
+    await expect(
+      userReauthHandler(
+        buildReauthEvent(oauthUser.id, "OAuth Only Parent", {
+          method: "social",
+          provider: "google",
+        })
+      )
+    ).rejects.toMatchObject({
+      statusCode: 401,
+      code: "INVALID_CREDENTIALS",
+    });
 
-    event.context.user = {
-      user_id: oauthUser.id,
-      display_name: "OAuth Only Parent",
-      session_id: "999",
-    };
-    event.context.body = { method: "social", provider: "google" };
+    const mfaPassword = "StrongPassword123!";
+    const mfaEmail = `mfa-reauth-${Date.now()}-${Math.floor(Math.random() * 100_000)}@mindkid.test`;
+    const mfaPasswordHash = await hashPassword(mfaPassword);
+    const [mfaUser] = await db
+      .insert(users)
+      .values({
+        email: mfaEmail,
+        passwordHash: mfaPasswordHash,
+        displayName: "2FA Enabled Parent",
+        status: USER_STATUS.ACTIVE,
+        twoFactorEnabled: true,
+      })
+      .returning({ id: users.id });
+    if (!mfaUser) {
+      throw new Error("Expected 2FA user");
+    }
 
-    const res = await userReauthHandler(event);
-    expect(res.ok).toBe(true);
+    await expect(
+      userReauthHandler(
+        buildReauthEvent(mfaUser.id, "2FA Enabled Parent", {
+          password: mfaPassword,
+        })
+      )
+    ).rejects.toMatchObject({
+      statusCode: 401,
+      code: "INVALID_CREDENTIALS",
+    });
+
+    await expect(
+      userReauthHandler(
+        buildReauthEvent(mfaUser.id, "2FA Enabled Parent", {
+          method: "password",
+          password: mfaPassword,
+        })
+      )
+    ).rejects.toMatchObject({
+      statusCode: 401,
+      code: "INVALID_CREDENTIALS",
+    });
   });
 
   it("[M-03] Single-device sign-out revokes only the current device, keeping other devices active", async () => {

@@ -1,14 +1,9 @@
-import { gameLevels } from "@mindkid/db";
-import { sql } from "drizzle-orm";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { OwnerDb } from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 /**
  * Số lượng trò chơi công khai — `BR-LND-09`.
- *
- * Trang chủ từng in số cứng (24 · 48 · 48 cho ba band, "120+" cho thư viện)
- * trong khi DB có 239 level published chia 60 · 84 · 95. Người lớn bấm vào
- * một nút "Xem N trò chơi" rồi thấy con số khác — mọi số trên bề mặt công khai
- * phải đi qua hàm này.
  *
  * Chỉ đếm `status = 'published'`: đó là tập mà `GAME-CATALOG-PUBLIC` §BR-GCP-06
  * cho khách thấy.
@@ -22,34 +17,16 @@ export interface PublishedLevelCounts {
 }
 
 export async function countPublishedLevels(
-  db: PostgresJsDatabase
+  db?: OwnerDb
 ): Promise<PublishedLevelCounts> {
-  const rows = await db
-    .select({
-      ageMin: gameLevels.ageMin,
-      ageMax: gameLevels.ageMax,
-      accessTier: gameLevels.accessTier,
-      count: sql<number>`count(*)::int`,
-    })
-    .from(gameLevels)
-    .groupBy(gameLevels.ageMin, gameLevels.ageMax, gameLevels.accessTier);
+  const { gameLevels } = db ? createRepositories(db) : useOwnerRepositories();
+  const stats = await gameLevels.countPublishedStats();
 
-  const byAgeBand: Record<string, number> = {};
-  const byAccessTier: Record<string, number> = {};
-  let total = 0;
-
-  for (const row of rows) {
-    const count = Number(row.count);
-    total += count;
-
-    if (row.ageMin != null && row.ageMax != null) {
-      const band = `${row.ageMin}-${row.ageMax}`;
-      byAgeBand[band] = (byAgeBand[band] ?? 0) + count;
-    }
-    byAccessTier[row.accessTier] = (byAccessTier[row.accessTier] ?? 0) + count;
-  }
-
-  return { total, by_age_band: byAgeBand, by_access_tier: byAccessTier };
+  return {
+    total: stats.total,
+    by_age_band: stats.byAgeBand,
+    by_access_tier: stats.byAccessTier,
+  };
 }
 
 /**

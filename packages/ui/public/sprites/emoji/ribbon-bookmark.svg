@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thẻ đánh dấu sách</title>
+  <defs>
+    <linearGradient id="rbmRed" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#fb7185" /><stop offset="100%" stop-color="#e11d48" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#881337" opacity="0.22" rx="26" ry="4.5" />
+    <polygon fill="url(#rbmRed)" points="36,18 84,18 84,100 60,80 36,100" stroke="#881337" stroke-linejoin="round" stroke-width="3.8" />
+    <circle cx="60" cy="34" fill="#ffffff" r="6" stroke="#881337" stroke-width="3" />
+</svg>

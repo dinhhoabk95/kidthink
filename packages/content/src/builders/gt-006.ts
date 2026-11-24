@@ -5,7 +5,7 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
-import { resolveItemAsset, safeGetItem } from "./utils.js";
+import { pickAgeBandPrompt, resolveItemAsset, safeGetItem } from "./utils.js";
 
 export const projectGT006: Projection<"GT-006"> = {
   template: "GT-006",
@@ -85,9 +85,19 @@ export const projectGT006: Projection<"GT-006"> = {
     const rep =
       opts.representation === "number-line" ? "number-line" : undefined;
 
+    const prompt = pickAgeBandPrompt(
+      opts.band,
+      {
+        mam: "Bé xếp hàng lần lượt từ đầu nhé!",
+        choi: "Bé thử xếp nối đuôi đúng thứ tự nhé!",
+        la: "Đố bé sắp xếp dãy theo đúng trình tự!",
+      },
+      "Bé sắp xếp theo đúng thứ tự nhé!"
+    );
+
     return {
       content_pack: {
-        prompt: "Bé hãy sắp xếp theo đúng thứ tự nhé!",
+        prompt,
         sequence,
         ...(rep ? { representation: rep } : {}),
       },

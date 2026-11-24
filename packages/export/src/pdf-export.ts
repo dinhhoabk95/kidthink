@@ -1,12 +1,13 @@
 import { writeAudit } from "@mindkid/audit";
 import {
-  exportJobs,
+  EXPORT_JOB_KIND,
+  EXPORT_JOB_KIND_CODEC,
+  EXPORT_JOB_STATUS,
+  EXPORT_JOB_STATUS_CODEC,
   getDb,
-  notificationDeliveries,
-  notifications,
-  personalCurricula,
-  personalCurriculumItems,
+  RECIPIENT_TYPE,
 } from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import { ExportNotFoundError } from "@mindkid/errors/account";
 import { TokenExpiredError } from "@mindkid/errors/auth";
 import {
@@ -17,17 +18,6 @@ import { PersonalCurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import { enqueue } from "@mindkid/queue";
 import { storage } from "@mindkid/storage";
 import {
-  and,
-  asc,
-  count,
-  eq,
-  gte,
-  inArray,
-  isNotNull,
-  lte,
-  ne,
-} from "drizzle-orm";
-import {
   type LessonPlanExportDTO,
   renderLessonPlanPdf,
 } from "./pdf-renderer.js";
@@ -36,31 +26,17 @@ export async function loadLessonPlanForExport(
   userId: number,
   planUuid: string
 ): Promise<LessonPlanExportDTO> {
-  const db = getDb();
-  const [plan] = await db
-    .select()
-    .from(personalCurricula)
-    .where(
-      and(
-        eq(personalCurricula.uuid, planUuid),
-        eq(personalCurricula.userId, userId)
-      )
-    )
-    .limit(1);
+  const repos = createRepositories(getDb());
+  const plan = await repos.personalCurricula.findByUuidForUser(
+    planUuid,
+    userId
+  );
 
   if (!plan) {
     throw new PersonalCurriculumNotFoundError(planUuid);
   }
 
-  const rawItems = await db
-    .select()
-    .from(personalCurriculumItems)
-    .where(eq(personalCurriculumItems.personalCurriculumId, plan.id))
-    .orderBy(
-      asc(personalCurriculumItems.weekNo),
-      asc(personalCurriculumItems.sessionNo),
-      asc(personalCurriculumItems.position)
-    );
+  const rawItems = await repos.personalCurricula.listItems(plan.id);
 
   return {
     uuid: plan.uuid,
@@ -120,21 +96,8 @@ export async function getUserMonthlyExportCount(
   db = getDb()
 ): Promise<number> {
   const monthStart = getIctMonthStart();
-
-  const [result] = await db
-    .select({
-      total: count(exportJobs.id),
-    })
-    .from(exportJobs)
-    .where(
-      and(
-        eq(exportJobs.userId, userId),
-        ne(exportJobs.status, "failed"),
-        gte(exportJobs.createdAt, monthStart)
-      )
-    );
-
-  return result?.total ?? 0;
+  const repos = createRepositories(db);
+  return await repos.exports.countMonthlyNonFailedByUser(userId, monthStart);
 }
 
 /**
@@ -146,7 +109,7 @@ export async function requestExportJob(
   refId: string,
   options?: RequestExportJobOptions
 ): Promise<{ job_uuid: string; status: "queued" }> {
-  const db = getDb();
+  const repos = createRepositories(getDb());
   const entitlements = options?.userEntitlements ?? [];
 
   // 1. Entitlement check
@@ -158,7 +121,7 @@ export async function requestExportJob(
   }
 
   // 2. Monthly Quota check (BR-PDF-02)
-  const currentUsage = await getUserMonthlyExportCount(userId, db);
+  const currentUsage = await getUserMonthlyExportCount(userId);
   if (currentUsage >= MONTHLY_PDF_EXPORT_QUOTA) {
     throw new QuotaExceededError(
       `Đã đạt giới hạn tối đa ${MONTHLY_PDF_EXPORT_QUOTA} lượt xuất PDF trong tháng này.`
@@ -174,19 +137,11 @@ export async function requestExportJob(
   }
 
   // 4. Reserve quota & insert queued export job
-  const [createdJob] = await db
-    .insert(exportJobs)
-    .values({
-      userId,
-      kind,
-      refId,
-      status: "queued",
-    })
-    .returning();
-
-  if (!createdJob) {
-    throw new Error("Không thể khởi tạo tiến trình xuất PDF.");
-  }
+  const createdJob = await repos.exports.createJob({
+    userId,
+    kind: EXPORT_JOB_KIND_CODEC.toCode(kind),
+    refId,
+  });
 
   // 5. Enqueue background job (BR-PDF-01)
   try {
@@ -204,14 +159,10 @@ export async function requestExportJob(
     );
   } catch (error) {
     // If enqueue fails, mark job failed immediately so quota is refunded (BR-PDF-09)
-    await db
-      .update(exportJobs)
-      .set({
-        status: "failed",
-        error: "Không thể đưa job vào hàng đợi xử lý.",
-        updatedAt: new Date(),
-      })
-      .where(eq(exportJobs.id, createdJob.id));
+    await repos.exports.markFailed(
+      createdJob.id,
+      "Không thể đưa job vào hàng đợi xử lý."
+    );
     throw error;
   }
 
@@ -228,12 +179,8 @@ export async function getExportJobByUuid(
   userId: number,
   jobUuid: string
 ): Promise<ExportJobResultDTO> {
-  const db = getDb();
-  const [job] = await db
-    .select()
-    .from(exportJobs)
-    .where(and(eq(exportJobs.uuid, jobUuid), eq(exportJobs.userId, userId)))
-    .limit(1);
+  const repos = createRepositories(getDb());
+  const job = await repos.exports.findByUuid(jobUuid, userId);
 
   if (!job) {
     // IDOR protection: returns 404 if not found or not owner
@@ -241,7 +188,7 @@ export async function getExportJobByUuid(
   }
 
   let downloadUrl: string | null = null;
-  if (job.status === "done" && job.filePath) {
+  if (job.status === EXPORT_JOB_STATUS.DONE && job.filePath) {
     // Check expiration (BR-PDF-08)
     if (job.expiresAt && new Date() > job.expiresAt) {
       throw new TokenExpiredError("File xuất PDF đã hết hạn lưu trữ (7 ngày).");
@@ -252,9 +199,9 @@ export async function getExportJobByUuid(
 
   return {
     uuid: job.uuid,
-    kind: job.kind as "worksheet" | "curriculum_plan",
+    kind: EXPORT_JOB_KIND_CODEC.toLabel(job.kind),
     ref_id: job.refId,
-    status: job.status as "queued" | "processing" | "done" | "failed",
+    status: EXPORT_JOB_STATUS_CODEC.toLabel(job.status),
     file_path: job.filePath,
     page_count: job.pageCount,
     download_url: downloadUrl,
@@ -271,40 +218,34 @@ export async function processPdfRenderJob(
   jobUuid: string
 ): Promise<{ success: boolean; filePath?: string; pageCount?: number }> {
   const db = getDb();
-  const [job] = await db
-    .select()
-    .from(exportJobs)
-    .where(eq(exportJobs.uuid, jobUuid))
-    .limit(1);
+  const repos = createRepositories(db);
+  const job = await repos.exports.findByUuid(jobUuid);
 
   if (!job) {
     return { success: false };
   }
 
   // Idempotency: skip if already terminal state
-  if (job.status === "done") {
+  if (job.status === EXPORT_JOB_STATUS.DONE) {
     return {
       success: true,
       filePath: job.filePath ?? undefined,
       pageCount: job.pageCount ?? undefined,
     };
   }
-  if (job.status === "failed") {
+  if (job.status === EXPORT_JOB_STATUS.FAILED) {
     return { success: false };
   }
 
   // Set processing
-  await db
-    .update(exportJobs)
-    .set({ status: "processing", updatedAt: new Date() })
-    .where(eq(exportJobs.id, job.id));
+  await repos.exports.markProcessing(job.id);
 
   try {
     let pdfBuffer: Buffer;
     let pageCount: number;
     let documentTitle = "Tài liệu";
 
-    if (job.kind === "curriculum_plan") {
+    if (job.kind === EXPORT_JOB_KIND.CURRICULUM_PLAN) {
       const planDetail = await loadLessonPlanForExport(job.userId, job.refId);
       documentTitle = planDetail.title;
 
@@ -327,39 +268,24 @@ export async function processPdfRenderJob(
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
     await db.transaction(async (tx) => {
-      await tx
-        .update(exportJobs)
-        .set({
-          status: "done",
-          filePath: uploadResult.path,
-          pageCount,
-          expiresAt,
-          updatedAt: new Date(),
-        })
-        .where(eq(exportJobs.id, job.id));
+      const txRepos = createRepositories(tx);
+      await txRepos.exports.markDone(job.id, {
+        filePath: uploadResult.path,
+        pageCount,
+        expiresAt,
+      });
 
       // In-app Notification (BR-PDF-09)
-      const [notif] = await tx
-        .insert(notifications)
-        .values({
-          recipientType: "user",
-          recipientId: job.userId,
-          templateCode: "pdf_export_ready",
-          payload: {
-            title: documentTitle,
-            job_uuid: job.uuid,
-            page_count: pageCount,
-          },
-        })
-        .returning();
-
-      if (notif) {
-        await tx.insert(notificationDeliveries).values({
-          notificationId: notif.id,
-          channel: "in_app",
-          status: "dispatched",
-        });
-      }
+      await txRepos.notifications.createInAppWithDelivery({
+        recipientType: RECIPIENT_TYPE.USER,
+        recipientId: job.userId,
+        templateCode: "pdf_export_ready",
+        payload: {
+          title: documentTitle,
+          job_uuid: job.uuid,
+          page_count: pageCount,
+        },
+      });
 
       await writeAudit(tx, {
         actor_type: "user",
@@ -369,7 +295,7 @@ export async function processPdfRenderJob(
         entity_id: job.uuid,
         after_data: {
           job_uuid: job.uuid,
-          kind: job.kind,
+          kind: EXPORT_JOB_KIND_CODEC.toLabel(job.kind),
           page_count: pageCount,
           file_path: uploadResult.path,
         },
@@ -382,44 +308,27 @@ export async function processPdfRenderJob(
       filePath: uploadResult.path,
       pageCount,
     };
-  } catch (error: unknown) {
+  } catch (error) {
     const errorMessage =
       error instanceof Error
         ? error.message
         : "Đã xảy ra lỗi trong quá trình xuất PDF.";
 
     await db.transaction(async (tx) => {
+      const txRepos = createRepositories(tx);
       // Mark failed -> this automatically refunds the quota for user (BR-PDF-02, BR-PDF-09)
-      await tx
-        .update(exportJobs)
-        .set({
-          status: "failed",
+      await txRepos.exports.markFailed(job.id, errorMessage);
+
+      await txRepos.notifications.createInAppWithDelivery({
+        recipientType: RECIPIENT_TYPE.USER,
+        recipientId: job.userId,
+        templateCode: "pdf_export_failed",
+        payload: {
+          title: "Giáo án",
           error: errorMessage,
-          updatedAt: new Date(),
-        })
-        .where(eq(exportJobs.id, job.id));
-
-      const [notif] = await tx
-        .insert(notifications)
-        .values({
-          recipientType: "user",
-          recipientId: job.userId,
-          templateCode: "pdf_export_failed",
-          payload: {
-            title: "Giáo án",
-            error: errorMessage,
-            job_uuid: job.uuid,
-          },
-        })
-        .returning();
-
-      if (notif) {
-        await tx.insert(notificationDeliveries).values({
-          notificationId: notif.id,
-          channel: "in_app",
-          status: "dispatched",
-        });
-      }
+          job_uuid: job.uuid,
+        },
+      });
 
       await writeAudit(tx, {
         actor_type: "user",
@@ -446,20 +355,10 @@ export async function processPdfRenderJob(
 export async function runPdfCleanupJob(): Promise<{
   cleanedCount: number;
 }> {
-  const db = getDb();
+  const repos = createRepositories(getDb());
   const now = new Date();
 
-  const expiredJobs = await db
-    .select()
-    .from(exportJobs)
-    .where(
-      and(
-        lte(exportJobs.expiresAt, now),
-        isNotNull(exportJobs.filePath),
-        ne(exportJobs.filePath, "")
-      )
-    )
-    .limit(500);
+  const expiredJobs = await repos.exports.listExpiredWithFiles(now, 500);
 
   const cleanedIds: number[] = [];
 
@@ -471,13 +370,7 @@ export async function runPdfCleanupJob(): Promise<{
   }
 
   if (cleanedIds.length > 0) {
-    await db
-      .update(exportJobs)
-      .set({
-        filePath: null,
-        updatedAt: new Date(),
-      })
-      .where(inArray(exportJobs.id, cleanedIds));
+    await repos.exports.clearFilePaths(cleanedIds, now);
   }
 
   return { cleanedCount: cleanedIds.length };

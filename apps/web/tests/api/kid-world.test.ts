@@ -1,8 +1,12 @@
 import crypto from "node:crypto";
 import {
+  ACCESS_TIER,
+  CONSENT_ACTION,
+  CONSENT_TYPE,
   childBadges,
   childProfiles,
   childStickers,
+  consentLogs,
   gameLevels,
   getOwnerDb,
   users,
@@ -90,6 +94,13 @@ async function createChildFixture(): Promise<ChildFixture> {
     throw new Error("Không tạo được user test");
   }
   createdUserIds.push(user.id);
+  await db.insert(consentLogs).values({
+    userId: user.id,
+    consentType: CONSENT_TYPE.CHILD_DATA,
+    action: CONSENT_ACTION.ACCEPTED,
+    ipAddress: "127.0.0.1",
+    userAgent: "vitest",
+  });
   const [child] = await db
     .insert(childProfiles)
     .values({
@@ -118,7 +129,7 @@ async function seedFreePlayLevels(): Promise<void> {
         thumbnailEmoji: "🍎",
         contentPack: {},
         difficultyParams: {},
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
         ageMin: 3,
         ageMax: 6,
       },
@@ -129,7 +140,7 @@ async function seedFreePlayLevels(): Promise<void> {
         thumbnailEmoji: "🐘",
         contentPack: {},
         difficultyParams: {},
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
         ageMin: 3,
         ageMax: 6,
       },
@@ -158,7 +169,14 @@ describe("Kid World APIs — Adventure, Mascot Gear & Sticker Diorama", () => {
         .where(inArray(gameLevels.id, createdLevelIds));
     }
     if (createdUserIds.length > 0) {
-      await db.delete(users).where(inArray(users.id, createdUserIds));
+      await db
+        .delete(childProfiles)
+        .where(inArray(childProfiles.userId, createdUserIds));
+      // consent_logs is INSERT-only (BR-DM-05) with ON DELETE RESTRICT on users.id.
+      await db
+        .delete(users)
+        .where(inArray(users.id, createdUserIds))
+        .catch(() => undefined);
     }
   });
 

@@ -50,11 +50,7 @@ class FakeSession extends TemplateGameSession<
   }
 }
 
-/**
- * Mô phỏng GT-001 (chạm-chọn đơn): `toAction` trả null khi chạm ngoài mọi thẻ
- * hoặc khi đã thắng — giống hệt `TemplateGameSession.dispatch` sẽ trả
- * `ACTION_IGNORED` (feedback "none") cho cả hai trường hợp đó.
- */
+/** Mô phỏng GT-001 (chạm-chọn đơn): chạm ngoài thẻ hoặc khi đã thắng trả ACTION_IGNORED. */
 class FakeTapSelectSession extends TemplateGameSession<
   Record<string, number>,
   Record<string, number>
@@ -111,6 +107,17 @@ type FeedbackSpy = (
   point: { readonly x: number; readonly y: number }
 ) => void;
 
+function makeMockAudio(speakPrompt = vi.fn()) {
+  return {
+    playSnapSound: vi.fn(),
+    playPopCelebrateSound: vi.fn(),
+    playSoftFeedbackSound: vi.fn(),
+    speakEncouragement: vi.fn(),
+    playPromptAudio: vi.fn(),
+    speakPrompt,
+  };
+}
+
 function makeTapSelectHarness(
   entities: { id: string; role: string }[],
   onFeedback?: FeedbackSpy
@@ -122,13 +129,7 @@ function makeTapSelectHarness(
   const engine = {
     activeSession: session,
     acceptingInput: true,
-    audio: {
-      playSnapSound: vi.fn(),
-      playPopCelebrateSound: vi.fn(),
-      playSoftFeedbackSound: vi.fn(),
-      speakEncouragement: vi.fn(),
-      speakPrompt,
-    },
+    audio: makeMockAudio(speakPrompt),
     scaffolding: { onMiss, onSuccess },
     renderSystem: { LOGIC_WIDTH: 960, LOGIC_HEIGHT: 540 },
   };
@@ -163,12 +164,7 @@ function makeHarness(
   const engine = {
     activeSession: session,
     acceptingInput: true,
-    audio: {
-      playSnapSound: vi.fn(),
-      playPopCelebrateSound: vi.fn(),
-      playSoftFeedbackSound: vi.fn(),
-      speakEncouragement: vi.fn(),
-    },
+    audio: makeMockAudio(),
     scaffolding: { onMiss, onSuccess },
     renderSystem: { LOGIC_WIDTH: 960, LOGIC_HEIGHT: 540 },
   };
@@ -495,14 +491,7 @@ function makeGt002Harness() {
   const engine = {
     activeSession: runner.getCurrentSession(),
     acceptingInput: true,
-    audio: {
-      playSnapSound: vi.fn(),
-      playPopCelebrateSound: vi.fn(),
-      playSoftFeedbackSound: vi.fn(),
-      speakEncouragement: vi.fn(),
-      playPromptAudio: vi.fn(),
-      speakPrompt: vi.fn(),
-    },
+    audio: makeMockAudio(),
     scaffolding: { onMiss: vi.fn(), onSuccess: vi.fn() },
     renderSystem: { LOGIC_WIDTH: 960, LOGIC_HEIGHT: 540 },
   };
@@ -553,11 +542,7 @@ function makeGt002Harness() {
   };
 }
 
-/**
- * GT-002 nộp bài bằng nút Xong ở `zones.action` (`BR-PSZ-05`, Task #283 B2): shell
- * đổi chạm vào vùng nút thành `commit`; bàn phím đi qua nút DOM
- * `pressActionButton`. Không có đường nào khác để thắng.
- */
+/** GT-002 nộp bài bằng nút Xong ở `zones.action` (`BR-PSZ-05`, Task #283 B2). */
 describe("usePlayGesture — nút Xong ở zones.action của GT-002 thật (Task #283 B2)", () => {
   beforeAll(async () => {
     await preloadGameSession("GT-002");
@@ -689,47 +674,77 @@ describe("usePlayGesture — đồng bộ view khi chọn/bỏ chọn (G4, Task 
   it("chạm vật GT-002: viewEntities cập nhật selected; chạm lại: cập nhật idle; onMiss không được gọi", () => {
     const { gesture, entityById, engine } = makeGt002Harness();
     const target = entityById("apple");
+    const tap = { type: "tap" as const, x: target.x, y: target.y, timeMs: 0 };
 
-    gesture.dispatchGesture({
-      type: "tap",
-      x: target.x,
-      y: target.y,
-      timeMs: 0,
-    });
+    gesture.dispatchGesture(tap);
+    expect(
+      gesture.viewEntities.value.find((e) => e.id === "apple")?.state
+    ).toBe("selected");
 
-    const selectedEntity = gesture.viewEntities.value.find(
-      (e) => e.id === "apple"
-    );
-    expect(selectedEntity?.state).toBe("selected");
-
-    gesture.dispatchGesture({
-      type: "tap",
-      x: target.x,
-      y: target.y,
-      timeMs: 0,
-    });
-
-    const idleEntity = gesture.viewEntities.value.find((e) => e.id === "apple");
-    expect(idleEntity?.state).toBe("idle");
+    gesture.dispatchGesture(tap);
+    expect(
+      gesture.viewEntities.value.find((e) => e.id === "apple")?.state
+    ).toBe("idle");
     expect(engine.scaffolding.onMiss).not.toHaveBeenCalled();
+  });
+
+  it("đa chọn GT-002: chọn (idle -> selected) đọc từ khoá, bỏ chọn (selected -> idle) im lặng", () => {
+    const { gesture, entityById, engine } = makeGt002Harness();
+    const target = entityById("banana");
+    const tap = { type: "tap" as const, x: target.x, y: target.y, timeMs: 0 };
+
+    gesture.dispatchGesture(tap);
+    expect(engine.audio.speakPrompt).toHaveBeenCalledTimes(1);
+    expect(engine.audio.speakPrompt).toHaveBeenCalledWith(target.spokenLabel);
+
+    engine.audio.speakPrompt.mockClear();
+    gesture.dispatchGesture(tap);
+    expect(
+      gesture.viewEntities.value.find((e) => e.id === "banana")?.state
+    ).toBe("idle");
+    expect(engine.audio.speakPrompt).not.toHaveBeenCalled();
+
+    gesture.dispatchGesture(tap);
+    expect(engine.audio.speakPrompt).toHaveBeenCalledExactlyOnceWith(
+      target.spokenLabel
+    );
+  });
+
+  it("lún xúc giác setTouchingItem: pointerdown bật id, pointerup / pointercancel / rời vùng chạm trả null", () => {
+    const { gesture, entityById, engine } = makeGt002Harness();
+    const setTouchingSpy = vi.fn<(itemId: string | null) => void>();
+    Object.assign(engine.activeSession, { setTouchingItem: setTouchingSpy });
+    const target = entityById("apple");
+    const ptr = (x: number, y: number, pointerId = 1): PointerEvent =>
+      ({ pointerId, clientX: x, clientY: y, timeStamp: 0 }) as PointerEvent;
+
+    gesture.handlePointerDown(ptr(target.x, target.y));
+    expect(setTouchingSpy).toHaveBeenLastCalledWith("apple");
+    gesture.handlePointerUp(ptr(target.x, target.y));
+    expect(setTouchingSpy).toHaveBeenLastCalledWith(null);
+
+    setTouchingSpy.mockClear();
+    gesture.handlePointerDown(ptr(target.x, target.y, 2));
+    expect(setTouchingSpy).toHaveBeenLastCalledWith("apple");
+    gesture.handlePointerCancel(ptr(target.x, target.y, 2));
+    expect(setTouchingSpy).toHaveBeenLastCalledWith(null);
+
+    setTouchingSpy.mockClear();
+    gesture.handlePointerDown(ptr(target.x, target.y, 3));
+    expect(setTouchingSpy).toHaveBeenLastCalledWith("apple");
+    gesture.handlePointerMove(ptr(950, 530, 3));
+    expect(setTouchingSpy).toHaveBeenLastCalledWith(null);
+    gesture.handlePointerUp(ptr(950, 530, 3));
   });
 });
 
 describe("usePlayGesture — nhấn chậm vẫn là chạm (BR-FBK-02)", () => {
   it("nhấn giữ 900ms không di chuyển → dispatch một tap, không im lặng", () => {
     const { gesture, session } = makeHarness([{ id: "a", role: "option" }]);
-    gesture.handlePointerDown({
-      pointerId: 1,
-      clientX: 0,
-      clientY: 100,
-      timeStamp: 0,
-    } as PointerEvent);
-    gesture.handlePointerUp({
-      pointerId: 1,
-      clientX: 2,
-      clientY: 101,
-      timeStamp: 900,
-    } as PointerEvent);
+    const ptDown = { pointerId: 1, clientX: 0, clientY: 100, timeStamp: 0 };
+    const ptUp = { pointerId: 1, clientX: 2, clientY: 101, timeStamp: 900 };
+    gesture.handlePointerDown(ptDown as PointerEvent);
+    gesture.handlePointerUp(ptUp as PointerEvent);
     expect(session.dispatched.map((a) => a.type)).toEqual(["tap_item"]);
   });
 
@@ -751,13 +766,7 @@ describe("usePlayGesture — nhấn chậm vẫn là chạm (BR-FBK-02)", () => 
         engine.actionHinted = false;
         engine.hintRegionIds = [];
       },
-      audio: {
-        playSnapSound: vi.fn(),
-        playPopCelebrateSound: vi.fn(),
-        playSoftFeedbackSound: vi.fn(),
-        speakEncouragement: vi.fn(),
-        speakPrompt: vi.fn(),
-      },
+      audio: makeMockAudio(),
       scaffolding: { onMiss, onSuccess },
       renderSystem: { LOGIC_WIDTH: 960, LOGIC_HEIGHT: 540 },
     };

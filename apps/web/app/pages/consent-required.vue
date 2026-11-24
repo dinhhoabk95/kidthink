@@ -220,6 +220,7 @@
   } from "#imports";
   import { useApi } from "~/composables/use-api";
   import { useUserAuthClient } from "~/composables/use-auth-client";
+  import { clearOfflinePackClientData } from "~/composables/use-offline-pack";
 
   definePageMeta({
     middleware: ["user-auth"],
@@ -431,6 +432,7 @@
     try {
       await authClient.signOut();
       await clearUserSessionState();
+      await clearOfflinePackClientData({ reason: "logout" });
     } catch {
       // Bỏ qua lỗi mạng khi đăng xuất
     } finally {

@@ -5,9 +5,13 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
-import { createRng, resolveItemAsset, shuffleDeterministic } from "./utils.js";
-
-const WHITESPACE_RE = /\s+/;
+import {
+  createRng,
+  pickAgeBandPrompt,
+  resolveItemAsset,
+  sanitizeChildPrompt,
+  shuffleDeterministic,
+} from "./utils.js";
 
 export const projectGT005: Projection<"GT-005"> = {
   template: "GT-005",
@@ -56,22 +60,29 @@ export const projectGT005: Projection<"GT-005"> = {
     )
       ? "các cặp"
       : "các cặp tương ứng";
-    const candidatePrompt =
-      dataset.phrasing.prompt_template.length >= 4
-        ? dataset.phrasing.prompt_template.replace("{label}", promptReplacement)
-        : "Bé hãy ghép các cặp tương ứng nhé!";
-    const wordCount = candidatePrompt
-      .trim()
-      .split(WHITESPACE_RE)
-      .filter(Boolean).length;
+    const bandFallback = pickAgeBandPrompt(
+      opts.band,
+      {
+        mam: "Bé nối hai hình tương ứng với nhau nhé!",
+        choi: "Đố bé ghép đúng các cặp tương ứng nhé!",
+        la: "Bé thử nối các cặp đôi tương ứng xem!",
+      },
+      "Bé ghép các cặp tương ứng nhé!"
+    );
     const prompt =
-      candidatePrompt.length >= 4 && wordCount <= 12
-        ? candidatePrompt
-        : "Bé hãy ghép các cặp tương ứng nhé!";
+      dataset.phrasing.prompt_template.length >= 4
+        ? sanitizeChildPrompt(
+            dataset.phrasing.prompt_template.replace(
+              "{label}",
+              promptReplacement
+            ),
+            bandFallback
+          )
+        : bandFallback;
 
     return {
       content_pack: {
-        prompt: prompt.length >= 4 ? prompt : "Bé hãy ghép cặp tương ứng nhé",
+        prompt,
         pairs,
       },
       difficulty_params: {

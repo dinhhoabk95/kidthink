@@ -1,6 +1,9 @@
 import {
+  ACTOR_TYPE,
   auditLogs,
   consentLogs,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
@@ -8,11 +11,13 @@ import {
   recurringSubscriptions,
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
+import { PENDING_PRICE_VND } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import type { H3Event } from "h3";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import cancelRecurringHandler from "#server/api/users/subscriptions/recurring/cancel.post";
 import getRecurringHandler from "#server/api/users/subscriptions/recurring/index.get";
 import optInRecurringHandler from "#server/api/users/subscriptions/recurring/opt-in.post";
@@ -54,6 +59,8 @@ function mockUserEvent(
   } as H3Event;
 }
 
+const TEST_RECURRING_VND = 599_000;
+
 describe("Recurring Billing API & Schema Suite (#292 S1 & S2, BR-RBL-01..06)", () => {
   beforeEach(async () => {
     const db = getOwnerDb();
@@ -62,6 +69,30 @@ describe("Recurring Billing API & Schema Suite (#292 S1 & S2, BR-RBL-01..06)", (
     }
     for (const pkg of SEED_PACKAGES) {
       await db.insert(packages).values(pkg).onConflictDoNothing();
+    }
+    await db
+      .update(packages)
+      .set({
+        offers: [
+          {
+            offer_code: "annual",
+            billing_period: "1 năm",
+            price_vnd: TEST_RECURRING_VND,
+            duration_days: 365,
+          },
+        ],
+      })
+      .where(eq(packages.code, "PKG-standard"));
+  });
+
+  afterAll(async () => {
+    const db = getOwnerDb();
+    const stdSeed = SEED_PACKAGES.find((p) => p.code === "PKG-standard");
+    if (stdSeed) {
+      await db
+        .update(packages)
+        .set({ offers: stdSeed.offers })
+        .where(eq(packages.code, "PKG-standard"));
     }
   });
 
@@ -76,7 +107,7 @@ describe("Recurring Billing API & Schema Suite (#292 S1 & S2, BR-RBL-01..06)", (
       .values({
         email: `optin_noconsent_${Date.now()}@example.com`,
         displayName: "No Consent User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -98,6 +129,94 @@ describe("Recurring Billing API & Schema Suite (#292 S1 & S2, BR-RBL-01..06)", (
     });
   });
 
+  it("S2: POST /api/users/subscriptions/recurring/opt-in rejects 403 ENTITLEMENT_REQUIRED when user has no paid entitlement or approved order for package", async () => {
+    const db = getOwnerDb();
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: `optin_unpaid_${Date.now()}@example.com`,
+        displayName: "Unpaid Opt-In User",
+        status: USER_STATUS.ACTIVE,
+      })
+      .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
+
+    await expect(
+      optInRecurringHandler(
+        mockUserEvent(
+          user.id,
+          {
+            package_code: "PKG-standard",
+            billing_period: "annual",
+            consent_accepted: true,
+            terms_version: "2026-10",
+          },
+          "POST"
+        )
+      )
+    ).rejects.toMatchObject({
+      code: "ENTITLEMENT_REQUIRED",
+      statusCode: 403,
+    });
+  });
+
+  it("S2: POST /api/users/subscriptions/recurring/opt-in rejects 422 VALIDATION_FAILED when package offer has price_vnd = 0", async () => {
+    const db = getOwnerDb();
+    await db
+      .update(packages)
+      .set({
+        offers: [
+          {
+            offer_code: "annual",
+            billing_period: "1 năm",
+            price_vnd: PENDING_PRICE_VND,
+            duration_days: 365,
+          },
+        ],
+      })
+      .where(eq(packages.code, "PKG-standard"));
+
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: `optin_zeroprice_${Date.now()}@example.com`,
+        displayName: "Zero Price Opt-In User",
+        status: USER_STATUS.ACTIVE,
+      })
+      .returning();
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
+
+    await db.insert(entitlements).values({
+      userId: user.id,
+      entitlementKey: "play_standard_games",
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+      status: ENTITLEMENT_STATUS.ACTIVE,
+      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+    });
+
+    await expect(
+      optInRecurringHandler(
+        mockUserEvent(
+          user.id,
+          {
+            package_code: "PKG-standard",
+            billing_period: "annual",
+            consent_accepted: true,
+            terms_version: "2026-10",
+          },
+          "POST"
+        )
+      )
+    ).rejects.toMatchObject({
+      code: "VALIDATION_FAILED",
+      statusCode: 422,
+    });
+  });
+
   it("S2: POST /api/users/subscriptions/recurring/opt-in creates subscription with auto_renew=true and snapshots price & consent, GET returns it, and cancel preserves entitlements until period end (BR-RBL-01/02/03/06)", async () => {
     const db = getOwnerDb();
     const [user] = await db
@@ -105,7 +224,7 @@ describe("Recurring Billing API & Schema Suite (#292 S1 & S2, BR-RBL-01..06)", (
       .values({
         email: `optin_full_${Date.now()}@example.com`,
         displayName: "Opt-In User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -118,6 +237,15 @@ describe("Recurring Billing API & Schema Suite (#292 S1 & S2, BR-RBL-01..06)", (
     ).rejects.toMatchObject({
       code: "SUBSCRIPTION_NOT_FOUND",
       status: 404,
+    });
+
+    // Seed active paid entitlement for PKG-standard before recurring opt-in
+    await db.insert(entitlements).values({
+      userId: user.id,
+      entitlementKey: "play_standard_games",
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+      status: ENTITLEMENT_STATUS.ACTIVE,
+      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
     });
 
     // 2. Opt-in with explicit consent
@@ -152,7 +280,7 @@ describe("Recurring Billing API & Schema Suite (#292 S1 & S2, BR-RBL-01..06)", (
       .from(auditLogs)
       .where(
         and(
-          eq(auditLogs.actorType, "user"),
+          eq(auditLogs.actorType, ACTOR_TYPE.USER),
           eq(auditLogs.actorId, user.id),
           eq(auditLogs.action, "subscription.opt_in_recurring")
         )
@@ -165,15 +293,6 @@ describe("Recurring Billing API & Schema Suite (#292 S1 & S2, BR-RBL-01..06)", (
     expect(getRes.auto_renew).toBe(true);
     expect(getRes.status).toBe("active");
     expect(getRes.consent_terms_version).toBe("2026-10");
-
-    // Grant active entitlement to verify BR-RBL-03 preservation on cancel
-    await db.insert(entitlements).values({
-      userId: user.id,
-      entitlementKey: "play_standard_games",
-      source: "package_order",
-      status: "active",
-      expiresAt: new Date(getRes.current_period_end),
-    });
 
     // 4. Cancel recurring subscription
     const cancelRes = await cancelRecurringHandler(
@@ -188,7 +307,7 @@ describe("Recurring Billing API & Schema Suite (#292 S1 & S2, BR-RBL-01..06)", (
       .select()
       .from(entitlements)
       .where(eq(entitlements.userId, user.id));
-    expect(entAfterCancel?.status).toBe("active");
+    expect(entAfterCancel?.status).toBe(ENTITLEMENT_STATUS.ACTIVE);
 
     // 5. Second cancel throws 409 SUBSCRIPTION_ALREADY_CANCELLED
     await expect(

@@ -1,8 +1,8 @@
-import { getOwnerDb } from "@mindkid/db";
+import { NoActiveChildError } from "@mindkid/errors/child";
 import { isValidThemeCode } from "@mindkid/shared";
+import { deleteCookie, getCookie } from "h3";
 import { z } from "zod";
-import { loadStickerAlbum } from "#server/services/index.js";
-import { requireOwnedActiveChild } from "#server/utils/active-child-runtime";
+import { getChildStickerAlbumExperience } from "#server/services/play-experience-service";
 import { defineApiRoute } from "#server/utils/define-api-route";
 
 const QuerySchema = z.object({
@@ -17,16 +17,18 @@ export default defineApiRoute({
   auth: "user",
   query: QuerySchema,
   async handler({ event, auth, query }) {
-    const db = getOwnerDb();
-    const child = await requireOwnedActiveChild(
-      event,
-      db,
-      Number(auth.user_id)
-    );
-
-    return await loadStickerAlbum(db, {
-      childId: child.id,
-      themeCode: query.theme,
-    });
+    const candidateUuid = getCookie(event, "active_child_id");
+    try {
+      return await getChildStickerAlbumExperience(
+        Number(auth.user_id),
+        candidateUuid,
+        query.theme
+      );
+    } catch (err) {
+      if (err instanceof NoActiveChildError && candidateUuid) {
+        deleteCookie(event, "active_child_id", { path: "/" });
+      }
+      throw err;
+    }
   },
 });

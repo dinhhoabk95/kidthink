@@ -34,6 +34,7 @@
   import { onMounted, onUnmounted, ref } from "vue";
   import { useRoute } from "vue-router";
   import { definePageMeta } from "#imports";
+  import { handleIntroRoundNarration } from "~/composables/play/play-intro-narration";
   import { resolveZonePromptText } from "~/composables/play/play-prompt-zone";
   import { playRoundOpenNarration } from "~/composables/play/round-open-narration";
   import { preloadSpritesForSession } from "~/composables/play/use-item-sprites";
@@ -81,7 +82,11 @@
   }
 
   function handleRoundWon(): void {
-    feedbackOverlay.celebrate();
+    engine?.audio.playRoundCompleteSound();
+    feedbackOverlay.celebrate(
+      currentConfig?.age_band ?? "4-5",
+      performance.now()
+    );
     clearTimeout(replayTimer);
     replayTimer = setTimeout(() => {
       if (currentConfig) {
@@ -106,7 +111,21 @@
     onRetryDisallowed: handleRetryDisallowed,
     getStageZones: () => stageZones,
     onPromptSpeakerTap: () => {
-      const prompt = resolveZonePromptText(engine?.activeSession);
+      const currentSession = engine?.activeSession;
+      if (currentTemplateCode === "GT-000") {
+        handleIntroRoundNarration({
+          trigger: "replay",
+          currentSession,
+          notePromptSettled: () => {
+            /* noop */
+          },
+          fallbackSpeak: (text) => {
+            engine?.audio.speakPrompt(text);
+          },
+        });
+        return;
+      }
+      const prompt = resolveZonePromptText(currentSession);
       if (prompt) {
         engine?.audio.speakPrompt(prompt);
       }
@@ -134,6 +153,9 @@
    * vang sau khi phiên mới mở hoặc trang đã rời.
    */
   function speakRoundOpen(autoReplay: boolean): void {
+    if (currentTemplateCode === "GT-000") {
+      return;
+    }
     const eng = engine;
     const session = eng?.activeSession;
     if (!(eng && session)) {
@@ -296,6 +318,7 @@
     if (gestureVisual) {
       drawActiveGestureOverlay(ctx, rs, gestureVisual, now);
     }
+    feedbackOverlay.drawMilestoneBanner(ctx, rs, now, stageZones.stage);
     drawFeedbackPulses(ctx, feedback.pulses);
   }
 

@@ -319,8 +319,8 @@
         <p class="text-sm text-surface-600">
           {{
             actionModal.mode === "disable"
-              ? "Để tắt xác thực hai lớp, vui lòng xác nhận bằng mật khẩu hiện tại của bạn:"
-              : "Hành động này sẽ vô hiệu hoá toàn bộ mã khôi phục cũ và cấp 10 mã mới. Vui lòng nhập mật khẩu hiện tại:"
+              ? "Để tắt xác thực hai lớp, vui lòng xác nhận bằng mật khẩu hiện tại và mã TOTP 6 số từ ứng dụng bảo mật:"
+              : "Hành động này sẽ vô hiệu hoá toàn bộ mã khôi phục cũ và cấp 10 mã mới. Vui lòng nhập mật khẩu hiện tại và mã TOTP 6 số:"
           }}
         </p>
 
@@ -338,6 +338,27 @@
             required
             type="password"
             v-model="actionModal.password"
+          >
+        </div>
+
+        <div class="space-y-2">
+          <label
+            class="block text-sm font-bold text-surface-700"
+            for="totpActionCode"
+          >
+            Mã xác thực hai lớp (TOTP 6 số) *
+          </label>
+          <input
+            autocomplete="one-time-code"
+            class="w-full min-h-11 px-4 py-2.5 rounded-2xl border-2 border-surface-300 focus:border-brand-600 focus:outline-none text-base font-mono tracking-widest text-surface-900"
+            data-testid="mfa-action-totp-input"
+            id="totpActionCode"
+            inputmode="numeric"
+            maxlength="6"
+            placeholder="123456"
+            required
+            type="text"
+            v-model.trim="actionModal.totp"
             @keyup.enter="handleTotpAction"
           >
         </div>
@@ -354,7 +375,7 @@
             class="min-h-11 px-5 py-2 rounded-2xl disabled:opacity-50 text-white text-sm font-bold font-heading"
             type="button"
             :class="actionModal.mode === 'disable' ? 'bg-danger-600 hover:bg-danger-700' : 'bg-brand-600 hover:bg-brand-700'"
-            :disabled="!actionModal.password.trim() || submitting"
+            :disabled="!actionModal.password.trim() || actionModal.totp.trim().length !== 6 || submitting"
             @click="handleTotpAction"
           >
             {{ actionButtonLabel }}
@@ -366,7 +387,9 @@
 </template>
 
 <script lang="ts" setup>
+  import { normalizeApiError } from "@mindkid/errors/client";
   import { computed, reactive, ref } from "vue";
+  import { useApi } from "~/composables/use-api";
   import { useUserAuthClient } from "~/composables/use-auth-client";
 
   export interface MfaStatusResponse {
@@ -385,6 +408,7 @@
     success: [message: string];
   }>();
 
+  const api = useApi();
   const authClient = useUserAuthClient();
   const submitting = ref(false);
 
@@ -403,6 +427,7 @@
   const actionModal = reactive({
     mode: null as "disable" | "regenerate" | null,
     password: "",
+    totp: "",
   });
 
   const actionButtonLabel = computed(() => {
@@ -552,30 +577,41 @@
   function openActionModal(mode: "disable" | "regenerate"): void {
     actionModal.mode = mode;
     actionModal.password = "";
+    actionModal.totp = "";
   }
 
   async function handleTotpAction(): Promise<void> {
     const password = actionModal.password.trim();
-    if (!(password && actionModal.mode)) {
+    const totp = actionModal.totp.trim();
+    if (!(password && actionModal.mode) || totp.length !== 6) {
       return;
     }
     submitting.value = true;
     emit("error", "");
     try {
+      await api("/api/users/auth/reauth", {
+        method: "POST",
+        body: { password, totp },
+      });
+
       if (actionModal.mode === "disable") {
-        const res = await authClient.twoFactor.disable({ password });
+        const res = await authClient.twoFactor.disable(
+          { password },
+          { headers: { "x-mindkid-totp": totp } }
+        );
         if (res.error) {
-          emit("error", res.error.message || "Mật khẩu xác thực không chính xác.");
+          emit("error", res.error.message || "Mật khẩu hoặc mã TOTP không chính xác.");
           return;
         }
         emit("success", "Đã tắt xác thực hai lớp.");
         actionModal.mode = null;
       } else {
-        const res = await authClient.twoFactor.generateBackupCodes({
-          password,
-        });
+        const res = await authClient.twoFactor.generateBackupCodes(
+          { password },
+          { headers: { "x-mindkid-totp": totp } }
+        );
         if (res.error || !res.data) {
-          emit("error", res.error?.message || "Mật khẩu xác thực không chính xác.");
+          emit("error", res.error?.message || "Mật khẩu hoặc mã TOTP không chính xác.");
           return;
         }
         setupState.recoveryCodes = res.data.backupCodes || [];
@@ -585,9 +621,13 @@
         emit("success", "Đã sinh lại 10 mã khôi phục mới.");
       }
       actionModal.password = "";
+      actionModal.totp = "";
       emit("reload");
-    } catch {
-      emit("error", "Không thể thực hiện thao tác MFA lúc này.");
+    } catch (err) {
+      emit(
+        "error",
+        normalizeApiError(err).message || "Không thể thực hiện thao tác MFA lúc này."
+      );
     } finally {
       submitting.value = false;
     }

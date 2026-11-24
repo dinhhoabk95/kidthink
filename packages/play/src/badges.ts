@@ -1,15 +1,6 @@
 import { evaluateBadges } from "@mindkid/adaptive";
-import {
-  childBadges,
-  childDailyStats,
-  curriculumEnrollments,
-  curriculumItemProgress,
-  curriculumItems,
-  masteryState,
-  skills,
-} from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import { getDateIct } from "@mindkid/shared";
-import { and, eq, inArray } from "drizzle-orm";
 import type { DbOrTx } from "#src/types";
 
 const STRAND_COMPLETE_THRESHOLD = 0.8;
@@ -171,13 +162,8 @@ export async function hasCompletedAnyStrand(
   db: DbOrTx,
   childId: number
 ): Promise<boolean> {
-  const masteryRows = await db
-    .select({
-      skillId: masteryState.skillId,
-      bestPLearn: masteryState.bestPLearn,
-    })
-    .from(masteryState)
-    .where(eq(masteryState.childProfileId, childId));
+  const repos = createRepositories(db);
+  const masteryRows = await repos.mastery.listForChild(childId);
 
   const masteredSkillIds = masteryRows
     .filter((r) => Number(r.bestPLearn) >= STRAND_COMPLETE_THRESHOLD)
@@ -187,10 +173,8 @@ export async function hasCompletedAnyStrand(
     return false;
   }
 
-  const masteredSkillRows = await db
-    .select({ id: skills.id, strandId: skills.strandId })
-    .from(skills)
-    .where(inArray(skills.id, masteredSkillIds));
+  const masteredSkillRows =
+    await repos.taxonomy.findSkillsByIds(masteredSkillIds);
 
   const candidateStrandIds = [
     ...new Set(masteredSkillRows.map((s) => Number(s.strandId))),
@@ -199,10 +183,8 @@ export async function hasCompletedAnyStrand(
     return false;
   }
 
-  const strandSkills = await db
-    .select({ id: skills.id, strandId: skills.strandId })
-    .from(skills)
-    .where(inArray(skills.strandId, candidateStrandIds));
+  const strandSkills =
+    await repos.taxonomy.findSkillsByStrandIds(candidateStrandIds);
 
   return evaluateStrandCompletion({
     masteredSkillIds: new Set(masteredSkillIds),
@@ -217,13 +199,8 @@ export async function hasCompletedAnyCurriculumWeek(
   db: DbOrTx,
   childId: number
 ): Promise<boolean> {
-  const enrollments = await db
-    .select({
-      id: curriculumEnrollments.id,
-      curriculumId: curriculumEnrollments.curriculumId,
-    })
-    .from(curriculumEnrollments)
-    .where(eq(curriculumEnrollments.childId, childId));
+  const repos = createRepositories(db);
+  const enrollments = await repos.curricula.listEnrollmentsByChild(childId);
 
   if (enrollments.length === 0) {
     return false;
@@ -235,27 +212,8 @@ export async function hasCompletedAnyCurriculumWeek(
   ];
 
   const [items, completedProgress] = await Promise.all([
-    db
-      .select({
-        id: curriculumItems.id,
-        curriculumId: curriculumItems.curriculumId,
-        weekNo: curriculumItems.weekNo,
-        isRequired: curriculumItems.isRequired,
-      })
-      .from(curriculumItems)
-      .where(inArray(curriculumItems.curriculumId, curriculumIds)),
-    db
-      .select({
-        enrollmentId: curriculumItemProgress.enrollmentId,
-        curriculumItemId: curriculumItemProgress.curriculumItemId,
-      })
-      .from(curriculumItemProgress)
-      .where(
-        and(
-          inArray(curriculumItemProgress.enrollmentId, enrollmentIds),
-          eq(curriculumItemProgress.status, "completed")
-        )
-      ),
+    repos.curricula.listItems(curriculumIds),
+    repos.curricula.listCompletedProgress(enrollmentIds),
   ]);
 
   if (items.length === 0) {
@@ -287,12 +245,9 @@ export async function awardChildBadges(params: {
   readonly now: Date;
 }): Promise<void> {
   const { db, childId, sessionUuid, now } = params;
-  const existingBadgesRows = await db
-    .select({ badgeCode: childBadges.badgeCode })
-    .from(childBadges)
-    .where(eq(childBadges.childProfileId, childId));
+  const repos = createRepositories(db);
   const existingBadgeCodes = new Set<string>(
-    existingBadgesRows.map((b: { badgeCode: string }) => b.badgeCode)
+    await repos.badges.listBadgeCodesForChild(childId)
   );
 
   if (
@@ -307,14 +262,10 @@ export async function awardChildBadges(params: {
     await Promise.all([
       existingBadgeCodes.has("PLAY_DAYS_5")
         ? Promise.resolve(0)
-        : db
-            .selectDistinct({ dateIct: childDailyStats.dateIct })
-            .from(childDailyStats)
-            .where(eq(childDailyStats.childProfileId, childId))
-            .then((rows: Array<{ dateIct: string }>) => {
-              const dateSet = new Set(
-                rows.map((d: { dateIct: string }) => d.dateIct)
-              );
+        : repos.analyticsRollup
+            .listDistinctPlayDatesForChild(childId)
+            .then((dates) => {
+              const dateSet = new Set(dates);
               dateSet.add(getDateIct(now));
               return dateSet.size;
             }),
@@ -334,16 +285,6 @@ export async function awardChildBadges(params: {
   });
 
   if (newBadges.length > 0) {
-    await db
-      .insert(childBadges)
-      .values(
-        newBadges.map((badgeCode) => ({
-          childProfileId: childId,
-          badgeCode,
-          awardedAt: now,
-          sourceRef: sessionUuid,
-        }))
-      )
-      .onConflictDoNothing();
+    await repos.badges.awardBadges(childId, newBadges, sessionUuid, now);
   }
 }

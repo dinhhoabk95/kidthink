@@ -1,69 +1,20 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Chuột túi</title>
   <defs>
-    <radialGradient cx="40%" cy="32%" id="kgFur" r="70%">
-      <stop offset="0%" stop-color="#fdba74" />
-      <stop offset="55%" stop-color="#d97706" />
-      <stop offset="100%" stop-color="#92400e" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="kgCoat" r="70%"><stop offset="0%" stop-color="#fdba74" /><stop offset="55%" stop-color="#d97706" /><stop offset="100%" stop-color="#92400e" /></radialGradient>
   </defs>
-  <ellipse cx="58" cy="105" fill="#5c3d2e" opacity="0.25" rx="38" ry="5.5" />
-  <path
-    d="M66 89C86 93 100 84 105 66C98 76 85 81 68 78Z"
-    fill="url(#kgFur)"
-    stroke="#5c3d2e"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <ellipse
-    cx="44"
-    cy="97"
-    fill="url(#kgFur)"
-    rx="15"
-    ry="5.5"
-    stroke="#5c3d2e"
-    stroke-width="3.8"
-  />
-  <ellipse
-    cx="58"
-    cy="70"
-    fill="url(#kgFur)"
-    rx="21"
-    ry="25"
-    stroke="#5c3d2e"
-    stroke-width="4"
-  />
-  <path
-    d="M43 72C43 85 65 85 65 72Z"
-    fill="#fef3c7"
-    stroke="#78350f"
-    stroke-linejoin="round"
-    stroke-width="3.6"
-  />
-  <circle
-    cx="53"
-    cy="68"
-    fill="#fbbf24"
-    r="6.5"
-    stroke="#78350f"
-    stroke-width="3.4"
-  />
-  <path
-    d="M42 29L36 14L49 24M56 27L62 13L64 28"
-    fill="url(#kgFur)"
-    stroke="#5c3d2e"
-    stroke-linejoin="round"
-    stroke-width="3.8"
-  />
-  <ellipse
-    cx="49"
-    cy="39"
-    fill="url(#kgFur)"
-    rx="16"
-    ry="14"
-    stroke="#5c3d2e"
-    stroke-width="4"
-  />
-  <circle cx="43" cy="38" fill="#292524" r="2.8" />
-  <circle cx="35" cy="43" fill="#5c3d2e" r="3" />
+  <ellipse cx="58" cy="106" fill="#451a03" opacity="0.22" rx="42" ry="5.5" />
+    <!-- Heavy counter-balancing tail + powerful hind leg & long foot -->
+    <path d="M66 82C82 94 98 98 110 94C102 103 84 103 62 92Z" fill="url(#kgCoat)" stroke="#451a03" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M44 26L40 13L49 23ZM52 26L56 13L58 25Z" fill="#d97706" stroke="#451a03" stroke-linejoin="round" stroke-width="3.4" />
+    <!-- Upright marsupial torso, neck & head -->
+    <path d="M46 24C54 24 59 29 58 36L66 58C74 68 74 84 64 92H46C40 84 40 68 45 54L44 38C36 39 31 36 31 31C31 27 38 24 46 24Z" fill="url(#kgCoat)" stroke="#451a03" stroke-linejoin="round" stroke-width="3.8" />
+    <!-- Pouch + cute joey head peeking out -->
+    <path d="M43 68C43 81 58 81 58 68Z" fill="#fef3c7" stroke="#78350f" stroke-linejoin="round" stroke-width="3" />
+    <circle cx="49" cy="65" fill="#d97706" r="5.5" stroke="#451a03" stroke-width="2.8" />
+    <circle cx="47.5" cy="64" fill="#1c1917" r="1.4" />
+    <!-- Forepaws & long hind foot -->
+    <path d="M44 54L34 61M48 57L38 64" stroke="#451a03" stroke-linecap="round" stroke-width="3.8" />
+    <path d="M56 80C66 80 68 94 58 100L34 104C32 100 38 97 50 96Z" fill="url(#kgCoat)" stroke="#451a03" stroke-linejoin="round" stroke-width="3.8" />
+    <circle cx="42" cy="30" fill="#1c1917" r="2.3" /><circle cx="41.4" cy="29.3" fill="#ffffff" r="0.9" />
 </svg>

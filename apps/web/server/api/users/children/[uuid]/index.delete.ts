@@ -1,9 +1,4 @@
-import { writeAudit } from "@mindkid/audit";
-import { verifyPassword } from "@mindkid/auth";
-import { childProfiles, getOwnerDb, users } from "@mindkid/db";
-import { InvalidCredentialsError } from "@mindkid/errors/auth";
-import { NotFoundError, ValidationError } from "@mindkid/errors/common";
-import { and, eq } from "drizzle-orm";
+import { NotFoundError } from "@mindkid/errors/common";
 import {
   defineEventHandler,
   deleteCookie,
@@ -12,6 +7,7 @@ import {
   readBody,
 } from "h3";
 import { z } from "zod";
+import { deleteChildProfileForUser } from "#server/services/child-service";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
@@ -32,19 +28,6 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError("NOT_FOUND");
   }
 
-  const userId = Number(userSession.user_id);
-  const db = getOwnerDb();
-
-  // Verify ownership at DB level (BR-CPC-09)
-  const [child] = await db
-    .select()
-    .from(childProfiles)
-    .where(and(eq(childProfiles.uuid, uuid), eq(childProfiles.userId, userId)));
-
-  if (!child) {
-    throw new NotFoundError("NOT_FOUND");
-  }
-
   const eventBody = (event.context as { body?: DeleteChildBodyInput })?.body;
   const raw =
     eventBody ||
@@ -54,69 +37,16 @@ export default defineEventHandler(async (event) => {
     throwValidationError(parsed.error);
   }
 
-  const password = parsed.data.password;
-  const confirmName = parsed.data.confirm_name.trim();
+  const result = await deleteChildProfileForUser({
+    userId: Number(userSession.user_id),
+    childUuid: uuid,
+    password: parsed.data.password,
+    confirmName: parsed.data.confirm_name,
+  });
 
-  // BR-CPR-08: Deletion requires password verification
-  const [userRecord] = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, userId));
-
-  if (
-    !(
-      userRecord?.passwordHash &&
-      (await verifyPassword(password, userRecord.passwordHash))
-    )
-  ) {
-    throw new InvalidCredentialsError("Mật khẩu xác nhận không đúng.");
-  }
-
-  // BR-CPR-04: Confirmation requires typing exact child display_name
-  if (confirmName !== child.displayName) {
-    throw new ValidationError(
-      "Tên xác nhận không trùng khớp với tên hồ sơ trẻ."
-    );
-  }
-
-  // Clear active_child_id cookie if target child is active
-  const activeUuid = getCookie(event, "active_child_id");
-  if (activeUuid === uuid) {
+  if (getCookie(event, "active_child_id") === uuid) {
     deleteCookie(event, "active_child_id", { path: "/" });
   }
 
-  const now = new Date();
-  const purgeAt = new Date(now.getTime() + 30 * 86_400 * 1000);
-
-  // BR-CPR-03 & BR-AUD-02: Mark status as pending_deletion (30-day grace period) and audit in same transaction
-  await db.transaction(async (tx) => {
-    await tx
-      .update(childProfiles)
-      .set({
-        status: "pending_deletion",
-        purgeAt,
-        updatedAt: now,
-      })
-      .where(eq(childProfiles.id, child.id));
-
-    await writeAudit(tx, {
-      actor_type: "user",
-      actor_id: userId,
-      action: "child_data_purged",
-      entity_type: "child_profile",
-      entity_id: child.uuid,
-      before_data: { child_uuid: child.uuid, status: child.status },
-      after_data: {
-        child_uuid: child.uuid,
-        status: "pending_deletion",
-        purge_at: purgeAt.toISOString(),
-      },
-    });
-  });
-
-  return {
-    uuid: child.uuid,
-    status: "pending_deletion",
-    purge_at: purgeAt.toISOString(),
-  };
+  return result;
 });

@@ -1,97 +1,28 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Hươu cao cổ</title>
   <defs>
-    <radialGradient cx="38%" cy="32%" id="girGold" r="70%">
-      <stop offset="0%" stop-color="#fef08a" />
-      <stop offset="55%" stop-color="#fbbf24" />
-      <stop offset="100%" stop-color="#f59e0b" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="girCoat" r="70%"><stop offset="0%" stop-color="#fef08a" /><stop offset="55%" stop-color="#fbbf24" /><stop offset="100%" stop-color="#d97706" /></radialGradient>
   </defs>
-  <ellipse cx="60" cy="99" fill="#78350f" opacity="0.26" rx="31" ry="8" />
-  <path
-    d="M48 34V18M72 34V18"
-    stroke="#92400e"
-    stroke-linecap="round"
-    stroke-width="5"
-  />
-  <circle
-    cx="48"
-    cy="17"
-    fill="#92400e"
-    r="6"
-    stroke="#451a03"
-    stroke-width="3"
-  />
-  <circle
-    cx="72"
-    cy="17"
-    fill="#92400e"
-    r="6"
-    stroke="#451a03"
-    stroke-width="3"
-  />
-  <ellipse
-    cx="28"
-    cy="44"
-    fill="url(#girGold)"
-    rx="11"
-    ry="6"
-    stroke="#92400e"
-    stroke-width="3.6"
-    transform="rotate(-22 28 44)"
-  />
-  <ellipse
-    cx="92"
-    cy="44"
-    fill="url(#girGold)"
-    rx="11"
-    ry="6"
-    stroke="#92400e"
-    stroke-width="3.6"
-    transform="rotate(22 92 44)"
-  />
-  <rect
-    fill="url(#girGold)"
-    height="28"
-    rx="10"
-    stroke="#92400e"
-    stroke-width="4"
-    width="26"
-    x="47"
-    y="76"
-  />
-  <circle cx="55" cy="92" fill="#b45309" r="4" />
-  <circle cx="65" cy="86" fill="#b45309" r="3.2" />
-  <ellipse
-    cx="60"
-    cy="56"
-    fill="url(#girGold)"
-    rx="31"
-    ry="26"
-    stroke="#92400e"
-    stroke-width="4"
-  />
-  <circle cx="45" cy="40" fill="#b45309" r="4.5" />
-  <circle cx="74" cy="42" fill="#b45309" r="4" />
-  <circle cx="46" cy="53" fill="#1c1917" r="4.4" />
-  <circle cx="44.7" cy="51.4" fill="#ffffff" r="1.7" />
-  <circle cx="74" cy="53" fill="#1c1917" r="4.4" />
-  <circle cx="72.7" cy="51.4" fill="#ffffff" r="1.7" />
-  <ellipse
-    cx="60"
-    cy="70"
-    fill="#fef3c7"
-    rx="22"
-    ry="13"
-    stroke="#92400e"
-    stroke-width="3.4"
-  />
-  <ellipse cx="52" cy="67" fill="#78350f" rx="2.5" ry="3.5" />
-  <ellipse cx="68" cy="67" fill="#78350f" rx="2.5" ry="3.5" />
-  <path
-    d="M53 75C57 78 63 78 67 75"
-    stroke="#78350f"
-    stroke-linecap="round"
-    stroke-width="2.6"
-  />
+  <ellipse cx="58" cy="108" fill="#78350f" opacity="0.22" rx="34" ry="5" />
+    <!-- Far long legs -->
+    <path d="M51 74L49 106H55L57 74ZM77 74L76 106H82L83 74Z" fill="#b45309" stroke="#78350f" stroke-linejoin="round" stroke-width="3.2" />
+    <!-- Tall slender neck + sloped back + body + tail -->
+    <path d="M35 19C41 19 46 23 46 29L56 58C68 57 82 62 85 73C86 80 79 84 68 84H52C44 84 41 78 43 70L36 33C28 34 22 31 22 26C22 22 28 19 35 19Z" fill="url(#girCoat)" stroke="#78350f" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M85 69C93 74 95 84 92 92" stroke="#78350f" stroke-linecap="round" stroke-width="3.4" />
+    <circle cx="92" cy="93" fill="#78350f" r="3" />
+    <!-- Ossicones & ears -->
+    <path d="M33 19V11M39 19V12" stroke="#78350f" stroke-linecap="round" stroke-width="3.4" />
+    <circle cx="33" cy="10" fill="#78350f" r="2.6" />
+    <circle cx="39" cy="11" fill="#78350f" r="2.6" />
+    <ellipse cx="46" cy="23" fill="#fbbf24" rx="5" ry="2.8" stroke="#78350f" stroke-width="2.8" transform="rotate(-18 46 23)" />
+    <!-- Reticulated chestnut patches -->
+    <circle cx="44" cy="40" fill="#92400e" opacity="0.82" r="3.6" />
+    <circle cx="48" cy="51" fill="#92400e" opacity="0.82" r="4" />
+    <circle cx="58" cy="67" fill="#92400e" opacity="0.82" r="5" />
+    <circle cx="71" cy="68" fill="#92400e" opacity="0.82" r="4.5" />
+    <circle cx="64" cy="76" fill="#92400e" opacity="0.82" r="3.8" />
+    <!-- Near long legs & hooves -->
+    <path d="M44 76L41 107H48L51 76ZM71 76L69 107H76L78 76Z" fill="url(#girCoat)" stroke="#78350f" stroke-linejoin="round" stroke-width="3.5" />
+    <path d="M41 103H48V107H41ZM69 103H76V107H69Z" fill="#451a03" />
+    <circle cx="31" cy="24" fill="#1c1917" r="2.3" /><circle cx="30.4" cy="23.3" fill="#ffffff" r="0.9" />
 </svg>

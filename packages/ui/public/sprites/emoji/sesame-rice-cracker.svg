@@ -1,0 +1,10 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh đa vừng nướng</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="srcRice" r="70%"><stop offset="0%" stop-color="#fef3c7" /><stop offset="55%" stop-color="#fbbf24" /><stop offset="100%" stop-color="#d97706" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#78350f" opacity="0.22" rx="36" ry="5.5" />
+    <circle cx="60" cy="58" fill="url(#srcRice)" r="37" stroke="#78350f" stroke-width="3.8" />
+    <path d="M42 92C42 74 78 74 78 92L74 96H46Z" fill="#f8fafc" stroke="#334155" stroke-linejoin="round" stroke-width="3.6" />
+    <circle cx="46" cy="44" fill="#292524" r="2.2" /><circle cx="62" cy="37" fill="#292524" r="2.2" /><circle cx="75" cy="49" fill="#292524" r="2.2" /><circle cx="51" cy="59" fill="#292524" r="2.2" /><circle cx="69" cy="62" fill="#292524" r="2.2" /><circle cx="58" cy="49" fill="#92400e" opacity="0.5" r="5" />
+</svg>

@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Phim chụp X-quang</title>
+  <defs>
+    <linearGradient id="xryFilm" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#1e3a8a" /><stop offset="100%" stop-color="#0f172a" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#0f172a" opacity="0.22" rx="34" ry="5" />
+    <rect fill="url(#xryFilm)" height="82" rx="10" stroke="#1e293b" stroke-width="4" width="68" x="26" y="18" />
+    <path d="M60 28V86M42 40C50 36 70 36 78 40M40 52C50 48 70 48 80 52M42 64C50 60 70 60 78 64M46 76C52 73 68 73 74 76" fill="none" stroke="#bae6fd" stroke-linecap="round" stroke-opacity="0.92" stroke-width="4.2" />
+</svg>

@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { gzipSync } from "node:zlib";
 import {
+  ACCESS_TIER_CODEC,
   gameLevelRounds,
   gameLevels,
   getOwnerDb,
@@ -137,7 +138,7 @@ async function seedTestLevel(options: {
         allow_retry: true,
         shuffle_items: true,
       },
-      accessTier: options.accessTier || "free",
+      accessTier: ACCESS_TIER_CODEC.toCode(options.accessTier || "free"),
     })
     .returning();
 
@@ -426,14 +427,17 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
   });
 
   describe("Task 5 — Dual Cache Modes (BR-CFG-04, BR-CFG-05, D-FT)", () => {
-    it("sets Cache-Control: public, max-age=300 for free level (BR-CFG-05)", async () => {
+    it("sets Cache-Control: private, no-store for free level when config delivery returns session.uuid (BR-CFG-05)", async () => {
       const { code } = await ensureAllowlistFreeLevel();
 
       const event = mockEvent("GET", undefined, { code });
-      await guestConfigHandler(event);
+      const res = (await guestConfigHandler(event)) as {
+        session?: { uuid?: string };
+      };
 
+      expect(res.session?.uuid).toBeDefined();
       const cacheHeader = event.__responseHeaders["cache-control"];
-      expect(cacheHeader).toBe("public, max-age=300");
+      expect(cacheHeader).toBe("private, no-store");
     });
 
     it("sets Cache-Control: private, no-store for login/premium level (BR-CFG-04)", async () => {
@@ -458,14 +462,18 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       expect(cacheHeader).not.toContain("public");
     });
 
-    it("D-FT negative test 2: fails if free level returns no-store", async () => {
+    it("D-FT negative test 2: free level config delivery with session.uuid returns private, no-store and never public cache", async () => {
       const { code } = await ensureAllowlistFreeLevel();
 
       const event = mockEvent("GET", undefined, { code });
-      await guestConfigHandler(event);
+      const res = (await guestConfigHandler(event)) as {
+        session?: { uuid?: string };
+      };
 
+      expect(res.session?.uuid).toBeDefined();
       const cacheHeader = event.__responseHeaders["cache-control"];
-      expect(cacheHeader).not.toContain("no-store");
+      expect(cacheHeader).toBe("private, no-store");
+      expect(cacheHeader).not.toContain("public");
     });
   });
 

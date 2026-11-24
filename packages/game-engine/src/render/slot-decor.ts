@@ -3,6 +3,7 @@ import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
 import { alpha } from "./color-utils.js";
+import { getEmojiSprite } from "./sprite-registry.js";
 import {
   applyCanvasFontAtSize,
   canvasFontPx,
@@ -415,7 +416,14 @@ export function drawClueSymbol(
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   if (symbol.kind === "other") {
-    ctx.fillText("\u{1F50D}", slot.x, slot.y);
+    const magSprite = getEmojiSprite("\u{1F50D}");
+    if (magSprite) {
+      const sz = Math.round(fontSize * 1.15);
+      const half = sz / 2;
+      ctx.drawImage(magSprite, slot.x - half, slot.y - half, sz, sz);
+    } else {
+      ctx.fillText("\u{1F50D}", slot.x, slot.y);
+    }
   } else if (symbol.kind === "between") {
     const gap = Math.min(slot.w * 0.28, fontSize * 2);
     ctx.fillText(String(symbol.min), slot.x - gap - fontSize * 0.6, slot.y);

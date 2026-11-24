@@ -1,5 +1,13 @@
 import { writeAudit } from "@mindkid/audit";
-import { entitlements, getOwnerDb, recurringSubscriptions } from "@mindkid/db";
+import {
+  type DbExecutor,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
+  RECURRING_SUBSCRIPTION_STATUS,
+  RECURRING_SUBSCRIPTION_STATUS_CODEC,
+  type RecurringSubscriptionEntity,
+} from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import {
   InvalidCancelReasonError,
   SubscriptionAlreadyCancelledError,
@@ -13,7 +21,8 @@ import {
   DUNNING_MAX_ATTEMPTS,
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
-import { and, eq, inArray, isNotNull, lt } from "drizzle-orm";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 export interface CreateRecurringSubscriptionParams {
   userId: number;
@@ -40,8 +49,8 @@ export interface AdminCancelSubscriptionParams {
 export async function createRecurringSubscription(
   params: CreateRecurringSubscriptionParams,
   now = new Date()
-) {
-  const db = getOwnerDb();
+): Promise<RecurringSubscriptionEntity> {
+  const repos = useOwnerRepositories();
 
   const periodDays = params.billingPeriod === "monthly" ? 30 : 365;
   const currentPeriodStart = now;
@@ -50,27 +59,20 @@ export async function createRecurringSubscription(
   );
   const nextBillingAt = currentPeriodEnd;
 
-  const [subscription] = await db
-    .insert(recurringSubscriptions)
-    .values({
-      userId: params.userId,
-      packageCode: params.packageCode,
-      offerCode: params.offerCode,
-      billingPeriod: params.billingPeriod,
-      priceVnd: params.priceVnd,
-      autoRenew: true,
-      status: "active",
-      currentPeriodStart,
-      currentPeriodEnd,
-      nextBillingAt,
-      consentTermsVersion: params.termsVersion,
-      consentSnapshot: params.consentSnapshot ?? null,
-      createdAt: now,
-      updatedAt: now,
-    })
-    .returning();
-
-  return subscription;
+  return await repos.recurringSubscriptions.createSubscription({
+    userId: params.userId,
+    packageCode: params.packageCode,
+    offerCode: params.offerCode,
+    billingPeriod: params.billingPeriod,
+    priceVnd: params.priceVnd,
+    autoRenew: true,
+    currentPeriodStart,
+    currentPeriodEnd,
+    nextBillingAt,
+    consentTermsVersion: params.termsVersion,
+    consentSnapshot: params.consentSnapshot ?? null,
+    now,
+  });
 }
 
 /**
@@ -83,25 +85,24 @@ export async function userCancelRecurringSubscription(
   now = new Date(),
   reason?: string
 ) {
-  const db = getOwnerDb();
+  const repos = useOwnerRepositories();
 
-  return await db.transaction(async (tx) => {
-    const [sub] = await tx
-      .select()
-      .from(recurringSubscriptions)
-      .where(
-        and(
-          eq(recurringSubscriptions.id, subscriptionId),
-          eq(recurringSubscriptions.userId, userId)
-        )
-      )
-      .limit(1);
+  return await repos.recurringSubscriptions.transaction(async (tx) => {
+    const txRepos = createRepositories(tx);
+    const sub = await txRepos.recurringSubscriptions.findByIdForUser(
+      subscriptionId,
+      userId
+    );
 
     if (!sub) {
       throw new SubscriptionModelNotFoundError(String(subscriptionId));
     }
 
-    if (!canCancelRecurringSubscription(sub.status)) {
+    if (
+      !canCancelRecurringSubscription(
+        RECURRING_SUBSCRIPTION_STATUS_CODEC.toLabel(sub.status)
+      )
+    ) {
       throw new SubscriptionAlreadyCancelledError(
         "Gói thuê bao định kỳ đã được huỷ trước đó"
       );
@@ -109,24 +110,20 @@ export async function userCancelRecurringSubscription(
 
     const cancelReason = reason?.trim() ? reason.trim() : "user_self_cancel";
 
-    const [updatedSub] = await tx
-      .update(recurringSubscriptions)
-      .set({
+    const updatedSub =
+      await txRepos.recurringSubscriptions.updateSubscriptionById(sub.id, {
         autoRenew: false,
-        status: "cancelled",
+        status: RECURRING_SUBSCRIPTION_STATUS.CANCELLED,
         cancelledAt: now,
         cancelledBy: "user",
         cancelReason,
         updatedAt: now,
-      })
-      .where(eq(recurringSubscriptions.id, sub.id))
-      .returning();
+      });
 
     if (!updatedSub) {
       throw new Error("Failed to update subscription");
     }
 
-    // Audit log
     await writeAudit(tx, {
       actor_type: "user",
       actor_id: userId,
@@ -150,33 +147,34 @@ export async function userCancelRecurringSubscription(
   });
 }
 
-type Tx = Parameters<
-  Parameters<ReturnType<typeof getOwnerDb>["transaction"]>[0]
->[0];
-
 async function revokeSubEntitlements(
-  tx: Tx,
+  tx: DbExecutor,
   userId: number,
   packageCode: string,
   now: Date
 ): Promise<void> {
+  const txRepos = createRepositories(tx);
   const pkg = PACKAGE_CATALOG[packageCode as keyof typeof PACKAGE_CATALOG];
   const pkgKeys = pkg ? [...pkg.entitlements] : [];
-  const entitlementConditions = [
-    eq(entitlements.userId, userId),
-    eq(entitlements.source, "package_order"),
-    inArray(entitlements.status, ["active", "soft_unlock", "grace_period"]),
-  ];
-  if (pkgKeys.length > 0) {
-    entitlementConditions.push(inArray(entitlements.entitlementKey, pkgKeys));
+  if (pkgKeys.length === 0) {
+    return;
   }
-  await tx
-    .update(entitlements)
-    .set({
-      status: "cancelled",
-      updatedAt: now,
-    })
-    .where(and(...entitlementConditions));
+  await txRepos.entitlements.updateStatusForUserKeys(
+    userId,
+    {
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+      currentStatuses: [
+        ENTITLEMENT_STATUS.ACTIVE,
+        ENTITLEMENT_STATUS.SOFT_UNLOCK,
+        ENTITLEMENT_STATUS.GRACE_PERIOD,
+      ],
+      keys: pkgKeys,
+    },
+    {
+      status: ENTITLEMENT_STATUS.CANCELLED,
+      now,
+    }
+  );
 }
 
 /**
@@ -199,82 +197,85 @@ export async function adminCancelSubscription(
     );
   }
 
-  const db = getOwnerDb();
+  const repos = useOwnerRepositories();
+  let cancelledUserId = 0;
 
-  return await db.transaction(async (tx) => {
-    const [sub] = await tx
-      .select()
-      .from(recurringSubscriptions)
-      .where(eq(recurringSubscriptions.id, params.subscriptionId))
-      .limit(1);
-
-    if (!sub) {
-      throw new SubscriptionModelNotFoundError(String(params.subscriptionId));
-    }
-
-    if (sub.status === "cancelled") {
-      throw new SubscriptionAlreadyCancelledError(
-        "Gói thuê bao định kỳ đã được huỷ trước đó"
+  const cancelResult = await repos.recurringSubscriptions.transaction(
+    async (tx) => {
+      const txRepos = createRepositories(tx);
+      const sub = await txRepos.recurringSubscriptions.findById(
+        params.subscriptionId
       );
-    }
 
-    const revokeImmediate = params.revokeImmediate ?? false;
+      if (!sub) {
+        throw new SubscriptionModelNotFoundError(String(params.subscriptionId));
+      }
 
-    // 1. Update subscription status
-    const [updatedSub] = await tx
-      .update(recurringSubscriptions)
-      .set({
-        autoRenew: false,
+      if (sub.status === RECURRING_SUBSCRIPTION_STATUS.CANCELLED) {
+        throw new SubscriptionAlreadyCancelledError(
+          "Gói thuê bao định kỳ đã được huỷ trước đó"
+        );
+      }
+
+      const revokeImmediate = params.revokeImmediate ?? false;
+
+      const updatedSub =
+        await txRepos.recurringSubscriptions.updateSubscriptionById(sub.id, {
+          autoRenew: false,
+          status: RECURRING_SUBSCRIPTION_STATUS.CANCELLED,
+          cancelledAt: now,
+          cancelledBy: "admin",
+          cancelReason: params.reason,
+          cancelNote: params.adminNote,
+          updatedAt: now,
+        });
+
+      if (!updatedSub) {
+        throw new Error("Failed to update subscription");
+      }
+
+      if (revokeImmediate) {
+        cancelledUserId = sub.userId;
+        await revokeSubEntitlements(tx, sub.userId, sub.packageCode, now);
+      }
+
+      await writeAudit(tx, {
+        actor_type: "manager",
+        actor_id: params.managerId,
+        action: "subscription.cancelled_by_admin",
+        entity_type: "recurring_subscription",
+        entity_id: String(sub.id),
+        reason: params.adminNote,
+        after_data: {
+          subscription_id: sub.id,
+          user_id: sub.userId,
+          reason: params.reason,
+          admin_note: params.adminNote,
+          revoke_immediate: revokeImmediate,
+          status: "cancelled",
+          effective_until: revokeImmediate
+            ? now.toISOString()
+            : sub.currentPeriodEnd.toISOString(),
+        },
+      });
+
+      return {
+        subscription_id: updatedSub.id,
         status: "cancelled",
-        cancelledAt: now,
-        cancelledBy: "admin",
-        cancelReason: params.reason,
-        cancelNote: params.adminNote,
-        updatedAt: now,
-      })
-      .where(eq(recurringSubscriptions.id, sub.id))
-      .returning();
-
-    if (!updatedSub) {
-      throw new Error("Failed to update subscription");
-    }
-
-    // 2. Handle entitlements according to revoke_immediate
-    if (revokeImmediate) {
-      await revokeSubEntitlements(tx, sub.userId, sub.packageCode, now);
-    }
-
-    // 3. Write Audit Log
-    await writeAudit(tx, {
-      actor_type: "manager",
-      actor_id: params.managerId,
-      action: "subscription.cancelled_by_admin",
-      entity_type: "recurring_subscription",
-      entity_id: String(sub.id),
-      reason: params.adminNote,
-      after_data: {
-        subscription_id: sub.id,
-        user_id: sub.userId,
-        reason: params.reason,
-        admin_note: params.adminNote,
+        auto_renew: false,
         revoke_immediate: revokeImmediate,
-        status: "cancelled",
         effective_until: revokeImmediate
           ? now.toISOString()
-          : sub.currentPeriodEnd.toISOString(),
-      },
-    });
+          : updatedSub.currentPeriodEnd.toISOString(),
+      };
+    }
+  );
 
-    return {
-      subscription_id: updatedSub.id,
-      status: "cancelled",
-      auto_renew: false,
-      revoke_immediate: revokeImmediate,
-      effective_until: revokeImmediate
-        ? now.toISOString()
-        : updatedSub.currentPeriodEnd.toISOString(),
-    };
-  });
+  if (cancelledUserId > 0) {
+    await invalidateUserEntitlementsCache(cancelledUserId);
+  }
+
+  return cancelResult;
 }
 
 /**
@@ -282,19 +283,13 @@ export async function adminCancelSubscription(
  * BR-RBL-04, BR-RBL-05
  */
 export async function runDunningSweep(now = new Date()) {
-  const db = getOwnerDb();
+  const repos = useOwnerRepositories();
+  const expiredUserIds = new Set<number>();
 
-  return await db.transaction(async (tx) => {
-    const pastDueSubs = await tx
-      .select()
-      .from(recurringSubscriptions)
-      .where(
-        and(
-          eq(recurringSubscriptions.status, "past_due"),
-          isNotNull(recurringSubscriptions.nextBillingAt),
-          lt(recurringSubscriptions.nextBillingAt, now)
-        )
-      );
+  const summary = await repos.recurringSubscriptions.transaction(async (tx) => {
+    const txRepos = createRepositories(tx);
+    const pastDueSubs =
+      await txRepos.recurringSubscriptions.listDueForDunning(now);
 
     let retriedCount = 0;
     let expiredCount = 0;
@@ -308,50 +303,41 @@ export async function runDunningSweep(now = new Date()) {
         sub.dunningAttempts < DUNNING_MAX_ATTEMPTS &&
         daysSincePeriodEnd <= DUNNING_GRACE_PERIOD_DAYS
       ) {
-        // Retry attempt within grace period
-        await tx
-          .update(recurringSubscriptions)
-          .set({
-            dunningAttempts: sub.dunningAttempts + 1,
-            lastDunningAt: now,
-            updatedAt: now,
-          })
-          .where(eq(recurringSubscriptions.id, sub.id));
+        await txRepos.recurringSubscriptions.updateSubscriptionById(sub.id, {
+          dunningAttempts: sub.dunningAttempts + 1,
+          lastDunningAt: now,
+          updatedAt: now,
+        });
         retriedCount++;
       } else {
-        // Exceeded grace period or max attempts -> cancel & revoke
-        await tx
-          .update(recurringSubscriptions)
-          .set({
-            status: "cancelled",
-            autoRenew: false,
-            cancelledAt: now,
-            cancelledBy: "system",
-            cancelReason: "dunning_grace_period_exceeded",
-            updatedAt: now,
-          })
-          .where(eq(recurringSubscriptions.id, sub.id));
+        await txRepos.recurringSubscriptions.updateSubscriptionById(sub.id, {
+          status: RECURRING_SUBSCRIPTION_STATUS.CANCELLED,
+          autoRenew: false,
+          cancelledAt: now,
+          cancelledBy: "system",
+          cancelReason: "dunning_grace_period_exceeded",
+          updatedAt: now,
+        });
 
-        // Revoke entitlements
         const pkg =
           PACKAGE_CATALOG[sub.packageCode as keyof typeof PACKAGE_CATALOG];
         const pkgKeys = pkg ? [...pkg.entitlements] : [];
-        const dunningConditions = [
-          eq(entitlements.userId, sub.userId),
-          eq(entitlements.source, "package_order"),
-          eq(entitlements.status, "grace_period"),
-        ];
         if (pkgKeys.length > 0) {
-          dunningConditions.push(inArray(entitlements.entitlementKey, pkgKeys));
+          await txRepos.entitlements.updateStatusForUserKeys(
+            sub.userId,
+            {
+              source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+              currentStatuses: [ENTITLEMENT_STATUS.GRACE_PERIOD],
+              keys: pkgKeys,
+            },
+            {
+              status: ENTITLEMENT_STATUS.CANCELLED,
+              now,
+            }
+          );
         }
-        await tx
-          .update(entitlements)
-          .set({
-            status: "cancelled",
-            updatedAt: now,
-          })
-          .where(and(...dunningConditions));
 
+        expiredUserIds.add(sub.userId);
         expiredCount++;
       }
     }
@@ -362,4 +348,10 @@ export async function runDunningSweep(now = new Date()) {
       expiredCount,
     };
   });
+
+  for (const userId of expiredUserIds) {
+    await invalidateUserEntitlementsCache(userId);
+  }
+
+  return summary;
 }

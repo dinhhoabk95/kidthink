@@ -1,7 +1,7 @@
 import { hashPassword } from "@mindkid/auth";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "#src/index";
+import { AUTH_METHOD, getOwnerDb, MANAGER_ROLE, USER_STATUS } from "#src/index";
 import {
   managerAccounts,
   managerSessions,
@@ -23,7 +23,7 @@ describe("Better Auth Session & Account Tables Integration (Task #319)", () => {
         email: `ba-sess-${suffix}@example.com`,
         displayName: "Session User",
         emailVerified: true,
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -39,14 +39,14 @@ describe("Better Auth Session & Account Tables Integration (Task #319)", () => {
         token: `tok-${suffix}`,
         ipAddress: "127.0.0.1",
         userAgent: "Chrome / macOS",
-        authMethod: "password",
+        authMethod: AUTH_METHOD.PASSWORD,
         reauthAt: now,
         expiresAt,
       })
       .returning();
 
     expect(sess?.userId).toBe(user.id);
-    expect(sess?.authMethod).toBe("password");
+    expect(sess?.authMethod).toBe(AUTH_METHOD.PASSWORD);
     expect(sess?.reauthAt).not.toBeNull();
   });
 
@@ -59,7 +59,7 @@ describe("Better Auth Session & Account Tables Integration (Task #319)", () => {
         email: `ba-revoke-${suffix}@example.com`,
         displayName: "Revoke User",
         emailVerified: true,
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -108,7 +108,7 @@ describe("Better Auth Session & Account Tables Integration (Task #319)", () => {
         displayName: "SNS & TOTP User",
         passwordHash: null,
         twoFactorEnabled: true,
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -149,7 +149,7 @@ describe("Better Auth Session & Account Tables Integration (Task #319)", () => {
         email: `ba-mgr-${suffix}@example.com`,
         displayName: "Manager MFA",
         passwordHash: hash,
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
         mfaEnabled: true,
       })
       .returning();

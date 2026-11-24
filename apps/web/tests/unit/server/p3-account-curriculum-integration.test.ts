@@ -1,10 +1,14 @@
 import {
+  ACCESS_TIER,
+  CONTENT_ENTITY_TYPE,
+  CURRICULUM_PROGRESS_STATUS,
   childProfiles,
   curricula,
   curriculumEnrollments,
   curriculumItemProgress,
   curriculumItems,
   curriculumWeeks,
+  ENROLLMENT_STATUS,
   gameLevels,
   getOwnerDb,
   users,
@@ -139,7 +143,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         templateCode,
         difficulty: 1,
         title: "Đếm số vui vẻ",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         contentPack: { items: ["apple"] },
         difficultyParams: { count: 3 },
       })
@@ -157,7 +161,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
       .values({
         code: `CUR-P3-${ts}-${rand}`.slice(0, 50),
         title: "Lộ trình tư duy toán 4-5 tuổi",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })
@@ -180,7 +184,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gl1.id,
         isRequired: true,
       })
@@ -194,7 +198,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
       .values({
         childId: childAId,
         curriculumId: curr1.id,
-        status: "active",
+        status: ENROLLMENT_STATUS.ACTIVE,
       })
       .returning();
     if (!enrA) {
@@ -205,7 +209,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
       enrollmentId: enrA.id,
       childId: childAId,
       curriculumItemId: cItem1.id,
-      status: "completed",
+      status: CURRICULUM_PROGRESS_STATUS.COMPLETED,
       completedAt: new Date(),
     });
   });
@@ -329,7 +333,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
         .where(
           and(
             eq(curriculumEnrollments.childId, childAId),
-            eq(curriculumEnrollments.status, "active")
+            eq(curriculumEnrollments.status, ENROLLMENT_STATUS.ACTIVE)
           )
         );
       expect(enrollmentA).toBeDefined();

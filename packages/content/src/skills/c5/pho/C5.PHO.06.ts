@@ -238,6 +238,16 @@ export const C5_PHO_06_SEED: SkillSeed = {
   dataset: C5_PHO_06_DATASET,
   levels: [
     {
+      code: "GL-C5-PHO-INTRO-7006",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "nature",
+      rounds: 1,
+      sequence_no: 1,
+    },
+    {
       code: "GL-C5-PHO-FRAC-0001",
       template: "GT-034",
       band: "5-6",

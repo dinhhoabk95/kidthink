@@ -45,55 +45,27 @@ export interface RoundRunnerOptions {
   rounds: RoundConfig[];
   sessionFactory: SessionFactory;
   audioController?: AudioController;
-  /**
-   * Chủ sở hữu duy nhất của việc phát câu dẫn (BR-PNR-03).
-   *
-   * Bề mặt chơi thật truyền hàm này để nó phát câu dẫn bằng đường phát của
-   * chính nó — đường duy nhất có đủ ba bậc dự phòng. Khi có hàm này,
-   * `RoundRunner` Cấm — NEVER tự phát thêm một lần nữa: hai nguồn phát song
-   * song cho ra hai giọng chồng nhau trên cùng một vòng.
-   */
+  /** Chủ sở hữu duy nhất phát câu dẫn; khi có mặt, runner không tự phát thêm để tránh chồng giọng. */
   onPlayNarration?: (
     roundConfig: RoundConfig,
     trigger: NarrationTrigger
   ) => void;
-  /**
-   * Bậc 3 của thứ tự dự phòng (BR-PNR-06): tín hiệu thị giác khi không phát
-   * được tiếng. Chỉ dùng cho đường phát nội bộ, tức khi không có
-   * `onPlayNarration`.
-   */
+  /** Tín hiệu thị giác dự phòng khi không có `onPlayNarration` và không phát được tiếng. */
   onNarrationFallbackCue?: () => void;
-  /** Band tuổi — truyền tới prepareRound. Mặc định '4-5'. */
   ageBand?: AgeBand;
   layoutSeed?: number;
   logicSpace?: LogicSpace;
-  /** Vùng sân khấu được cấp bởi shell (`BR-PSZ-01`, Task #277 S3). */
   stageRect?: ZoneRect;
-  /** Vùng khay được cấp bởi shell khi session `needsTray` (Task #277 S5). */
   trayRect?: ZoneRect;
-  /** Px CSS trên một logic px do shell đo (`BR-PSZ-04`, Task #283 N). */
   cssPerLogic?: number;
   onRoundStarted?: (roundIndex: number, roundConfig: RoundConfig) => void;
   onRoundCompleted?: (roundIndex: number, wasSkipped: boolean) => void;
   onAllRoundsCompleted?: () => void;
-  /**
-   * Trì hoãn đồng hồ vòng (`duration_ms` của `round_completed`/`round_skipped`)
-   * và hẹn giờ trợ giúp (`hint_after_ms`) tới khi gọi `notePromptSettled()`,
-   * thay vì tính từ lúc mở vòng (`BR-PNR-11`, Task #273).
-   *
-   * Mặc định `false` — giữ đúng hành vi cũ cho mọi lời gọi hiện có (test,
-   * harness không gắn cổng câu dẫn). Bề mặt chơi thật khai `true` và gọi
-   * `notePromptSettled()` khi câu dẫn của chính nó (đường `onPlayNarration`)
-   * phát xong hoặc quá hạn dự phòng.
-   */
+  /** Trì hoãn đồng hồ vòng tới khi gọi `notePromptSettled()` thay vì tính ngay lúc mở vòng. */
   gateOnPromptSettle?: boolean;
 }
 
-/**
- * Ghép khung chuyện trước câu dẫn trong cùng một lượt phát (`BR-FBK-16`).
- * Nguồn duy nhất của quy tắc ghép: `RoundRunner.spokenPromptFor` (trang chơi)
- * và lượt đọc mở vòng của Studio preview cùng gọi hàm này.
- */
+/** Ghép khung chuyện trước câu dẫn trong cùng một lượt phát. */
 export function withStoryLine(
   story: string | null | undefined,
   prompt: string
@@ -104,18 +76,7 @@ export function withStoryLine(
 export interface RoundRunnerState {
   currentRoundIndex: number;
   roundsTotal: number;
-  /**
-   * Số vòng đã **hoàn thành**, không phải số vòng đúng ngay lần đầu.
-   *
-   * Cấm — NEVER gửi giá trị này lên server, và Cấm — NEVER dùng nó làm
-   * `rounds_correct` của mục 7.1 `scoring-and-result.md`: định nghĩa ở đó là
-   * vòng có `answer_correct` **ở lần thử đầu**, còn biến này tăng ở mọi
-   * `completeCurrentRound()` bất kể trẻ thử mấy lần. `BR-RSP-12` bắt server tự
-   * dựng `rounds_total` và `rounds_correct` từ chuỗi event.
-   *
-   * Tên cũ của nó trùng tên chỉ số của server, và cái tên đó là một lời mời gửi
-   * nó đi.
-   */
+  /** Tổng vòng đã hoàn thành (không dùng làm số vòng đúng ngay lần đầu của server). */
   roundsCompleted: number;
   roundsSkipped: number;
   isFinished: boolean;
@@ -400,6 +361,7 @@ export class RoundRunner {
     this.currentSession.destroy();
     this.currentSession = null;
     this.roundsCompleted++;
+    this.audioController.playFolkChime?.();
 
     this.onRoundCompleted?.(this.currentRoundIndex, false);
 
@@ -583,17 +545,10 @@ export class RoundRunner {
       return;
     }
 
-    // "Nghe lại" không chờ gì — gate chỉ áp cho nhịp mở vòng (BR-PNR-08:
-    // nghe lại Cấm — NEVER ảnh hưởng điểm/bậc trợ giúp, Cấm — NEVER khoá cử
-    // chỉ). Nó cắt câu dẫn mở vòng đang phát, mà clip bị cắt không còn báo
-    // xong (`playPromptAudio`, Task #274 S1c) — nên settle lượt mở vòng ngay
-    // tại đây, như `stopNarrationAudio()` của bề mặt web.
+    // Nghe lại cắt câu dẫn mở vòng đang phát nên settle lượt mở vòng ngay.
     if (trigger === "replay") {
       this.notePromptSettled();
     }
-    // `speak()` gọi `cancel()` trước, và `cancel()` bắn đồng bộ `onEnd` của
-    // câu dẫn vòng TRƯỚC — lúc đó vòng mới đã mở. Không có token thì callback
-    // cũ settle vòng mới: mở input và chạy hẹn giờ trợ giúp trước khi đọc đề.
     if (trigger === "round_open") {
       this.narrationToken++;
     }
@@ -621,11 +576,7 @@ export class RoundRunner {
     };
 
     if (audioPath) {
-      // `playPromptAudio` gọi CẢ `onError` và tham số `onEnd` trên mọi nhánh
-      // lỗi (hợp đồng của nó — xem docstring ở `audio-controller.ts`), nên
-      // không thể coi `onEnd` là "đã xong thật". Cờ `mp3Failed` phân biệt
-      // "phát xong thật" với "lỗi, đang rơi xuống TTS" — thiếu cờ này thì
-      // vòng settle ngay khi mp3 lỗi, trước khi TTS kịp nói xong.
+      // Cờ `mp3Failed` tránh settle sớm trước khi nhánh rơi xuống TTS đọc xong.
       let mp3Failed = false;
       this.audioController.playPromptAudio(
         audioPath,

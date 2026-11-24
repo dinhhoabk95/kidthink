@@ -107,15 +107,18 @@ const CANARY_PREFIX_REGEX = /canary-/i;
 const CANARY_BRACKET_REGEX = /\[CANARY_/i;
 const EMAIL_REDACT_REGEX =
   /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/gi;
-const PHONE_REDACT_REGEX = /\b(0\d{9,10}|\+84\d{9,10})\b/g;
+const PHONE_REDACT_REGEX =
+  /(?<!\w)(?:\(\+?84\)|\+84|0)(?:[\s.-]?\d){8,10}(?!\w)/g;
 const UUID_REDACT_REGEX =
   /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi;
 const BIRTH_YEAR_REDACT_REGEX =
-  /\b(sinh năm|năm sinh|dob|birthdate|birth_year)\s*[:=]?\s*\d{4}\b/gi;
+  /(?<=^|[^\p{L}\d_])(?:ngày\s+sinh|sinh\s+ngày|sinh\s+năm|năm\s+sinh|dob|birthdate|birth_year|date_of_birth|sn)\s*[:=]?\s*(?:\d{1,2}[/-]\d{1,2}[/-](?:19|20)?\d{2}|(?:19|20)\d{2})(?=$|[^\p{L}\d_])/giu;
+const FULL_DATE_REDACT_REGEX =
+  /(?<!\d)(?:(?:0?[1-9]|[12]\d|3[01])[/-](?:0?[1-9]|1[0-2])[/-](?:19|20)\d{2}|(?:19|20)\d{2}[/-](?:0?[1-9]|1[0-2])[/-](?:0?[1-9]|[12]\d|3[01]))(?!\d)/g;
 const SENSITIVE_KEY_VALUE_REDACT_REGEX =
-  /\b(child_uuid|child_id|child_name|display_name|user_id)\s*[:=]\s*[^\s,;]+/gi;
+  /\b(child_uuid|childUuid|child_id|childId|child_name|childName|display_name|displayName|user_id|userId|email|phone|phone_number|phoneNumber|date_of_birth|dateOfBirth|full_name|fullName|parent_name|parentName|address|school)\s*[:=]\s*(?:"[^"]*"|'[^']*'|\[REDACTED_[A-Z_]+\]|[^\s,;)\]}]+(?:[ \t]+(?!(?:và|hoặc|liên\s+hệ|cho|để|giúp)\b|[a-zA-Z_]+\s*[:=])[^\s,;)\]}]+)*)/gi;
 const VIETNAMESE_CHILD_NAME_REGEX =
-  /\b(bé|cháu|em)\s+([A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]+(?:\s+[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]+)*)/g;
+  /(?<=^|[^\p{L}\d_])([Bb][eéEÉ]|[Cc][Hh][aáAÁ][uU]|[Ee][Mm]|[Cc][Oo][Nn]|[Tt][Rr][eẻEẺ]|[Tt][eêEÊ][Nn][ \t]+[Ll][aàAÀ])[ \t]+([A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]+(?:[ \t]+[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]+)*)/gu;
 
 const MEDICAL_DIAGNOSIS_PATTERNS = [
   /\bchẩn đoán\b/i,
@@ -147,6 +150,7 @@ export function stripChildPii(text: string): string {
     .replace(PHONE_REDACT_REGEX, "[REDACTED_PHONE]")
     .replace(UUID_REDACT_REGEX, "[REDACTED_UUID]")
     .replace(BIRTH_YEAR_REDACT_REGEX, "[REDACTED_DOB]")
+    .replace(FULL_DATE_REDACT_REGEX, "[REDACTED_DOB]")
     .replace(SENSITIVE_KEY_VALUE_REDACT_REGEX, "[REDACTED_PII]")
     .replace(VIETNAMESE_CHILD_NAME_REGEX, "$1 [REDACTED_NAME]");
 }
@@ -780,10 +784,24 @@ export const aiProvider = {
       };
     }
 
+    if (
+      CANARY_PREFIX_REGEX.test(guideText) ||
+      CANARY_BRACKET_REGEX.test(guideText)
+    ) {
+      assertNoEgressViolation(guideText, "rewriteGuide");
+    }
+
     const audienceTitle =
       targetAudience === "home" ? "người dạy tại nhà" : "người dạy trên lớp";
     const sanitizedGuide = stripChildPii(guideText);
     assertNoEgressViolation(sanitizedGuide, "rewriteGuide");
+
+    const inputModeration = moderateText(sanitizedGuide);
+    if (!inputModeration.passed || hasMedicalDiagnosisTerm(sanitizedGuide)) {
+      throw new ModerationBlockedError(
+        "Nội dung đầu vào gửi tới trợ lý AI không qua được bộ lọc kiểm duyệt an toàn."
+      );
+    }
 
     if (shouldUseHttpAdapter()) {
       const prompt = `Hãy viết lại hướng dẫn hoạt động sau dành cho ${audienceTitle}: ${sanitizedGuide}`;
@@ -806,6 +824,13 @@ export const aiProvider = {
       "1. Khởi động (1-2 phút): Tạo tâm lý thoải mái và gợi mở sự tò mò cho bé.\n" +
       `2. Trọng tâm: ${sanitizedGuide}\n` +
       "3. Đồng hành: Khen ngợi từng nỗ lực nhỏ của bé và giữ không khí vui tươi, không gây áp lực.";
+
+    const outputModeration = moderateText(text);
+    if (!outputModeration.passed || hasMedicalDiagnosisTerm(text)) {
+      throw new ModerationBlockedError(
+        "Nội dung từ trợ lý AI không qua được bộ lọc kiểm duyệt an toàn (BR-AIA-04, BR-AIA-09)."
+      );
+    }
 
     return {
       text,

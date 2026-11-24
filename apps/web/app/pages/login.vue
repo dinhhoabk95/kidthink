@@ -341,6 +341,13 @@
       await router.replace(registerLink.value);
       return;
     }
+    if (route.query.mfa === "1") {
+      isMfaStep.value = true;
+      isBackupCodeMode.value = false;
+      mfaCode.value = "";
+      errorMessage.value = "";
+      return;
+    }
     if (route.query.error === "social_conflict") {
       errorMessage.value =
         "Email này đã được đăng ký tài khoản MindKid. Vui lòng đăng nhập bằng mật khẩu hoặc Passkey trước, sau đó liên kết mạng xã hội trong phần Cài đặt.";
@@ -379,6 +386,13 @@
         errorMessage.value =
           res.error.message ||
           "Đăng nhập bằng Passkey không thành công hoặc đã bị huỷ.";
+        return;
+      }
+      const data = res.data as SignInDataWithTwoFactor | null;
+      if (data?.twoFactorRedirect) {
+        isMfaStep.value = true;
+        isBackupCodeMode.value = false;
+        mfaCode.value = "";
         return;
       }
       await fetchSession();

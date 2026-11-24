@@ -24,7 +24,9 @@ describe("Task #313 B4 — presentCompletion", () => {
       show: (o) => shown.push(o),
       update: () => undefined,
     });
-    expect(shown).toEqual([{ celebration: "good", stars: null }]);
+    expect(shown).toEqual([
+      { celebration: "good", stars: null, sticker: null },
+    ]);
     gate.resolve({ celebration: "great", stars: 3 });
     await done;
   });

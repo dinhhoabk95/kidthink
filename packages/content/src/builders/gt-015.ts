@@ -12,7 +12,7 @@ import {
   shuffleDeterministic,
 } from "./utils.js";
 
-const DEFAULT_GLYPHS = ["🍎", "🍌", "🍇", "🍊"];
+const DEFAULT_GLYPHS = ["🥭", "🍌", "🪷", "🍊"];
 
 function buildCells2x2(sym0: string, sym1: string) {
   return [
@@ -154,8 +154,8 @@ export const projectGT015: Projection<"GT-015"> = {
     return {
       content_pack: {
         prompt: use4x4
-          ? "Bé điền đủ bốn hình vào hàng, cột và ô nhé!"
-          : "Bé tìm hình còn thiếu vào ô trống nhé!",
+          ? "Bé xếp đủ bốn hình vào hàng, cột, ô vuông nhé!"
+          : "Đố bé đặt hình còn thiếu vào ô trống nhé!",
         grid_size: gridSize,
         symbols,
         cells,

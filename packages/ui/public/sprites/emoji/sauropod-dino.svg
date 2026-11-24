@@ -1,0 +1,17 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khủng long cổ dài</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="spDino" r="70%"><stop offset="0%" stop-color="#a7f3d0" /><stop offset="55%" stop-color="#34d399" /><stop offset="100%" stop-color="#059669" /></radialGradient><linearGradient id="spBelly" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#fef9c3" /><stop offset="100%" stop-color="#fde68a" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#064e3b" opacity="0.22" rx="44" ry="5.5" />
+    <!-- Tail + Neck + Body continuous anatomical sauropod -->
+    <path d="M46 72L44 103H53L55 74ZM74 72L73 103H82L83 74Z" fill="#047857" stroke="#064e3b" stroke-linejoin="round" stroke-width="3.5" />
+    <path d="M25 22C18 22 14 27 15 32C16 36 22 37 27 35C29 48 32 62 39 70C46 60 66 57 80 65C92 72 99 84 110 87C103 92 91 91 81 84C72 88 50 89 41 83L39 105H48L50 84L67 84L66 105H75L77 80C66 76 47 76 42 66C37 55 35 38 35 27C35 23 30 22 25 22Z" fill="url(#spDino)" stroke="#064e3b" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M43 80C53 85 67 85 76 80" stroke="url(#spBelly)" stroke-linecap="round" stroke-width="4" />
+    <circle cx="55" cy="69" fill="#047857" opacity="0.55" r="4.2" />
+    <circle cx="67" cy="71" fill="#047857" opacity="0.55" r="3.4" />
+    <circle cx="61" cy="64" fill="#047857" opacity="0.5" r="2.8" />
+    <path d="M40 103H48M66 103H75" stroke="#fef3c7" stroke-dasharray="2.5 2.5" stroke-linecap="round" stroke-width="2.6" />
+    <circle cx="23" cy="27" fill="#1c1917" r="2.5" /><circle cx="22.3" cy="26.3" fill="#ffffff" r="0.9" />
+    <path d="M16 31C19 33 23 33 26 31" stroke="#064e3b" stroke-linecap="round" stroke-width="2.2" />
+</svg>

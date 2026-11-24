@@ -1,38 +1,25 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Ngựa phi</title>
   <defs>
-    <linearGradient id="ghCoat" x1="15%" x2="85%" y1="15%" y2="85%">
-      <stop offset="0%" stop-color="#f59e0b" />
-      <stop offset="55%" stop-color="#b45309" />
-      <stop offset="100%" stop-color="#78350f" />
-    </linearGradient>
+    <radialGradient cx="38%" cy="30%" id="g_gallopinghorse" r="70%"><stop offset="0%" stop-color="#fdba74" /><stop offset="55%" stop-color="#c2410c" /><stop offset="100%" stop-color="#7c2d12" /></radialGradient>
   </defs>
-  <ellipse cx="58" cy="103" fill="#5c3d2e" opacity="0.24" rx="40" ry="5.5" />
-  <path
-    d="M88 52C101 46 109 55 104 68C98 63 93 62 88 64"
-    fill="#451a03"
-    stroke="#292524"
-    stroke-linejoin="round"
-    stroke-width="3.6"
-  />
-  <path
-    d="M36 70L18 86M46 72L33 94M74 72L86 94M84 68L101 84"
-    stroke="#5c3d2e"
-    stroke-linecap="round"
-    stroke-width="6.5"
-  />
-  <path
-    d="M32 32C40 26 48 31 50 40"
-    stroke="#451a03"
-    stroke-linecap="round"
-    stroke-width="6"
-  />
-  <path
-    d="M22 44L31 28L38 34L48 48H82C90 48 94 55 91 64C89 71 82 74 74 74H44C36 74 32 67 34 58L29 50L21 51Z"
-    fill="url(#ghCoat)"
-    stroke="#5c3d2e"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <circle cx="30" cy="39" fill="#1c1917" r="2.6" />
+  <ellipse cx="62" cy="106" fill="#431407" opacity="0.22" rx="40" ry="5.5" />
+    <path d="M91 58C103 60 110 72 106 86C99 81 95 72 90 66Z" fill="#431407" stroke="#291509" stroke-linejoin="round" stroke-width="3.2" /><path d="M33 30C42 34 48 44 50 52" stroke="#431407" stroke-linecap="round" stroke-width="6" />
+    <!-- Far legs -->
+    <path d="M47 74L44 102H51L53 74ZM81 74L79 102H86L88 74Z" fill="#7c2d12" stroke="#431407" stroke-linejoin="round" stroke-width="3.4" />
+    <path d="M44 98H51V103H44ZM79 98H86V103H79Z" fill="#1c1917" />
+    <!-- Torso & Neck -->
+    <path d="M35 45C41 52 36 50 64 50C92 50 96 61 92 71C88 80 42 80 38 69C34 61 31 55 35 45Z" fill="url(#g_gallopinghorse)" stroke="#431407" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M46 75C56 81 74 81 84 75" fill="#9a3412" opacity="0.85" />
+    
+    <!-- Near legs -->
+    <path d="M39 72L36 104H44L47 72ZM73 72L71 104H79L81 72Z" fill="url(#g_gallopinghorse)" stroke="#431407" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M36 99H44V104H36ZM71 99H79V104H71Z" fill="#1c1917" stroke="#431407" stroke-linejoin="round" stroke-width="2.2" />
+    <!-- Head -->
+    <ellipse cx="29" cy="39" fill="url(#g_gallopinghorse)" rx="13" ry="10" stroke="#431407" stroke-width="3.8" />
+    <ellipse cx="20" cy="43" fill="#fed7aa" rx="7.5" ry="6" stroke="#431407" stroke-width="3.2" />
+    <circle cx="18" cy="42" fill="#431407" r="1.8" />
+    <path d="M18 46C21 48 24 47 25 45" stroke="#431407" stroke-linecap="round" stroke-width="2.2" />
+    <circle cx="27" cy="36" fill="#1c1917" r="2.7" /><circle cx="26.2" cy="35.2" fill="#ffffff" r="1" />
+    <path d="M26 29L24 20L31 28ZM32 29L35 20L37 30Z" fill="#c2410c" stroke="#431407" stroke-linejoin="round" stroke-width="3" />
 </svg>

@@ -1,0 +1,17 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chim phượng hoàng</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="phxBody" r="70%"><stop offset="0%" stop-color="#fef08a" /><stop offset="55%" stop-color="#f97316" /><stop offset="100%" stop-color="#dc2626" /></radialGradient><linearGradient id="phxWing" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#fbbf24" /><stop offset="100%" stop-color="#b91c1c" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="107" fill="#7f1d1d" opacity="0.22" rx="34" ry="5" />
+    <!-- Tail plumes -->
+    <path d="M52 78C40 92 26 98 16 94C26 89 35 82 44 72ZM60 80C56 96 46 105 34 105C44 98 50 89 54 77ZM68 78C76 93 88 101 100 98C90 92 80 84 73 73Z" fill="url(#phxWing)" stroke="#7f1d1d" stroke-linejoin="round" stroke-width="3.4" />
+    <!-- Outspread layered wings -->
+    <path d="M48 56C30 42 15 30 12 18C18 18 28 23 38 32C26 30 16 34 14 42C24 42 36 47 46 56ZM72 56C90 42 105 30 108 18C102 18 92 23 82 32C94 30 104 34 106 42C96 42 84 47 74 56Z" fill="url(#phxWing)" stroke="#7f1d1d" stroke-linejoin="round" stroke-width="3.6" />
+    <!-- Crest feathers -->
+    <path d="M57 26C54 16 58 11 62 15C65 11 70 15 66 26" fill="#facc15" stroke="#7f1d1d" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.4" />
+    <!-- Body & Head -->
+    <path d="M60 25C68 25 73 31 72 39C76 48 77 63 70 74C64 81 56 81 50 74C43 63 44 48 48 39C47 31 52 25 60 25Z" fill="url(#phxBody)" stroke="#7f1d1d" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M56 38L60 45L64 38Z" fill="#fef08a" stroke="#78350f" stroke-linejoin="round" stroke-width="2.6" />
+    <circle cx="54" cy="34" fill="#1c1917" r="2.3" /><circle cx="53.4" cy="33.3" fill="#ffffff" r="0.9" /><circle cx="66" cy="34" fill="#1c1917" r="2.3" /><circle cx="65.4" cy="33.3" fill="#ffffff" r="0.9" />
+</svg>

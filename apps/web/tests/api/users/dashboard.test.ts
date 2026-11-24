@@ -1,6 +1,9 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import {
+  ACCESS_TIER,
+  CONTENT_ENTITY_TYPE,
+  CURRICULUM_PROGRESS_STATUS,
   childDailyStats,
   childProfiles,
   curricula,
@@ -8,8 +11,10 @@ import {
   curriculumItemProgress,
   curriculumItems,
   curriculumWeeks,
+  ENROLLMENT_STATUS,
   gameLevels,
   getOwnerDb,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
@@ -70,7 +75,7 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
         email: `dashboard_u1_${ts}_${rand}@tinimath.test`,
         passwordHash: "hash123",
         displayName: "Parent User 1",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     user1Id = u1.id;
@@ -81,7 +86,7 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
         email: `dashboard_u2_${ts}_${rand}@tinimath.test`,
         passwordHash: "hash123",
         displayName: "Parent User 2",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     user2Id = u2.id;
@@ -135,7 +140,7 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
         templateCode,
         difficulty: 1,
         title: "Đếm số vui vẻ",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         contentPack: { items: ["apple"] },
         difficultyParams: { count: 3 },
       })
@@ -147,7 +152,7 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
       .values({
         code: `CUR-P3-DASH-${ts}-${rand}`.slice(0, 50),
         title: "Lộ trình tư duy toán mầm non",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })
@@ -166,7 +171,7 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gl.id,
         isRequired: true,
       })
@@ -177,7 +182,7 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
       .values({
         childId: childAId,
         curriculumId: curr.id,
-        status: "active",
+        status: ENROLLMENT_STATUS.ACTIVE,
       })
       .returning();
 
@@ -185,7 +190,7 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
       enrollmentId: enrA.id,
       childId: childAId,
       curriculumItemId: cItem.id,
-      status: "completed",
+      status: CURRICULUM_PROGRESS_STATUS.COMPLETED,
       completedAt: new Date(),
     });
 

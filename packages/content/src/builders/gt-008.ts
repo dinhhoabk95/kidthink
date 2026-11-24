@@ -5,7 +5,12 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
-import { createRng, resolveItemAsset, shuffleDeterministic } from "./utils.js";
+import {
+  createRng,
+  pickAgeBandPrompt,
+  resolveItemAsset,
+  shuffleDeterministic,
+} from "./utils.js";
 
 export const projectGT008: Projection<"GT-008"> = {
   template: "GT-008",
@@ -43,11 +48,19 @@ export const projectGT008: Projection<"GT-008"> = {
       asset: resolveItemAsset(item, true),
     }));
 
-    const prompt = "Bé hãy kéo các hình vào đúng ô tương ứng nhé!";
+    const prompt = pickAgeBandPrompt(
+      opts.band,
+      {
+        mam: "Bé đặt từng hình vào đúng khay nhé!",
+        choi: "Bé thử ướm các hình vào đúng ô nhé!",
+        la: "Đố bé xếp mọi mảnh vào đúng vị trí!",
+      },
+      "Bé kéo các hình vào đúng ô nhé!"
+    );
 
     return {
       content_pack: {
-        prompt: prompt.length >= 4 ? prompt : "Bé hãy kéo vào ô tương ứng nhé",
+        prompt,
         slots,
         items: shuffleDeterministic(items, rng),
       },

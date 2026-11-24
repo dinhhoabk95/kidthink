@@ -261,5 +261,23 @@ export const C2_SOL_07_SEED: SkillSeed = {
       theme: "farm",
       rounds: 3,
     },
+    {
+      code: "GL-C2-SOL-INTRO-6003",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 3,
+      theme: "food",
+      rounds: 3,
+      sequence_no: 61,
+    },
+    {
+      code: "GL-C2-SOL-STK-6004",
+      template: "GT-017",
+      band: "5-6",
+      difficulty: 4,
+      theme: "art",
+      rounds: 3,
+      sequence_no: 63,
+    },
   ],
 };

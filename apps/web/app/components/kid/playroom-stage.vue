@@ -1,11 +1,28 @@
 <template>
   <section
     aria-label="Phòng chơi Gấu Con"
-    class="playroom-card rounded-3xl bg-white border-4 border-warning-300 p-4 sm:p-5 flex flex-col items-center justify-between relative overflow-hidden"
+    class="playroom-card rounded-3xl bg-surface-50 border-4 border-warning-400 p-4 sm:p-5 flex flex-col items-center justify-between relative overflow-hidden"
     data-testid="kid-playroom-stage"
   >
-    <!-- Cửa sổ nắng ấm phong cách Giấy & Gỗ -->
+    <!-- Cửa sổ nắng ấm & mành tre mộc mạc phong cách Tuổi thơ Việt × Giấy Gỗ Mộc -->
     <div aria-hidden="true" class="playroom-sunbeam pointer-events-none" />
+    <svg
+      aria-hidden="true"
+      class="playroom-bamboo-decor pointer-events-none"
+      viewBox="0 0 120 140"
+    >
+      <path
+        class="bamboo-stem"
+        d="M 96 140 L 96 12 M 74 140 L 74 36"
+        fill="none"
+        stroke-linecap="round"
+        stroke-width="6"
+      />
+      <path
+        class="bamboo-leaf"
+        d="M 96 38 Q 116 28, 118 44 Q 104 48, 96 38 Z M 74 66 Q 54 56, 52 72 Q 66 76, 74 66 Z M 96 84 Q 115 76, 116 90 Q 102 94, 96 84 Z"
+      />
+    </svg>
 
     <div class="relative flex items-center justify-center gap-3 z-10">
       <!-- Nút chạm Gấu Con đập tay (≥ 96px CSS, BR-MPR-04, BR-MPR-06) -->
@@ -62,7 +79,7 @@
     </div>
 
     <p
-      class="mt-3 font-heading font-bold text-lg sm:text-xl text-surface-900 text-center z-10"
+      class="mt-3 font-heading font-bold text-lg sm:text-xl text-surface-900 text-center leading-relaxed z-10"
     >
       {{ activeSpeechBubble }}
     </p>
@@ -105,10 +122,10 @@
   const { playSfx, speakVi } = useKidSound();
 
   const GREETINGS = [
-    "Đập tay nào! Hôm nay mình khám phá điều mới nhé!",
-    "Gấu Con rất vui được chơi cùng bé!",
-    "Bé chạm nhẹ vào nút cam để đi phiêu lưu nhé!",
-    "Hoan hô! Mình cùng vừa chơi vừa học thật vui!",
+    "Dung dăng dung dẻ, đập tay cùng Gấu Con khám phá điều mới nhé!",
+    "Tùng dinh dinh! Hôm nay mình xếp khay gỗ mộc thật vui nhé!",
+    "Bé chạm nhẹ nút cam để cùng Gấu Con dạo chơi vùng đất mới nhé!",
+    "Rồng rắn lên mây, vừa chơi vừa nghĩ thật hay cùng Gấu Con nào!",
   ] as const;
 
   const greetingIndex = ref(0);
@@ -132,12 +149,12 @@
       return customBubble.value;
     }
     if (props.celebrateArrival) {
-      return "Hoan hô! Bé vừa hoàn thành chuyến phiêu lưu thật giỏi!";
+      return "Tùng dinh dinh! Bé vừa đi trọn chuyến phiêu lưu thật giỏi!";
     }
     if (props.childName) {
-      return `Gấu Con chào ${props.childName}! Chạm đập tay cùng mình nhé!`;
+      return `Gấu Con chào ${props.childName}! Chạm đập tay dạo vườn quê cùng mình nhé!`;
     }
-    return "Gấu Con chào bé! Chạm đập tay cùng mình nhé!";
+    return "Gấu Con chào bé! Chạm đập tay dạo vườn quê cùng mình nhé!";
   });
 
   function triggerHappyBounce(
@@ -189,18 +206,35 @@
 
 <style scoped>
   .playroom-card {
-    box-shadow: 0 8px 0 var(--color-warning-300);
+    box-shadow: 0 8px 0 var(--color-warning-400);
   }
 
   .playroom-sunbeam {
     position: absolute;
     top: -2rem;
     left: -2rem;
-    width: 9rem;
-    height: 9rem;
+    width: 9.5rem;
+    height: 9.5rem;
     border-radius: 9999px;
     background-color: var(--color-warning-100);
-    opacity: 0.7;
+    opacity: 0.8;
+  }
+
+  .playroom-bamboo-decor {
+    position: absolute;
+    right: 0.5rem;
+    bottom: -0.25rem;
+    width: 6.5rem;
+    height: 7.5rem;
+    opacity: 0.45;
+  }
+
+  .bamboo-stem {
+    stroke: var(--color-success-500);
+  }
+
+  .bamboo-leaf {
+    fill: var(--color-brand-500);
   }
 
   .mascot-stage-btn--bounce {

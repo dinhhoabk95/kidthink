@@ -1,6 +1,13 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getAppDb, getOwnerDb } from "#src/index";
+import {
+  ACTOR_TYPE,
+  getAppDb,
+  getOwnerDb,
+  NOTIFICATION_CHANNEL,
+  NOTIFICATION_STATUS,
+  RECIPIENT_TYPE,
+} from "#src/index";
 import {
   auditLogs,
   notificationDeliveries,
@@ -8,13 +15,13 @@ import {
 } from "#src/schema/ops";
 
 describe("Ops Schema Integration Tests", () => {
-  it("BR-AUD-01: audit_logs is INSERT-only (UPDATE/DELETE by app role fails)", async () => {
+  it("BR-AUD-01: audit_logs is INSERT-only (UPDATE/DELETE fails)", async () => {
     const appDb = getAppDb();
 
     const [log] = await appDb
       .insert(auditLogs)
       .values({
-        actorType: "system",
+        actorType: ACTOR_TYPE.SYSTEM,
         actorId: null,
         action: "TEST_ACTION",
         entityType: "system",
@@ -51,7 +58,7 @@ describe("Ops Schema Integration Tests", () => {
         const [notif] = await tx
           .insert(notifications)
           .values({
-            recipientType: "user",
+            recipientType: RECIPIENT_TYPE.USER,
             recipientId: 1,
             templateCode: actionTag,
             payload: { test: true },
@@ -63,8 +70,8 @@ describe("Ops Schema Integration Tests", () => {
 
         await tx.insert(notificationDeliveries).values({
           notificationId: notif.id,
-          channel: "email",
-          status: "queued",
+          channel: NOTIFICATION_CHANNEL.EMAIL,
+          status: NOTIFICATION_STATUS.QUEUED,
         });
 
         // Intentional error to trigger rollback

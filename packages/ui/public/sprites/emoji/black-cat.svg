@@ -1,0 +1,25 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con mèo mun</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="blkCat" r="70%"><stop offset="0%" stop-color="#52525b" /><stop offset="55%" stop-color="#3f3f46" /><stop offset="100%" stop-color="#27272a" /></radialGradient>
+  </defs>
+  <ellipse cx="58" cy="105" fill="#18181b" opacity="0.22" rx="34" ry="5.5" />
+    <!-- Gracefully curled tail -->
+    <path d="M80 92C96 92 104 78 99 64C96 57 89 58 91 65C93 73 88 83 78 84" fill="none" stroke="#18181b" stroke-linecap="round" stroke-width="7.5" />
+    <path d="M80 92C96 92 104 78 99 64C96 57 89 58 91 65" fill="none" stroke="#52525b" stroke-linecap="round" stroke-width="3" />
+    <!-- Seated sleek cat body & paws -->
+    <path d="M42 54C36 66 36 86 42 98H74C80 86 78 66 68 54Z" fill="url(#blkCat)" stroke="#18181b" stroke-linejoin="round" stroke-width="3.8" />
+    <ellipse cx="48" cy="99" fill="#3f3f46" rx="7" ry="4.5" stroke="#18181b" stroke-width="3.4" />
+    <ellipse cx="66" cy="99" fill="#3f3f46" rx="7" ry="4.5" stroke="#18181b" stroke-width="3.4" />
+    <!-- Pointed ears & feline head -->
+    <path d="M39 36L41 16L53 28ZM73 36L71 16L59 28Z" fill="url(#blkCat)" stroke="#18181b" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M43 32L44 21L51 29ZM69 32L68 21L61 29Z" fill="#f472b6" opacity="0.75" />
+    <ellipse cx="56" cy="40" fill="url(#blkCat)" rx="19" ry="16" stroke="#18181b" stroke-width="3.8" />
+    <!-- Luminous golden-green eyes -->
+    <ellipse cx="49" cy="39" fill="#bef264" rx="4.2" ry="3.6" />
+    <ellipse cx="63" cy="39" fill="#bef264" rx="4.2" ry="3.6" />
+    <ellipse cx="49" cy="39" fill="#18181b" rx="1.5" ry="3" />
+    <ellipse cx="63" cy="39" fill="#18181b" rx="1.5" ry="3" />
+    <path d="M54 45H58L56 48Z" fill="#f472b6" />
+    <path d="M31 43L42 45M31 48L42 48M81 43L70 45M81 48L70 48" stroke="#52525b" stroke-linecap="round" stroke-width="2.2" />
+</svg>

@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh kẹp nhân đầy</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="pitBread" r="70%"><stop offset="0%" stop-color="#fef3c7" /><stop offset="55%" stop-color="#fbbf24" /><stop offset="100%" stop-color="#d97706" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.22" rx="38" ry="5.5" />
+    <circle cx="44" cy="46" fill="#22c55e" r="12" stroke="#14532d" stroke-width="3.4" />
+    <circle cx="62" cy="42" fill="#ef4444" r="11" stroke="#7f1d1d" stroke-width="3.4" />
+    <circle cx="77" cy="48" fill="#92400e" r="11" stroke="#451a03" stroke-width="3.4" />
+    <path d="M22 52C22 82 38 96 60 96C82 96 98 82 98 52C76 62 44 62 22 52Z" fill="url(#pitBread)" stroke="#78350f" stroke-linejoin="round" stroke-width="3.8" />
+</svg>

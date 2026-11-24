@@ -18,8 +18,6 @@ RUN pnpm --filter @mindkid/worker build
 
 FROM node:26.13.1-alpine AS runner
 RUN npm install -g corepack && corepack enable
-# pg_dump / psql cho backup:postgres và backup:verify.
-RUN apk add --no-cache postgresql-client
 
 WORKDIR /app
 COPY --from=builder /app /app

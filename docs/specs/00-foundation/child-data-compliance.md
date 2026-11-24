@@ -96,6 +96,7 @@ Spec này ép ràng buộc lên schema **trước** khi bảng được tạo.
 | `BR-CDC-12` | Trẻ không rời được khu vực chơi mà không qua **Parent Gate** | Ngăn trẻ tự chạm vào thanh toán và cấu hình |
 | `BR-CDC-13` | `content_reviewer` không truy cập được bất kỳ dữ liệu trẻ nào | Người soạn nội dung không có nhu cầu nghiệp vụ với dữ liệu trẻ |
 | `BR-CDC-14` | Bề mặt admin không hiện telemetry / mastery / lịch sử chơi của **một trẻ cụ thể** | Vận hành không cần dữ liệu học tập của một đứa trẻ; người giám hộ cần |
+| `BR-CDC-15` | Ở Giai đoạn 1 (`MINDKID_RUNTIME=cloudflare`, dữ liệu lưu trên cụm APAC của Cloudflare D1), trang `/privacy` và `/child-privacy` phải công bố rõ việc xử lý dữ liệu đám mây xuyên biên giới và nộp hồ sơ đánh giá tác động theo Luật 91/2025/QH15; khi cán mốc `1.000 DAU` (Giai đoạn 2 `MINDKID_RUNTIME=vps`), dữ liệu gốc định danh được di trú về máy chủ đặt tại Việt Nam | Đảm bảo minh bạch tuyệt đối với phụ huynh và tuân thủ điều khoản chuyển dữ liệu cá nhân ra nước ngoài của Luật Bảo vệ DLCN 91/2025/QH15 ở cả hai giai đoạn hạ tầng |
 
 ## 7. Data
 

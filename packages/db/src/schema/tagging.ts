@@ -1,44 +1,37 @@
 import {
-  bigint,
   index,
-  numeric,
-  pgEnum,
-  pgTable,
+  integer,
   primaryKey,
-  varchar,
-} from "drizzle-orm/pg-core";
+  sqliteTable,
+  text,
+} from "drizzle-orm/sqlite-core";
+import {
+  type ContentEntityType,
+  TAG_STATUS,
+  type TagAxis,
+  type TagStatus,
+} from "#src/constants/learning-enums";
 import { idPk, timestamps } from "./columns.ts";
 import { skills } from "./taxonomy.ts";
 
-export const tagAxisEnum = pgEnum("tag_axis", [
-  "what",
-  "thinking",
-  "mechanic",
-  "theme",
-]);
-
-export const tagStatusEnum = pgEnum("tag_status", ["active", "deprecated"]);
-
-export const contentEntityTypeEnum = pgEnum("content_entity_type", [
-  "game_level",
-  "curriculum",
-]);
-
-export const contentTags = pgTable("content_tags", {
+export const contentTags = sqliteTable("content_tags", {
   id: idPk(),
-  code: varchar("code", { length: 50 }).notNull().unique(),
-  axis: tagAxisEnum("axis").notNull(),
-  label: varchar("label", { length: 100 }).notNull(),
-  status: tagStatusEnum("status").notNull().default("active"),
+  code: text("code").notNull().unique(),
+  axis: integer("axis").$type<TagAxis>().notNull(),
+  label: text("label").notNull(),
+  status: integer("status")
+    .$type<TagStatus>()
+    .notNull()
+    .default(TAG_STATUS.ACTIVE),
   ...timestamps(),
 });
 
-export const contentTagMap = pgTable(
+export const contentTagMap = sqliteTable(
   "content_tag_map",
   {
-    entityType: contentEntityTypeEnum("entity_type").notNull(),
-    entityId: bigint("entity_id", { mode: "number" }).notNull(),
-    tagId: bigint("tag_id", { mode: "number" })
+    entityType: integer("entity_type").$type<ContentEntityType>().notNull(),
+    entityId: integer("entity_id").notNull(),
+    tagId: integer("tag_id")
       .notNull()
       .references(() => contentTags.id, { onDelete: "cascade" }),
     ...timestamps(),
@@ -49,15 +42,15 @@ export const contentTagMap = pgTable(
   ]
 );
 
-export const contentSkillMap = pgTable(
+export const contentSkillMap = sqliteTable(
   "content_skill_map",
   {
-    entityType: contentEntityTypeEnum("entity_type").notNull(),
-    entityId: bigint("entity_id", { mode: "number" }).notNull(),
-    skillId: bigint("skill_id", { mode: "number" })
+    entityType: integer("entity_type").$type<ContentEntityType>().notNull(),
+    entityId: integer("entity_id").notNull(),
+    skillId: integer("skill_id")
       .notNull()
       .references(() => skills.id, { onDelete: "cascade" }),
-    weight: numeric("weight", { precision: 3, scale: 2 }).notNull(),
+    weight: text("weight").notNull(),
     ...timestamps(),
   },
   (table) => [

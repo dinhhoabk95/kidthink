@@ -1,5 +1,30 @@
-import { requireValkeyUrl } from "@mindkid/config";
+import { AsyncLocalStorage } from "node:async_hooks";
+import { isCloudflareRuntime, requireValkeyUrl } from "@mindkid/config";
 import { Redis } from "ioredis";
+
+export interface CacheKvPort {
+  get(key: string): Promise<string | null>;
+  set(key: string, value: string, ttlSeconds?: number): Promise<void>;
+  del(...keys: string[]): Promise<number>;
+  deleteByPrefix?(prefix: string): Promise<number>;
+}
+
+const cfCacheAls = new AsyncLocalStorage<CacheKvPort | undefined>();
+let cloudflareCachePort: CacheKvPort | undefined;
+
+export function enterCloudflareCachePort(port: CacheKvPort | undefined): void {
+  cfCacheAls.enterWith(port);
+}
+
+export function registerCloudflareCachePort(
+  port: CacheKvPort | undefined
+): void {
+  cloudflareCachePort = port;
+}
+
+export function getCloudflareCachePort(): CacheKvPort | undefined {
+  return cfCacheAls.getStore() ?? cloudflareCachePort;
+}
 
 let client: Redis | undefined;
 const disconnectListeners = new Set<() => void>();
@@ -47,6 +72,10 @@ export function getClient(): Redis {
 }
 
 export async function ping(urlOverride?: string): Promise<boolean> {
+  if (!urlOverride && isCloudflareRuntime()) {
+    return getCloudflareCachePort() !== undefined;
+  }
+
   const c = urlOverride
     ? new Redis(urlOverride, {
         connectTimeout: 2000,

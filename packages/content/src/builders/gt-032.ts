@@ -64,7 +64,7 @@ function buildCups(
     return {
       cups: cups.slice(0, cupCount),
       question_type: "same",
-      prompt: "Bé hãy chọn chiếc cốc có lượng nước bằng nhau nhé!",
+      prompt: "Đố bé hai chiếc cốc nào đựng nước bằng nhau?",
     };
   }
 
@@ -80,7 +80,7 @@ function buildCups(
   return {
     cups,
     question_type: "more",
-    prompt: "Bé hãy chọn chiếc cốc có nhiều nước hơn nhé!",
+    prompt: "Đố bé chiếc cốc nào đựng nhiều nước hơn nhỉ?",
   };
 }
 

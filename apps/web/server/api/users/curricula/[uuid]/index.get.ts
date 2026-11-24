@@ -1,16 +1,21 @@
-import { defineEventHandler, getRouterParam } from "h3";
+import { getRouterParam } from "h3";
 import { z } from "zod";
-import { getPersonalCurriculumByUuid } from "#server/services/index.js";
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { getPersonalCurriculumDetailWithKoguma } from "#server/services/play-experience-service";
+import { defineApiRoute } from "#server/utils/define-api-route";
 
 const UuidParamSchema = z.string().trim().min(1);
 
-export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
-  const userId = Number(user.user_id);
-  const parsedParam = UuidParamSchema.safeParse(getRouterParam(event, "uuid"));
-  const uuid = parsedParam.success ? parsedParam.data : "";
+export default defineApiRoute({
+  auth: "user",
+  async handler({ event, auth }) {
+    const parsedParam = UuidParamSchema.safeParse(
+      getRouterParam(event, "uuid")
+    );
+    const uuid = parsedParam.success ? parsedParam.data : "";
 
-  const curriculum = await getPersonalCurriculumByUuid({ userId }, uuid);
-  return curriculum;
+    return await getPersonalCurriculumDetailWithKoguma(
+      { userId: Number(auth.user_id) },
+      uuid
+    );
+  },
 });

@@ -1,93 +1,49 @@
-import { childProfiles, entitlements, getOwnerDb } from "@mindkid/db";
-import {
-  InternalError,
-  NotFoundError,
-  ValidationError,
-} from "@mindkid/errors/common";
-import { validateCustomPlayCap } from "@mindkid/shared";
-import { and, eq, gt, isNull, or } from "drizzle-orm";
-import { defineEventHandler, getRouterParam, readBody } from "h3";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
+import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { updateChildPlaySettings } from "#server/services/child-report-service";
+import {
+  getParentGateSecret,
+  requireWebUserSession,
+} from "#server/utils/auth-runtime";
 
-const patchSettingsSchema = z.object({
-  daily_play_cap_minutes: z.number().int(),
-});
+const patchSettingsSchema = z
+  .object({
+    daily_play_cap_minutes: z.number().int(),
+    gate_token: z.string().min(1).max(2048).optional(),
+  })
+  .strict();
 
 export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
+  const user = requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
     throw new NotFoundError();
   }
 
-  const eventBody = (event.context as { body?: unknown })?.body;
-  const raw = eventBody || (await readBody(event).catch(() => ({})));
+  const eventContext = event.context as {
+    body?: { daily_play_cap_minutes?: number; gate_token?: string };
+  };
+  const raw =
+    eventContext?.body ??
+    (await readBody<{ daily_play_cap_minutes?: number; gate_token?: string }>(
+      event
+    ).catch(() => ({})));
   const parsed = patchSettingsSchema.safeParse(raw);
-
   if (!parsed.success) {
     throw new ValidationError({
       message: "daily_play_cap_minutes là bắt buộc.",
     });
   }
 
-  const requestedCap = parsed.data.daily_play_cap_minutes;
+  const gateToken =
+    parsed.data.gate_token ?? getHeader(event, "x-parent-gate-token");
 
-  const db = getOwnerDb();
-  const userId = Number(user.user_id);
-  const [child] = await db
-    .select()
-    .from(childProfiles)
-    .where(and(eq(childProfiles.uuid, uuid), eq(childProfiles.userId, userId)));
-
-  if (!child) {
-    throw new NotFoundError();
-  }
-
-  // Determine user tier
-  let tier: "login" | "standard" | "premium" = "login";
-  const activeEntitlements = await db
-    .select({ key: entitlements.entitlementKey })
-    .from(entitlements)
-    .where(
-      and(
-        eq(entitlements.userId, userId),
-        eq(entitlements.status, "active"),
-        or(
-          isNull(entitlements.expiresAt),
-          gt(entitlements.expiresAt, new Date())
-        )
-      )
-    );
-  const keys = new Set(activeEntitlements.map((row) => row.key));
-  if (keys.has("play_premium_games")) {
-    tier = "premium";
-  } else if (keys.has("play_standard_games")) {
-    tier = "standard";
-  }
-
-  // Validate cap <= package max cap (BR-HPL-08 -> 422 if exceeded)
-  if (!validateCustomPlayCap(requestedCap, tier)) {
-    throw new ValidationError({
-      message: `Hạn mức ${requestedCap} phút vượt quá trần của gói (${tier}).`,
-    });
-  }
-
-  const [updatedChild] = await db
-    .update(childProfiles)
-    .set({
-      dailyPlayCapMinutes: requestedCap,
-      updatedAt: new Date(),
-    })
-    .where(eq(childProfiles.id, child.id))
-    .returning();
-
-  if (!updatedChild) {
-    throw new InternalError("Cập nhật cài đặt thất bại");
-  }
-
-  return {
-    uuid: updatedChild.uuid,
-    daily_play_cap_minutes: updatedChild.dailyPlayCapMinutes,
-  };
+  return await updateChildPlaySettings({
+    userId: Number(user.user_id),
+    childUuid: uuid,
+    dailyPlayCapMinutes: parsed.data.daily_play_cap_minutes,
+    gateToken,
+    parentGateSecret: getParentGateSecret(event),
+  });
 });

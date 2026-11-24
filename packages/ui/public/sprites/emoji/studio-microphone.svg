@@ -1,0 +1,10 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Micrô thu âm</title>
+  <defs>
+    <linearGradient id="micSilv" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#f8fafc" /><stop offset="100%" stop-color="#94a3b8" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e293b" opacity="0.22" rx="28" ry="5" />
+    <rect fill="url(#micSilv)" height="48" rx="18" stroke="#1e293b" stroke-width="3.8" width="36" x="42" y="18" />
+    <path d="M44 34H76M44 44H76M44 54H76" stroke="#475569" stroke-width="2.6" />
+    <path d="M32 48C32 66 44 76 60 76C76 76 88 66 88 48M60 76V98M40 98H80" fill="none" stroke="#1e293b" stroke-linecap="round" stroke-width="4.5" />
+</svg>

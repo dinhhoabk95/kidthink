@@ -1,27 +1,13 @@
-import { writeAudit } from "@mindkid/audit";
 import { MAX_BONUS_DAYS, MIN_ADMIN_NOTE_LENGTH } from "@mindkid/config";
-import { entitlements, getDb, notifications, paymentOrders } from "@mindkid/db";
 import { AdminNoteRequiredError } from "@mindkid/errors/account";
-import { OrderAlreadyProcessedError } from "@mindkid/errors/billing";
-import { NotFoundError, ValidationError } from "@mindkid/errors/common";
-import {
-  activeStackBase,
-  assertPaymentOrderTransition,
-  computeStackedExpiryDate,
-  PACKAGE_CATALOG,
-  type PaymentOrderStatus,
-} from "@mindkid/shared";
-import { and, eq } from "drizzle-orm";
-import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
+import { ValidationError } from "@mindkid/errors/common";
+import { defineEventHandler, getHeader, getRouterParam } from "h3";
 import { z } from "zod";
-import { grantCredits } from "#server/services/index.js";
+import { approveManagerOrder } from "#server/services/order-review-service";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
-import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
-
-type DbTx = Parameters<
-  Parameters<ReturnType<typeof getDb>["transaction"]>[0]
->[0];
+import { requireReauth } from "#server/utils/reauth-runtime";
+import { readRequestBody } from "#server/utils/request-body";
 
 const approveOrderSchema = z.object({
   admin_note: z
@@ -63,249 +49,15 @@ const approveOrderSchema = z.object({
   duration_days: z.number().optional(),
 });
 
-async function fetchAndLockOrder(tx: DbTx, orderUuid: string) {
-  const [order] = await tx
-    .select()
-    .from(paymentOrders)
-    .where(eq(paymentOrders.uuid, orderUuid))
-    .for("update");
-
-  if (!order) {
-    throw new NotFoundError();
-  }
-
-  const currentStatus = order.status as PaymentOrderStatus;
-  if (currentStatus !== "submitted" && currentStatus !== "under_review") {
-    throw new OrderAlreadyProcessedError({
-      current_status: currentStatus,
-      reason: "Đơn hàng đã được xử lý hoặc không ở trạng thái có thể duyệt.",
-    });
-  }
-
-  assertPaymentOrderTransition(currentStatus, "approved");
-  return order;
-}
-
-async function grantEntitlementsForOrder(
-  tx: DbTx,
-  orderUserId: number,
-  orderUuid: string,
-  managerId: number,
-  packageCode: string,
-  offerCode: string,
-  bonusDays: number,
-  adminNote: string,
-  now: Date
-): Promise<Array<{ key: string; expires_at: Date | null }>> {
-  const pkg = PACKAGE_CATALOG[packageCode];
-  const offer = pkg?.offers.find((o) => o.offer_code === offerCode);
-  const offerDurationDays = offer ? offer.duration_days : 365;
-  const entitlementKeys = pkg?.entitlements || [];
-
-  const results: Array<{ key: string; expires_at: Date | null }> = [];
-  for (const key of entitlementKeys) {
-    const [existing] = await tx
-      .select()
-      .from(entitlements)
-      .where(
-        and(
-          eq(entitlements.userId, orderUserId),
-          eq(entitlements.entitlementKey, key)
-        )
-      )
-      .limit(1);
-
-    const newExpiresAt = computeStackedExpiryDate(
-      activeStackBase(existing),
-      offerDurationDays,
-      bonusDays,
-      now
-    );
-
-    if (existing) {
-      await tx
-        .update(entitlements)
-        .set({
-          status: "active",
-          source: "package_order",
-          sourceRef: orderUuid,
-          expiresAt: newExpiresAt,
-          grantedByManagerId: managerId,
-          grantReason: adminNote,
-          updatedAt: now,
-        })
-        .where(eq(entitlements.id, existing.id));
-    } else {
-      await tx.insert(entitlements).values({
-        userId: orderUserId,
-        entitlementKey: key,
-        source: "package_order",
-        sourceRef: orderUuid,
-        status: "active",
-        expiresAt: newExpiresAt,
-        grantedByManagerId: managerId,
-        grantReason: adminNote,
-      });
-    }
-
-    results.push({
-      key,
-      expires_at: newExpiresAt,
-    });
-  }
-  return results;
-}
-
-async function maybeGrantPackageCredits(
-  tx: DbTx,
-  userId: number,
-  orderUuid: string,
-  packageCode: string
-): Promise<void> {
-  const pkg = PACKAGE_CATALOG[packageCode];
-  if (pkg?.credits_grant && pkg.credits_grant > 0) {
-    await grantCredits({
-      userId,
-      delta: pkg.credits_grant,
-      reason: "purchase",
-      refType: "payment_order",
-      refId: orderUuid,
-      idempotencyKey: `order-approve-credits-${orderUuid}`,
-      notifyUser: false,
-      tx,
-    });
-  }
-}
-
-async function executeOrderApproval(
-  db: ReturnType<typeof getDb>,
-  session: { manager_id: number },
-  orderUuid: string,
-  adminNote: string,
-  checklist: Record<string, unknown>,
-  bonusDays: number,
-  ip: string | null,
-  userAgent: string | null
-) {
-  const now = new Date();
-  let orderUserId = 0;
-  let grantedEntitlements: Array<{ key: string; expires_at: Date | null }> = [];
-
-  await db.transaction(async (tx) => {
-    const order = await fetchAndLockOrder(tx, orderUuid);
-    const currentStatus = order.status as PaymentOrderStatus;
-    orderUserId = order.userId;
-
-    const structuredAdminNote = JSON.stringify({
-      note: adminNote,
-      checklist,
-      bonus_days: bonusDays,
-    });
-
-    await tx
-      .update(paymentOrders)
-      .set({
-        status: "approved",
-        reviewedAt: now,
-        reviewedByManagerId: session.manager_id,
-        adminNote: structuredAdminNote,
-        updatedAt: now,
-      })
-      .where(eq(paymentOrders.id, order.id));
-
-    grantedEntitlements = await grantEntitlementsForOrder(
-      tx,
-      order.userId,
-      order.uuid,
-      session.manager_id,
-      order.packageCode,
-      order.offerCode,
-      bonusDays,
-      adminNote,
-      now
-    );
-
-    await maybeGrantPackageCredits(
-      tx,
-      order.userId,
-      order.uuid,
-      order.packageCode
-    );
-
-    await writeAudit(tx, {
-      actor_type: "manager",
-      actor_id: session.manager_id,
-      action: "order_approved",
-      entity_type: "payment_order",
-      entity_id: order.uuid,
-      before_data: { status: currentStatus },
-      after_data: {
-        status: "approved",
-        bonus_days: bonusDays,
-        checklist,
-      },
-      reason: adminNote,
-      ip_address: ip,
-      user_agent: userAgent,
-    });
-
-    if (bonusDays > 0) {
-      await writeAudit(tx, {
-        actor_type: "manager",
-        actor_id: session.manager_id,
-        action: "bonus_days_granted",
-        entity_type: "payment_order",
-        entity_id: order.uuid,
-        before_data: { bonus_days: 0 },
-        after_data: {
-          bonus_days: bonusDays,
-          user_id: order.userId,
-          package_code: order.packageCode,
-        },
-        reason: adminNote,
-        ip_address: ip,
-        user_agent: userAgent,
-      });
-    }
-
-    await tx.insert(notifications).values({
-      recipientType: "user",
-      recipientId: order.userId,
-      templateCode: "order_approved",
-      payload: {
-        order_uuid: order.uuid,
-        package_code: order.packageCode,
-        offer_code: order.offerCode,
-        bonus_days: bonusDays,
-      },
-    });
-  });
-
-  if (orderUserId > 0) {
-    await invalidateUserEntitlementsCache(orderUserId);
-  }
-
-  return {
-    status: "approved",
-    entitlements: grantedEntitlements,
-  };
-}
-
 export default defineEventHandler(async (event) => {
   const session = requireSuperAdminSession(event);
+  requireReauth(event);
   const orderUuid = getRouterParam(event, "uuid");
   if (!orderUuid) {
     throw new ValidationError("Order UUID is required");
   }
 
-  const customEvent = event as unknown as {
-    _body?: unknown;
-    context?: { body?: unknown };
-  };
-  const rawBody =
-    (await readBody(event).catch(() => undefined)) ??
-    customEvent._body ??
-    customEvent.context?.body;
+  const rawBody = await readRequestBody(event);
   const parsed = approveOrderSchema.safeParse(rawBody);
   if (!parsed.success) {
     const fieldErrors = parsed.error.flatten().fieldErrors;
@@ -317,17 +69,13 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const { admin_note, checklist, bonus_days } = parsed.data;
-  const db = getDb();
-
-  return await executeOrderApproval(
-    db,
-    session,
+  return await approveManagerOrder({
+    managerId: session.manager_id,
     orderUuid,
-    admin_note,
-    checklist,
-    bonus_days,
-    getVerifiedRemoteIp(event),
-    getHeader(event, "user-agent") || null
-  );
+    adminNote: parsed.data.admin_note,
+    checklist: parsed.data.checklist,
+    bonusDays: parsed.data.bonus_days,
+    ipAddress: getVerifiedRemoteIp(event),
+    userAgent: getHeader(event, "user-agent") || null,
+  });
 });

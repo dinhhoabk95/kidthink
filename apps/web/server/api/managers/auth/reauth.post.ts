@@ -1,20 +1,7 @@
-import {
-  getAuthRedisClient,
-  MfaAttemptGuard,
-  verifyBetterAuthTotp,
-  verifyPassword,
-} from "@mindkid/auth";
-import { requireEnv } from "@mindkid/config";
-import {
-  getOwnerDb,
-  managerAccounts,
-  managers,
-  managerTwoFactors,
-} from "@mindkid/db";
-import { InvalidCredentialsError, MfaLockedError } from "@mindkid/errors/auth";
-import { and, eq } from "drizzle-orm";
+import { InvalidCredentialsError } from "@mindkid/errors/auth";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
+import { verifyManagerReauthCredentials } from "#server/services/identity-manager-service";
 import {
   enforceTwoAxisRateLimit,
   requireManagerSession,
@@ -29,51 +16,6 @@ const ReauthSchema = z
     method: z.enum(["password", "totp"]).optional(),
   })
   .strict();
-
-async function verifyManagerTotpReauth(
-  db: ReturnType<typeof getOwnerDb>,
-  managerId: number,
-  totpCode: string
-): Promise<void> {
-  const attemptGuard = new MfaAttemptGuard(getAuthRedisClient());
-  await attemptGuard.assertNotLocked("manager", managerId);
-  const [mfa] = await db
-    .select()
-    .from(managerTwoFactors)
-    .where(eq(managerTwoFactors.userId, managerId))
-    .limit(1);
-
-  if (!mfa?.secret) {
-    throw new InvalidCredentialsError();
-  }
-  const ok = await verifyBetterAuthTotp({
-    storedSecret: mfa.secret,
-    rootSecret: requireEnv("NUXT_SESSION_PASSWORD"),
-    namespace: "manager",
-    code: totpCode,
-  });
-  if (!ok) {
-    const failure = await attemptGuard.recordFailure("manager", managerId);
-    if (failure.locked) {
-      throw new MfaLockedError();
-    }
-    throw new InvalidCredentialsError();
-  }
-  await attemptGuard.reset("manager", managerId);
-}
-
-async function verifyManagerPasswordReauth(
-  password: string | undefined,
-  passwordHash: string | null
-): Promise<void> {
-  if (!(password && passwordHash)) {
-    throw new InvalidCredentialsError();
-  }
-  const isValid = await verifyPassword(password, passwordHash);
-  if (!isValid) {
-    throw new InvalidCredentialsError();
-  }
-}
 
 export default defineEventHandler(async (event) => {
   const managerSession = requireManagerSession(event);
@@ -90,39 +32,11 @@ export default defineEventHandler(async (event) => {
     throw new InvalidCredentialsError();
   }
 
-  const db = getOwnerDb();
-  const [manager] = await db
-    .select({
-      passwordHash: managers.passwordHash,
-      isActive: managers.isActive,
-    })
-    .from(managers)
-    .where(eq(managers.id, managerId))
-    .limit(1);
-
-  if (!manager?.isActive) {
-    throw new InvalidCredentialsError();
-  }
-
-  const [cred] = await db
-    .select({ password: managerAccounts.password })
-    .from(managerAccounts)
-    .where(
-      and(
-        eq(managerAccounts.userId, managerId),
-        eq(managerAccounts.providerId, "credential")
-      )
-    )
-    .limit(1);
-
-  const effectiveHash = cred?.password ?? manager.passwordHash;
-  const totpCode = parsed.data.totp ?? parsed.data.code;
-
-  if (totpCode) {
-    await verifyManagerTotpReauth(db, managerId, totpCode);
-  } else {
-    await verifyManagerPasswordReauth(parsed.data.password, effectiveHash);
-  }
+  await verifyManagerReauthCredentials({
+    managerId,
+    password: parsed.data.password,
+    totp: parsed.data.totp ?? parsed.data.code,
+  });
 
   const now = new Date();
   await markCurrentSessionReauthenticated(event, now);

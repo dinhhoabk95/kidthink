@@ -180,7 +180,10 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
       const catalogRouteSource = readRepoFile(
         "apps/web/server/api/guest/levels/index.get.ts"
       );
-      expect(catalogRouteSource).toContain("GUEST_CTA_VIEWER");
+      const catalogServiceSource = readRepoFile(
+        "apps/web/server/services/catalog-service.ts"
+      );
+      expect(catalogServiceSource).toContain("GUEST_CTA_VIEWER");
       expect(catalogRouteSource).toContain('role: "guest"');
     });
 
@@ -200,7 +203,11 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
       const searchServiceSource = readRepoFile(
         "apps/web/server/services/content-search.ts"
       );
-      expect(searchServiceSource).toContain("from(gameLevels)");
+      const catalogRepoSource = readRepoFile(
+        "packages/db/src/repositories/catalog-repository.ts"
+      );
+      expect(searchServiceSource).toContain("gameLevels");
+      expect(catalogRepoSource).toContain("this.db.query.gameLevels.find");
     });
 
     it("Scenario: BR-GCP-07 — every public game has a distinct indexable detail page URL", () => {
@@ -253,10 +260,11 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
     });
 
     it("Scenario: BR-GDP-05 — omits content_pack when tier is locked", () => {
-      const detailRouteSource = readRepoFile(
-        "apps/web/server/api/guest/levels/[code]/index.get.ts"
+      const catalogServiceSource = readRepoFile(
+        "apps/web/server/services/catalog-service.ts"
       );
-      expect(detailRouteSource).toContain("rounds: isLocked");
+      expect(catalogServiceSource).toContain("rounds: []");
+      expect(catalogServiceSource).not.toContain("loadRoundSet");
       const lockedResp = buildTierLockedResponse("premium");
       expect("content_pack" in lockedResp).toBe(false);
     });
@@ -381,11 +389,11 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
     it("Scenario: BR-LND-05 — pricing figures are dynamically loaded from PACKAGE_CATALOG", () => {
       expect(PACKAGE_CATALOG["PKG-standard"]).toBeDefined();
       expect(PACKAGE_CATALOG["PKG-premium"]).toBeDefined();
-      const homeRouteSource = readRepoFile(
-        "apps/web/server/api/guest/home.get.ts"
+      const catalogServiceSource = readRepoFile(
+        "apps/web/server/services/catalog-service.ts"
       );
-      expect(homeRouteSource).toContain('PACKAGE_CATALOG["PKG-standard"]');
-      expect(homeRouteSource).toContain('PACKAGE_CATALOG["PKG-premium"]');
+      expect(catalogServiceSource).toContain('PACKAGE_CATALOG["PKG-standard"]');
+      expect(catalogServiceSource).toContain('PACKAGE_CATALOG["PKG-premium"]');
     });
 
     it("Scenario: BR-LND-06 — forbids outcome claims on landing page", () => {
@@ -412,8 +420,11 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
       const homeRouteSource = readRepoFile(
         "apps/web/server/api/guest/home.get.ts"
       );
+      const catalogServiceSource = readRepoFile(
+        "apps/web/server/services/catalog-service.ts"
+      );
       expect(homeRouteSource).toContain("countPublishedLevels");
-      expect(homeRouteSource).toContain("COMPETENCY_CATALOG");
+      expect(catalogServiceSource).toContain("COMPETENCY_CATALOG");
     });
   });
 

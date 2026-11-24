@@ -1,6 +1,5 @@
-import { getOwnerDb } from "@mindkid/db";
 import { z } from "zod";
-import { createCollection } from "#server/services/library.js";
+import { createCollection } from "#server/services/index.js";
 import { defineApiRoute } from "#server/utils/define-api-route";
 
 const CreateCollectionSchema = z.object({
@@ -12,10 +11,7 @@ export default defineApiRoute({
   body: CreateCollectionSchema,
   status: 201,
   async handler({ auth, body }) {
-    const userId = Number(auth.user_id);
-    const db = getOwnerDb();
-
-    const created = await createCollection(db, userId, body.name);
+    const created = await createCollection(Number(auth.user_id), body.name);
 
     return {
       success: true,

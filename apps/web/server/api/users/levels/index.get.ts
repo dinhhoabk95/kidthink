@@ -1,17 +1,13 @@
-import { getOwnerDb } from "@mindkid/db";
 import { defineEventHandler, getQuery, setHeader } from "h3";
-import { searchGameLevels } from "#server/services/index.js";
-
+import {
+  type RawSearchParamsInput,
+  searchGameLevels,
+} from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
 /**
- * Gói của người gọi suy từ **entitlement đang hoạt động**, không phải từ session.
- *
- * `UserTokenPayload` chưa bao giờ mang `packageCode`; bản cũ đọc trường không
- * tồn tại nên `userPackage` luôn `undefined`, và mọi người đã mua gói đều bị
- * catalog này xếp về bậc `login` — thư viện trả phí trông như bị khoá với đúng
- * người đã trả tiền.
+ * Gói của người gọi suy từ entitlement đang hoạt động, không phải từ session.
  */
 export default defineEventHandler(async (event) => {
   let userPackage: string | undefined;
@@ -27,9 +23,8 @@ export default defineEventHandler(async (event) => {
     // Unauthenticated user searches with guest package level
   }
 
-  const db = getOwnerDb();
-  const query = getQuery(event);
-  const result = await searchGameLevels(db, query, {
+  const query = getQuery(event) as RawSearchParamsInput;
+  const result = await searchGameLevels(query, {
     role: "user",
     userPackage,
   });

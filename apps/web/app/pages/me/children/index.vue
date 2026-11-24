@@ -50,7 +50,7 @@
       <div
         class="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl border-2 border-brand-200 bg-brand-100/60 text-3xl dark:border-brand-800 dark:bg-brand-900/40"
       >
-        👶
+        <BrandEmoji decorative emoji="👶" />
       </div>
       <div class="space-y-1">
         <h2

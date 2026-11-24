@@ -3,6 +3,8 @@ import {
   createMindKidManagerAuth,
   createMindKidUserAuth,
   createRedisSecondaryStorage,
+  decodeManagerRoleValue,
+  decodeUserStatusValue,
   getAuthRedisClient,
   type ManagerRole,
   type ManagerTokenPayload,
@@ -13,6 +15,7 @@ import {
 } from "@mindkid/auth";
 import { requireEnv } from "@mindkid/config";
 import {
+  type DbExecutor,
   getOwnerDb,
   managerAccounts,
   managerPasskeys,
@@ -43,6 +46,7 @@ import {
   validateSignupConsentMarkersImpl,
   withFailClosedRedis,
 } from "#server/utils/better-auth-callbacks";
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 const SITE_TRAILING_SLASH_PATTERN = /\/$/;
 const BEARER_AUTH_PATTERN = /^bearer\s+/i;
@@ -137,8 +141,19 @@ export function getUserAuth(): MindKidUserAuth {
             ? { clientId: fbClientId, clientSecret: fbClientSecret }
             : undefined,
       },
-      callbacks: buildUserAuthCallbacks((sessionId, createdAt, dbReauthAt) =>
-        resolveReauthTimestamp("user", sessionId, createdAt, dbReauthAt)
+      callbacks: buildUserAuthCallbacks(
+        (sessionId, createdAt, dbReauthAt) =>
+          resolveReauthTimestamp("user", sessionId, createdAt, dbReauthAt),
+        {
+          onPasswordReset: (userId) =>
+            revokeAllBetterAuthSessions("user", userId),
+          revokeOtherSessions: (userId, keepSessionToken) =>
+            revokeOtherBetterAuthSessionsByToken(
+              "user",
+              userId,
+              keepSessionToken
+            ),
+        }
       ),
     });
   }
@@ -163,7 +178,18 @@ export function getManagerAuth(): MindKidManagerAuth {
       siteUrl: getSiteUrl(),
       trustedOrigins: getTrustedOriginsList(),
       isProduction: process.env.NODE_ENV === "production",
-      callbacks: buildManagerAuthCallbacks(),
+      callbacks: buildManagerAuthCallbacks(
+        (sessionId, createdAt, dbReauthAt) =>
+          resolveReauthTimestamp("manager", sessionId, createdAt, dbReauthAt),
+        {
+          revokeOtherSessions: (managerId, keepSessionToken) =>
+            revokeOtherBetterAuthSessionsByToken(
+              "manager",
+              managerId,
+              keepSessionToken
+            ),
+        }
+      ),
     });
   }
   return managerAuthInstance;
@@ -247,12 +273,32 @@ export async function resolveBetterAuthUserSession(
     if (!(result?.session && result.user)) {
       return null;
     }
-    const status = String(
-      (result.user as { status?: string }).status ?? "active"
-    );
-    if (status === "suspended" || status === "deleted") {
+
+    const repos = useOwnerRepositories();
+    const liveUser = await repos.users.findForAuthById(Number(result.user.id));
+    const cachedUuid = (result.user as { uuid?: string }).uuid;
+    const cachedSessionVersion = (
+      result.user as { sessionVersion?: number | string }
+    ).sessionVersion;
+    const liveStatus = liveUser ? decodeUserStatusValue(liveUser.status) : null;
+
+    const isStaleOrInvalid =
+      !liveUser ||
+      (cachedUuid !== undefined && cachedUuid !== liveUser.uuid) ||
+      (cachedSessionVersion !== undefined &&
+        Number(cachedSessionVersion) !== liveUser.sessionVersion) ||
+      liveStatus === "suspended" ||
+      liveStatus === "deleted";
+
+    if (isStaleOrInvalid) {
+      const secondary = createRedisSecondaryStorage(
+        getAuthRedisClient(),
+        "user"
+      );
+      await secondary.delete(result.session.token);
       return null;
     }
+
     const sessionId = String(result.session.id);
     const createdAt = new Date(result.session.createdAt);
     const rawReauth = (result.session as { reauthAt?: Date | string | null })
@@ -266,15 +312,13 @@ export async function resolveBetterAuthUserSession(
     );
 
     const payload: UserTokenPayload = {
-      user_id: Number(result.user.id),
-      uuid: (result.user as { uuid?: string }).uuid,
-      email: result.user.email,
-      status,
-      email_verified: Boolean(result.user.emailVerified),
-      two_factor_enabled: Boolean(
-        (result.user as { twoFactorEnabled?: boolean }).twoFactorEnabled
-      ),
-      display_name: result.user.name,
+      user_id: liveUser.id,
+      uuid: liveUser.uuid,
+      email: liveUser.email,
+      status: liveStatus ?? "pending_verification",
+      email_verified: Boolean(liveUser.emailVerified),
+      two_factor_enabled: Boolean(liveUser.twoFactorEnabled),
+      display_name: liveUser.displayName,
       session_id: sessionId,
       session_token: result.session.token,
       created_at: createdAt,
@@ -313,10 +357,32 @@ export async function resolveBetterAuthManagerSession(
     if (!(result?.session && result.user)) {
       return null;
     }
-    const isActive = (result.user as { isActive?: boolean }).isActive ?? true;
-    if (!isActive) {
+
+    const repos = useOwnerRepositories();
+    const liveManager = await repos.managers.findStatusById(
+      Number(result.user.id)
+    );
+    const cachedUuid = (result.user as { uuid?: string }).uuid;
+    const cachedSessionVersion = (
+      result.user as { sessionVersion?: number | string }
+    ).sessionVersion;
+
+    const isStaleOrInvalid =
+      !liveManager ||
+      (cachedUuid !== undefined && cachedUuid !== liveManager.uuid) ||
+      (cachedSessionVersion !== undefined &&
+        Number(cachedSessionVersion) !== liveManager.sessionVersion) ||
+      !liveManager.isActive;
+
+    if (isStaleOrInvalid) {
+      const secondary = createRedisSecondaryStorage(
+        getAuthRedisClient(),
+        "manager"
+      );
+      await secondary.delete(result.session.token);
       return null;
     }
+
     const sessionId = String(result.session.id);
     const createdAt = new Date(result.session.createdAt);
     const rawReauth = (result.session as { reauthAt?: Date | string | null })
@@ -328,13 +394,11 @@ export async function resolveBetterAuthManagerSession(
       createdAt,
       dbReauthAt
     );
-    const rawRole = (result.user as { role?: string }).role;
-    const role: ManagerRole =
-      rawRole === "content_reviewer" ? "content_reviewer" : "super_admin";
+    const role: ManagerRole = decodeManagerRoleValue(liveManager.role);
 
     const payload: ManagerTokenPayload = {
-      manager_id: Number(result.user.id),
-      uuid: (result.user as { uuid?: string }).uuid,
+      manager_id: liveManager.id,
+      uuid: liveManager.uuid,
       email: result.user.email,
       mfa_enabled: Boolean(
         (result.user as { twoFactorEnabled?: boolean }).twoFactorEnabled
@@ -392,13 +456,33 @@ export async function requireBetterAuthSuperAdmin(
   return manager;
 }
 
+async function purgeSessionsFromStore(
+  namespace: AuthInstanceNamespace,
+  rows: readonly { readonly id: number; readonly token: string }[]
+): Promise<void> {
+  if (rows.length === 0) {
+    return;
+  }
+  const redis = getAuthRedisClient();
+  const secondary = createRedisSecondaryStorage(redis, namespace);
+  for (const row of rows) {
+    await secondary.delete(row.token);
+    await withFailClosedRedis(() =>
+      redis.del(buildReauthRedisKey(namespace, String(row.id)))
+    );
+  }
+}
+
 export async function revokeAllBetterAuthSessions(
   namespace: AuthInstanceNamespace,
   accountId: number,
-  options?: { readonly incrementSessionVersion?: boolean }
+  options?: {
+    readonly tx?: DbExecutor;
+    readonly incrementSessionVersion?: boolean;
+  }
 ): Promise<void> {
   const shouldIncrement = options?.incrementSessionVersion !== false;
-  const db = getOwnerDb();
+  const db = options?.tx ?? getOwnerDb();
   const secondary = createRedisSecondaryStorage(
     getAuthRedisClient(),
     namespace
@@ -409,13 +493,6 @@ export async function revokeAllBetterAuthSessions(
       .select({ id: userSessions.id, token: userSessions.token })
       .from(userSessions)
       .where(eq(userSessions.userId, accountId));
-    for (const row of rows) {
-      await secondary.delete(row.token);
-      await withFailClosedRedis(() =>
-        getAuthRedisClient().del(buildReauthRedisKey("user", String(row.id)))
-      );
-    }
-    await secondary.delete(`active-sessions-${accountId}`);
     await db.delete(userSessions).where(eq(userSessions.userId, accountId));
     if (shouldIncrement) {
       await db
@@ -426,6 +503,8 @@ export async function revokeAllBetterAuthSessions(
         })
         .where(eq(users.id, accountId));
     }
+    await purgeSessionsFromStore("user", rows);
+    await secondary.delete(`active-sessions-${accountId}`);
     return;
   }
 
@@ -433,13 +512,6 @@ export async function revokeAllBetterAuthSessions(
     .select({ id: managerSessions.id, token: managerSessions.token })
     .from(managerSessions)
     .where(eq(managerSessions.userId, accountId));
-  for (const row of rows) {
-    await secondary.delete(row.token);
-    await withFailClosedRedis(() =>
-      getAuthRedisClient().del(buildReauthRedisKey("manager", String(row.id)))
-    );
-  }
-  await secondary.delete(`active-sessions-${accountId}`);
   await db.delete(managerSessions).where(eq(managerSessions.userId, accountId));
   if (shouldIncrement) {
     await db
@@ -450,6 +522,8 @@ export async function revokeAllBetterAuthSessions(
       })
       .where(eq(managers.id, accountId));
   }
+  await purgeSessionsFromStore("manager", rows);
+  await secondary.delete(`active-sessions-${accountId}`);
 }
 
 export async function revokeOtherBetterAuthSessions(
@@ -458,10 +532,6 @@ export async function revokeOtherBetterAuthSessions(
   keepSessionId: string
 ): Promise<void> {
   const db = getOwnerDb();
-  const secondary = createRedisSecondaryStorage(
-    getAuthRedisClient(),
-    namespace
-  );
   const keepIdNum = Number(keepSessionId);
 
   if (namespace === "user") {
@@ -476,13 +546,8 @@ export async function revokeOtherBetterAuthSessions(
       .select({ id: userSessions.id, token: userSessions.token })
       .from(userSessions)
       .where(whereClause);
-    for (const row of rows) {
-      await secondary.delete(row.token);
-      await withFailClosedRedis(() =>
-        getAuthRedisClient().del(buildReauthRedisKey("user", String(row.id)))
-      );
-    }
     await db.delete(userSessions).where(whereClause);
+    await purgeSessionsFromStore("user", rows);
     return;
   }
 
@@ -497,11 +562,43 @@ export async function revokeOtherBetterAuthSessions(
     .select({ id: managerSessions.id, token: managerSessions.token })
     .from(managerSessions)
     .where(whereClause);
-  for (const row of rows) {
-    await secondary.delete(row.token);
-    await withFailClosedRedis(() =>
-      getAuthRedisClient().del(buildReauthRedisKey("manager", String(row.id)))
-    );
-  }
   await db.delete(managerSessions).where(whereClause);
+  await purgeSessionsFromStore("manager", rows);
+}
+
+export async function revokeOtherBetterAuthSessionsByToken(
+  namespace: AuthInstanceNamespace,
+  accountId: number,
+  keepSessionToken: string
+): Promise<void> {
+  const db = getOwnerDb();
+
+  if (namespace === "user") {
+    const whereClause = keepSessionToken
+      ? and(
+          eq(userSessions.userId, accountId),
+          ne(userSessions.token, keepSessionToken)
+        )
+      : eq(userSessions.userId, accountId);
+    const rows = await db
+      .select({ id: userSessions.id, token: userSessions.token })
+      .from(userSessions)
+      .where(whereClause);
+    await db.delete(userSessions).where(whereClause);
+    await purgeSessionsFromStore("user", rows);
+    return;
+  }
+
+  const whereClause = keepSessionToken
+    ? and(
+        eq(managerSessions.userId, accountId),
+        ne(managerSessions.token, keepSessionToken)
+      )
+    : eq(managerSessions.userId, accountId);
+  const rows = await db
+    .select({ id: managerSessions.id, token: managerSessions.token })
+    .from(managerSessions)
+    .where(whereClause);
+  await db.delete(managerSessions).where(whereClause);
+  await purgeSessionsFromStore("manager", rows);
 }

@@ -1,0 +1,12 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe taxi vàng</title>
+  <defs>
+    <linearGradient id="ycfGold" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#fef08a" /><stop offset="100%" stop-color="#eab308" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#1e293b" opacity="0.22" rx="38" ry="5" />
+    <rect fill="#1e293b" height="14" rx="4" width="14" x="26" y="86" /><rect fill="#1e293b" height="14" rx="4" width="14" x="80" y="86" />
+    <rect fill="#fef08a" height="10" rx="4" stroke="#78350f" stroke-width="3.2" width="26" x="47" y="22" />
+    <path d="M32 32H88L96 56V86H24V56Z" fill="url(#ycfGold)" stroke="#78350f" stroke-linejoin="round" stroke-width="3.8" />
+    <polygon fill="#bae6fd" points="36,38 84,38 90,56 30,56" stroke="#0c4a6e" stroke-linejoin="round" stroke-width="3.2" />
+    <circle cx="35" cy="70" fill="#ffffff" r="5.5" stroke="#78350f" stroke-width="2.8" /><circle cx="85" cy="70" fill="#ffffff" r="5.5" stroke="#78350f" stroke-width="2.8" />
+</svg>

@@ -1,30 +1,31 @@
-import { requireEnv } from "@mindkid/config";
-import postgres from "postgres";
+import { createRequire } from "node:module";
+import type { DatabaseSync as NodeDatabaseSync } from "node:sqlite";
 import { afterAll, describe, expect, it } from "vitest";
+import { resolveSqliteDatabasePath } from "#src/drivers/sqlite-local-driver";
 import {
   acquireRunLock,
   assertDisposableDatabaseUrl,
+  assertDisposableSqliteDir,
   claimDatabasePreparation,
   TABLES,
   truncateAllTestTables,
 } from "./global-setup.ts";
 
-const DUPLICATE_KEY_ERROR = /duplicate key/i;
+interface NodeSqliteModule {
+  readonly DatabaseSync: typeof NodeDatabaseSync;
+}
 
-/**
- * Ca âm cho D-BX. Không mock — nối Postgres thật.
- *
- * Dùng một bảng scratch riêng (`_test_truncate_probe`), không đụng 47 bảng chia sẻ với
- * các integration test khác — tránh TRUNCATE bảng thật giữa lúc file khác đang chạy
- * song song (Vitest chạy nhiều file test cùng lúc theo mặc định).
- */
-/**
- * `globalSetup` gắn vào mọi project vitest, nên `pnpm test` gọi nó 17 lần cho
- * 17 project — tất cả trỏ vào cùng một `mindkid_test`. Lần dọn thứ hai trở đi
- * rơi vào giữa transaction của project đang chạy: đo 2026-08-31 thấy
- * `deadlock detected` giết transaction `seed()` và 4 phép thử khác đỏ vì hàng
- * của chúng bị xoá (`Key (user_id)=(3) is not present in table "users"`).
- */
+const req = createRequire(import.meta.url);
+const { DatabaseSync } = req("node:sqlite") as NodeSqliteModule;
+
+const UNIQUE_CONSTRAINT_ERROR = /UNIQUE constraint failed/i;
+
+function resolveTestDbPath(): string {
+  const targetDir = process.env.SQLITE_DATA_DIR;
+  const resolved = resolveSqliteDatabasePath(targetDir);
+  return resolved.dbPath;
+}
+
 describe("global-setup: chỉ chuẩn bị database một lần cho mỗi lượt chạy", () => {
   it("ca âm — không có cờ thì mọi project đều giành được quyền dọn", () => {
     const withoutGuard = [1, 2, 3].map(() => {
@@ -53,92 +54,99 @@ describe("global-setup: chỉ chuẩn bị database một lần cho mỗi lượ
 });
 
 describe("global-setup: truncateAllTestTables", () => {
-  const url = requireEnv("DATABASE_URL");
-  const sql = postgres(url);
   const probeTable = `_test_truncate_probe_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
 
-  it("BR-TST-05: refuses to truncate a non-loopback database", () => {
+  it("BR-TST-05: refuses to truncate a non-loopback database or dev sqlite dir", () => {
     expect(() =>
       assertDisposableDatabaseUrl(
         "postgres://postgres:postgres@db.example.invalid:5432/mindkid"
       )
     ).toThrow("loopback");
+    expect(() =>
+      assertDisposableSqliteDir("/var/opt/mindkid/sqlite")
+    ).toThrow();
   });
 
-  afterAll(async () => {
-    await sql`drop table if exists ${sql(probeTable)}`;
-    await sql.end();
+  afterAll(() => {
+    const db = new DatabaseSync(resolveTestDbPath());
+    try {
+      db.exec(`DROP TABLE IF EXISTS "${probeTable}";`);
+    } finally {
+      db.close();
+    }
   });
 
-  it("ca âm — dữ liệu sót từ lần trước làm insert lặp lại dính duplicate key", async () => {
-    await sql`create table if not exists ${sql(probeTable)} (
-      id bigint generated always as identity primary key,
-      code varchar(50) not null unique
-    )`;
-    await sql`insert into ${sql(probeTable)} (code) values ('DUP-CODE') on conflict do nothing`;
-
-    // Mô phỏng đúng lỗi đã đo 2026-08-09: dòng "lần chạy trước" chưa dọn còn nằm đó.
-    await expect(
-      sql`insert into ${sql(probeTable)} (code) values ('DUP-CODE')`
-    ).rejects.toThrow(DUPLICATE_KEY_ERROR);
+  it("ca âm — dữ liệu sót từ lần trước làm insert lặp lại dính duplicate key", () => {
+    const db = new DatabaseSync(resolveTestDbPath());
+    try {
+      db.exec(`CREATE TABLE IF NOT EXISTS "${probeTable}" (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        code TEXT NOT NULL UNIQUE
+      );`);
+      db.exec(
+        `INSERT INTO "${probeTable}" (code) VALUES ('DUP-CODE') ON CONFLICT DO NOTHING;`
+      );
+      expect(() =>
+        db.exec(`INSERT INTO "${probeTable}" (code) VALUES ('DUP-CODE');`)
+      ).toThrow(UNIQUE_CONSTRAINT_ERROR);
+    } finally {
+      db.close();
+    }
   });
 
-  /**
-   * Cổng chống lệch cho D-BX. Danh sách TABLES viết tay từng đứng yên ở 56 tên
-   * trong khi schema đã lên 78 — 22 bảng thêm sau không bao giờ được dọn và rác
-   * cứ cộng dồn im lặng. Đối chiếu với `pg_tables` biến "quên thêm tên" thành
-   * test đỏ ngay lần chạy đầu tiên sau khi thêm bảng.
-   */
-  it("TABLES phủ đúng mọi bảng trong schema public", async () => {
-    const rows = await sql<{ tablename: string }[]>`
-      select tablename from pg_tables
-      where schemaname = 'public' and tablename not like '\\_test\\_%'
-    `;
-    const inDatabase = rows.map((row) => row.tablename).sort();
-    const listed = [...TABLES].sort();
+  it("TABLES phủ đúng mọi bảng trong SQLite test schema", () => {
+    const db = new DatabaseSync(resolveTestDbPath());
+    try {
+      const rows = db
+        .prepare(
+          "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE '\\_test\\_%' ESCAPE '\\' ORDER BY name;"
+        )
+        .all() as Array<{ name: string }>;
+      const inDatabase = rows.map((row) => row.name).sort();
+      const listed = [...TABLES].sort();
 
-    expect(listed).toEqual(inDatabase);
+      expect(listed).toEqual(inDatabase);
+    } finally {
+      db.close();
+    }
   });
 
-  it("sau truncateAllTestTables, bảng rỗng và identity reset về 1", async () => {
-    await truncateAllTestTables(url, [probeTable]);
+  it("sau truncateAllTestTables, bảng rỗng và autoincrement reset về 1", async () => {
+    await truncateAllTestTables(undefined, [probeTable]);
 
-    const before = await sql`select count(*) c from ${sql(probeTable)}`;
-    expect(Number(before[0]?.c)).toBe(0);
+    const db = new DatabaseSync(resolveTestDbPath());
+    try {
+      const before = db
+        .prepare(`SELECT COUNT(*) AS c FROM "${probeTable}";`)
+        .get() as { c: number };
+      expect(Number(before.c)).toBe(0);
 
-    // Cùng code vừa gây duplicate key ở test trên giờ insert được — chứng minh dọn thật.
-    const [row] =
-      await sql`insert into ${sql(probeTable)} (code) values ('DUP-CODE') returning id`;
-    expect(Number(row?.id)).toBe(1);
+      const inserted = db
+        .prepare(
+          `INSERT INTO "${probeTable}" (code) VALUES ('DUP-CODE') RETURNING id;`
+        )
+        .get() as { id: number };
+      expect(Number(inserted.id)).toBe(1);
+    } finally {
+      db.close();
+    }
   });
 });
 
 describe("global-setup: loại trừ lẫn nhau giữa hai lượt vitest run", () => {
-  const PROBE_LOCK_KEY = 8_314_999;
-  const WAIT_POLLS = 200;
-
   it("lượt thứ hai đợi đến khi lượt thứ nhất nhả khoá; ca âm: không nhả thì không qua", async () => {
-    const dbUrl = requireEnv("DATABASE_URL");
-    const releaseFirst = await acquireRunLock(dbUrl, PROBE_LOCK_KEY);
+    const probeKey = `probe_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
+    const targetDir = process.env.SQLITE_DATA_DIR;
+    const releaseFirst = await acquireRunLock(targetDir, probeKey);
+
     let secondAcquired = false;
-    const second = acquireRunLock(dbUrl, PROBE_LOCK_KEY).then((release) => {
+    const second = acquireRunLock(targetDir, probeKey).then((release) => {
       secondAcquired = true;
       return release;
     });
 
-    // Đợi đến khi server thấy phiên thứ hai đang xếp hàng chờ khoá (không dùng timer).
-    const probe = postgres(dbUrl, { max: 1 });
-    try {
-      for (let i = 0; i < WAIT_POLLS; i++) {
-        const [row] =
-          await probe`select count(*)::int c from pg_locks where locktype = 'advisory' and not granted and objid = ${PROBE_LOCK_KEY}`;
-        if ((row?.c ?? 0) > 0) {
-          break;
-        }
-        await probe`select 1`;
-      }
-    } finally {
-      await probe.end({ timeout: 5 });
+    for (let i = 0; i < 10; i++) {
+      await new Promise<void>((resolve) => setImmediate(resolve));
     }
     expect(secondAcquired).toBe(false);
 

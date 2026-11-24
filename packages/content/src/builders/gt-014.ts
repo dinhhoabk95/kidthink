@@ -24,14 +24,14 @@ function resolveGoalAndPrompt(
   if (useRefScale) {
     return {
       goal: "balance",
-      prompt: "Bé nhìn cân mẫu rồi đặt vật cho cân bằng nhé!",
+      prompt: "Bé xem cân mẫu rồi đặt vật cho thăng bằng nhé!",
       targetSide: undefined,
     };
   }
   if (difficulty === 3) {
     return {
       goal: "pick_lighter",
-      prompt: "Bé hãy chạm vào bên đĩa cân nhẹ hơn nhé!",
+      prompt: "Đố bé chạm vào đĩa cân bồng nhẹ hơn nhé!",
       targetSide: "right",
     };
   }
@@ -44,7 +44,7 @@ function resolveGoalAndPrompt(
   }
   return {
     goal: "pick_heavier",
-    prompt: "Bé hãy chạm vào bên đĩa cân nặng hơn nhé!",
+    prompt: "Đố bé chạm vào đĩa cân trĩu nặng hơn nhé!",
     targetSide: "left",
   };
 }

@@ -257,5 +257,23 @@ export const C5_PRA_02_SEED: SkillSeed = {
       difficulty: 2,
       theme: "farm",
     },
+    {
+      code: "GL-C5-PRA-INTRO-6003",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 2,
+      theme: "job",
+      rounds: 3,
+      sequence_no: 61,
+    },
+    {
+      code: "GL-C5-PRA-DROP-6005",
+      template: "GT-003",
+      band: "4-5",
+      difficulty: 3,
+      theme: "farm",
+      rounds: 3,
+      sequence_no: 63,
+    },
   ],
 };

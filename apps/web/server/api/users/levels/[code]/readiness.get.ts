@@ -1,13 +1,11 @@
-import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
-import { eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
+import { checkUserLevelReadiness } from "#server/services/catalog-service";
 import {
   getOptionalActiveChildUuid,
   getOrSetGuestDeviceId,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
-import { checkLevelIntroRequired } from "#server/utils/concept-intro-runtime";
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
@@ -17,39 +15,17 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError("NOT_FOUND");
   }
 
-  const db = getOwnerDb();
-  const [level] = await db
-    .select()
-    .from(gameLevels)
-    .where(eq(gameLevels.code, code))
-    .limit(1);
+  const guestDeviceId = getOrSetGuestDeviceId(event);
+  const readiness = await checkUserLevelReadiness({
+    code,
+    userId: user.user_id,
+    activeChildUuid,
+    guestDeviceId,
+  });
 
-  if (!level) {
+  if (!readiness) {
     throw new NotFoundError("NOT_FOUND");
   }
 
-  const guestDeviceId = getOrSetGuestDeviceId(event);
-  const introStatus = await checkLevelIntroRequired(
-    level,
-    {
-      kind: "user",
-      user_id: String(user.user_id),
-      active_child_id: activeChildUuid,
-    },
-    { guestDeviceId }
-  );
-
-  return {
-    code: level.code,
-    ready: !introStatus.intro_required,
-    intro_required: introStatus.intro_required,
-    intro_queue: introStatus.intro_queue ?? [],
-    intro_remaining: introStatus.intro_remaining ?? 0,
-    return_level_code: introStatus.return_level_code ?? level.code,
-    primary_skill_code: introStatus.primary_skill_code ?? "",
-    intro_level_code:
-      introStatus.intro_level_code ??
-      introStatus.intro_queue?.[0]?.intro_level_code ??
-      null,
-  };
+  return readiness;
 });

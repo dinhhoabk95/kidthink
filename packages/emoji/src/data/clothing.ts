@@ -3,6 +3,8 @@ import type { EmojiEntry } from "#src/types";
 export const CLOTHING_EMOJIS: EmojiEntry[] = [
   {
     emoji: "👕",
+    slug: "t-shirt",
+    svg_path: "/sprites/emoji/t-shirt.svg",
     name: "Áo phông",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -11,6 +13,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👖",
+    slug: "blue-jeans",
+    svg_path: "/sprites/emoji/blue-jeans.svg",
     name: "Quần jeans",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -19,6 +23,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👗",
+    slug: "summer-dress",
+    svg_path: "/sprites/emoji/summer-dress.svg",
     name: "Váy",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -27,6 +33,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👘",
+    slug: "traditional-robe",
+    svg_path: "/sprites/emoji/traditional-robe.svg",
     name: "Kimono",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -35,6 +43,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🧥",
+    slug: "warm-coat",
+    svg_path: "/sprites/emoji/warm-coat.svg",
     name: "Áo khoác",
     categories: ["clothing"],
     curriculum_themes: ["ban_than", "thoi_tiet_mua"],
@@ -43,6 +53,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥼",
+    slug: "white-lab-coat",
+    svg_path: "/sprites/emoji/white-lab-coat.svg",
     name: "Áo blouse",
     categories: ["clothing"],
     curriculum_themes: ["ban_than", "nghe_nghiep"],
@@ -51,14 +63,18 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👒",
+    slug: "sun-hat",
+    svg_path: "/sprites/emoji/sun-hat.svg",
     name: "Mũ rộng vành",
-    categories: ["clothing"],
+    categories: ["clothing", "vn-culture"],
     curriculum_themes: ["ban_than"],
     keywords: ["woman hat", "wide brim hat", "mũ", "nón", "rộng vành"],
     age_min: 3,
   },
   {
     emoji: "🧢",
+    slug: "billed-cap",
+    svg_path: "/sprites/emoji/billed-cap.svg",
     name: "Mũ lưỡi trai",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -67,6 +83,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🎩",
+    slug: "magic-hat",
+    svg_path: "/sprites/emoji/magic-hat.svg",
     name: "Mũ cao",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -75,6 +93,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👑",
+    slug: "crown",
+    svg_path: "/sprites/emoji/crown.svg",
     name: "Vương miện",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -83,6 +103,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👟",
+    slug: "sneaker",
+    svg_path: "/sprites/emoji/sneaker.svg",
     name: "Giày thể thao",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -91,6 +113,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👠",
+    slug: "dress-heel",
+    svg_path: "/sprites/emoji/dress-heel.svg",
     name: "Giày cao gót",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -99,6 +123,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👢",
+    slug: "tall-boot",
+    svg_path: "/sprites/emoji/tall-boot.svg",
     name: "Ủng",
     categories: ["clothing"],
     curriculum_themes: ["ban_than", "thoi_tiet_mua"],
@@ -107,6 +133,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👡",
+    slug: "summer-sandal",
+    svg_path: "/sprites/emoji/summer-sandal.svg",
     name: "Xăng đan",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -115,6 +143,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🩴",
+    slug: "flip-flop",
+    svg_path: "/sprites/emoji/flip-flop.svg",
     name: "Dép xỏ ngón",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -123,6 +153,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🧣",
+    slug: "scarf",
+    svg_path: "/sprites/emoji/scarf.svg",
     name: "Khăn quàng",
     categories: ["clothing"],
     curriculum_themes: ["ban_than", "thoi_tiet_mua"],
@@ -131,6 +163,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🧤",
+    slug: "winter-gloves",
+    svg_path: "/sprites/emoji/winter-gloves.svg",
     name: "Găng tay",
     categories: ["clothing"],
     curriculum_themes: ["ban_than", "thoi_tiet_mua"],
@@ -139,6 +173,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🧦",
+    slug: "socks",
+    svg_path: "/sprites/emoji/socks.svg",
     name: "Tất",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -147,6 +183,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👓",
+    slug: "eyeglasses",
+    svg_path: "/sprites/emoji/eyeglasses.svg",
     name: "Kính",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -155,6 +193,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🕶️",
+    slug: "sunglasses",
+    svg_path: "/sprites/emoji/sunglasses.svg",
     name: "Kính râm",
     categories: ["clothing"],
     curriculum_themes: ["ban_than", "thoi_tiet_mua"],
@@ -163,6 +203,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👜",
+    slug: "handbag",
+    svg_path: "/sprites/emoji/handbag.svg",
     name: "Túi xách",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -170,15 +212,9 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
     age_min: 3,
   },
   {
-    emoji: "🎒",
-    name: "Ba lô",
-    categories: ["clothing", "school"],
-    curriculum_themes: ["ban_than", "truong_mam_non"],
-    keywords: ["backpack", "ba lô", "cặp", "đi học", "school bag", "cặp sách"],
-    age_min: 3,
-  },
-  {
     emoji: "💍",
+    slug: "gem-ring",
+    svg_path: "/sprites/emoji/gem-ring.svg",
     name: "Nhẫn",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -187,6 +223,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🩱",
+    slug: "swimsuit",
+    svg_path: "/sprites/emoji/swimsuit.svg",
     name: "Đồ bơi",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -195,6 +233,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "👔",
+    slug: "shirt-necktie",
+    svg_path: "/sprites/emoji/shirt-necktie.svg",
     name: "Cà vạt",
     categories: ["clothing"],
     curriculum_themes: ["ban_than", "nghe_nghiep"],
@@ -203,6 +243,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥿",
+    slug: "ballet-flat",
+    svg_path: "/sprites/emoji/ballet-flat.svg",
     name: "Giày bệt",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -211,6 +253,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🩳",
+    slug: "play-shorts",
+    svg_path: "/sprites/emoji/play-shorts.svg",
     name: "Quần short",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -219,6 +263,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🧳",
+    slug: "suitcase",
+    svg_path: "/sprites/emoji/suitcase.svg",
     name: "Vali",
     categories: ["clothing"],
     curriculum_themes: ["ban_than"],
@@ -227,6 +273,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⛑️",
+    slug: "rescue-helmet",
+    svg_path: "/sprites/emoji/rescue-helmet.svg",
     name: "Mũ cứu hộ",
     categories: ["clothing"],
     curriculum_themes: ["ban_than", "nghe_nghiep"],
@@ -235,6 +283,8 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🪖",
+    slug: "green-helmet",
+    svg_path: "/sprites/emoji/green-helmet.svg",
     name: "Mũ lính",
     categories: ["clothing"],
     curriculum_themes: ["ban_than", "nghe_nghiep"],
@@ -242,11 +292,13 @@ export const CLOTHING_EMOJIS: EmojiEntry[] = [
     age_min: 4,
   },
   {
-    emoji: "🧶",
-    name: "Cuộn len",
-    categories: ["clothing", "tool", "household"],
-    curriculum_themes: ["ban_than"],
-    keywords: ["yarn", "wool", "cuộn len", "len", "đan len"],
-    age_min: 3,
+    emoji: "🥾",
+    slug: "hiking-boot",
+    svg_path: "/sprites/emoji/hiking-boot.svg",
+    name: "Đôi giày leo núi",
+    categories: ["clothing", "sport-game"],
+    curriculum_themes: ["ban_than", "nuoc_hien_tuong_tu_nhien"],
+    keywords: ["hiking boot", "walking shoe", "giày leo núi", "giày đi rừng"],
+    age_min: 4,
   },
 ];

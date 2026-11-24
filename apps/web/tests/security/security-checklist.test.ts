@@ -1,7 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { appError, hashPassword } from "@mindkid/auth";
-import { childProfiles, getAppDb, users } from "@mindkid/db";
+import {
+  CHILD_STATUS,
+  childProfiles,
+  getAppDb,
+  USER_STATUS,
+  users,
+} from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { findUnvalidatedRoutes } from "./route-validation.ts";
@@ -55,7 +61,7 @@ describe("Security Checklist Contract (BR-SEC-01..10)", () => {
         email: `sec05_${suffix}@example.com`,
         passwordHash: await hashPassword("secure123"),
         displayName: "User SEC 05",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -81,7 +87,7 @@ describe("Security Checklist Contract (BR-SEC-01..10)", () => {
       .from(users)
       .where(eq(users.id, user.id));
     expect(refreshed?.displayName).toBe("Updated Valid Name");
-    expect(refreshed?.status).toBe("active"); // Không bị ghi đè thành deleted
+    expect(refreshed?.status).toBe(USER_STATUS.ACTIVE); // Không bị ghi đè thành deleted
     expect(refreshed?.sessionVersion).toBe(0); // Không bị ghi đè thành 999
   });
 
@@ -97,7 +103,7 @@ describe("Security Checklist Contract (BR-SEC-01..10)", () => {
         email: `user_a_${suffix1}@example.com`,
         passwordHash: await hashPassword("password123"),
         displayName: "User A",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -108,7 +114,7 @@ describe("Security Checklist Contract (BR-SEC-01..10)", () => {
         displayName: "Bé A",
         birthYear: 2021,
         avatarId: "avatar-01",
-        status: "active",
+        status: CHILD_STATUS.ACTIVE,
       })
       .returning();
 
@@ -119,7 +125,7 @@ describe("Security Checklist Contract (BR-SEC-01..10)", () => {
         email: `user_b_${suffix2}@example.com`,
         passwordHash: await hashPassword("password123"),
         displayName: "User B",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 

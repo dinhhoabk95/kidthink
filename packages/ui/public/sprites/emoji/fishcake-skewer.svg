@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xiên chả cá viên</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="fskBall" r="70%"><stop offset="0%" stop-color="#fef3c7" /><stop offset="55%" stop-color="#fbbf24" /><stop offset="100%" stop-color="#d97706" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#78350f" opacity="0.22" rx="32" ry="5" />
+    <path d="M22 98L98 22" stroke="#92400e" stroke-linecap="round" stroke-width="5" />
+    <polygon fill="#fde68a" points="78,24 94,40 70,48" stroke="#78350f" stroke-linejoin="round" stroke-width="3.6" />
+    <circle cx="60" cy="60" fill="url(#fskBall)" r="13" stroke="#78350f" stroke-width="3.6" />
+    <ellipse cx="41" cy="79" fill="#fed7aa" rx="13" ry="10" stroke="#7c2d12" stroke-width="3.6" transform="rotate(-45 41 79)" />
+</svg>

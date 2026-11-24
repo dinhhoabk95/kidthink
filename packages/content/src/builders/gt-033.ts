@@ -66,7 +66,7 @@ export const projectGT033: Projection<"GT-033"> = {
 
     return {
       content_pack: {
-        prompt: "Bé điền màu thích hợp vào ô trống nhé!",
+        prompt: "Bé đan tiếp sắc màu còn thiếu vào chiếu nhé!",
         grid: { rows: gridSize, cols: gridSize },
         palette,
         cells,

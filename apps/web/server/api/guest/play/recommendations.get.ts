@@ -1,8 +1,7 @@
-import { getOwnerDb } from "@mindkid/db";
 import { type AgeBand, isAgeBand } from "@mindkid/shared";
 import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
-import { getGuestRecommendations } from "#server/services/index.js";
+import { getCatalogGuestRecommendations } from "#server/services/catalog-service";
 
 const GuestRecommendationsQuerySchema = z.object({
   limit: z.coerce.number().optional(),
@@ -24,13 +23,8 @@ export default defineEventHandler(async (event) => {
   const ageBand: AgeBand | undefined =
     rawAgeBand && isAgeBand(rawAgeBand) ? rawAgeBand : undefined;
 
-  const db = getOwnerDb();
-
-  // P3.6 (D-MW, BR-REC-04, BR-REC-06): Guest recommendations purely from allow-list 'free'
-  const recommendations = await getGuestRecommendations(db, {
+  return await getCatalogGuestRecommendations({
     ageBand,
     limit,
   });
-
-  return recommendations;
 });

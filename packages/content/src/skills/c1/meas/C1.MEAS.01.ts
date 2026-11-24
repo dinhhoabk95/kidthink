@@ -313,5 +313,20 @@ export const C1_MEAS_01_SEED: SkillSeed = {
       theme: "animal",
       rounds: 3,
     },
+    {
+      code: "GL-C1-MEAS-INTRO-6001",
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      theme: "family",
+    },
+    {
+      code: "GL-C1-MEAS-TAP-6002",
+      template: "GT-001",
+      band: "3-4",
+      difficulty: 1,
+      theme: "body",
+      rounds: 3,
+    },
   ],
 };

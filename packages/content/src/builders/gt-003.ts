@@ -8,7 +8,9 @@ import type {
 import { formatDisplayLabel, formatPluralNoun } from "@mindkid/shared";
 import {
   createRng,
+  pickAgeBandPrompt,
   resolveItemAsset,
+  resolveThemeContainers,
   safeGetItem,
   shuffleDeterministic,
 } from "./utils.js";
@@ -140,12 +142,29 @@ export const projectGT003: Projection<"GT-003"> = {
       })),
     ];
 
+    const containerPair = resolveThemeContainers(opts.theme);
+    const pluralDisplay = formatPluralNoun(displayNoun);
+    const rawContainerLabel = `${containerPair.primaryLabel} ${formatDisplayLabel(displayNoun)}`;
+    const containerLabel =
+      rawContainerLabel.length > 32
+        ? rawContainerLabel.slice(0, 32)
+        : rawContainerLabel;
+    const prompt = pickAgeBandPrompt(
+      opts.band,
+      {
+        mam: `Bé bỏ ${pluralDisplay} vào giỏ nhé!`,
+        choi: `Bé thử xếp ${pluralDisplay} vào giỏ nhé!`,
+        la: `Đố bé gom đủ ${pluralDisplay} vào giỏ!`,
+      },
+      "Bé xếp các vật cùng nhóm vào giỏ nhé!"
+    );
+
     return {
       content_pack: {
-        prompt: `Bé hãy kéo ${formatPluralNoun(displayNoun)} vào giỏ nhé!`,
+        prompt,
         container: {
           container_id: "basket_1",
-          label: `Giỏ ${formatDisplayLabel(displayNoun)}`,
+          label: containerLabel,
           accepts_attribute: targetAttr,
         },
         items: shuffleDeterministic(items, rng),

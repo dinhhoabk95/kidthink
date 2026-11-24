@@ -8,8 +8,9 @@ Ngôn ngữ thị giác của MindKid được định hình theo hướng "Gi�
 - **Nền giấy ấm**: Thay thế nền xám lạnh bằng tông màu đá ấm (`surface-50` đến `surface-200`), gợi cảm giác trang giấy học tập thân thiện.
 - **Giáo cụ gỗ**: Các vật thể tương tác trên bề mặt trẻ có khối, bóng đổ một hướng, bo tròn mềm mại như những khối gỗ Montessori.
 - **Màu nhấn tập trung**: Sử dụng màu xanh mòng két (`brand`) làm điểm tựa nhận diện và màu cam sẫm (`cta`) cho hành động chuyển đổi chính.
+- **Bản sắc mầm non Việt Nam trên bề mặt trẻ ("Tuổi thơ Việt × Giấy Gỗ Mộc")**: Riêng trên không gian chơi của trẻ (`/play/**` và Canvas 2D), triết lý "Giấy và Gỗ" được bản địa hoá sâu thành chất liệu tre ngà, chiếu cói, quạt nan, đạo cụ 10 chủ đề mầm non Việt Nam, âm sắc mộc cầm ngũ cung (*Hò – Xự – Xang – Xê – Cống*) và lời khích lệ đồng dao ấm áp — quy định chi tiết tại [`vn-preschool-identity.md`](vn-preschool-identity.md).
 
-Hướng tiếp cận này giúp sản phẩm giữ được sự nghiêm túc, tạo niềm tin với phụ huynh trả phí, đồng thời tạo ra môi trường học tập nhẹ nhàng, tập trung cho trẻ nhỏ.
+Hướng tiếp cận này giúp sản phẩm giữ được sự nghiêm túc, tạo niềm tin với phụ huynh trả phí, đồng thời tạo ra môi trường học tập nhẹ nhàng, gần gũi văn hoá Việt cho trẻ nhỏ.
 
 ## 2. Sáu nguyên tắc cốt lõi
 

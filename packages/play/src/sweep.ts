@@ -1,28 +1,22 @@
 import {
-  childDailyStats,
   getOwnerDb,
-  playSessions,
-  telemetryEvents,
+  type PlaySessionEntity,
+  type TelemetryEventEntity,
 } from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import {
   computeAbandonedSessionDurationSeconds,
   getDateIct,
   type TelemetryEventInput,
 } from "@mindkid/shared";
-import { and, eq, inArray, sql } from "drizzle-orm";
 import { applyAbandonedSessionMastery } from "#src/mastery";
+import type { DbOrTx } from "#src/types";
 
 const DEFAULT_SWEEP_LIMIT = 100;
 
-function isTelemetryPayloadRecord(
-  val: typeof telemetryEvents.$inferSelect.payload
-): val is NonNullable<TelemetryEventInput["payload"]> {
-  return typeof val === "object" && val !== null && !Array.isArray(val);
-}
-
 async function recordAbandonedSessionStats(params: {
-  readonly db: ReturnType<typeof getOwnerDb>;
-  readonly session: typeof playSessions.$inferSelect;
+  readonly db: DbOrTx;
+  readonly session: PlaySessionEntity;
   readonly playTimeSec: number;
   readonly now: Date;
 }): Promise<void> {
@@ -30,26 +24,14 @@ async function recordAbandonedSessionStats(params: {
   if (!session.childProfileId) {
     return;
   }
+  const repos = createRepositories(db);
   const statDate = getDateIct(session.startedAt);
-  await db
-    .insert(childDailyStats)
-    .values({
-      childProfileId: Number(session.childProfileId),
-      dateIct: statDate,
-      totalPlayTimeSeconds: playTimeSec,
-      levelsAttempted: 1,
-      levelsCompleted: 0,
-      starsEarned: 0,
-      updatedAt: now,
-    })
-    .onConflictDoUpdate({
-      target: [childDailyStats.childProfileId, childDailyStats.dateIct],
-      set: {
-        totalPlayTimeSeconds: sql`${childDailyStats.totalPlayTimeSeconds} + ${playTimeSec}`,
-        levelsAttempted: sql`${childDailyStats.levelsAttempted} + 1`,
-        updatedAt: now,
-      },
-    });
+  await repos.analyticsRollup.incrementAbandonedPlayStats(
+    Number(session.childProfileId),
+    statDate,
+    playTimeSec,
+    now
+  );
 
   if (!session.isPreview && session.templateCode !== "GT-000") {
     await applyAbandonedSessionMastery({
@@ -66,18 +48,13 @@ export async function sweepAbandonedSessions(
   limit = DEFAULT_SWEEP_LIMIT
 ): Promise<number> {
   const db = getOwnerDb();
+  const repos = createRepositories(db);
   const thirtyMinsAgo = new Date(now.getTime() - 30 * 60 * 1000);
 
-  const candidateSessions = await db
-    .select()
-    .from(playSessions)
-    .where(
-      and(
-        eq(playSessions.completionStatus, "in_progress"),
-        sql`${playSessions.startedAt} <= ${thirtyMinsAgo.toISOString()}::timestamptz`
-      )
-    )
-    .limit(limit);
+  const candidateSessions = await repos.playSessions.listStaleInProgress(
+    thirtyMinsAgo,
+    limit
+  );
 
   if (candidateSessions.length === 0) {
     return 0;
@@ -86,14 +63,10 @@ export async function sweepAbandonedSessions(
   const sessionUuids = candidateSessions.map((s) => s.sessionUuid);
   const events =
     sessionUuids.length > 0
-      ? await db
-          .select()
-          .from(telemetryEvents)
-          .where(inArray(telemetryEvents.sessionUuid, sessionUuids))
-          .orderBy(telemetryEvents.seq)
+      ? await repos.telemetry.listBySessions(sessionUuids)
       : [];
 
-  const eventsBySession = new Map<string, typeof events>();
+  const eventsBySession = new Map<string, TelemetryEventEntity[]>();
   for (const e of events) {
     const list = eventsBySession.get(e.sessionUuid);
     if (list) {
@@ -113,7 +86,7 @@ export async function sweepAbandonedSessions(
       seq: e.seq,
       eventName: e.eventName,
       occurredAtMs: e.occurredAtMs,
-      payload: isTelemetryPayloadRecord(e.payload) ? e.payload : null,
+      payload: e.payload,
       clientTimestamp: e.clientTimestamp,
     }));
 
@@ -125,20 +98,11 @@ export async function sweepAbandonedSessions(
           )
         : Math.max(0, session.durationSeconds ?? 0);
 
-    const [updatedRow] = await db
-      .update(playSessions)
-      .set({
-        completionStatus: "abandoned",
-        durationSeconds: playTimeSec,
-        updatedAt: now,
-      })
-      .where(
-        and(
-          eq(playSessions.id, session.id),
-          eq(playSessions.completionStatus, "in_progress")
-        )
-      )
-      .returning({ id: playSessions.id });
+    const updatedRow = await repos.playSessions.abandonExpiredById(
+      session.id,
+      playTimeSec,
+      now
+    );
 
     if (!updatedRow) {
       continue;

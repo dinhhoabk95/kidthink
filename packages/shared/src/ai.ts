@@ -21,31 +21,37 @@ export const PROMPT_VERSIONS = {
 
 export const AI_SUGGESTION_LABEL = "Gợi ý";
 
-export const aiEgressReportSkillSchema = z.object({
-  code: z.string().min(1),
-  name: z.string().min(1),
-  mastery_label: z.string().min(1),
-  attempts: z.number().int().min(0),
-});
+export const aiEgressReportSkillSchema = z
+  .object({
+    code: z.string().min(1),
+    name: z.string().min(1),
+    mastery_label: z.string().min(1),
+    attempts: z.number().int().min(0),
+  })
+  .strict();
 
 import { AGE_BANDS } from "./age-bands.js";
 
-export const aiEgressReportTotalsSchema = z.object({
-  sessions: z.number().int().min(0),
-  minutes: z.number().int().min(0),
-  completion_rate: z.number().min(0).max(1),
-});
+export const aiEgressReportTotalsSchema = z
+  .object({
+    sessions: z.number().int().min(0),
+    minutes: z.number().int().min(0),
+    completion_rate: z.number().min(0).max(1),
+  })
+  .strict();
 
 /**
  * Closed allow-list schema for AI report egress payload (BR-AIA-01, BR-AIA-02, BR-CDC-06).
  * NEVER includes child_uuid, display_name, birth_year, user_id, or raw telemetry.
  */
-export const aiEgressReportPayloadSchema = z.object({
-  age_band: z.enum(AGE_BANDS),
-  skills: z.array(aiEgressReportSkillSchema).min(1),
-  period_days: z.number().int().min(1).max(365),
-  totals: aiEgressReportTotalsSchema,
-});
+export const aiEgressReportPayloadSchema = z
+  .object({
+    age_band: z.enum(AGE_BANDS),
+    skills: z.array(aiEgressReportSkillSchema).min(1),
+    period_days: z.number().int().min(1).max(365),
+    totals: aiEgressReportTotalsSchema,
+  })
+  .strict();
 
 export type AiEgressReportSkill = z.infer<typeof aiEgressReportSkillSchema>;
 export type AiEgressReportTotals = z.infer<typeof aiEgressReportTotalsSchema>;

@@ -1,0 +1,7 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chiếc nạng gỗ hỗ trợ</title>
+  <ellipse cx="60" cy="106" fill="#451a03" opacity="0.22" rx="22" ry="4.5" />
+    <path d="M40 24C48 20 72 20 80 24" stroke="#78350f" stroke-linecap="round" stroke-width="8" />
+    <path d="M46 25L57 72V102M74 25L63 72M49 52H71" stroke="#b45309" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" />
+    <circle cx="60" cy="102" fill="#334155" r="4.5" />
+</svg>

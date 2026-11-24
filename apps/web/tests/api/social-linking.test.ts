@@ -4,8 +4,10 @@ import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
 import {
   auditLogs,
   getOwnerDb,
+  NOTIFICATION_CHANNEL,
   notificationDeliveries,
   notifications,
+  USER_STATUS,
   userAccounts,
   users,
 } from "@mindkid/db";
@@ -128,7 +130,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, BR-SIB-1
         .values({
           email: `parent_linked_${Date.now()}_${Math.random()}@example.com`,
           displayName: "Parent Linked",
-          status: "active",
+          status: USER_STATUS.ACTIVE,
         })
         .returning();
       if (!testUser) {
@@ -171,7 +173,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, BR-SIB-1
           email,
           displayName: "Link BA User",
           passwordHash,
-          status: "active",
+          status: USER_STATUS.ACTIVE,
           emailVerified: true,
           emailVerifiedAt: new Date(),
         })
@@ -278,7 +280,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, BR-SIB-1
         .values({
           email: `reauth_test_${Date.now()}_${Math.random()}@example.com`,
           displayName: "Reauth Test",
-          status: "active",
+          status: USER_STATUS.ACTIVE,
         })
         .returning();
 
@@ -299,7 +301,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, BR-SIB-1
           email: `passwordless_${Date.now()}_${Math.random()}@example.com`,
           displayName: "Passwordless User",
           passwordHash: null,
-          status: "active",
+          status: USER_STATUS.ACTIVE,
         })
         .returning();
 
@@ -338,7 +340,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, BR-SIB-1
           email: `has_password_${Date.now()}_${Math.random()}@example.com`,
           displayName: "Has Password",
           passwordHash: "$argon2id$v=19$m=19456,p=1,t=2$dummyhash",
-          status: "active",
+          status: USER_STATUS.ACTIVE,
         })
         .returning();
 
@@ -406,7 +408,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, BR-SIB-1
           .from(notificationDeliveries)
           .where(eq(notificationDeliveries.notificationId, notif.id));
         expect(deliveries).toHaveLength(1);
-        expect(deliveries[0]?.channel).toBe("email");
+        expect(deliveries[0]?.channel).toBe(NOTIFICATION_CHANNEL.EMAIL);
       }
     });
 
@@ -417,7 +419,7 @@ describe("Task 6 — Social Account Linking & Unlinking (BR-SLK-01..10, BR-SIB-1
           email: `multi_identity_${Date.now()}_${Math.random()}@example.com`,
           displayName: "Multi Identity User",
           passwordHash: null,
-          status: "active",
+          status: USER_STATUS.ACTIVE,
         })
         .returning();
 

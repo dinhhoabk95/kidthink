@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Lát thịt áp chảo</title>
+  <defs>
+    <linearGradient id="bcnRed" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#ef4444" /><stop offset="100%" stop-color="#991b1b" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#7f1d1d" opacity="0.22" rx="38" ry="5" />
+    <path d="M18 42C34 32 48 52 64 42C80 32 92 48 102 40L98 58C86 66 74 50 58 60C42 70 28 50 14 60Z" fill="url(#bcnRed)" stroke="#7f1d1d" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M20 50C36 40 50 60 66 50C80 42 90 54 98 48" stroke="#fde68a" stroke-linecap="round" stroke-opacity="0.92" stroke-width="4.5" />
+    <path d="M20 70C36 60 50 80 66 70C82 60 94 76 104 68L100 86C88 94 76 78 60 88C44 98 30 78 16 88Z" fill="url(#bcnRed)" stroke="#7f1d1d" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M22 78C38 68 52 88 68 78C82 70 92 82 100 76" stroke="#fde68a" stroke-linecap="round" stroke-opacity="0.92" stroke-width="4.5" />
+</svg>

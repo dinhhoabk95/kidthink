@@ -1,6 +1,11 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { getOwnerDb } from "#src/index";
+import {
+  getOwnerDb,
+  NOTIFICATION_ENDPOINT_PROVIDER,
+  NOTIFICATION_ENDPOINT_STATUS,
+  RECIPIENT_TYPE,
+} from "#src/index";
 import { users } from "#src/schema/identity";
 import {
   notificationEndpoints,
@@ -17,7 +22,7 @@ describe("Notification Inbox & Endpoints DB Integration Tests", () => {
     const [notif] = await db
       .insert(notifications)
       .values({
-        recipientType: "user",
+        recipientType: RECIPIENT_TYPE.USER,
         recipientId: 999_991,
         templateCode: tag,
         payload: { title: "Test Title", body: "Test Body" },
@@ -85,11 +90,11 @@ describe("Notification Inbox & Endpoints DB Integration Tests", () => {
       .insert(notificationEndpoints)
       .values({
         userId: user.id,
-        provider: "fcm_web",
+        provider: NOTIFICATION_ENDPOINT_PROVIDER.FCM_WEB,
         clientInstallationId: installationId,
         tokenEncrypted: "enc_v1_aes256_mock_ciphertext",
         tokenFingerprint: fingerprint,
-        status: "active",
+        status: NOTIFICATION_ENDPOINT_STATUS.ACTIVE,
       })
       .returning();
     if (!endpoint) {
@@ -98,18 +103,18 @@ describe("Notification Inbox & Endpoints DB Integration Tests", () => {
 
     expect(endpoint).toBeDefined();
     expect(endpoint.userId).toBe(user.id);
-    expect(endpoint.provider).toBe("fcm_web");
-    expect(endpoint.status).toBe("active");
+    expect(endpoint.provider).toBe(NOTIFICATION_ENDPOINT_PROVIDER.FCM_WEB);
+    expect(endpoint.status).toBe(NOTIFICATION_ENDPOINT_STATUS.ACTIVE);
 
     // Duplicate fingerprint fails (UNIQUE constraint)
     await expect(
       db.insert(notificationEndpoints).values({
         userId: user.id,
-        provider: "fcm_web",
+        provider: NOTIFICATION_ENDPOINT_PROVIDER.FCM_WEB,
         clientInstallationId: crypto.randomUUID(),
         tokenEncrypted: "enc_v1_different",
         tokenFingerprint: fingerprint,
-        status: "active",
+        status: NOTIFICATION_ENDPOINT_STATUS.ACTIVE,
       })
     ).rejects.toThrow();
 
@@ -117,11 +122,11 @@ describe("Notification Inbox & Endpoints DB Integration Tests", () => {
     await expect(
       db.insert(notificationEndpoints).values({
         userId: user.id,
-        provider: "fcm_web",
+        provider: NOTIFICATION_ENDPOINT_PROVIDER.FCM_WEB,
         clientInstallationId: installationId,
         tokenEncrypted: "enc_v1_different_2",
         tokenFingerprint: `hmac_fp_different_${Date.now()}`,
-        status: "active",
+        status: NOTIFICATION_ENDPOINT_STATUS.ACTIVE,
       })
     ).rejects.toThrow();
 

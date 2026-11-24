@@ -69,13 +69,30 @@ export function canPromptPwaInstall(params: {
 export const OFFLINE_PACK_CACHE_NAME = "mindkid-offline-pack-v1";
 export const OFFLINE_PACK_MAX_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB max per pack
 
+const OfflineSyncJsonPrimitiveSchema = z.union([
+  z.string(),
+  z.number(),
+  z.boolean(),
+  z.null(),
+]);
+
+export const OfflineSyncPayloadValueSchema = z.union([
+  OfflineSyncJsonPrimitiveSchema,
+  z.array(OfflineSyncJsonPrimitiveSchema),
+  z.record(z.string(), OfflineSyncJsonPrimitiveSchema),
+]);
+
+export type OfflineSyncPayloadValue = z.infer<
+  typeof OfflineSyncPayloadValueSchema
+>;
+
 export const OfflineSyncEventItemSchema = z.object({
   session_uuid: z.string().uuid(),
   seq: z.number().int().min(1),
-  event_name: z.string().min(1),
+  event_name: z.string().min(1).max(64),
   occurred_at_ms: z.number().int().nonnegative().optional(),
-  payload: z.record(z.string(), z.unknown()).optional(),
-  client_timestamp: z.string().optional(),
+  payload: z.record(z.string(), OfflineSyncPayloadValueSchema).optional(),
+  client_timestamp: z.string().datetime().optional(),
 });
 
 export type OfflineSyncEventItem = z.infer<typeof OfflineSyncEventItemSchema>;

@@ -1,38 +1,24 @@
-import { getOwnerDb } from "@mindkid/db";
-import { allowedTiers } from "@mindkid/shared";
-import { getDailyAdventure } from "#server/services/index.js";
-import { requireOwnedActiveChild } from "#server/utils/active-child-runtime";
+import { NoActiveChildError } from "@mindkid/errors/child";
+import { deleteCookie, getCookie } from "h3";
+import { getChildAdventureExperience } from "#server/services/play-experience-service";
 import { getOrSetGuestDeviceId } from "#server/utils/auth-runtime";
 import { defineApiRoute } from "#server/utils/define-api-route";
-import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
-/** Chuyến phiêu lưu một chạm hợp ZPD — `daily-adventure-flow.md` §8. */
 export default defineApiRoute({
   auth: "user",
   async handler({ event, auth }) {
-    const db = getOwnerDb();
-    const userId = Number(auth.user_id);
-    const [child, activeKeys] = await Promise.all([
-      requireOwnedActiveChild(event, db, userId),
-      resolveUserActiveEntitlements(userId),
-    ]);
-
-    const userAllowedTiers = await allowedTiers(
-      {
-        kind: "user",
-        user_id: String(userId),
-        active_child_id: String(child.id),
-      },
-      activeKeys
-    );
-
-    return await getDailyAdventure(db, {
-      userId,
-      childId: child.id,
-      childUuid: child.uuid,
-      childDisplayName: child.displayName,
-      allowedTiers: userAllowedTiers,
-      guestDeviceId: getOrSetGuestDeviceId(event),
-    });
+    const candidateUuid = getCookie(event, "active_child_id");
+    try {
+      return await getChildAdventureExperience(
+        Number(auth.user_id),
+        candidateUuid,
+        () => getOrSetGuestDeviceId(event)
+      );
+    } catch (err) {
+      if (err instanceof NoActiveChildError && candidateUuid) {
+        deleteCookie(event, "active_child_id", { path: "/" });
+      }
+      throw err;
+    }
   },
 });

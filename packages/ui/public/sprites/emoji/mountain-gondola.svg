@@ -1,0 +1,12 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Cáp treo vượt núi</title>
+  <defs>
+    <linearGradient id="gndRed" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#fb7185" /><stop offset="100%" stop-color="#dc2626" /></linearGradient>
+  </defs>
+  <path d="M12 36L108 16" stroke="#1e293b" stroke-linecap="round" stroke-width="4.5" />
+    <circle cx="60" cy="26" fill="#facc15" r="5" stroke="#78350f" stroke-width="3" />
+    <path d="M60 31V46" stroke="#1e293b" stroke-width="4" />
+    <rect fill="url(#gndRed)" height="48" rx="12" stroke="#7f1d1d" stroke-width="3.8" width="56" x="32" y="46" />
+    <rect fill="#bae6fd" height="20" rx="4" stroke="#1e3a8a" stroke-width="3" width="20" x="38" y="54" />
+    <rect fill="#bae6fd" height="20" rx="4" stroke="#1e3a8a" stroke-width="3" width="20" x="62" y="54" />
+</svg>

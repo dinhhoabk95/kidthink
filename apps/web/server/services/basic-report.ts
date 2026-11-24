@@ -1,12 +1,10 @@
 import { type MasteryLabel, masteryLabel } from "@mindkid/adaptive";
 import {
-  childDailyStats,
-  childProfiles,
-  childSessionSummaries,
-  contentSkillMap,
-  gameLevels,
-  getOwnerDb,
-  skills,
+  CHILD_STATUS_CODEC,
+  CONTENT_ENTITY_TYPE,
+  type ContentSkillMapEntity,
+  PLAY_COMPLETION_STATUS_CODEC,
+  type SkillEntity,
 } from "@mindkid/db";
 import {
   BASIC_REPORT_DISCLAIMER,
@@ -27,7 +25,7 @@ import {
   type BasicReportVersionMarker,
   FEATURED_GUEST_LEVELS,
 } from "@mindkid/shared";
-import { and, asc, desc, eq, gte, lte } from "drizzle-orm";
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 interface SessionSummaryRow {
   id: number;
@@ -160,7 +158,7 @@ function computeSkillsTouchedSection(params: {
   sessionRows: SessionSummaryRow[];
   dailyRows: DailyStatRow[];
   totalSessionsCount: number;
-  skillsByLevelId: Map<number, (typeof skills.$inferSelect)[]>;
+  skillsByLevelId: Map<number, SkillEntity[]>;
 }): {
   section: BasicReportSkillsTouchedSection;
   overallLabel: MasteryLabel;
@@ -170,7 +168,7 @@ function computeSkillsTouchedSection(params: {
 
   const sessionsBySkillId = new Map<
     number,
-    { skill: typeof skills.$inferSelect; sessions: SessionSummaryRow[] }
+    { skill: SkillEntity; sessions: SessionSummaryRow[] }
   >();
 
   for (const s of sessionRows) {
@@ -236,13 +234,14 @@ function computeSkillsTouchedSection(params: {
   };
 }
 
-export type BasicReportLevelRow = Pick<
-  typeof gameLevels.$inferSelect,
-  "id" | "code" | "title" | "thumbnailEmoji"
-> & {
-  entityId?: number;
-  status?: string;
-};
+export interface BasicReportLevelRow {
+  readonly id: number;
+  readonly code: string;
+  readonly title: string;
+  readonly thumbnailEmoji: string | null;
+  readonly entityId?: number;
+  readonly status?: string;
+}
 
 function computeFavoriteGamesSection(params: {
   sessionRows: SessionSummaryRow[];
@@ -433,11 +432,11 @@ function computeSuggestionsSection(
 
 function buildLevelSkillMaps(params: {
   allLevels: BasicReportLevelRow[];
-  allMappings: (typeof contentSkillMap.$inferSelect)[];
-  allSkills: (typeof skills.$inferSelect)[];
+  allMappings: ContentSkillMapEntity[];
+  allSkills: SkillEntity[];
 }): {
   levelById: Map<number, BasicReportLevelRow>;
-  skillsByLevelId: Map<number, (typeof skills.$inferSelect)[]>;
+  skillsByLevelId: Map<number, SkillEntity[]>;
 } {
   const { allLevels, allMappings, allSkills } = params;
   const levelById = new Map<number, BasicReportLevelRow>();
@@ -452,12 +451,12 @@ function buildLevelSkillMaps(params: {
     levelIdsByEntityId.set(eId, list);
   }
 
-  const skillById = new Map<number, typeof skills.$inferSelect>();
+  const skillById = new Map<number, SkillEntity>();
   for (const sk of allSkills) {
     skillById.set(Number(sk.id), sk);
   }
 
-  const skillsByLevelId = new Map<number, (typeof skills.$inferSelect)[]>();
+  const skillsByLevelId = new Map<number, SkillEntity[]>();
   for (const m of allMappings) {
     const sk = skillById.get(Number(m.skillId));
     if (!sk) {
@@ -494,8 +493,8 @@ export interface BuildBasicReportDataInput {
   dailyRows: DailyStatRow[];
   sessionRows: SessionSummaryRow[];
   allLevels: BasicReportLevelRow[];
-  allMappings: (typeof contentSkillMap.$inferSelect)[];
-  allSkills: (typeof skills.$inferSelect)[];
+  allMappings: ContentSkillMapEntity[];
+  allSkills: SkillEntity[];
 }
 
 export function buildBasicReportFromData(
@@ -599,21 +598,17 @@ export function buildBasicReportFromData(
 /**
  * BR-BRP-01..08 & spec §4, §5, §7, §8
  * Builds Basic Child Report strictly from rollup tables (child_daily_stats &
- * child_session_summaries), never querying telemetry_events or mastery_state,
+ * child_session_summaries), never querying telemetry_events or raw mastery rows,
  * and never exposing raw p_learn or mastery percentages.
  */
 export async function buildBasicReport(params: {
   childId: number;
   period: BasicReportPeriod;
 }): Promise<BasicReportResult> {
-  const db = getOwnerDb();
   const { childId, period } = params;
+  const repos = useOwnerRepositories();
 
-  const [child] = await db
-    .select()
-    .from(childProfiles)
-    .where(eq(childProfiles.id, childId));
-
+  const child = await repos.childProfiles.findById(childId);
   if (!child) {
     throw new Error(`Child profile #${childId} not found`);
   }
@@ -624,51 +619,39 @@ export async function buildBasicReport(params: {
   const fromDateIct = formatDateIct(startDate);
   const toDateIct = formatDateIct(now);
 
-  const [dailyRows, sessionRows, allLevels, allMappings, allSkills] =
-    await Promise.all([
-      db
-        .select()
-        .from(childDailyStats)
-        .where(
-          and(
-            eq(childDailyStats.childProfileId, childId),
-            gte(childDailyStats.dateIct, fromDateIct),
-            lte(childDailyStats.dateIct, toDateIct)
-          )
-        )
-        .orderBy(asc(childDailyStats.dateIct)),
-      db
-        .select()
-        .from(childSessionSummaries)
-        .where(
-          and(
-            eq(childSessionSummaries.childProfileId, childId),
-            gte(childSessionSummaries.createdAt, startDate)
-          )
-        )
-        .orderBy(desc(childSessionSummaries.createdAt)),
-      db
-        .select({
-          id: gameLevels.id,
-          code: gameLevels.code,
-          title: gameLevels.title,
-          thumbnailEmoji: gameLevels.thumbnailEmoji,
-        })
-        .from(gameLevels),
-      db
-        .select()
-        .from(contentSkillMap)
-        .where(eq(contentSkillMap.entityType, "game_level")),
-      db.select().from(skills).orderBy(asc(skills.position)),
-    ]);
+  const [
+    childDailyStats,
+    childSessionSummaries,
+    allLevels,
+    allMappings,
+    allSkills,
+  ] = await Promise.all([
+    repos.analyticsRollup.listChildDailyStatsRange(
+      childId,
+      fromDateIct,
+      toDateIct
+    ),
+    repos.analyticsRollup.listSummariesForChildSince(childId, startDate),
+    repos.gameLevels.listAllOrdered(2000),
+    repos.tagging.listSkillMaps(CONTENT_ENTITY_TYPE.GAME_LEVEL),
+    repos.taxonomy.listSkills(),
+  ]);
 
   return buildBasicReportFromData({
-    child,
+    child: {
+      ...child,
+      status: CHILD_STATUS_CODEC.toLabel(child.status),
+    },
     period,
     fromDateIct,
     toDateIct,
-    dailyRows,
-    sessionRows,
+    dailyRows: childDailyStats,
+    sessionRows: childSessionSummaries.map((s) => ({
+      ...s,
+      completionStatus: PLAY_COMPLETION_STATUS_CODEC.toLabel(
+        s.completionStatus
+      ),
+    })),
     allLevels,
     allMappings,
     allSkills,

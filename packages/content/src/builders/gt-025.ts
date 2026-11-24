@@ -101,7 +101,7 @@ export const projectGT025: Projection<"GT-025"> = {
 
     return {
       content_pack: {
-        prompt: "Bé hãy tìm điểm khác biệt giữa hai bức hình nhé!",
+        prompt: "Đố bé tinh mắt tìm điểm khác giữa hai tranh nhé!",
         target_count: targetCount,
         left_objects,
         right_objects,

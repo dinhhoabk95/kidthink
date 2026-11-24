@@ -7,7 +7,46 @@ import {
   type ActionResult,
   defineTemplate,
   type GameAction,
+  type GameActionValue,
 } from "#src/contracts/types";
+import {
+  GT000AssetRepresentationSchema,
+  GT000InteractionHintSchema,
+  GT000SceneBoardSchema,
+  GT000StoryContextSchema,
+} from "./scene-board-schema.js";
+
+// biome-ignore lint/performance/noBarrelFile: Re-export scene-board contracts on canonical GT-000 template module
+export {
+  type GT000AssetRepresentation,
+  GT000AssetRepresentationSchema,
+  type GT000InteractionHint,
+  GT000InteractionHintSchema,
+  type GT000PartWholeOperation,
+  GT000PartWholeOperationSchema,
+  type GT000QuantityRepKind,
+  GT000QuantityRepKindSchema,
+  type GT000RuleMemoryVariant,
+  GT000RuleMemoryVariantSchema,
+  type GT000SceneBoard,
+  type GT000SceneBoardMode,
+  GT000SceneBoardSchema,
+  type GT000ShapeBadge,
+  GT000ShapeBadgeSchema,
+  type GT000SortingBasket,
+  GT000SortingBasketSchema,
+  type GT000SpatialAnchorProp,
+  GT000SpatialAnchorPropSchema,
+  type GT000SpatialRelation,
+  GT000SpatialRelationSchema,
+  type GT000StoryContext,
+  GT000StoryContextSchema,
+  type GT000ToneMark,
+  GT000ToneMarkSchema,
+  resolveStepInteractionHint,
+  resolveStepSceneBoard,
+  resolveStoryContext,
+} from "./scene-board-schema.js";
 
 const GT000AssetKindSchema = z.enum(["glyph", "word", "image"]);
 
@@ -22,6 +61,8 @@ export const GT000AssetSchema = z
     value: z.number().optional(),
     image_ref: assetSchema().optional(),
     contrast_group: z.string().min(1),
+    syllables: z.array(z.string().min(1)).min(1).max(6).optional(),
+    representation: GT000AssetRepresentationSchema.optional(),
   })
   .refine((asset) => Boolean(asset.glyph || asset.image_ref), {
     message:
@@ -32,6 +73,8 @@ const GT000StepPresentSchema = z.object({
   action: z.literal("present"),
   target_asset_id: z.string().min(1),
   narration_line: z.string().optional(),
+  interaction_hint: GT000InteractionHintSchema.optional(),
+  scene_board: GT000SceneBoardSchema.optional(),
 });
 
 /**
@@ -45,6 +88,7 @@ const GT000StepEchoSchema = z.object({
   target_asset_id: z.string().min(1),
   repeat_count: z.number().int().min(1).max(3).default(1),
   prompt_line: z.string().optional(),
+  scene_board: GT000SceneBoardSchema.optional(),
 });
 
 const GT000StepRecogniseSchema = z.object({
@@ -52,6 +96,7 @@ const GT000StepRecogniseSchema = z.object({
   target_asset_id: z.string().min(1),
   distractor_asset_ids: z.array(z.string().min(1)).min(1).max(3),
   prompt_line: z.string().optional(),
+  scene_board: GT000SceneBoardSchema.optional(),
 });
 
 const GT000StepLinkSchema = z.object({
@@ -59,6 +104,7 @@ const GT000StepLinkSchema = z.object({
   source_asset_id: z.string().min(1),
   target_asset_id: z.string().min(1),
   prompt_line: z.string().optional(),
+  scene_board: GT000SceneBoardSchema.optional(),
 });
 
 const GT000StepRecallSchema = z.object({
@@ -66,9 +112,10 @@ const GT000StepRecallSchema = z.object({
   target_asset_id: z.string().min(1),
   option_asset_ids: z.array(z.string().min(1)).min(2).max(4),
   prompt_line: z.string().optional(),
+  scene_board: GT000SceneBoardSchema.optional(),
 });
 
-const GT000StepSchema = z.discriminatedUnion("action", [
+export const GT000StepSchema = z.discriminatedUnion("action", [
   GT000StepPresentSchema,
   GT000StepEchoSchema,
   GT000StepRecogniseSchema,
@@ -82,6 +129,8 @@ export const GT000SegmentSchema = z
     asset_ids: z.array(z.string().min(1)).min(2).max(6),
     steps: z.array(GT000StepSchema).min(2).max(12),
     is_review: z.boolean().default(false),
+    scene_cue: z.string().min(1).optional(),
+    milestone_line: z.string().min(1).optional(),
   })
   .refine((seg) => seg.is_review || seg.asset_ids.length <= 3, {
     message:
@@ -124,6 +173,7 @@ export const GT000ContentSchema = z
       sequence_no: z.number().int().min(1).default(1),
     }),
     prompt: z.string().optional(),
+    story_context: GT000StoryContextSchema.optional(),
     assets: z.array(GT000AssetSchema).min(2).max(21),
     segments: z.array(GT000SegmentSchema).min(1).max(8).optional(),
     steps: z.array(GT000StepSchema).min(2).max(12).optional(),
@@ -461,12 +511,29 @@ export function resolveGT000InitialState(
   };
 }
 
-export function readGT000ActionPayload(
-  action: GameAction
-): Record<string, string | boolean | number> {
-  return typeof action.data === "object" && action.data !== null
-    ? (action.data as Record<string, string | boolean | number>)
-    : {};
+export type GT000ActionPayload = Record<string, string | boolean | number>;
+
+function isPrimitiveActionField(
+  val: GameActionValue
+): val is string | boolean | number {
+  return (
+    typeof val === "string" ||
+    typeof val === "boolean" ||
+    typeof val === "number"
+  );
+}
+
+export function readGT000ActionPayload(action: GameAction): GT000ActionPayload {
+  if (typeof action.data !== "object" || action.data === null) {
+    return {};
+  }
+  const out: GT000ActionPayload = {};
+  for (const [key, val] of Object.entries(action.data)) {
+    if (isPrimitiveActionField(val)) {
+      out[key] = val;
+    }
+  }
+  return out;
 }
 
 export function validateGT000SessionAction(

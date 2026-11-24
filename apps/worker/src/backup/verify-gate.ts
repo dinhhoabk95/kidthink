@@ -7,8 +7,8 @@
  * record with `status = "success"`, `restoredRows > 0`, and timestamp within
  * the last 7 days relative to `now`.
  */
-import { backupLog, getOwnerDb } from "@mindkid/db";
-import { desc, eq } from "drizzle-orm";
+import { BACKUP_DIR } from "@mindkid/config/backup";
+import { listRecentLocalBackupLogs } from "#src/backup/backup-log-store";
 
 export const BACKUP_VERIFY_MAX_AGE_DAYS = 7;
 export const BACKUP_VERIFY_MAX_AGE_MS =
@@ -128,18 +128,15 @@ export function assertRecentVerifiedBackup(
 }
 
 /**
- * Queries `backup_log` in Postgres and evaluates the BR-BAK-06 7-day verify gate.
+ * Reads local backup_log entries and evaluates the BR-BAK-06 7-day verify gate.
  */
-export async function checkDatabaseBackupVerifyGate(
-  now: Date
+export function checkDatabaseBackupVerifyGate(
+  now: Date,
+  directory: string = BACKUP_DIR
 ): Promise<BackupVerifyGateResult> {
-  const db = getOwnerDb();
-  const rows = await db
-    .select()
-    .from(backupLog)
-    .where(eq(backupLog.backupType, "verify"))
-    .orderBy(desc(backupLog.startedAt))
-    .limit(20);
+  const rows = listRecentLocalBackupLogs(directory, 20, {
+    backupType: "verify",
+  });
 
-  return evaluateBackupVerifyGate(rows, now);
+  return Promise.resolve(evaluateBackupVerifyGate(rows, now));
 }

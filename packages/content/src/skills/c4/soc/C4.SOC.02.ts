@@ -264,5 +264,23 @@ export const C4_SOC_02_SEED: SkillSeed = {
       theme: "nature",
       rounds: 3,
     },
+    {
+      code: "GL-C4-SOC-INTRO-6002",
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      theme: "job",
+      rounds: 3,
+      sequence_no: 61,
+    },
+    {
+      code: "GL-C4-SOC-MATCH-6004",
+      template: "GT-005",
+      band: "3-4",
+      difficulty: 2,
+      theme: "home",
+      rounds: 3,
+      sequence_no: 63,
+    },
   ],
 };

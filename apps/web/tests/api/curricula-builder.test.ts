@@ -1,4 +1,11 @@
-import { curricula, getOwnerDb, managers } from "@mindkid/db";
+import {
+  ACCESS_TIER,
+  curricula,
+  getOwnerDb,
+  MANAGER_ROLE,
+  managers,
+  PROGRAM_TYPE,
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import getCurriculaHandler from "#server/api/managers/curricula/index.get";
@@ -22,7 +29,7 @@ beforeEach(async () => {
         email: "curriculum-tester@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "Curriculum Tester",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
         isActive: true,
       })
       .onConflictDoUpdate({
@@ -97,12 +104,12 @@ describe("Curriculum Catalog API Endpoints", () => {
       .values({
         code,
         title: "Chương Trình Test API",
-        programType: "age_based",
+        programType: PROGRAM_TYPE.AGE_BASED,
         targetAgeMin: 3,
         targetAgeMax: 4,
         durationWeeks: 8,
         sessionsPerWeek: 3,
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
       })
       .onConflictDoNothing();
 

@@ -1,69 +1,23 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Voi con</title>
   <defs>
-    <radialGradient cx="38%" cy="32%" id="eleBody" r="70%">
-      <stop offset="0%" stop-color="#e0f2fe" />
-      <stop offset="52%" stop-color="#93c5fd" />
-      <stop offset="100%" stop-color="#60a5fa" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="eleGrey" r="70%"><stop offset="0%" stop-color="#e2e8f0" /><stop offset="55%" stop-color="#94a3b8" /><stop offset="100%" stop-color="#64748b" /></radialGradient>
   </defs>
-  <ellipse cx="60" cy="80" fill="#1e3a8a" opacity="0.24" rx="44" ry="26" />
-  <ellipse
-    cx="24"
-    cy="58"
-    fill="url(#eleBody)"
-    rx="18"
-    ry="25"
-    stroke="#1e3a8a"
-    stroke-width="4"
-  />
-  <ellipse cx="24" cy="59" fill="#fbcfe8" fill-opacity="0.78" rx="10" ry="16" />
-  <ellipse
-    cx="96"
-    cy="58"
-    fill="url(#eleBody)"
-    rx="18"
-    ry="25"
-    stroke="#1e3a8a"
-    stroke-width="4"
-  />
-  <ellipse cx="96" cy="59" fill="#fbcfe8" fill-opacity="0.78" rx="10" ry="16" />
-  <circle
-    cx="60"
-    cy="58"
-    fill="url(#eleBody)"
-    r="31"
-    stroke="#1e3a8a"
-    stroke-width="4"
-  />
-  <circle cx="46" cy="53" fill="#1c1917" r="4.6" />
-  <circle cx="44.5" cy="51.2" fill="#ffffff" r="1.9" />
-  <circle cx="74" cy="53" fill="#1c1917" r="4.6" />
-  <circle cx="72.5" cy="51.2" fill="#ffffff" r="1.9" />
-  <circle cx="38" cy="65" fill="#fb7185" fill-opacity="0.48" r="5" />
-  <circle cx="82" cy="65" fill="#fb7185" fill-opacity="0.48" r="5" />
-  <path
-    d="M52 63C52 81 56 97 69 97C77 97 80 90 75 86C71 84 68 88 66 86C63 83 64 72 66 63"
-    fill="url(#eleBody)"
-    stroke="#1e3a8a"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <path
-    d="M56 71H63M57 78H63"
-    stroke="#1e40af"
-    stroke-linecap="round"
-    stroke-opacity="0.55"
-    stroke-width="2.4"
-  />
-  <ellipse
-    cx="48"
-    cy="38"
-    fill="#ffffff"
-    fill-opacity="0.6"
-    rx="8"
-    ry="3.6"
-    transform="rotate(-20 48 38)"
-  />
+  <ellipse cx="62" cy="106" fill="#1e293b" opacity="0.22" rx="42" ry="5.5" />
+    <!-- Far pillar legs -->
+    <path d="M51 76V103H61V76ZM82 76V103H92V76Z" fill="#64748b" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.5" />
+    <!-- Domed realistic grey body & tail -->
+    <path d="M40 54C44 40 62 36 80 40C95 44 102 56 100 72C98 83 88 86 74 86H48C38 86 36 68 40 54Z" fill="url(#eleGrey)" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M100 60C107 66 108 76 105 83" stroke="#1e293b" stroke-linecap="round" stroke-width="3.5" />
+    <!-- Near pillar legs with pale toenails -->
+    <path d="M43 76V105H55V76ZM74 76V105H86V76Z" fill="url(#eleGrey)" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M44 103H54M75 103H85" stroke="#f8fafc" stroke-dasharray="3 2" stroke-linecap="round" stroke-width="3" />
+    <!-- Head + curved trunk -->
+    <path d="M35 34C22 34 15 43 15 56C15 70 11 84 21 88C27 90 31 85 28 81C24 79 24 68 26 60C34 62 44 57 46 47C47 39 42 34 35 34Z" fill="url(#eleGrey)" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.8" />
+    <!-- Large fan ear -->
+    <path d="M38 36C51 35 58 46 54 60C51 69 41 69 37 60C35 53 35 42 38 36Z" fill="url(#eleGrey)" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M41 42C48 42 52 49 49 58C47 63 42 63 40 57Z" fill="#fda4af" opacity="0.55" />
+    <!-- Ivory tusk -->
+    <path d="M27 59C20 63 15 62 12 57C17 57 22 57 26 55Z" fill="#fffbeb" stroke="#78350f" stroke-linejoin="round" stroke-width="2.8" />
+    <circle cx="27" cy="46" fill="#1c1917" r="2.6" /><circle cx="26.3" cy="45.2" fill="#ffffff" r="1" />
 </svg>

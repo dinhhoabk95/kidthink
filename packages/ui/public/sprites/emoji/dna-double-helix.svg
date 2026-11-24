@@ -1,0 +1,7 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Chuỗi xoắn di truyền</title>
+  <ellipse cx="60" cy="106" fill="#1e293b" opacity="0.22" rx="28" ry="4.5" />
+    <path d="M36 26H84M40 42H80M40 78H80M36 94H84" stroke="#b45309" stroke-linecap="round" stroke-width="4.5" />
+    <path d="M34 18C34 44 86 44 86 60C86 76 34 76 34 102" fill="none" stroke="#1d4ed8" stroke-linecap="round" stroke-width="7" />
+    <path d="M86 18C86 44 34 44 34 60C34 76 86 76 86 102" fill="none" stroke="#dc2626" stroke-linecap="round" stroke-width="7" />
+</svg>

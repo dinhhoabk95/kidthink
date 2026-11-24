@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ăng-ten chảo vệ tinh</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="satBowl" r="70%"><stop offset="0%" stop-color="#f8fafc" /><stop offset="55%" stop-color="#cbd5e1" /><stop offset="100%" stop-color="#94a3b8" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e293b" opacity="0.22" rx="32" ry="5" />
+    <polygon fill="#64748b" points="46,102 74,102 65,70 55,70" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M30 40C20 62 36 86 62 82C76 80 88 70 92 56Z" fill="url(#satBowl)" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M62 60L84 32" stroke="#1e293b" stroke-linecap="round" stroke-width="4" />
+    <circle cx="86" cy="30" fill="#ef4444" r="5.5" stroke="#7f1d1d" stroke-width="3" />
+</svg>

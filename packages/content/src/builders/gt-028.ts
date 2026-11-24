@@ -44,7 +44,7 @@ export const projectGT028: Projection<"GT-028"> = {
 
     return {
       content_pack: {
-        prompt: `Bé hãy chạm đếm cách 2 cho đến ${target_total} nhé!`,
+        prompt: `Bé gom từng đôi đếm cách 2 tới ${target_total} nhé!`,
         step: 2 as const,
         items,
         target_total,

@@ -7,9 +7,20 @@
  * phải sửa: 37 template phản hồi giống nhau qua cùng một lớp.
  */
 
+import type { AgeBand } from "#src/contracts/types";
+import {
+  type EncouragementMoment,
+  pickEncouragementPhrase,
+} from "#src/labels/encouragement-phrases";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { MascotPose } from "#src/render/mascot";
+import {
+  drawEncouragementBanner,
+  type EncouragementBannerKind,
+} from "#src/render/montessori-feedback";
 import { designTokens } from "./designTokens";
 import { FEEDBACK_TABLE } from "./feedback-system";
+import type { RenderSystem } from "./render-system";
 
 export type OverlayFeedbackKind = "success" | "retry";
 
@@ -42,6 +53,12 @@ interface ActiveFeedback {
 
 /** Dáng phản hồi giữ đủ lâu để trẻ kịp thấy — §7.4. */
 export const MASCOT_FEEDBACK_HOLD_MS = 700;
+
+/** Thời lượng bảng đồng dao khích lệ cột mốc trên HUD (ms). */
+export const MILESTONE_BANNER_HOLD_MS = 2200;
+
+const BANNER_FADE_IN_MS = 140;
+const BANNER_FADE_OUT_MS = 240;
 
 const PULSE_BASE_RADIUS = 18;
 const PULSE_GROWTH = 1.6;
@@ -127,9 +144,27 @@ export function resolveBaseMascotPose(input: BaseMascotPoseInput): MascotPose {
   return input.session?.mascotMood?.() ?? "idle";
 }
 
+function bannerKindForMoment(
+  moment: EncouragementMoment
+): EncouragementBannerKind {
+  if (moment === "level_complete") {
+    return "celebrate";
+  }
+  if (moment === "retry") {
+    return "retry";
+  }
+  return "praise";
+}
+
 export class FeedbackOverlay {
   private active: ActiveFeedback | null = null;
   private celebrating = false;
+  private bannerText = "";
+  private bannerKind: EncouragementBannerKind = "praise";
+  private bannerStartMs = -1;
+  private bannerUntilMs = -1;
+  private milestoneCount = 0;
+  private readonly bannerBox = { x: 0, y: 0, w: 0, h: 52 };
 
   trigger(
     kind: OverlayFeedbackKind,
@@ -140,13 +175,98 @@ export class FeedbackOverlay {
     this.active = { kind, point: { x: point.x, y: point.y }, startMs: nowMs };
   }
 
-  celebrate(): void {
+  /**
+   * Phát bảng đồng dao / lời cô giáo mầm non trên cột mốc vòng chơi hoặc hoàn
+   * thành màn (`pickEncouragementPhrase` + `drawEncouragementBanner`).
+   */
+  triggerMilestone(
+    moment: EncouragementMoment,
+    ageBand: AgeBand,
+    nowMs: number,
+    durationMs = MILESTONE_BANNER_HOLD_MS
+  ): string {
+    const phrase = pickEncouragementPhrase(
+      moment,
+      ageBand,
+      this.milestoneCount
+    );
+    this.milestoneCount += 1;
+    this.bannerText = phrase;
+    this.bannerKind = bannerKindForMoment(moment);
+    this.bannerStartMs = nowMs;
+    this.bannerUntilMs = nowMs + Math.max(400, durationMs);
+    return phrase;
+  }
+
+  hasActiveMilestoneBanner(nowMs: number): boolean {
+    return (
+      this.bannerText.length > 0 &&
+      nowMs >= this.bannerStartMs &&
+      nowMs < this.bannerUntilMs
+    );
+  }
+
+  getMilestoneBannerText(nowMs: number): string | null {
+    return this.hasActiveMilestoneBanner(nowMs) ? this.bannerText : null;
+  }
+
+  drawMilestoneBanner(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    nowMs: number,
+    stageZone?: ZoneRect
+  ): void {
+    if (!this.hasActiveMilestoneBanner(nowMs)) {
+      return;
+    }
+    const elapsed = nowMs - this.bannerStartMs;
+    const remaining = this.bannerUntilMs - nowMs;
+    let opacity = 1;
+    if (!rs.reducedMotion) {
+      if (elapsed < BANNER_FADE_IN_MS) {
+        opacity = Math.max(0, elapsed / BANNER_FADE_IN_MS);
+      } else if (remaining < BANNER_FADE_OUT_MS) {
+        opacity = Math.max(0, remaining / BANNER_FADE_OUT_MS);
+      }
+    }
+
+    if (stageZone && stageZone.w > 0) {
+      this.bannerBox.x = stageZone.x;
+      this.bannerBox.y = stageZone.y + 6;
+      this.bannerBox.w = stageZone.w;
+      this.bannerBox.h = 52;
+    } else {
+      this.bannerBox.x = 0;
+      this.bannerBox.y = 12;
+      this.bannerBox.w = rs.LOGIC_WIDTH;
+      this.bannerBox.h = 52;
+    }
+
+    ctx.save();
+    ctx.globalAlpha = opacity;
+    drawEncouragementBanner(
+      ctx,
+      rs,
+      this.bannerText,
+      this.bannerKind,
+      this.bannerBox
+    );
+    ctx.restore();
+  }
+
+  celebrate(ageBand?: AgeBand, nowMs?: number): void {
     this.celebrating = true;
+    if (nowMs !== undefined) {
+      this.triggerMilestone("level_complete", ageBand ?? "4-5", nowMs, 3200);
+    }
   }
 
   reset(): void {
     this.active = null;
     this.celebrating = false;
+    this.bannerText = "";
+    this.bannerStartMs = -1;
+    this.bannerUntilMs = -1;
   }
 
   frame(

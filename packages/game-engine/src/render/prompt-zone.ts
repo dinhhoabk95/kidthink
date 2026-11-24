@@ -19,6 +19,7 @@ import { drawMascot, type MascotPose, type MascotSprites } from "./mascot";
 import { drawEmojiContent, graphemes } from "./shared-render";
 import { applyCanvasFontAtSize, canvasFontPx } from "./type-scale";
 import type { RenderAsset } from "./types";
+import { drawBambooJointAccent, drawDoPaperFiberMarks } from "./vn-folk-motifs";
 
 export interface PromptZoneOptions {
   readonly promptText?: string;
@@ -37,20 +38,32 @@ function drawPromptContainer(
 ): void {
   const radius = Math.min(24, prompt.h / 2);
   ctx.save();
-  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.12);
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.14);
   ctx.shadowBlur = 10;
   ctx.shadowOffsetY = 3;
-  ctx.fillStyle = designTokens.colors.surface[0];
+  ctx.fillStyle = designTokens.colors.vnMaterials.doPaper.sheet;
   ctx.beginPath();
   ctx.roundRect(prompt.x, prompt.y, prompt.w, prompt.h, radius);
   ctx.fill();
   ctx.restore();
 
-  ctx.strokeStyle = designTokens.colors.surface[200];
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = designTokens.colors.vnMaterials.bamboo.stalk;
+  ctx.lineWidth = 2.5;
   ctx.beginPath();
   ctx.roundRect(prompt.x, prompt.y, prompt.w, prompt.h, radius);
   ctx.stroke();
+
+  drawDoPaperFiberMarks(ctx, prompt.x, prompt.y, prompt.w, prompt.h);
+  if (prompt.w >= 260) {
+    drawBambooJointAccent(
+      ctx,
+      prompt.x + radius + 12,
+      prompt.y + prompt.h - 4,
+      prompt.x + prompt.w - radius - 12,
+      prompt.y + prompt.h - 4,
+      3
+    );
+  }
 }
 
 /** Cạnh ô vuông của mascot: chiều cao dải (`top`) hoặc bề rộng cột (`side`). */

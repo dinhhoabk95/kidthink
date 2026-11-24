@@ -58,10 +58,15 @@
         </NuxtLink>
 
         <div
-          class="bg-white border-[3px] border-surface-300 px-5 py-2 rounded-2xl shadow-sm hidden md:block"
+          class="bg-warning-50 border-[3px] border-warning-300 px-5 py-2 rounded-2xl shadow-sm hidden md:flex items-center gap-2"
         >
-          <span class="font-heading font-bold text-brand-700 text-xl"
-            >Phòng Chơi Gấu Con</span
+          <UIcon
+            class="w-5 h-5 text-warning-600 shrink-0"
+            name="i-lucide-sparkles"
+          />
+          <span
+            class="font-heading font-bold text-brand-800 text-xl leading-relaxed"
+            >Gian Chơi Gấu Con · Giấy Gỗ Mộc</span
           >
         </div>
       </div>
@@ -79,6 +84,7 @@
 
         <KidAdventureLauncher
           :greeting-vi="adventureGreeting"
+          :moet-theme-title="activeMoetThemeTitle"
           :steps="effectiveAdventureSteps"
           @launch="handleLaunchAdventure"
         />
@@ -128,22 +134,24 @@
               >
             </div>
             <span
-              class="font-heading font-bold text-lg sm:text-xl text-surface-900 text-center"
+              class="font-heading font-bold text-lg sm:text-xl text-surface-900 text-center leading-relaxed"
             >
               {{ c.title }}
             </span>
-            <span class="text-base text-surface-600 text-center mt-1">
+            <span
+              class="text-base text-surface-600 text-center mt-1 leading-relaxed"
+            >
               {{ c.desc }}
             </span>
           </NuxtLink>
 
           <button
-            class="absolute top-3 right-3 min-h-16 min-w-16 rounded-2xl bg-surface-50 border-2 border-surface-300 flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
+            class="absolute top-3 right-3 min-h-16 min-w-16 rounded-2xl bg-warning-50 border-[3px] border-warning-300 shadow-[0_3px_0_var(--color-warning-300)] active:shadow-[0_1px_0_var(--color-warning-300)] active:translate-y-0.5 flex items-center justify-center cursor-pointer transition-all"
             type="button"
             :aria-label="`Nghe tên đảo ${c.title}`"
             @click.stop="speakIsland(c.title, c.desc)"
           >
-            <UIcon class="w-6 h-6 text-brand-600" name="i-lucide-volume-2" />
+            <UIcon class="w-6 h-6 text-brand-700" name="i-lucide-volume-2" />
           </button>
         </div>
       </div>
@@ -151,9 +159,9 @@
 
     <!-- Footer Safe Zone -->
     <footer
-      class="max-w-5xl mx-auto w-full mt-6 text-center text-base text-surface-600"
+      class="max-w-5xl mx-auto w-full mt-6 text-center text-base text-surface-600 leading-relaxed"
     >
-      MindKid Thinking Play — Chơi mà Học
+      MindKid Tư Duy Mầm Non — Tuổi thơ Việt trên khay Giấy Gỗ Mộc
     </footer>
 
     <!-- Parent Gate Modal: Thoát khỏi sảnh chơi về trang chủ -->
@@ -207,6 +215,13 @@
     type MascotGearResponse,
     resolveUnlockedMascotGear,
   } from "@mindkid/shared/client";
+  import {
+    getKogumaUnitByLevelOrSkillCode,
+    isKogumaAgeBand,
+    type KogumaMoetThemePublic,
+    type KogumaUnitSummary,
+    MOET_PRESCHOOL_THEMES,
+  } from "@mindkid/taxonomy";
   import { computed, onMounted, ref, watch } from "vue";
   import CurriculumProgressCard from "~/components/curriculum-progress-card.vue";
   import KidAdventureLauncher from "~/components/kid/adventure-launcher.vue";
@@ -332,8 +347,14 @@
     parentGateToken.value = null;
   }
 
+  interface EnrichedDailyAdventureResponse extends DailyAdventureResponse {
+    readonly is_koguma?: boolean;
+    readonly active_moet_theme?: KogumaMoetThemePublic | null;
+    readonly current_koguma_unit?: KogumaUnitSummary | null;
+  }
+
   const recommendations = ref<RecommendationsPayload | null>(null);
-  const serverAdventure = ref<DailyAdventureResponse | null>(null);
+  const serverAdventure = ref<EnrichedDailyAdventureResponse | null>(null);
   const unlockedGears =
     ref<readonly MascotGearPublicItem[]>(STARTER_GUEST_GEARS);
   const equippedGearCode = ref<string | null>(null);
@@ -364,8 +385,28 @@
   const adventureGreeting = computed(
     () =>
       serverAdventure.value?.greeting_vi ??
-      "Mình cùng bắt đầu chuyến phiêu lưu vui nhộn hôm nay nhé!"
+      "Dung dăng dung dẻ, mình cùng mở khay gỗ đi phiêu lưu hôm nay nhé!"
   );
+
+  const activeMoetThemeTitle = computed<string | undefined>(() => {
+    const direct = serverAdventure.value?.active_moet_theme?.title_vi;
+    if (direct) {
+      return direct;
+    }
+    const fromUnit =
+      serverAdventure.value?.current_koguma_unit?.moet_theme_title;
+    if (fromUnit) {
+      return fromUnit;
+    }
+    const firstCode = effectiveAdventureSteps.value[0]?.level_code;
+    if (!firstCode) {
+      return undefined;
+    }
+    const childBand = activeChild.value?.age_band;
+    const band = isKogumaAgeBand(childBand) ? childBand : "4-5";
+    const matched = getKogumaUnitByLevelOrSkillCode(firstCode, band);
+    return matched?.moet_theme_title ?? MOET_PRESCHOOL_THEMES[0]?.title_vi;
+  });
 
   async function loadRecommendations(): Promise<void> {
     if (isLoadingRecommendations) {
@@ -393,9 +434,9 @@
     }
     try {
       const [advRes, gearRes] = await Promise.all([
-        apiFetch<DailyAdventureResponse>("/api/users/play/adventure").catch(
-          () => null
-        ),
+        apiFetch<EnrichedDailyAdventureResponse>(
+          "/api/users/play/adventure"
+        ).catch(() => null),
         apiFetch<MascotGearResponse>("/api/users/play/mascot-gear").catch(
           () => null
         ),

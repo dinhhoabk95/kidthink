@@ -1,40 +1,14 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Chim hồng hạc</title>
   <defs>
-    <radialGradient cx="40%" cy="35%" id="flPink" r="70%">
-      <stop offset="0%" stop-color="#fbcfe8" />
-      <stop offset="55%" stop-color="#f472b6" />
-      <stop offset="100%" stop-color="#db2777" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="flmPink" r="70%"><stop offset="0%" stop-color="#fbcfe8" /><stop offset="55%" stop-color="#f472b6" /><stop offset="100%" stop-color="#db2777" /></radialGradient>
   </defs>
-  <ellipse cx="60" cy="103" fill="#0369a1" opacity="0.25" rx="34" ry="6" />
-  <path
-    d="M58 72V101M65 72L78 84L54 88"
-    stroke="#be185d"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="3.8"
-  />
-  <path
-    d="M40 28C32 28 28 33 29 40L35 37Z"
-    fill="#334155"
-    stroke="#1e293b"
-    stroke-linejoin="round"
-    stroke-width="3.2"
-  />
-  <path
-    d="M44 20C53 20 56 28 50 38C43 49 44 58 55 56C74 52 92 58 94 72C82 78 52 79 42 68C33 58 34 45 41 34C36 33 34 28 36 24C38 21 41 20 44 20Z"
-    fill="url(#flPink)"
-    stroke="#881337"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <path
-    d="M56 62C68 59 78 62 82 69C72 72 61 71 56 62Z"
-    fill="#f9a8d4"
-    stroke="#881337"
-    stroke-linejoin="round"
-    stroke-width="3"
-  />
-  <circle cx="44" cy="26" fill="#1c1917" r="2.3" />
+  <ellipse cx="60" cy="107" fill="#831843" opacity="0.22" rx="28" ry="4.5" />
+    <!-- One straight leg + one raised bent leg -->
+    <path d="M60 72V106M54 106H66M65 72L76 85L58 90" fill="none" stroke="#9d174d" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.6" />
+    <!-- Tall S-neck + coral body + hooked black-tipped bill -->
+    <path d="M36 16C45 16 48 24 44 35C40 46 41 56 50 56C64 50 82 54 90 66C81 75 62 77 48 70C36 65 33 50 37 34C38 28 37 24 33 24Z" fill="url(#flmPink)" stroke="#831843" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M33 18C24 19 20 25 22 33C26 32 29 27 33 24Z" fill="#1c1917" stroke="#1c1917" stroke-linejoin="round" stroke-width="2.4" />
+    <path d="M56 58C68 56 78 60 82 67C72 71 60 69 56 58Z" fill="#fb7185" stroke="#831843" stroke-width="2.8" />
+    <circle cx="36" cy="21" fill="#1c1917" r="2" /><circle cx="35.4" cy="20.4" fill="#ffffff" r="0.9" />
 </svg>

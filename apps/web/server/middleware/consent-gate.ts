@@ -1,3 +1,4 @@
+import { canonicalizeRequestPath } from "@mindkid/shared";
 import { defineEventHandler, getRequestURL } from "h3";
 import {
   assertUserTermsAndPrivacyConsent,
@@ -5,8 +6,9 @@ import {
 } from "#server/utils/consent-guard";
 
 export default defineEventHandler(async (event) => {
-  const url = getRequestURL(event);
-  const pathname = url.pathname;
+  const pathname = canonicalizeRequestPath(
+    event.path || getRequestURL(event).pathname
+  );
 
   // Only gate user api routes
   if (!pathname.startsWith("/api/users/")) {

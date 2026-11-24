@@ -1,0 +1,6 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Kim khâu luồn chỉ</title>
+  <path d="M26 94L92 22" stroke="#475569" stroke-linecap="round" stroke-width="5.5" />
+    <ellipse cx="86" cy="28" fill="#ffffff" rx="3" ry="5" stroke="#1e293b" stroke-width="2.2" transform="rotate(45 86 28)" />
+    <path d="M88 26C106 34 98 64 74 64C50 64 46 92 68 98" fill="none" stroke="#e11d48" stroke-linecap="round" stroke-width="3.8" />
+</svg>

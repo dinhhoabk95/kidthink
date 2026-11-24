@@ -18,6 +18,8 @@ export * from "./ops.ts";
 export * from "./personal-curriculum.ts";
 export * from "./play.ts";
 export * from "./play-child-relations.ts";
+export * from "./relations.ts";
+export * from "./tables.ts";
 export * from "./tagging.ts";
 export * from "./taxonomy.ts";
 export * from "./taxonomy-content-relations.ts";

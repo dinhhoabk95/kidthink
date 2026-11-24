@@ -1,4 +1,10 @@
 import {
+  CONTENT_ENTITY_TYPE,
+  ENTITLEMENT_GROUP_CODEC,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
+  EXPORT_JOB_KIND,
+  EXPORT_JOB_STATUS,
   entitlementKeys,
   entitlements,
   exportJobs,
@@ -90,7 +96,7 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
         .insert(entitlementKeys)
         .values({
           key: k.key,
-          group: k.group as any,
+          group: ENTITLEMENT_GROUP_CODEC.toCode(k.group),
           label: k.label,
           isMvp: k.is_mvp,
         })
@@ -102,14 +108,14 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
       {
         userId: user1Id,
         entitlementKey: "create_custom_curriculum",
-        source: "manual_grant",
-        status: "active",
+        source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+        status: ENTITLEMENT_STATUS.ACTIVE,
       },
       {
         userId: user1Id,
         entitlementKey: "export_pdf",
-        source: "manual_grant",
-        status: "active",
+        source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+        status: ENTITLEMENT_STATUS.ACTIVE,
       },
     ]);
 
@@ -133,7 +139,7 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
       weekNo: 1,
       sessionNo: 1,
       position: 1,
-      entityType: "game_level",
+      entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
       entityId: 1,
       isRequired: true,
     });
@@ -181,9 +187,9 @@ describe("Task P4.2 — PDF Export API (BR-PDF-01..09)", () => {
     for (let i = 0; i < MONTHLY_PDF_EXPORT_QUOTA; i++) {
       await db.insert(exportJobs).values({
         userId: user1Id,
-        kind: "curriculum_plan",
+        kind: EXPORT_JOB_KIND.CURRICULUM_PLAN,
         refId: plan1Uuid,
-        status: "done",
+        status: EXPORT_JOB_STATUS.DONE,
         pageCount: 1,
         createdAt: new Date(),
       });

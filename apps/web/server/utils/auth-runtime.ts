@@ -3,7 +3,12 @@ import {
   requireUserAuth,
   type UserTokenPayload,
 } from "@mindkid/auth";
-import { requireEnv } from "@mindkid/config";
+import { isCloudflareRuntime, requireEnv } from "@mindkid/config";
+import {
+  USER_STATUS,
+  type UserStatus,
+  type UserStatusLabel,
+} from "@mindkid/db";
 import { RestrictedModeError } from "@mindkid/errors/auth";
 import { NoActiveChildError } from "@mindkid/errors/child";
 import {
@@ -169,6 +174,9 @@ function logFirstPeerIpOnce(socketIp: string, isTrusted: boolean): void {
 }
 
 export function getVerifiedRemoteIp(event: H3Event): string {
+  if (isCloudflareRuntime()) {
+    return normalizeIp(getHeader(event, "cf-connecting-ip")) || "unknown";
+  }
   const request = event.node?.req as
     | { socket?: { remoteAddress?: string } }
     | undefined;
@@ -197,8 +205,13 @@ export function requireWebUserSession(event: H3Event): UserTokenPayload {
   return requireUserAuth(event);
 }
 
-export function assertUnrestrictedUser(status: string): void {
-  if (status === "pending_verification") {
+export function assertUnrestrictedUser(
+  status: UserStatus | UserStatusLabel
+): void {
+  if (
+    status === USER_STATUS.PENDING_VERIFICATION ||
+    status === "pending_verification"
+  ) {
     throw new RestrictedModeError();
   }
 }

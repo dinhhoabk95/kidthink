@@ -16,7 +16,8 @@
       "!!**/*.yml",
       "!!**/*.yaml",
       "!!packages/db/src/migrations/**/snapshot.json",
-      "!.agents"
+      "!.agents",
+      "!packages/content/src/roadmaps/content-demand.json"
     ]
   },
   "html": {

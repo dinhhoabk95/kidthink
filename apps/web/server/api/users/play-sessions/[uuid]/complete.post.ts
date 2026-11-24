@@ -8,6 +8,7 @@ import {
   getOrSetGuestDeviceId,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
+import { requireCurrentConsent } from "#server/utils/consent-guard";
 
 const CompleteSchema = z
   .object({
@@ -20,11 +21,13 @@ const CompleteSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
+  const user = requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
     throw new NotFoundError("NOT_FOUND");
   }
+
+  await requireCurrentConsent(Number(user.user_id), "child_data");
 
   const guestDeviceId = getOrSetGuestDeviceId(event);
   const parsed = CompleteSchema.safeParse((await readBody(event)) || {});

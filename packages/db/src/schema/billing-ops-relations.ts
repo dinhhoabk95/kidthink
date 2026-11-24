@@ -1,190 +1,159 @@
-import { relations } from "drizzle-orm/_relations";
-import { aiUsageLog } from "./ai.ts";
-import { aiCreditBalance, aiCreditLedger } from "./ai-credit.ts";
-import {
-  entitlementKeys,
-  entitlements,
-  packages,
-  paymentOrders,
-  paymentTransactions,
-  quotaUsage,
-  recurringSubscriptions,
-} from "./billing.ts";
-import { exportJobs } from "./exports.ts";
-import { managers, users } from "./identity.ts";
-import {
-  errorLogs,
-  featureFlags,
-  notificationDeliveries,
-  notificationEndpoints,
-  notificationReads,
-  notifications,
-} from "./ops.ts";
+import type { RelationsBuilder } from "drizzle-orm";
+import type { DbTables } from "./tables.ts";
 
-export const entitlementKeysRelations = relations(
-  entitlementKeys,
-  ({ many }) => ({
-    entitlements: many(entitlements),
-  })
-);
+type SchemaTables = DbTables;
 
-export const packagesRelations = relations(packages, ({ many }) => ({
-  paymentOrders: many(paymentOrders),
-  recurringSubscriptions: many(recurringSubscriptions),
-}));
-
-export const entitlementsRelations = relations(entitlements, ({ one }) => ({
-  user: one(users, {
-    fields: [entitlements.userId],
-    references: [users.id],
-  }),
-  keyDefinition: one(entitlementKeys, {
-    fields: [entitlements.entitlementKey],
-    references: [entitlementKeys.key],
-  }),
-  grantedByManager: one(managers, {
-    fields: [entitlements.grantedByManagerId],
-    references: [managers.id],
-  }),
-}));
-
-export const paymentOrdersRelations = relations(
-  paymentOrders,
-  ({ one, many }) => ({
-    user: one(users, {
-      fields: [paymentOrders.userId],
-      references: [users.id],
-    }),
-    package: one(packages, {
-      fields: [paymentOrders.packageCode],
-      references: [packages.code],
-    }),
-    reviewedByManager: one(managers, {
-      fields: [paymentOrders.reviewedByManagerId],
-      references: [managers.id],
-    }),
-    transactions: many(paymentTransactions),
-  })
-);
-
-export const quotaUsageRelations = relations(quotaUsage, ({ one }) => ({
-  user: one(users, {
-    fields: [quotaUsage.userId],
-    references: [users.id],
-  }),
-}));
-
-export const paymentTransactionsRelations = relations(
-  paymentTransactions,
-  ({ one }) => ({
-    order: one(paymentOrders, {
-      fields: [paymentTransactions.orderId],
-      references: [paymentOrders.id],
-    }),
-  })
-);
-
-export const recurringSubscriptionsRelations = relations(
-  recurringSubscriptions,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [recurringSubscriptions.userId],
-      references: [users.id],
-    }),
-    package: one(packages, {
-      fields: [recurringSubscriptions.packageCode],
-      references: [packages.code],
-    }),
-  })
-);
-
-export const notificationsRelations = relations(
-  notifications,
-  ({ one, many }) => ({
-    deliveries: many(notificationDeliveries),
-    read: one(notificationReads),
-  })
-);
-
-export const notificationDeliveriesRelations = relations(
-  notificationDeliveries,
-  ({ one }) => ({
-    notification: one(notifications, {
-      fields: [notificationDeliveries.notificationId],
-      references: [notifications.id],
-    }),
-  })
-);
-
-export const notificationReadsRelations = relations(
-  notificationReads,
-  ({ one }) => ({
-    notification: one(notifications, {
-      fields: [notificationReads.notificationId],
-      references: [notifications.id],
-    }),
-  })
-);
-
-export const notificationEndpointsRelations = relations(
-  notificationEndpoints,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [notificationEndpoints.userId],
-      references: [users.id],
-    }),
-  })
-);
-
-export const featureFlagsRelations = relations(featureFlags, ({ one }) => ({
-  updatedByManager: one(managers, {
-    fields: [featureFlags.updatedByManagerId],
-    references: [managers.id],
-  }),
-}));
-
-export const errorLogsRelations = relations(errorLogs, ({ one }) => ({
-  user: one(users, {
-    fields: [errorLogs.userId],
-    references: [users.id],
-  }),
-  resolvedByManager: one(managers, {
-    fields: [errorLogs.resolvedByManagerId],
-    references: [managers.id],
-  }),
-}));
-
-export const aiUsageLogRelations = relations(aiUsageLog, ({ one }) => ({
-  user: one(users, {
-    fields: [aiUsageLog.userId],
-    references: [users.id],
-  }),
-}));
-
-export const aiCreditLedgerRelations = relations(aiCreditLedger, ({ one }) => ({
-  user: one(users, {
-    fields: [aiCreditLedger.userId],
-    references: [users.id],
-  }),
-  grantedByManager: one(managers, {
-    fields: [aiCreditLedger.grantedByManagerId],
-    references: [managers.id],
-  }),
-}));
-
-export const aiCreditBalanceRelations = relations(
-  aiCreditBalance,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [aiCreditBalance.userId],
-      references: [users.id],
-    }),
-  })
-);
-
-export const exportJobsRelations = relations(exportJobs, ({ one }) => ({
-  user: one(users, {
-    fields: [exportJobs.userId],
-    references: [users.id],
-  }),
-}));
+export function buildBillingOpsRelations(r: RelationsBuilder<SchemaTables>) {
+  return {
+    entitlementKeys: {
+      entitlements: r.many.entitlements({
+        from: r.entitlementKeys.key,
+        to: r.entitlements.entitlementKey,
+      }),
+    },
+    packages: {
+      paymentOrders: r.many.paymentOrders({
+        from: r.packages.code,
+        to: r.paymentOrders.packageCode,
+      }),
+      recurringSubscriptions: r.many.recurringSubscriptions({
+        from: r.packages.code,
+        to: r.recurringSubscriptions.packageCode,
+      }),
+    },
+    entitlements: {
+      user: r.one.users({
+        from: r.entitlements.userId,
+        to: r.users.id,
+        optional: false,
+      }),
+      keyDefinition: r.one.entitlementKeys({
+        from: r.entitlements.entitlementKey,
+        to: r.entitlementKeys.key,
+        optional: false,
+      }),
+      grantedByManager: r.one.managers({
+        from: r.entitlements.grantedByManagerId,
+        to: r.managers.id,
+        optional: true,
+      }),
+    },
+    paymentOrders: {
+      user: r.one.users({
+        from: r.paymentOrders.userId,
+        to: r.users.id,
+        optional: false,
+      }),
+      package: r.one.packages({
+        from: r.paymentOrders.packageCode,
+        to: r.packages.code,
+        optional: false,
+      }),
+      reviewedByManager: r.one.managers({
+        from: r.paymentOrders.reviewedByManagerId,
+        to: r.managers.id,
+        optional: true,
+      }),
+      transactions: r.many.paymentTransactions({
+        from: r.paymentOrders.id,
+        to: r.paymentTransactions.orderId,
+      }),
+    },
+    quotaUsage: {
+      user: r.one.users({
+        from: r.quotaUsage.userId,
+        to: r.users.id,
+        optional: false,
+      }),
+    },
+    paymentTransactions: {
+      order: r.one.paymentOrders({
+        from: r.paymentTransactions.orderId,
+        to: r.paymentOrders.id,
+        optional: true,
+      }),
+    },
+    recurringSubscriptions: {
+      user: r.one.users({
+        from: r.recurringSubscriptions.userId,
+        to: r.users.id,
+        optional: false,
+      }),
+      package: r.one.packages({
+        from: r.recurringSubscriptions.packageCode,
+        to: r.packages.code,
+        optional: false,
+      }),
+    },
+    notifications: {
+      deliveries: r.many.notificationDeliveries({
+        from: r.notifications.id,
+        to: r.notificationDeliveries.notificationId,
+      }),
+      read: r.one.notificationReads({
+        from: r.notifications.id,
+        to: r.notificationReads.notificationId,
+        optional: true,
+      }),
+      userRecipient: r.one.users({
+        from: r.notifications.recipientId,
+        to: r.users.id,
+        optional: true,
+      }),
+    },
+    notificationDeliveries: {
+      notification: r.one.notifications({
+        from: r.notificationDeliveries.notificationId,
+        to: r.notifications.id,
+        optional: false,
+      }),
+    },
+    notificationReads: {
+      notification: r.one.notifications({
+        from: r.notificationReads.notificationId,
+        to: r.notifications.id,
+        optional: false,
+      }),
+    },
+    notificationEndpoints: {
+      user: r.one.users({
+        from: r.notificationEndpoints.userId,
+        to: r.users.id,
+        optional: false,
+      }),
+    },
+    aiUsageLog: {
+      user: r.one.users({
+        from: r.aiUsageLog.userId,
+        to: r.users.id,
+        optional: false,
+      }),
+    },
+    aiCreditLedger: {
+      user: r.one.users({
+        from: r.aiCreditLedger.userId,
+        to: r.users.id,
+        optional: false,
+      }),
+      grantedByManager: r.one.managers({
+        from: r.aiCreditLedger.grantedByManagerId,
+        to: r.managers.id,
+        optional: true,
+      }),
+    },
+    aiCreditBalance: {
+      user: r.one.users({
+        from: r.aiCreditBalance.userId,
+        to: r.users.id,
+        optional: false,
+      }),
+    },
+    exportJobs: {
+      user: r.one.users({
+        from: r.exportJobs.userId,
+        to: r.users.id,
+        optional: false,
+      }),
+    },
+  };
+}

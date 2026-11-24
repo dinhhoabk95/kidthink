@@ -13,6 +13,8 @@ import { computed, ref } from "vue";
 const isLoading = ref(false);
 const errorMessage = ref<string | null>(null);
 const canSkipRound = ref(false);
+const isIntroCardStep = ref(false);
+const introStepIndex = ref(0);
 
 const definePageMetaMock = vi.fn();
 
@@ -47,8 +49,8 @@ vi.mock("~/composables/play/use-play-session", () => ({
     currentRound: ref(0),
     canSkipRound,
     isEchoStep: ref(false),
-    isIntroCardStep: ref(false),
-    introStepIndex: ref(0),
+    isIntroCardStep,
+    introStepIndex,
     showVictoryModal: ref(false),
     earnedCelebration: ref(null),
     earnedStars: ref(null),
@@ -131,6 +133,8 @@ describe("Task #277 S2 — layout kid và HUD ba nút", () => {
     isLoading.value = false;
     errorMessage.value = null;
     canSkipRound.value = false;
+    isIntroCardStep.value = false;
+    introStepIndex.value = 0;
     definePageMetaMock.mockClear();
     setupCanvasMock.mockClear();
     setLogicSpaceMock.mockClear();
@@ -202,5 +206,20 @@ describe("Task #277 S2 — layout kid và HUD ba nút", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("GT-000 Intro — cụm nút điều hướng nằm ngoài .main-arena / .wooden-tray-container để không đè mặt canvas", async () => {
+    isIntroCardStep.value = true;
+    introStepIndex.value = 1;
+    const wrapper = await mountPlaySurface();
+
+    const introControls = wrapper.find(".intro-controls-bar");
+    expect(introControls.exists()).toBe(true);
+    expect(
+      wrapper.find(".wooden-tray-container .intro-controls-bar").exists()
+    ).toBe(false);
+    expect(wrapper.find(".main-arena .intro-controls-bar").exists()).toBe(
+      false
+    );
   });
 });

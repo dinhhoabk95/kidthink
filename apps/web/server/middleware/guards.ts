@@ -1,4 +1,7 @@
-import { resolveRequestBodySizeLimit } from "@mindkid/shared";
+import {
+  canonicalizeRequestPath,
+  resolveRequestBodySizeLimit,
+} from "@mindkid/shared";
 import { defineEventHandler, getRequestURL } from "h3";
 import {
   assertRequestBodySize,
@@ -29,8 +32,9 @@ function isMutatingMethod(method: string | undefined): boolean {
 }
 
 export default defineEventHandler((event) => {
-  const url = getRequestURL(event);
-  const pathname = url.pathname;
+  const pathname = canonicalizeRequestPath(
+    event.path || getRequestURL(event).pathname
+  );
 
   if (!(pathname === "/api" || pathname.startsWith("/api/"))) {
     return;

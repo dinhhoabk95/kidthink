@@ -8,27 +8,25 @@ import {
   shuffleWithSeed,
 } from "@mindkid/adaptive";
 import {
-  childProfiles,
-  contentSkillMap,
-  curricula,
-  curriculumEnrollments,
-  curriculumItemProgress,
-  curriculumItems,
-  curriculumWeeks,
-  gameLevels,
-  levelDailyStats,
-  masteryState,
-  playSessions,
-  skillPrerequisites,
+  ACCESS_TIER,
+  ACCESS_TIER_CODEC,
+  CONTENT_ENTITY_TYPE,
+  CONTENT_ENTITY_TYPE_CODEC,
+  type DbExecutor,
+  type GameLevelEntity,
 } from "@mindkid/db";
+import {
+  createRepositories,
+  type MindKidRepositories,
+} from "@mindkid/db/repositories";
 import {
   type AccessTier,
   type AgeBand,
   deriveAgeBand,
+  getEffectiveTier,
   resolveNextStep,
 } from "@mindkid/shared";
-import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { useRepositories } from "#server/utils/repositories";
 
 export interface GetChildRecommendationsOptions {
   childId: number;
@@ -44,26 +42,28 @@ export interface GetGuestRecommendationsOptions {
   seed?: number;
 }
 
-type PublishedGameLevel = Pick<
-  typeof gameLevels.$inferSelect,
-  | "id"
-  | "code"
-  | "title"
-  | "thumbnailEmoji"
-  | "accessTier"
-  | "ageMin"
-  | "ageMax"
->;
+export interface PlayedLevelCodes {
+  totalPlaysCount: number;
+  recentLevelCodes: string[];
+  allPlayedLevelCodeSet: Set<string>;
+}
 
-const publishedGameLevelColumns = {
-  id: gameLevels.id,
-  code: gameLevels.code,
-  title: gameLevels.title,
-  thumbnailEmoji: gameLevels.thumbnailEmoji,
-  accessTier: gameLevels.accessTier,
-  ageMin: gameLevels.ageMin,
-  ageMax: gameLevels.ageMax,
-};
+const MAX_RECOMMENDATION_LEVEL_POOL = 2000;
+
+function isRepositories(
+  target: DbExecutor | MindKidRepositories
+): target is MindKidRepositories {
+  return "gameLevels" in target;
+}
+
+function toRepositories(
+  target?: DbExecutor | MindKidRepositories
+): MindKidRepositories {
+  if (!target) {
+    return useRepositories();
+  }
+  return isRepositories(target) ? target : createRepositories(target);
+}
 
 /**
  * Resolves thumbnail emoji to string with fallback. (Task #202 D-EE)
@@ -96,60 +96,64 @@ function parseAgeBandRange(ageBand?: string): [number, number] {
   return [3, 6];
 }
 
+function mapLevelIdsToCandidates(
+  entityIds: readonly number[],
+  reasonCode: "skill_reinforce" | "skill_progression" | "revision",
+  targetMin: number,
+  targetMax: number,
+  publishedByEntityId: Map<number, GameLevelEntity>
+): RawCandidateLevel[] {
+  const results: RawCandidateLevel[] = [];
+  for (const entityId of entityIds) {
+    const gl = publishedByEntityId.get(entityId);
+    if (gl && isLevelAgeMatch(gl.ageMin, gl.ageMax, targetMin, targetMax)) {
+      results.push({
+        level_code: gl.code,
+        title: gl.title,
+        thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
+        reason_code: reasonCode,
+        access_tier: ACCESS_TIER_CODEC.toLabel(gl.accessTier),
+        age_min: gl.ageMin,
+        age_max: gl.ageMax,
+        entity_id: gl.id,
+      });
+    }
+  }
+  return results;
+}
+
 async function resolveTier1CurriculumCandidate(
-  db: PostgresJsDatabase,
+  repos: MindKidRepositories,
   childId: number,
   allowedTiers: AccessTier[],
-  publishedByEntityId: Map<number, PublishedGameLevel>,
-  publishedByCode: Map<string, PublishedGameLevel>
+  publishedByEntityId: Map<number, GameLevelEntity>,
+  publishedByCode: Map<string, GameLevelEntity>
 ): Promise<RawCandidateLevel | null> {
-  const [activeEnrollment] = await db
-    .select({
-      id: curriculumEnrollments.id,
-      curriculumId: curriculumEnrollments.curriculumId,
-      durationWeeks: curricula.durationWeeks,
-    })
-    .from(curriculumEnrollments)
-    .innerJoin(curricula, eq(curricula.id, curriculumEnrollments.curriculumId))
-    .where(
-      and(
-        eq(curriculumEnrollments.childId, childId),
-        eq(curriculumEnrollments.status, "active")
-      )
-    )
-    .limit(1);
-
+  const activeEnrollment = await repos.curricula.findEnrollmentForChild(
+    childId,
+    true
+  );
   if (!activeEnrollment) {
     return null;
   }
 
   const [rawItems, rawWeeks, progressRows] = await Promise.all([
-    db
-      .select()
-      .from(curriculumItems)
-      .where(eq(curriculumItems.curriculumId, activeEnrollment.curriculumId)),
-    db
-      .select()
-      .from(curriculumWeeks)
-      .where(eq(curriculumWeeks.curriculumId, activeEnrollment.curriculumId)),
-    db
-      .select({ curriculumItemId: curriculumItemProgress.curriculumItemId })
-      .from(curriculumItemProgress)
-      .where(
-        and(
-          eq(curriculumItemProgress.enrollmentId, activeEnrollment.id),
-          eq(curriculumItemProgress.status, "completed")
-        )
-      ),
+    repos.curricula.listItems([activeEnrollment.curriculumId]),
+    repos.curricula.listWeeks(activeEnrollment.curriculumId),
+    repos.curricula.listCompletedProgress([activeEnrollment.id]),
   ]);
 
   const completedItemIds = new Set(progressRows.map((p) => p.curriculumItemId));
+  const curriculumTier = ACCESS_TIER_CODEC.toLabel(
+    activeEnrollment.curriculum.accessTier
+  );
 
   const itemsRef = rawItems.map((item) => {
     const gl =
-      item.entityType === "game_level"
+      item.entityType === CONTENT_ENTITY_TYPE.GAME_LEVEL
         ? publishedByEntityId.get(item.entityId)
         : null;
+    const levelTier = gl ? ACCESS_TIER_CODEC.toLabel(gl.accessTier) : "premium";
     return {
       id: item.id,
       curriculum_id: item.curriculumId,
@@ -158,10 +162,12 @@ async function resolveTier1CurriculumCandidate(
       position: item.position,
       entity_type: "game_level" as const,
       entity_id: item.entityId,
-      code: gl?.code ?? `${item.entityType}_${item.entityId}`,
+      code:
+        gl?.code ??
+        `${CONTENT_ENTITY_TYPE_CODEC.toLabel(item.entityType)}_${item.entityId}`,
       title: gl?.title ?? "Trò chơi",
       is_required: item.isRequired,
-      access_tier: (gl?.accessTier as AccessTier) ?? "free",
+      access_tier: getEffectiveTier(levelTier, curriculumTier),
     };
   });
 
@@ -171,7 +177,7 @@ async function resolveTier1CurriculumCandidate(
   }));
 
   const nextStep = resolveNextStep({
-    durationWeeks: activeEnrollment.durationWeeks,
+    durationWeeks: activeEnrollment.curriculum.durationWeeks,
     weeks: weeksRef,
     items: itemsRef,
     completedItemIds,
@@ -196,7 +202,10 @@ async function resolveTier1CurriculumCandidate(
     title: matchedLevel.title,
     thumbnail_emoji: resolveThumbnailEmoji(matchedLevel.thumbnailEmoji),
     reason_code: "curriculum_next",
-    access_tier: matchedLevel.accessTier as AccessTier,
+    access_tier: getEffectiveTier(
+      ACCESS_TIER_CODEC.toLabel(matchedLevel.accessTier),
+      curriculumTier
+    ),
     age_min: matchedLevel.ageMin,
     age_max: matchedLevel.ageMax,
     entity_id: matchedLevel.id,
@@ -204,150 +213,90 @@ async function resolveTier1CurriculumCandidate(
 }
 
 async function resolveReinforceCandidates(
-  db: PostgresJsDatabase,
+  repos: MindKidRepositories,
   skillIds: number[],
   targetMin: number,
   targetMax: number,
-  publishedByEntityId: Map<number, PublishedGameLevel>
+  publishedByEntityId: Map<number, GameLevelEntity>
 ): Promise<RawCandidateLevel[]> {
   if (skillIds.length === 0) {
     return [];
   }
-  const mapped = await db
-    .select({ entityId: contentSkillMap.entityId })
-    .from(contentSkillMap)
-    .where(
-      and(
-        eq(contentSkillMap.entityType, "game_level"),
-        inArray(contentSkillMap.skillId, skillIds)
-      )
-    );
-
-  const results: RawCandidateLevel[] = [];
-  for (const mapRow of mapped) {
-    const gl = publishedByEntityId.get(mapRow.entityId);
-    if (gl && isLevelAgeMatch(gl.ageMin, gl.ageMax, targetMin, targetMax)) {
-      results.push({
-        level_code: gl.code,
-        title: gl.title,
-        thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
-        reason_code: "skill_reinforce",
-        access_tier: gl.accessTier as AccessTier,
-        age_min: gl.ageMin,
-        age_max: gl.ageMax,
-        entity_id: gl.id,
-      });
-    }
-  }
-  return results;
+  const entityIds = await repos.tagging.listLevelIdsBySkillIds(
+    skillIds,
+    CONTENT_ENTITY_TYPE.GAME_LEVEL
+  );
+  return mapLevelIdsToCandidates(
+    entityIds,
+    "skill_reinforce",
+    targetMin,
+    targetMax,
+    publishedByEntityId
+  );
 }
 
 async function resolveProgressionCandidates(
-  db: PostgresJsDatabase,
+  repos: MindKidRepositories,
   masteredSkillIds: number[],
   targetMin: number,
   targetMax: number,
-  publishedByEntityId: Map<number, PublishedGameLevel>
+  publishedByEntityId: Map<number, GameLevelEntity>
 ): Promise<RawCandidateLevel[]> {
   if (masteredSkillIds.length === 0) {
     return [];
   }
-  const nextSkills = await db
-    .select({ targetSkillId: skillPrerequisites.skillId })
-    .from(skillPrerequisites)
-    .where(inArray(skillPrerequisites.prerequisiteId, masteredSkillIds))
-    .limit(10);
-
-  const targetSkillIds = nextSkills.map((s) => s.targetSkillId);
+  const targetSkillIds = await repos.taxonomy.listSuccessorSkillIds(
+    masteredSkillIds,
+    10
+  );
   if (targetSkillIds.length === 0) {
     return [];
   }
-
-  const mapped = await db
-    .select({ entityId: contentSkillMap.entityId })
-    .from(contentSkillMap)
-    .where(
-      and(
-        eq(contentSkillMap.entityType, "game_level"),
-        inArray(contentSkillMap.skillId, targetSkillIds)
-      )
-    );
-
-  const results: RawCandidateLevel[] = [];
-  for (const mapRow of mapped) {
-    const gl = publishedByEntityId.get(mapRow.entityId);
-    if (gl && isLevelAgeMatch(gl.ageMin, gl.ageMax, targetMin, targetMax)) {
-      results.push({
-        level_code: gl.code,
-        title: gl.title,
-        thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
-        reason_code: "skill_progression",
-        access_tier: gl.accessTier as AccessTier,
-        age_min: gl.ageMin,
-        age_max: gl.ageMax,
-        entity_id: gl.id,
-      });
-    }
-  }
-  return results;
+  const entityIds = await repos.tagging.listLevelIdsBySkillIds(
+    targetSkillIds,
+    CONTENT_ENTITY_TYPE.GAME_LEVEL
+  );
+  return mapLevelIdsToCandidates(
+    entityIds,
+    "skill_progression",
+    targetMin,
+    targetMax,
+    publishedByEntityId
+  );
 }
 
 async function resolveRevisionCandidates(
-  db: PostgresJsDatabase,
+  repos: MindKidRepositories,
   revisionSkillIds: number[],
   targetMin: number,
   targetMax: number,
-  publishedByEntityId: Map<number, PublishedGameLevel>
+  publishedByEntityId: Map<number, GameLevelEntity>
 ): Promise<RawCandidateLevel[]> {
   if (revisionSkillIds.length === 0) {
     return [];
   }
-  const mapped = await db
-    .select({ entityId: contentSkillMap.entityId })
-    .from(contentSkillMap)
-    .where(
-      and(
-        eq(contentSkillMap.entityType, "game_level"),
-        inArray(contentSkillMap.skillId, revisionSkillIds)
-      )
-    );
-
-  const results: RawCandidateLevel[] = [];
-  for (const mapRow of mapped) {
-    const gl = publishedByEntityId.get(mapRow.entityId);
-    if (gl && isLevelAgeMatch(gl.ageMin, gl.ageMax, targetMin, targetMax)) {
-      results.push({
-        level_code: gl.code,
-        title: gl.title,
-        thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
-        reason_code: "revision",
-        access_tier: gl.accessTier as AccessTier,
-        age_min: gl.ageMin,
-        age_max: gl.ageMax,
-        entity_id: gl.id,
-      });
-    }
-  }
-  return results;
+  const entityIds = await repos.tagging.listLevelIdsBySkillIds(
+    revisionSkillIds,
+    CONTENT_ENTITY_TYPE.GAME_LEVEL
+  );
+  return mapLevelIdsToCandidates(
+    entityIds,
+    "revision",
+    targetMin,
+    targetMax,
+    publishedByEntityId
+  );
 }
 
 async function resolveMasteryTiers2To4(
-  db: PostgresJsDatabase,
+  repos: MindKidRepositories,
   childId: number,
   targetAgeMin: number,
   targetAgeMax: number,
-  publishedByEntityId: Map<number, PublishedGameLevel>,
+  publishedByEntityId: Map<number, GameLevelEntity>,
   now: Date
 ): Promise<RawCandidateLevel[]> {
-  const masteryRows = await db
-    .select({
-      skillId: masteryState.skillId,
-      pLearn: masteryState.pLearn,
-      lastSeenAt: masteryState.lastSeenAt,
-    })
-    .from(masteryState)
-    .where(eq(masteryState.childProfileId, childId));
-
+  const masteryRows = await repos.mastery.listForChild(childId);
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
   const reinforceSkillIds = masteryRows
@@ -371,21 +320,21 @@ async function resolveMasteryTiers2To4(
 
   const [t2, t3, t4] = await Promise.all([
     resolveReinforceCandidates(
-      db,
+      repos,
       reinforceSkillIds,
       targetAgeMin,
       targetAgeMax,
       publishedByEntityId
     ),
     resolveProgressionCandidates(
-      db,
+      repos,
       masteredSkillIds,
       targetAgeMin,
       targetAgeMax,
       publishedByEntityId
     ),
     resolveRevisionCandidates(
-      db,
+      repos,
       revisionSkillIds,
       targetAgeMin,
       targetAgeMax,
@@ -397,21 +346,10 @@ async function resolveMasteryTiers2To4(
 }
 
 async function resolvePopularCandidates(
-  db: PostgresJsDatabase,
-  unplayedMatching: PublishedGameLevel[]
+  repos: MindKidRepositories,
+  unplayedMatching: GameLevelEntity[]
 ): Promise<RawCandidateLevel[]> {
-  const popularStats = await db
-    .select({
-      levelCode: levelDailyStats.levelCode,
-      totalPlays: sql<number>`SUM(${levelDailyStats.playsCount})::int`,
-    })
-    .from(levelDailyStats)
-    .groupBy(levelDailyStats.levelCode);
-
-  const popularMap = new Map<string, number>();
-  for (const s of popularStats) {
-    popularMap.set(s.levelCode, s.totalPlays || 0);
-  }
+  const popularMap = await repos.analyticsRollup.sumPlaysByLevelCode();
 
   const unplayedForPopular = [...unplayedMatching].sort((a, b) => {
     const pA = popularMap.get(a.code) ?? 0;
@@ -424,7 +362,7 @@ async function resolvePopularCandidates(
     title: gl.title,
     thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
     reason_code: "popular" as const,
-    access_tier: gl.accessTier as AccessTier,
+    access_tier: ACCESS_TIER_CODEC.toLabel(gl.accessTier),
     age_min: gl.ageMin,
     age_max: gl.ageMax,
     plays_count: popularMap.get(gl.code) ?? 0,
@@ -432,31 +370,32 @@ async function resolvePopularCandidates(
   }));
 }
 
-export interface PlayedLevelCodes {
-  totalPlaysCount: number;
-  recentLevelCodes: string[];
-  allPlayedLevelCodeSet: Set<string>;
-}
-
 /**
  * Level đã chơi, theo MÃ level (không theo `game_levels.id`): id đổi khi bản cũ
  * bị archive sau khi nâng content_version, mà level đã chơi ở bản cũ vẫn là đã chơi.
  */
 export async function loadPlayedLevelCodes(
-  db: PostgresJsDatabase,
   childId: number
+): Promise<PlayedLevelCodes>;
+export async function loadPlayedLevelCodes(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  childId: number
+): Promise<PlayedLevelCodes>;
+export async function loadPlayedLevelCodes(
+  first: DbExecutor | MindKidRepositories | number,
+  maybeChildId?: number
 ): Promise<PlayedLevelCodes> {
-  const sessions = await db
-    .select({ levelCode: gameLevels.code })
-    .from(playSessions)
-    .innerJoin(gameLevels, eq(gameLevels.id, playSessions.gameLevelId))
-    .where(eq(playSessions.childProfileId, childId))
-    .orderBy(desc(playSessions.startedAt));
+  const isLegacyCall = typeof first !== "number";
+  const repos = isLegacyCall ? toRepositories(first) : useRepositories();
+  const childId = isLegacyCall ? (maybeChildId as number) : first;
+
+  const playedCodes =
+    await repos.playSessions.listPlayedLevelCodesForChild(childId);
 
   return {
-    totalPlaysCount: sessions.length,
-    recentLevelCodes: sessions.slice(0, 3).map((s) => s.levelCode),
-    allPlayedLevelCodeSet: new Set(sessions.map((s) => s.levelCode)),
+    totalPlaysCount: playedCodes.length,
+    recentLevelCodes: playedCodes.slice(0, 3),
+    allPlayedLevelCodeSet: new Set(playedCodes),
   };
 }
 
@@ -464,16 +403,27 @@ export async function loadPlayedLevelCodes(
  * P3.6 — Recommend Next Content for Enrolled Child (BR-REC-01..08, D-MQ..D-MX).
  */
 export async function getRecommendationsForChild(
-  db: PostgresJsDatabase,
   options: GetChildRecommendationsOptions
+): Promise<RecommendationsPayload>;
+export async function getRecommendationsForChild(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  options: GetChildRecommendationsOptions
+): Promise<RecommendationsPayload>;
+export async function getRecommendationsForChild(
+  first: DbExecutor | MindKidRepositories | GetChildRecommendationsOptions,
+  maybeOptions?: GetChildRecommendationsOptions
 ): Promise<RecommendationsPayload> {
+  const isLegacyCall = maybeOptions !== undefined;
+  const repos = isLegacyCall
+    ? toRepositories(first as DbExecutor | MindKidRepositories)
+    : useRepositories();
+  const options = isLegacyCall
+    ? maybeOptions
+    : (first as GetChildRecommendationsOptions);
+
   const { childId, allowedTiers, limit = 5, now = new Date() } = options;
 
-  const [child] = await db
-    .select()
-    .from(childProfiles)
-    .where(eq(childProfiles.id, childId));
-
+  const child = await repos.childProfiles.findById(childId);
   if (!child) {
     throw new Error("CHILD_NOT_FOUND");
   }
@@ -489,15 +439,12 @@ export async function getRecommendationsForChild(
     { totalPlaysCount, recentLevelCodes, allPlayedLevelCodeSet },
     allPublishedLevels,
   ] = await Promise.all([
-    loadPlayedLevelCodes(db, childId),
-    db
-      .select(publishedGameLevelColumns)
-      .from(gameLevels)
-      .orderBy(asc(gameLevels.code)),
+    loadPlayedLevelCodes(repos, childId),
+    repos.gameLevels.listAllOrdered(MAX_RECOMMENDATION_LEVEL_POOL),
   ]);
 
-  const publishedByEntityId = new Map<number, PublishedGameLevel>();
-  const publishedByCode = new Map<string, PublishedGameLevel>();
+  const publishedByEntityId = new Map<number, GameLevelEntity>();
+  const publishedByCode = new Map<string, GameLevelEntity>();
   for (const lvl of allPublishedLevels) {
     publishedByEntityId.set(lvl.id, lvl);
     publishedByCode.set(lvl.code, lvl);
@@ -507,7 +454,7 @@ export async function getRecommendationsForChild(
 
   // Tier 1
   const tier1 = await resolveTier1CurriculumCandidate(
-    db,
+    repos,
     childId,
     allowedTiers,
     publishedByEntityId,
@@ -520,7 +467,7 @@ export async function getRecommendationsForChild(
   // Tiers 2..4 (mastery, if played >= 3)
   if (totalPlaysCount >= 3) {
     const masteryCandidates = await resolveMasteryTiers2To4(
-      db,
+      repos,
       childId,
       targetAgeMin,
       targetAgeMax,
@@ -544,7 +491,7 @@ export async function getRecommendationsForChild(
       title: gl.title,
       thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
       reason_code: "explore",
-      access_tier: gl.accessTier as AccessTier,
+      access_tier: ACCESS_TIER_CODEC.toLabel(gl.accessTier),
       age_min: gl.ageMin,
       age_max: gl.ageMax,
       entity_id: gl.id,
@@ -553,7 +500,7 @@ export async function getRecommendationsForChild(
 
   // Tier 6: popular
   const popularCandidates = await resolvePopularCandidates(
-    db,
+    repos,
     unplayedMatching
   );
   candidatePool.push(...popularCandidates);
@@ -572,14 +519,13 @@ export async function getRecommendationsForChild(
       title: gl.title,
       thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
       reason_code: "revision",
-      access_tier: gl.accessTier as AccessTier,
+      access_tier: ACCESS_TIER_CODEC.toLabel(gl.accessTier),
       age_min: gl.ageMin,
       age_max: gl.ageMax,
       entity_id: gl.id,
     });
   }
 
-  // Fallback if candidate pool is completely empty
   if (candidatePool.length === 0 && allPublishedLevels.length > 0) {
     for (const gl of allPublishedLevels) {
       candidatePool.push({
@@ -587,7 +533,7 @@ export async function getRecommendationsForChild(
         title: gl.title,
         thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
         reason_code: "revision",
-        access_tier: gl.accessTier as AccessTier,
+        access_tier: ACCESS_TIER_CODEC.toLabel(gl.accessTier),
         age_min: gl.ageMin,
         age_max: gl.ageMax,
         entity_id: gl.id,
@@ -611,6 +557,7 @@ export async function getRecommendationsForChild(
   if (!fallbackLevel) {
     throw new Error("No published game levels available for recommendation");
   }
+  const fallbackTier = ACCESS_TIER_CODEC.toLabel(fallbackLevel.accessTier);
   return {
     primary: formatRecommendationItem(
       {
@@ -618,9 +565,9 @@ export async function getRecommendationsForChild(
         title: fallbackLevel.title,
         thumbnail_emoji: resolveThumbnailEmoji(fallbackLevel.thumbnailEmoji),
         reason_code: "revision",
-        access_tier: fallbackLevel.accessTier as AccessTier,
+        access_tier: fallbackTier,
       },
-      !allowedTiers.includes(fallbackLevel.accessTier as AccessTier)
+      !allowedTiers.includes(fallbackTier)
     ),
     alternatives: [],
   };
@@ -630,37 +577,43 @@ export async function getRecommendationsForChild(
  * P3.6 — Recommend Next Content for Guest (D-MW, BR-REC-04, BR-REC-06).
  */
 export async function getGuestRecommendations(
-  db: PostgresJsDatabase,
-  options: GetGuestRecommendationsOptions = {}
+  options?: GetGuestRecommendationsOptions
+): Promise<RecommendationsPayload>;
+export async function getGuestRecommendations(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  options?: GetGuestRecommendationsOptions
+): Promise<RecommendationsPayload>;
+export async function getGuestRecommendations(
+  first?: DbExecutor | MindKidRepositories | GetGuestRecommendationsOptions,
+  maybeOptions?: GetGuestRecommendationsOptions
 ): Promise<RecommendationsPayload> {
+  const isDbCall =
+    first !== undefined &&
+    ("gameLevels" in first || ("select" in first && "transaction" in first));
+  const repos = isDbCall ? toRepositories(first) : useRepositories();
+  const options = isDbCall
+    ? (maybeOptions ?? {})
+    : ((first as GetGuestRecommendationsOptions | undefined) ?? {});
+
   const { ageBand, limit = 5, seed = 42 } = options;
   const [targetAgeMin, targetAgeMax] = parseAgeBandRange(ageBand);
 
-  const [freeLevels, popularStats] = await Promise.all([
-    db
-      .select(publishedGameLevelColumns)
-      .from(gameLevels)
-      .where(eq(gameLevels.accessTier, "free"))
-      .orderBy(asc(gameLevels.code)),
-    db
-      .select({
-        levelCode: levelDailyStats.levelCode,
-        totalPlays: sql<number>`SUM(${levelDailyStats.playsCount})::int`,
-      })
-      .from(levelDailyStats)
-      .groupBy(levelDailyStats.levelCode),
+  const [freeLevels, popularMap] = await Promise.all([
+    repos.gameLevels.listPublished({
+      accessTier: ACCESS_TIER.FREE,
+      limit: MAX_RECOMMENDATION_LEVEL_POOL,
+    }),
+    repos.analyticsRollup.sumPlaysByLevelCode(),
   ]);
 
-  const matchingFree = freeLevels.filter((gl) =>
+  const sortedFree = [...freeLevels].sort((a, b) =>
+    a.code.localeCompare(b.code)
+  );
+  const matchingFree = sortedFree.filter((gl) =>
     isLevelAgeMatch(gl.ageMin, gl.ageMax, targetAgeMin, targetAgeMax)
   );
 
-  const levelsToUse = matchingFree.length > 0 ? matchingFree : freeLevels;
-
-  const popularMap = new Map<string, number>();
-  for (const s of popularStats) {
-    popularMap.set(s.levelCode, s.totalPlays || 0);
-  }
+  const levelsToUse = matchingFree.length > 0 ? matchingFree : sortedFree;
 
   const candidatePool: RawCandidateLevel[] = [];
 

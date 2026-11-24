@@ -62,6 +62,16 @@ export async function runSendEmail(
     };
   }
 
+  if (
+    !input.adapter &&
+    (process.env.NODE_ENV === "production" ||
+      process.env.MINDKID_RUNTIME === "cloudflare")
+  ) {
+    throw new Error(
+      "runSendEmail requires a production EmailAdapter in production/Cloudflare runtime"
+    );
+  }
+
   const emailAdapter = input.adapter ?? new LocalFileEmailAdapter();
   const dispatchRes = await emailAdapter.sendEmail({
     to: input.to,

@@ -279,5 +279,28 @@ export const C3_SET_04_SEED: SkillSeed = {
       theme: "nature",
       rounds: 3,
     },
+    {
+      code: "GL-C3-SET-INTRO-7304",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 3,
+      theme: "festival",
+    },
+    {
+      code: "GL-C3-SET-MULTI-7305",
+      template: "GT-002",
+      band: "5-6",
+      difficulty: 3,
+      theme: "family",
+      rounds: 3,
+    },
+    {
+      code: "GL-C3-SET-DROP-7306",
+      template: "GT-003",
+      band: "5-6",
+      difficulty: 3,
+      theme: "weather",
+      rounds: 3,
+    },
   ],
 };

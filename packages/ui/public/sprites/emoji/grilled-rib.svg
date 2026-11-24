@@ -1,0 +1,15 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khúc sườn nướng</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="ribGlaze" r="70%"><stop offset="0%" stop-color="#fb923c" /><stop offset="55%" stop-color="#c2410c" /><stop offset="100%" stop-color="#7c2d12" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#431407" opacity="0.22" rx="38" ry="5" />
+    <path d="M16 60H104" stroke="#5c2d16" stroke-linecap="round" stroke-width="11" />
+    <path d="M16 60H104" stroke="#fffbeb" stroke-linecap="round" stroke-width="3" />
+    <circle cx="16" cy="55" fill="#fffbeb" r="5.5" stroke="#5c2d16" stroke-width="3" />
+    <circle cx="16" cy="65" fill="#fffbeb" r="5.5" stroke="#5c2d16" stroke-width="3" />
+    <circle cx="104" cy="55" fill="#fffbeb" r="5.5" stroke="#5c2d16" stroke-width="3" />
+    <circle cx="104" cy="65" fill="#fffbeb" r="5.5" stroke="#5c2d16" stroke-width="3" />
+    <rect fill="url(#ribGlaze)" height="46" rx="16" stroke="#431407" stroke-width="3.8" width="56" x="32" y="37" />
+    <path d="M44 45L40 75M58 45L54 75M72 45L68 75" stroke="#431407" stroke-linecap="round" stroke-width="3.2" />
+</svg>

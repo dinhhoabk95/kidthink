@@ -1,0 +1,10 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ngòi bút mực</title>
+  <defs>
+    <linearGradient id="spnSilv" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#f8fafc" /><stop offset="100%" stop-color="#94a3b8" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e293b" opacity="0.22" rx="26" ry="4.5" />
+    <polygon fill="url(#spnSilv)" points="60,18 86,68 74,98 46,98 34,68" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M60 18V58" stroke="#1e293b" stroke-linecap="round" stroke-width="3.4" />
+    <circle cx="60" cy="62" fill="#1e293b" r="5" />
+</svg>

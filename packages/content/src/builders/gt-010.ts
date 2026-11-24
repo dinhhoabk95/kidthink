@@ -96,7 +96,7 @@ export const projectGT010: Projection<"GT-010"> = {
 
     return {
       content_pack: {
-        prompt: "Bé tính xem hình có giá trị bao nhiêu nhé!",
+        prompt: "Đố bé mỗi hình đổi được bao nhiêu đơn vị nhỉ?",
         symbols: [symA, symB],
         equations,
         question: { kind: "value" as const, symbol_id: itemB.id },

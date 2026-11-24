@@ -1,18 +1,21 @@
 /**
- * @mindkid/emoji — Custom 2.5D "Giấy & Gỗ" Emoji-Art & Tier-3 Hero Sprite Registry
- * Phủ 915 emoji custom nội bộ (875 Vector Craft SVG + 40 Tier-3 Soft Clay Hero WebP).
+ * @mindkid/emoji — Custom 2.5D Realistic Vector SVG & Tier-3 Hero Sprite Registry
+ * Phủ 100% danh mục ALL_EMOJIS + kho emoji nội dung toàn hệ thống.
  */
 
 import {
-  BATCH_2_SPRITES,
-  type EmojiSpriteMeta,
-  hero,
-  sprite,
-} from "./sprites-batch2";
-import { BATCH_3A_SPRITES } from "./sprites-batch3a";
-import { BATCH_3B_SPRITES } from "./sprites-batch3b";
+  buildGlyphLookupMap,
+  normalizeGlyph,
+  resolveFromGlyphMap,
+} from "#src/glyph-utils";
+import { hero, sprite } from "#src/sprite-helpers";
+import { BATCH_2_SPRITES } from "#src/sprites-batch2";
+import { BATCH_3A_SPRITES } from "#src/sprites-batch3a";
+import { BATCH_3B_SPRITES } from "#src/sprites-batch3b";
+import { BATCH_4_SPRITES } from "#src/sprites-batch4";
+import type { EmojiSpriteMeta } from "#src/types";
 
-export type { CustomSpriteTier, EmojiSpriteMeta } from "./sprites-batch2";
+export type { CustomSpriteTier, EmojiSpriteMeta } from "#src/types";
 
 const BATCH_1_SPRITES: readonly EmojiSpriteMeta[] = [
   // Core PoC — Trái cây & Đồ ăn (9)
@@ -26,7 +29,7 @@ const BATCH_1_SPRITES: readonly EmojiSpriteMeta[] = [
   sprite("🌽", "corn", "Bắp ngô"),
   sprite("🧁", "cupcake", "Bánh kem nhỏ"),
 
-  // Core PoC — Động vật đáng yêu (9)
+  // Core PoC — Động vật thân thuộc (9)
   hero("🐟", "fish", "Con cá"),
   hero("🐰", "rabbit", "Con thỏ"),
   hero("🐻", "bear", "Con gấu"),
@@ -161,68 +164,40 @@ const CUSTOM_SPRITE_LIST: readonly EmojiSpriteMeta[] = [
   ...BATCH_2_SPRITES,
   ...BATCH_3A_SPRITES,
   ...BATCH_3B_SPRITES,
+  ...BATCH_4_SPRITES,
 ];
 
-const VARIATION_SELECTOR_16_RE = /\uFE0F/g;
-
-function stripVariationSelector(value: string): string {
-  return value.replace(VARIATION_SELECTOR_16_RE, "");
-}
-
-function buildCanonicalMap(): ReadonlyMap<string, EmojiSpriteMeta> {
-  const map = new Map<string, EmojiSpriteMeta>();
-  for (const meta of CUSTOM_SPRITE_LIST) {
-    map.set(meta.emoji.normalize("NFC"), meta);
-  }
-  return map;
-}
-
-function buildLookupMap(): ReadonlyMap<string, EmojiSpriteMeta> {
-  const map = new Map<string, EmojiSpriteMeta>();
-  for (const meta of CUSTOM_SPRITE_LIST) {
-    const nfc = meta.emoji.normalize("NFC");
-    map.set(nfc, meta);
-    const stripped = stripVariationSelector(nfc);
-    if (!map.has(stripped)) {
-      map.set(stripped, meta);
-    }
-  }
-  return map;
-}
-
 export const CUSTOM_EMOJI_SPRITES: ReadonlyMap<string, EmojiSpriteMeta> =
-  buildCanonicalMap();
+  /* @__PURE__ */ (() => {
+    const map = new Map<string, EmojiSpriteMeta>();
+    for (const meta of CUSTOM_SPRITE_LIST) {
+      map.set(normalizeGlyph(meta.emoji), meta);
+    }
+    return map;
+  })();
 
-const SPRITE_LOOKUP_MAP: ReadonlyMap<string, EmojiSpriteMeta> =
-  buildLookupMap();
+let spriteLookupCache: ReadonlyMap<string, EmojiSpriteMeta> | null = null;
 
-/**
- * Tra cứu metadata sprite custom theo emoji (hỗ trợ chuẩn hoá NFC và bỏ VS16 \uFE0F).
- */
+function getSpriteLookupMap(): ReadonlyMap<string, EmojiSpriteMeta> {
+  if (!spriteLookupCache) {
+    spriteLookupCache = buildGlyphLookupMap(
+      CUSTOM_SPRITE_LIST,
+      (meta) => meta.emoji
+    );
+  }
+  return spriteLookupCache;
+}
+
 export function resolveCustomEmojiSprite(
   emoji: string
 ): EmojiSpriteMeta | null {
-  if (!emoji) {
-    return null;
-  }
-  const normalized = emoji.normalize("NFC");
-  return (
-    SPRITE_LOOKUP_MAP.get(normalized) ??
-    SPRITE_LOOKUP_MAP.get(stripVariationSelector(normalized)) ??
-    null
-  );
+  return resolveFromGlyphMap(getSpriteLookupMap(), emoji);
 }
 
-/**
- * Kiểm tra emoji có sprite custom trong thư viện hay không.
- */
 export function hasCustomEmojiSprite(emoji: string): boolean {
   return resolveCustomEmojiSprite(emoji) !== null;
 }
 
-/**
- * Liệt kê toàn bộ 915 sprite custom theo thứ tự khai báo.
- */
 export function listCustomEmojiSprites(): readonly EmojiSpriteMeta[] {
   return CUSTOM_SPRITE_LIST;
 }

@@ -1,0 +1,13 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tàu điện thành phố</title>
+  <defs>
+    <linearGradient id="ctmTeal" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#5eead4" /><stop offset="100%" stop-color="#0d9488" /></linearGradient>
+  </defs>
+  <path d="M14 100H106" stroke="#334155" stroke-linecap="round" stroke-width="4.5" />
+    <path d="M48 34L60 20L72 34" fill="none" stroke="#334155" stroke-linejoin="round" stroke-width="3.6" />
+    <rect fill="url(#ctmTeal)" height="54" rx="12" stroke="#134e4a" stroke-width="3.8" width="84" x="18" y="36" />
+    <rect fill="#e0f2fe" height="20" rx="4" stroke="#0c4a6e" stroke-width="3" width="22" x="26" y="44" />
+    <rect fill="#e0f2fe" height="20" rx="4" stroke="#0c4a6e" stroke-width="3" width="22" x="52" y="44" />
+    <rect fill="#e0f2fe" height="20" rx="4" stroke="#0c4a6e" stroke-width="3" width="16" x="78" y="44" />
+    <circle cx="38" cy="94" fill="#334155" r="6" /><circle cx="82" cy="94" fill="#334155" r="6" />
+</svg>

@@ -135,6 +135,8 @@ const FORBIDDEN_VARIANT_TERMS = ["đa dạng", "nhiều chủ đề", "phong ph�
 const ALLOWED_DO_MO = ["đóng", "bán mở", "mở"] as const;
 
 const TAG_AXIS_ENUM_REGEX = /pgEnum\(\s*"tag_axis"\s*,\s*\[([^\]]*)\]/;
+const TAG_AXIS_CODEC_REGEX =
+  /TAG_AXIS_CODEC\s*=\s*createIntEnumCodec[\s\S]*?\[([\s\S]*?)\]\s*\)/;
 const TAG_AXIS_VALUE_REGEX = /"([^"]+)"/g;
 
 /** Bốn trục tag đã đóng. Miền hành vi cấm trở thành trục thứ năm (BR-EBD-03). */
@@ -1173,7 +1175,8 @@ function checkBehaviorDomainNotATagAxis(
       }
     }
 
-    const axisMatch = TAG_AXIS_ENUM_REGEX.exec(content);
+    const axisMatch =
+      TAG_AXIS_ENUM_REGEX.exec(content) ?? TAG_AXIS_CODEC_REGEX.exec(content);
     if (!axisMatch?.[1]) {
       continue;
     }

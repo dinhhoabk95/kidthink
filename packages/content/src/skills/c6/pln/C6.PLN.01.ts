@@ -296,5 +296,23 @@ export const C6_PLN_01_SEED: SkillSeed = {
       theme: "nature",
       rounds: 3,
     },
+    {
+      code: "GL-C6-PLN-SWT-6501",
+      template: "GT-027",
+      band: "5-6",
+      difficulty: 4,
+      theme: "festival",
+      rounds: 3,
+      sequence_no: 61,
+    },
+    {
+      code: "GL-C6-PLN-NOGO-6503",
+      template: "GT-026",
+      band: "5-6",
+      difficulty: 4,
+      theme: "homeland",
+      rounds: 3,
+      sequence_no: 63,
+    },
   ],
 };

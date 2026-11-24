@@ -36,6 +36,14 @@ export const HIGH_RES_RASTER_BASE_PX = 192;
 export const MAX_HIGH_RES_RASTER_PX = 384;
 
 const PICTOGRAPHIC_REGEX = /\p{Extended_Pictographic}/u;
+const ENGINE_AMBIENT_UI_EMOJIS = [
+  "\u{1F446}",
+  "🎵",
+  "🎶",
+  "\u{1F50D}",
+  "⭐",
+  "🌟",
+] as const;
 const GRAPHEME_SEGMENTER =
   typeof Intl !== "undefined" && "Segmenter" in Intl
     ? new Intl.Segmenter("vi", { granularity: "grapheme" })
@@ -395,6 +403,9 @@ export async function preloadSpritesForSession(
   const emojis = new Set<string>();
   const images = new Map<string, Set<string>>();
   scanValue(source, new Set<object>(), emojis, images);
+  for (const ambientEmoji of ENGINE_AMBIENT_UI_EMOJIS) {
+    emojis.add(ambientEmoji.normalize("NFC"));
+  }
 
   if (options?.includeFlashcardCounters) {
     for (const counterEmoji of FLASHCARD_COUNTER_EMOJI_POOL) {

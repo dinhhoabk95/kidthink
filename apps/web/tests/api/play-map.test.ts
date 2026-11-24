@@ -1,7 +1,10 @@
 import {
+  CONSENT_ACTION,
+  CONSENT_TYPE,
   childBadges,
   childProfiles,
   competencies,
+  consentLogs,
   getOwnerDb,
   users,
 } from "@mindkid/db";
@@ -72,6 +75,14 @@ describe("Child Play Map API (BR-PRG-02..05, D-MJ, D-MK)", () => {
         displayName: "Parent User",
       })
       .returning();
+
+    await db.insert(consentLogs).values({
+      userId: user.id,
+      consentType: CONSENT_TYPE.CHILD_DATA,
+      action: CONSENT_ACTION.ACCEPTED,
+      ipAddress: "127.0.0.1",
+      userAgent: "vitest",
+    });
 
     const [child] = await db
       .insert(childProfiles)

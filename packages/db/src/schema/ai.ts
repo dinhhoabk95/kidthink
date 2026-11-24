@@ -1,31 +1,25 @@
-import {
-  bigint,
-  boolean,
-  index,
-  integer,
-  pgTable,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
-import { idPk, timestamps } from "./columns.ts";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { idPk, timestamps, uuidCol } from "./columns.ts";
 import { users } from "./identity.ts";
 
-export const aiUsageLog = pgTable(
+export const aiUsageLog = sqliteTable(
   "ai_usage_log",
   {
     id: idPk(),
-    uuid: uuid("uuid").defaultRandom().notNull().unique(),
-    userId: bigint("user_id", { mode: "number" })
+    uuid: uuidCol("uuid").unique(),
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    feature: varchar("feature", { length: 60 }).notNull(),
+    feature: text("feature").notNull(),
     creditsSpent: integer("credits_spent").notNull().default(0),
-    model: varchar("model", { length: 60 }).notNull(),
-    promptVersion: varchar("prompt_version", { length: 40 }).notNull(),
+    model: text("model").notNull(),
+    promptVersion: text("prompt_version").notNull(),
     inputTokens: integer("input_tokens").notNull().default(0),
     outputTokens: integer("output_tokens").notNull().default(0),
     costUsdMicros: integer("cost_usd_micros").notNull().default(0),
-    moderationPassed: boolean("moderation_passed").notNull().default(true),
+    moderationPassed: integer("moderation_passed", { mode: "boolean" })
+      .notNull()
+      .default(true),
     ...timestamps(),
   },
   (table) => [

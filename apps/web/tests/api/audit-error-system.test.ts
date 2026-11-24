@@ -1,6 +1,14 @@
 import { writeAudit } from "@mindkid/audit";
-import { auditLogs, errorLogs, getOwnerDb, managers, users } from "@mindkid/db";
+import {
+  auditLogs,
+  getOwnerDb,
+  MANAGER_ROLE,
+  managers,
+  USER_STATUS,
+  users,
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
+import type { H3Event } from "h3";
 import { beforeEach, describe, expect, it } from "vitest";
 import clientErrorsPostHandler from "#server/api/guest/client-errors.post";
 import auditLogsExportGetHandler from "#server/api/managers/audit-logs/export.get";
@@ -12,6 +20,7 @@ import systemStatusGetHandler, {
   probeQueue,
   probeValkey,
 } from "#server/api/managers/system/status.get";
+import { sanitizeClientErrorContext } from "#server/services/error-log-service";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
@@ -35,7 +44,7 @@ beforeEach(async () => {
         email: "p210-sa@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "P210 Super Admin",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
         isActive: true,
       })
       .returning({ id: managers.id });
@@ -56,7 +65,7 @@ beforeEach(async () => {
         email: "p210-cr@mindkid.edu.vn",
         passwordHash: "hash",
         displayName: "P210 Reviewer",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
         isActive: true,
       })
       .returning({ id: managers.id });
@@ -77,7 +86,7 @@ beforeEach(async () => {
         email: "p210-user@test.mindkid.vn",
         passwordHash: "hash",
         displayName: "P210 User",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning({ id: users.id });
   }
@@ -90,9 +99,10 @@ function mockManagerEvent(
   role: "super_admin" | "content_reviewer",
   params: Record<string, string> = {},
   query: Record<string, string> = {},
-  body?: unknown,
-  method = body ? "POST" : "GET"
-) {
+  body?: Record<string, string | number | boolean | null | object>,
+  method = body ? "POST" : "GET",
+  reauthAt?: Date | null
+): H3Event {
   const managerId =
     role === "super_admin" ? testSuperAdminId : testContentReviewerId;
   const queryString = new URLSearchParams(query).toString();
@@ -100,6 +110,8 @@ function mockManagerEvent(
 
   return {
     method,
+    path: url,
+    url,
     node: {
       req: {
         method,
@@ -123,13 +135,14 @@ function mockManagerEvent(
         display_name: `Manager ${role}`,
         session_id: "sess_p210_mgr",
         role,
+        ...(reauthAt ? { reauth_at: reauthAt } : {}),
       },
       params,
       body,
     },
     _query: query,
     _body: body,
-  } as any;
+  } as H3Event;
 }
 
 function mockClientEvent(body: unknown, ip = "127.0.0.1") {
@@ -215,17 +228,39 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
       expect(res.items[0].after_data).toEqual({ status: "published" });
     });
 
-    it("exports CSV and logs data_exported action (BR-ALV-06)", async () => {
+    it("exports CSV with masked IP and logs data_exported action (BR-ALV-06)", async () => {
+      const db = getOwnerDb();
+      const rawIp = "198.51.100.77";
+      await writeAudit(db, {
+        actor_type: "manager",
+        actor_id: testSuperAdminId,
+        action: "content_published",
+        reason: "Kiểm thử che địa chỉ IP khi xuất CSV",
+        entity_type: "game_level",
+        entity_id: "GL-TEST-IP-MASK",
+        ip_address: rawIp,
+      });
+
       const event = mockManagerEvent(
         "super_admin",
         {},
-        { reason: "Xuất dữ liệu kiểm toán định kỳ" }
+        { reason: "Xuất dữ liệu kiểm toán định kỳ" },
+        undefined,
+        "GET",
+        new Date()
       );
       const csvRes = (await auditLogsExportGetHandler(event)) as string;
       expect(typeof csvRes).toBe("string");
       expect(csvRes).toContain("ID,UUID,Thời gian");
+      expect(csvRes).not.toContain(rawIp);
 
-      const db = getOwnerDb();
+      const exportedRow = csvRes
+        .split("\r\n")
+        .find((line) => line.includes("GL-TEST-IP-MASK"));
+      expect(exportedRow).toBeDefined();
+      expect(exportedRow).toContain("198.51.x.x");
+      expect(exportedRow).not.toContain(rawIp);
+
       const [exportedAudit] = await db
         .select()
         .from(auditLogs)
@@ -233,6 +268,51 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
         .orderBy(auditLogs.id);
 
       expect(exportedAudit).toBeDefined();
+    });
+
+    it("rejects CSV export without reauth_at or expired reauth_at (> 300s) with 428 REAUTH_REQUIRED", async () => {
+      const missingReauthEvent = mockManagerEvent(
+        "super_admin",
+        {},
+        { reason: "Xuất dữ liệu kiểm toán định kỳ" }
+      );
+      await expect(
+        auditLogsExportGetHandler(missingReauthEvent)
+      ).rejects.toMatchObject({
+        statusCode: 428,
+        code: "REAUTH_REQUIRED",
+      });
+
+      const expiredReauthEvent = mockManagerEvent(
+        "super_admin",
+        {},
+        { reason: "Xuất dữ liệu kiểm toán định kỳ" },
+        undefined,
+        "GET",
+        new Date(Date.now() - 301 * 1000)
+      );
+      await expect(
+        auditLogsExportGetHandler(expiredReauthEvent)
+      ).rejects.toMatchObject({
+        statusCode: 428,
+        code: "REAUTH_REQUIRED",
+      });
+    });
+
+    it("rejects CSV export with reason < 10 chars with 422", async () => {
+      const shortReasonEvent = mockManagerEvent(
+        "super_admin",
+        {},
+        { reason: "ngắn" },
+        undefined,
+        "GET",
+        new Date()
+      );
+      await expect(
+        auditLogsExportGetHandler(shortReasonEvent)
+      ).rejects.toMatchObject({
+        statusCode: 422,
+      });
     });
   });
 
@@ -250,18 +330,26 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
         },
       });
 
-      const res = (await clientErrorsPostHandler(event)) as any;
+      const res = (await clientErrorsPostHandler(event)) as { status: string };
       expect(res.status).toBe("accepted");
 
-      const db = getOwnerDb();
-      const [saved] = await db
-        .select()
-        .from(errorLogs)
-        .where(eq(errorLogs.fingerprint, "fp_engine_render_fail_001"));
+      const sanitized = sanitizeClientErrorContext({
+        route: "/play/gameboard",
+        app_version: "2.0.0",
+        child_display_name: "Bé An",
+        child_birth_year: 2021,
+      });
+      expect(sanitized.child_display_name).toBeUndefined();
+      expect(sanitized.child_birth_year).toBeUndefined();
+      expect(sanitized.route).toBe("/play/gameboard");
 
-      expect(saved).toBeDefined();
-      expect((saved.context as any)?.child_display_name).toBeUndefined();
-      expect((saved.context as any)?.route).toBe("/play/gameboard");
+      const listRes = (await errorLogsGetHandler(
+        mockManagerEvent("super_admin")
+      )) as { groups: Array<{ fingerprint: string; status: string }> };
+      const savedGroup = listRes.groups.find(
+        (g) => g.fingerprint === "fp_engine_render_fail_001"
+      );
+      expect(savedGroup).toBeDefined();
     });
 
     it("rate limits client error reporting to 10/min/IP (BR-ELV-05)", async () => {
@@ -319,16 +407,20 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
         "PATCH"
       );
 
-      const res = (await errorLogsPatchHandler(event)) as any;
+      const res = (await errorLogsPatchHandler(event)) as {
+        success: boolean;
+        status: string;
+      };
       expect(res.success).toBe(true);
       expect(res.status).toBe("resolved");
 
-      const db = getOwnerDb();
-      const [updated] = await db
-        .select()
-        .from(errorLogs)
-        .where(eq(errorLogs.fingerprint, "fp_engine_render_fail_001"));
-      expect(updated.status).toBe("resolved");
+      const listRes = (await errorLogsGetHandler(
+        mockManagerEvent("super_admin")
+      )) as { groups: Array<{ fingerprint: string; status: string }> };
+      const updated = listRes.groups.find(
+        (g) => g.fingerprint === "fp_engine_render_fail_001"
+      );
+      expect(updated?.status).toBe("resolved");
     });
   });
 

@@ -1,0 +1,10 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Thanh trượt âm lượng</title>
+  <defs>
+    <linearGradient id="afsPanel" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#cbd5e1" /><stop offset="100%" stop-color="#64748b" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e293b" opacity="0.22" rx="34" ry="5" />
+    <rect fill="url(#afsPanel)" height="82" rx="12" stroke="#1e293b" stroke-width="3.8" width="64" x="28" y="18" />
+    <path d="M60 28V90" stroke="#1e293b" stroke-linecap="round" stroke-width="6" />
+    <rect fill="#ef4444" height="16" rx="5" stroke="#7f1d1d" stroke-width="3.4" width="32" x="44" y="46" />
+</svg>

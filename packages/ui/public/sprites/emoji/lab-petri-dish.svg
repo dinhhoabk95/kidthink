@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đĩa nuôi cấy vi sinh</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="ptrGel" r="70%"><stop offset="0%" stop-color="#bbf7d0" /><stop offset="55%" stop-color="#4ade80" /><stop offset="100%" stop-color="#16a34a" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#0c4a6e" opacity="0.22" rx="42" ry="6" />
+    <path d="M18 62V74C18 88 37 96 60 96C83 96 102 88 102 74V62Z" fill="#bae6fd" stroke="#0c4a6e" stroke-linejoin="round" stroke-width="3.8" />
+    <ellipse cx="60" cy="62" fill="#e0f2fe" rx="42" ry="22" stroke="#0c4a6e" stroke-width="3.8" />
+    <ellipse cx="60" cy="63" fill="url(#ptrGel)" rx="34" ry="16" stroke="#15803d" stroke-width="2.8" />
+    <circle cx="48" cy="60" fill="#ec4899" r="5" /><circle cx="68" cy="65" fill="#f59e0b" r="4" /><circle cx="60" cy="56" fill="#3b82f6" r="3.5" />
+</svg>

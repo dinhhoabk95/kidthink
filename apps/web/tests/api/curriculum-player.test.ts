@@ -1,13 +1,21 @@
 import crypto from "node:crypto";
 import {
+  ACCESS_TIER,
+  CHILD_STATUS,
+  CONTENT_ENTITY_TYPE,
   childProfiles,
   curricula,
   curriculumItems,
   curriculumWeeks,
+  ENTITLEMENT_GROUP,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   gameLevels,
   getOwnerDb,
+  PROGRAM_TYPE,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
 import {
@@ -82,7 +90,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
       .values({
         email: `parent-cur-${crypto.randomUUID()}@example.com`,
         displayName: "Parent Cur",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
 
@@ -95,7 +103,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         displayName: "Bé Cur",
         birthYear: 2021, // 5 years old in 2026
         avatarId: "cat",
-        status: "active",
+        status: CHILD_STATUS.ACTIVE,
       })
       .returning();
 
@@ -115,7 +123,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
           instruction: "Hướng dẫn",
           contentPack: { level: i },
           difficultyParams: { difficulty: 1 },
-          accessTier: i === 4 ? "premium" : "free", // Level 4 is premium
+          accessTier: i === 4 ? ACCESS_TIER.PREMIUM : ACCESS_TIER.FREE, // Level 4 is premium
         })
         .returning();
       createdLevels.push(lvl);
@@ -127,13 +135,13 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
       .insert(curricula)
       .values({
         code: curCode,
-        programType: "age_based",
+        programType: PROGRAM_TYPE.AGE_BASED,
         targetAgeMin: 4,
         targetAgeMax: 6,
         durationWeeks: 8,
         sessionsPerWeek: 3,
         title: "Chương trình Toán 5 tuổi",
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
 
@@ -154,7 +162,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: createdLevels[0].id,
         isRequired: true,
       })
@@ -167,7 +175,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         weekNo: 1,
         sessionNo: 2,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: createdLevels[1].id,
         isRequired: true,
       })
@@ -180,7 +188,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         weekNo: 1,
         sessionNo: 3,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: createdLevels[2].id,
         isRequired: false, // Optional item
       })
@@ -194,7 +202,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         weekNo: 2,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: createdLevels[3].id, // Premium
         isRequired: true,
       })
@@ -207,7 +215,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         weekNo: 2,
         sessionNo: 2,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: createdLevels[4].id, // Free
         isRequired: true,
       })
@@ -221,7 +229,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         weekNo: 3,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: createdLevels[5].id, // Free
         isRequired: true,
       })
@@ -490,7 +498,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
       .insert(entitlementKeys)
       .values({
         key: "play_premium_games",
-        group: "content",
+        group: ENTITLEMENT_GROUP.CONTENT,
         label: "Chơi trò chơi cao cấp",
         isMvp: true,
       })
@@ -499,8 +507,8 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "play_premium_games",
-      status: "active",
-      source: "package_order",
+      status: ENTITLEMENT_STATUS.ACTIVE,
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
     });
     await invalidateUserEntitlementsCache(user.id);
 
@@ -659,7 +667,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
         displayName: "Bé Lớn",
         birthYear: 2018,
         avatarId: "panda",
-        status: "active",
+        status: CHILD_STATUS.ACTIVE,
       })
       .returning();
 
@@ -702,13 +710,13 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
       .insert(curricula)
       .values({
         code: `CUR-PREM-${uid}`,
-        programType: "age_based",
+        programType: PROGRAM_TYPE.AGE_BASED,
         targetAgeMin: 4,
         targetAgeMax: 6,
         durationWeeks: 4,
         sessionsPerWeek: 2,
         title: "Chương trình VIP",
-        accessTier: "premium",
+        accessTier: ACCESS_TIER.PREMIUM,
       })
       .returning();
 
@@ -718,7 +726,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
       weekNo: 1,
       sessionNo: 1,
       position: 1,
-      entityType: "game_level",
+      entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
       entityId: createdLevels[3].id, // Premium
       isRequired: true,
     });

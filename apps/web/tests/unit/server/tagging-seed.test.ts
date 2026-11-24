@@ -1,10 +1,13 @@
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Socket } from "node:net";
 import {
+  CONTENT_ENTITY_TYPE,
   contentTags,
   detectOrphanedContentTags,
   getOwnerDb,
   normalizeMechanicTagCode,
+  TAG_AXIS,
+  TAG_STATUS,
   validateAndAssignTags,
   validateContentSkillMap,
 } from "@mindkid/db";
@@ -21,18 +24,23 @@ describe("Task P1.10 — Content Tagging & Public Vocabulary (BR-TAG-*)", () => 
     await db
       .insert(contentTags)
       .values([
-        { code: "cnt", axis: "what", label: "Đếm số", status: "active" },
+        {
+          code: "cnt",
+          axis: TAG_AXIS.WHAT,
+          label: "Đếm số",
+          status: TAG_STATUS.ACTIVE,
+        },
         {
           code: "visual",
-          axis: "thinking",
+          axis: TAG_AXIS.THINKING,
           label: "Tư duy trực quan",
-          status: "active",
+          status: TAG_STATUS.ACTIVE,
         },
         {
           code: "tap_select",
-          axis: "mechanic",
+          axis: TAG_AXIS.MECHANIC,
           label: "Chạm chọn",
-          status: "active",
+          status: TAG_STATUS.ACTIVE,
         },
       ])
       .onConflictDoNothing();
@@ -42,7 +50,7 @@ describe("Task P1.10 — Content Tagging & Public Vocabulary (BR-TAG-*)", () => 
     const db = getOwnerDb();
     try {
       await validateAndAssignTags(db, {
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: 99_999,
         tagCodes: ["fun_stuff"],
       });
@@ -59,7 +67,7 @@ describe("Task P1.10 — Content Tagging & Public Vocabulary (BR-TAG-*)", () => 
       await validateAndAssignTags(
         db,
         {
-          entityType: "game_level",
+          entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
           entityId: 99_999,
           tagCodes: ["cnt"],
         },
@@ -132,9 +140,9 @@ describe("Task P1.10 — Content Tagging & Public Vocabulary (BR-TAG-*)", () => 
       .insert(contentTags)
       .values({
         code: deprecatedTagCode,
-        axis: "what",
+        axis: TAG_AXIS.WHAT,
         label: "Tag đã ngừng dùng",
-        status: "deprecated",
+        status: TAG_STATUS.DEPRECATED,
       })
       .onConflictDoNothing();
 

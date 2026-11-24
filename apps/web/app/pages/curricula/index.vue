@@ -5,7 +5,7 @@
     <PublicNavbar />
 
     <main
-      class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8"
+      class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 min-w-0"
       id="main-content"
     >
       <div
@@ -15,16 +15,17 @@
           <span
             class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300 text-sm font-bold mb-2"
           >
-            Gói bổ trợ lộ trình cá nhân
+            Lộ trình học tập và cá nhân hoá
           </span>
           <h1
             class="text-2xl sm:text-3xl font-heading font-extrabold text-surface-900 dark:text-white"
           >
-            Lộ trình học cá nhân
+            Lộ trình Koguma-kai và Lộ trình cá nhân
           </h1>
           <p class="text-surface-600 dark:text-surface-300 text-base mt-1">
-            Xây dựng, tùy biến và theo dõi tiến độ lộ trình học toán tư duy dành
-            riêng cho con bạn.
+            Kích hoạt ngay lộ trình Koguma-kai Học kỳ 12 tuần (HK1/HK2) hoặc Năm
+            học 36 tuần (Chặng 1/Chặng 2) cho bé, hoặc tự xây dựng lộ trình
+            riêng.
           </p>
         </div>
 
@@ -77,6 +78,13 @@
           <UIcon class="w-5 h-5" name="i-lucide-x" />
         </button>
       </div>
+
+      <!-- Khối kích hoạt nhanh Koguma-kai 12 tuần vs 36 tuần -->
+      <KogumaEnrollmentPanel
+        class="mt-8"
+        :children-list="childrenList"
+        @enrolled="onKogumaEnrolled"
+      />
 
       <section class="mt-8" data-testid="personal-curricula-section">
         <div class="text-center py-12" v-if="pending">
@@ -142,7 +150,7 @@
                   {{ item.status === "ready" ? "Sẵn sàng" : "Bản nháp" }}
                 </span>
                 <span
-                  class="text-sm text-surface-600 dark:text-surface-300 font-bold"
+                  class="text-sm text-surface-600 dark:text-surface-300 font-bold tabular-nums"
                 >
                   v{{ item.version }}
                 </span>
@@ -160,17 +168,22 @@
                     class="w-4 h-4 text-surface-500 dark:text-surface-400 shrink-0"
                     name="i-lucide-calendar"
                   />
-                  <span
-                    >{{ item.duration_weeks }}
-                    tuần · {{ item.sessions_per_week }} buổi/tuần</span
-                  >
+                  <span class="tabular-nums">
+                    {{ item.duration_weeks }}
+                    tuần ·
+                    {{ item.sessions_per_week }}
+                    buổi/tuần
+                  </span>
                 </div>
                 <div class="flex items-center gap-2">
                   <UIcon
                     class="w-4 h-4 text-surface-500 dark:text-surface-400 shrink-0"
                     name="i-lucide-puzzle"
                   />
-                  <span>{{ item.item_count }} bài học / trò chơi đã gán</span>
+                  <span class="tabular-nums">
+                    {{ item.item_count }}
+                    bài học đã gán
+                  </span>
                 </div>
                 <div
                   class="flex items-center gap-2"
@@ -180,11 +193,10 @@
                     class="w-4 h-4 text-surface-500 dark:text-surface-400 shrink-0"
                     name="i-lucide-baby"
                   />
-                  <span
-                    >Độ tuổi: {{ item.age_min || 3 }} -
-                    {{ item.age_max || 6 }}
-                    tuổi</span
-                  >
+                  <span>
+                    Độ tuổi: {{ item.age_min || 3 }} - {{ item.age_max || 6 }}
+                    tuổi
+                  </span>
                 </div>
               </div>
             </div>
@@ -220,23 +232,27 @@
         </div>
       </section>
 
+      <KogumaProgramBanner class="mt-10" compact show-explore-link />
+
       <section
-        class="mt-12 pt-8 border-t border-surface-200 dark:border-surface-700"
+        class="mt-10 pt-8 border-t border-surface-200 dark:border-surface-700"
         data-testid="system-curricula-library"
         v-if="systemPrograms.length > 0"
       >
         <div
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6"
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5"
         >
           <div>
             <h2
-              class="text-xl sm:text-2xl font-heading font-extrabold text-surface-900 dark:text-white"
+              class="text-xl sm:text-2xl font-heading font-extrabold text-surface-900 dark:text-white leading-relaxed"
             >
-              Thư viện lộ trình mẫu
+              Thư viện lộ trình mẫu Koguma-kai và Mầm · Chồi · Lá
             </h2>
-            <p class="text-surface-600 dark:text-surface-300 text-base mt-1">
-              Tham khảo chương trình chuẩn của MindKid hoặc sao chép làm lộ
-              trình riêng cho bé.
+            <p
+              class="text-surface-600 dark:text-surface-300 text-base mt-1 leading-relaxed"
+            >
+              Chọn chương trình Tư duy Koguma-kai 100 Học phần hoặc lộ trình
+              theo lớp Mầm, Chồi, Lá để sao chép riêng cho bé.
             </p>
           </div>
           <NuxtLink
@@ -247,53 +263,90 @@
           </NuxtLink>
         </div>
 
+        <!-- Track Filter Pills -->
+        <div class="flex flex-wrap gap-2 mb-6">
+          <button
+            class="inline-flex items-center gap-1.5 min-h-11 px-3.5 py-2 rounded-2xl border-2 text-sm font-bold transition-colors tabular-nums"
+            type="button"
+            v-for="tab in libraryTrackTabs"
+            :key="tab.value"
+            :aria-pressed="selectedLibraryTrack === tab.value"
+            :class="
+              selectedLibraryTrack === tab.value
+                ? 'bg-brand-600 border-brand-600 text-white'
+                : 'bg-white dark:bg-surface-800 border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-200 hover:border-brand-500'
+            "
+            @click="selectedLibraryTrack = tab.value"
+          >
+            <span>{{ tab.label }}</span>
+            <span>({{ tab.count }})</span>
+          </button>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <article
-            class="bg-white dark:bg-surface-800 border-4 border-surface-200 dark:border-surface-700 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+            class="bg-white dark:bg-surface-800 border-4 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between min-w-0"
             data-testid="system-curriculum-card"
-            v-for="prog in systemPrograms"
+            v-for="prog in filteredSystemPrograms"
             :key="prog.code"
+            :class="
+              isKogumaProgramCode(prog.code)
+                ? 'border-warning-400 dark:border-warning-600'
+                : 'border-surface-200 dark:border-surface-700'
+            "
           >
             <div>
               <div
                 class="flex flex-wrap items-center justify-between gap-2 mb-3"
               >
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <span
+                    class="px-2.5 py-0.5 rounded-full bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-200 text-sm font-bold"
+                  >
+                    {{ prog.target_age.min }}–{{ prog.target_age.max }}
+                    tuổi
+                  </span>
+                  <span
+                    class="px-2.5 py-0.5 rounded-full bg-warning-100 text-warning-900 dark:bg-warning-900/50 dark:text-warning-200 text-sm font-bold"
+                    v-if="isKogumaProgramCode(prog.code)"
+                  >
+                    {{ getKogumaBadge(prog.code, prog.duration_weeks) }}
+                  </span>
+                </div>
                 <span
-                  class="px-2.5 py-0.5 rounded-full bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-200 text-sm font-bold"
+                  class="text-sm text-surface-600 dark:text-surface-300 font-mono font-bold"
                 >
-                  {{ prog.target_age.min }}–{{ prog.target_age.max }}
-                  tuổi
-                </span>
-                <span
-                  class="text-sm text-surface-600 dark:text-surface-300 font-bold"
-                >
-                  {{ prog.code }}
+                  {{ toPublicProgramCode(prog.code) }}
                 </span>
               </div>
               <h3
                 class="font-heading font-extrabold text-lg text-surface-900 dark:text-white line-clamp-2"
               >
-                {{ prog.title }}
+                {{ formatSafeViLabel(prog.title) }}
               </h3>
               <p
                 class="mt-2 text-sm text-surface-600 dark:text-surface-300 line-clamp-2"
               >
                 {{
-                  prog.description ||
-                    "Chương trình rèn luyện tư duy toán học mầm non qua trò chơi và hoạt động trải nghiệm."
+                  formatSafeViLabel(
+                    prog.description ||
+                      "Chương trình rèn luyện tư duy toán học mầm non qua trò chơi và hoạt động trải nghiệm."
+                  )
                 }}
               </p>
               <div
-                class="mt-4 flex items-center gap-2 text-sm text-surface-600 dark:text-surface-300"
+                class="mt-4 flex items-center gap-2 text-sm text-surface-600 dark:text-surface-300 tabular-nums"
               >
                 <UIcon
                   class="w-4 h-4 text-surface-500 dark:text-surface-400 shrink-0"
                   name="i-lucide-calendar"
                 />
-                <span
-                  >{{ prog.duration_weeks }}
-                  tuần · {{ prog.sessions_per_week }} buổi/tuần</span
-                >
+                <span>
+                  {{ prog.duration_weeks }}
+                  tuần ·
+                  {{ prog.sessions_per_week }}
+                  buổi/tuần
+                </span>
               </div>
             </div>
 
@@ -302,7 +355,7 @@
             >
               <NuxtLink
                 class="inline-flex items-center gap-1.5 text-sm font-heading font-bold text-brand-600 dark:text-brand-400 hover:underline min-h-11 py-2"
-                :to="`/programs/${prog.code}`"
+                :to="`/programs/${toPublicProgramCode(prog.code)}`"
               >
                 Xem chi tiết →
               </NuxtLink>
@@ -319,295 +372,22 @@
       </section>
     </main>
 
-    <div
-      class="fixed inset-0 z-50 bg-surface-900/60 backdrop-blur-sm flex items-center justify-center p-4"
-      v-if="modalTitle"
-    >
-      <div
-        class="bg-white dark:bg-surface-800 border-4 border-surface-200 dark:border-surface-700 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4"
-      >
-        <div
-          class="flex items-center justify-between border-b border-surface-200 dark:border-surface-700 pb-3"
-        >
-          <h3
-            class="font-heading font-extrabold text-xl text-surface-900 dark:text-white"
-          >
-            {{ modalTitle }}
-          </h3>
-          <button
-            aria-label="Đóng hộp thoại"
-            class="inline-flex items-center justify-center text-surface-600 hover:text-surface-800 dark:text-surface-300 dark:hover:text-white text-lg font-bold min-h-11 min-w-11"
-            type="button"
-            @click="closeModals"
-          >
-            <UIcon class="w-5 h-5" name="i-lucide-x" />
-          </button>
-        </div>
-
-        <form
-          class="space-y-4"
-          v-if="activeModal === 'create'"
-          @submit.prevent="handleCreateSubmit"
-        >
-          <div>
-            <label
-              class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1"
-              for="create-curriculum-title"
-            >
-              Tên lộ trình *
-            </label>
-            <input
-              class="w-full px-4 py-2.5 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white font-sans text-base focus:outline-none focus:border-brand-500 min-h-11"
-              id="create-curriculum-title"
-              maxlength="200"
-              placeholder="VD: Lộ trình rèn tư duy toán lớp Mầm"
-              required
-              type="text"
-              v-model="createForm.title"
-            >
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1"
-                for="create-curriculum-duration"
-              >
-                Số tuần học
-              </label>
-              <input
-                class="w-full px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white text-base focus:outline-none min-h-11"
-                id="create-curriculum-duration"
-                max="52"
-                min="1"
-                type="number"
-                v-model.number="createForm.duration_weeks"
-              >
-            </div>
-            <div>
-              <label
-                class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1"
-                for="create-curriculum-sessions"
-              >
-                Buổi / tuần
-              </label>
-              <input
-                class="w-full px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white text-base focus:outline-none min-h-11"
-                id="create-curriculum-sessions"
-                max="7"
-                min="1"
-                type="number"
-                v-model.number="createForm.sessions_per_week"
-              >
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1"
-                for="create-curriculum-age-min"
-              >
-                Tuổi từ
-              </label>
-              <select
-                class="w-full px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white text-base focus:outline-none min-h-11"
-                id="create-curriculum-age-min"
-                v-model.number="createForm.age_min"
-              >
-                <option :value="3">3 tuổi</option>
-                <option :value="4">4 tuổi</option>
-                <option :value="5">5 tuổi</option>
-              </select>
-            </div>
-            <div>
-              <label
-                class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1"
-                for="create-curriculum-age-max"
-              >
-                Đến tuổi
-              </label>
-              <select
-                class="w-full px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white text-base focus:outline-none min-h-11"
-                id="create-curriculum-age-max"
-                v-model.number="createForm.age_max"
-              >
-                <option :value="4">4 tuổi</option>
-                <option :value="5">5 tuổi</option>
-                <option :value="6">6 tuổi</option>
-              </select>
-            </div>
-          </div>
-          <div
-            class="pt-4 flex justify-end gap-3 border-t border-surface-200 dark:border-surface-700"
-          >
-            <button
-              class="px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 font-bold text-sm min-h-11"
-              type="button"
-              @click="closeModals"
-            >
-              Hủy
-            </button>
-            <button
-              class="px-6 py-2 rounded-2xl bg-cta hover:bg-cta-hover text-white font-heading font-bold shadow-md text-sm transition-all active:scale-95 disabled:opacity-50 min-h-11"
-              type="submit"
-              :disabled="isSubmitting"
-            >
-              {{ isSubmitting ? "Đang tạo..." : "Tạo lộ trình" }}
-            </button>
-          </div>
-        </form>
-
-        <form
-          class="space-y-4"
-          v-else-if="activeModal === 'copy'"
-          @submit.prevent="handleCopySubmit"
-        >
-          <div>
-            <label
-              class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1"
-              for="copy-system-curriculum-code"
-            >
-              Mã chương trình mẫu *
-            </label>
-            <input
-              class="w-full px-4 py-2.5 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white text-base focus:outline-none min-h-11"
-              id="copy-system-curriculum-code"
-              placeholder="VD: CUR-MAM-01"
-              required
-              type="text"
-              v-model="copyForm.system_curriculum_code"
-            >
-          </div>
-          <div>
-            <label
-              class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1"
-              for="copy-system-curriculum-title"
-            >
-              Tên lộ trình bản sao
-            </label>
-            <input
-              class="w-full px-4 py-2.5 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white text-base focus:outline-none min-h-11"
-              id="copy-system-curriculum-title"
-              placeholder="VD: Bản sao lớp Mầm của mẹ"
-              type="text"
-              v-model="copyForm.title"
-            >
-          </div>
-          <div
-            class="pt-4 flex justify-end gap-3 border-t border-surface-200 dark:border-surface-700"
-          >
-            <button
-              class="px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 font-bold text-sm min-h-11"
-              type="button"
-              @click="closeModals"
-            >
-              Hủy
-            </button>
-            <button
-              class="px-6 py-2 rounded-2xl bg-cta hover:bg-cta-hover text-white font-heading font-bold shadow-md text-sm transition-all active:scale-95 disabled:opacity-50 min-h-11"
-              type="submit"
-              :disabled="isSubmitting"
-            >
-              {{ isSubmitting ? "Đang sao chép..." : "Sao chép" }}
-            </button>
-          </div>
-        </form>
-
-        <div
-          class="space-y-4"
-          v-else-if="activeModal === 'enroll' && activeCurriculum"
-        >
-          <p class="text-base text-surface-600 dark:text-surface-300">
-            Chọn bé để áp dụng lộ trình
-            <strong>{{ activeCurriculum.title }}</strong>:
-          </p>
-          <div class="space-y-2" v-if="childrenList.length > 0">
-            <label
-              class="flex items-center justify-between p-3 rounded-2xl border-2 border-surface-200 dark:border-surface-700 hover:border-brand-500 cursor-pointer min-h-11"
-              v-for="child in childrenList"
-              :key="child.uuid"
-            >
-              <div class="flex items-center gap-3">
-                <span class="text-2xl">
-                  <BrandEmoji :emoji="resolveAvatarEmoji(child.avatar_id)" />
-                </span>
-                <div>
-                  <div
-                    class="font-bold text-base text-surface-900 dark:text-white"
-                  >
-                    {{ child.display_name }}
-                  </div>
-                  <div class="text-sm text-surface-600 dark:text-surface-300">
-                    Năm sinh: {{ child.birth_year }}
-                  </div>
-                </div>
-              </div>
-              <input
-                class="h-5 w-5 text-brand-600"
-                name="selectedChild"
-                type="radio"
-                v-model="selectedChildUuid"
-                :value="child.uuid"
-              >
-            </label>
-          </div>
-          <div
-            class="text-center py-4 text-base text-surface-600 dark:text-surface-300"
-            v-else
-          >
-            Bạn chưa có hồ sơ trẻ nào. Vui lòng tạo hồ sơ trẻ trước.
-          </div>
-          <div
-            class="pt-4 flex justify-end gap-3 border-t border-surface-200 dark:border-surface-700"
-          >
-            <button
-              class="px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 font-bold text-sm min-h-11"
-              type="button"
-              @click="closeModals"
-            >
-              Đóng
-            </button>
-            <button
-              class="px-6 py-2 rounded-2xl bg-cta hover:bg-cta-hover text-white font-heading font-bold shadow-md text-sm transition-all active:scale-95 disabled:opacity-50 min-h-11"
-              type="button"
-              :disabled="!selectedChildUuid || isSubmitting"
-              @click="handleEnrollSubmit"
-            >
-              {{ isSubmitting ? "Đang ghi danh..." : "Xác nhận ghi danh" }}
-            </button>
-          </div>
-        </div>
-
-        <div
-          class="space-y-4"
-          v-else-if="activeModal === 'delete' && deletingCurriculum"
-        >
-          <p class="text-base text-surface-600 dark:text-surface-300">
-            Bạn có chắc chắn muốn xoá lộ trình
-            <strong>{{ deletingCurriculum.title }}</strong>? Hành động này không
-            thể hoàn tác.
-          </p>
-          <div
-            class="pt-4 flex justify-end gap-3 border-t border-surface-200 dark:border-surface-700"
-          >
-            <button
-              class="px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 font-bold text-sm min-h-11"
-              type="button"
-              @click="closeModals"
-            >
-              Hủy
-            </button>
-            <button
-              class="px-6 py-2 rounded-2xl bg-danger-600 hover:bg-danger-700 text-white font-heading font-bold shadow-md text-sm transition-all active:scale-95 disabled:opacity-50 min-h-11"
-              type="button"
-              :disabled="isSubmitting"
-              @click="handleDeleteSubmit"
-            >
-              {{ isSubmitting ? "Đang xoá..." : "Xoá vĩnh viễn" }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <PersonalCurriculumModals
+      v-model:copy-form="copyForm"
+      v-model:create-form="createForm"
+      v-model:selected-child-uuid="selectedChildUuid"
+      :active-curriculum="activeCurriculum"
+      :active-modal="activeModal"
+      :children-list="childrenList"
+      :deleting-curriculum="deletingCurriculum"
+      :is-submitting="isSubmitting"
+      :modal-title="modalTitle"
+      @close="closeModals"
+      @submit-copy="handleCopySubmit"
+      @submit-create="handleCreateSubmit"
+      @submit-delete="handleDeleteSubmit"
+      @submit-enroll="handleEnrollSubmit"
+    />
 
     <PublicFooter />
   </div>
@@ -619,13 +399,24 @@
     ProgramCardPublic,
     ProgramListPublicResponse,
   } from "@mindkid/shared/client";
-  import BrandEmoji from "@mindkid/ui/brand-emoji";
+  import {
+    isKogumaProgramCode,
+    normalizeCurriculumRoadmapCode,
+    parseKogumaProgramMeta,
+  } from "@mindkid/taxonomy";
   import { computed, ref } from "vue";
   import { definePageMeta, useFetch, useRouter, useSeoMeta } from "#imports";
+  import KogumaEnrollmentPanel from "~/components/koguma-enrollment-panel.vue";
+  import KogumaProgramBanner from "~/components/koguma-program-banner.vue";
+  import PersonalCurriculumModals, {
+    type CopyCurriculumFormState,
+    type CreateCurriculumFormState,
+    type PersonalCurriculumModalKind,
+  } from "~/components/personal-curriculum-modals.vue";
   import { useApi } from "~/composables/use-api";
-  import { resolveAvatarEmoji } from "~/utils/child-avatar";
 
   definePageMeta({ layout: false });
+
   interface PersonalCurriculumItem {
     id: number;
     uuid: string;
@@ -638,6 +429,7 @@
     version: number;
     item_count: number;
   }
+
   interface ChildProfile {
     id?: number;
     uuid: string;
@@ -645,15 +437,26 @@
     birth_year: number;
     avatar_id: string;
   }
-  type ModalKind = "create" | "copy" | "enroll" | "delete" | null;
+
+  type ModalKind = PersonalCurriculumModalKind;
+  type LibraryTrackFilter =
+    | "all"
+    | "year-01"
+    | "year-02"
+    | "sem-01"
+    | "sem-02"
+    | "standard";
+
   const MODAL_TITLES: Record<Exclude<ModalKind, null>, string> = {
     create: "Tạo lộ trình học mới",
     copy: "Sao chép lộ trình hệ thống",
     enroll: "Ghi danh lộ trình cho trẻ",
     delete: "Xác nhận xoá lộ trình",
   };
+
   const router = useRouter();
   const api = useApi();
+
   const [
     { data: curriculaData, pending, refresh },
     { data: childrenData },
@@ -670,6 +473,7 @@
       key: "personal-curricula-system-library",
     }),
   ]);
+
   const curriculaList = computed(() => curriculaData.value?.items || []);
   const childrenList = computed(
     () => childrenData.value?.children || childrenData.value?.items || []
@@ -677,6 +481,98 @@
   const systemPrograms = computed<ProgramCardPublic[]>(() =>
     (systemCurriculaData.value?.groups || []).flatMap((grp) => grp.programs)
   );
+
+  const selectedLibraryTrack = ref<LibraryTrackFilter>("all");
+
+  function matchLibraryTrack(
+    prog: ProgramCardPublic,
+    filter: LibraryTrackFilter
+  ): boolean {
+    if (filter === "all") {
+      return true;
+    }
+    const meta = parseKogumaProgramMeta(prog.code, prog.duration_weeks);
+    if (filter === "year-01") {
+      return meta.is_koguma && meta.koguma_variant === "year-01";
+    }
+    if (filter === "year-02") {
+      return meta.is_koguma && meta.koguma_variant === "year-02";
+    }
+    if (filter === "sem-01") {
+      return meta.is_koguma && meta.koguma_variant === "01";
+    }
+    if (filter === "sem-02") {
+      return meta.is_koguma && meta.koguma_variant === "02";
+    }
+    return !meta.is_koguma;
+  }
+
+  const libraryTrackTabs = computed(() => {
+    const countFor = (f: LibraryTrackFilter): number =>
+      systemPrograms.value.filter((p) => matchLibraryTrack(p, f)).length;
+    return [
+      {
+        value: "all" as const,
+        label: "Tất cả mẫu",
+        count: systemPrograms.value.length,
+      },
+      {
+        value: "year-01" as const,
+        label: "Năm học 36w · Chặng 1",
+        count: countFor("year-01"),
+      },
+      {
+        value: "year-02" as const,
+        label: "Năm học 36w · Chặng 2",
+        count: countFor("year-02"),
+      },
+      {
+        value: "sem-01" as const,
+        label: "Học kỳ 1 · 12w",
+        count: countFor("sem-01"),
+      },
+      {
+        value: "sem-02" as const,
+        label: "Học kỳ 2 · 12w",
+        count: countFor("sem-02"),
+      },
+      {
+        value: "standard" as const,
+        label: "Lộ trình Cơ bản",
+        count: countFor("standard"),
+      },
+    ];
+  });
+
+  const filteredSystemPrograms = computed<ProgramCardPublic[]>(() =>
+    systemPrograms.value.filter((p) =>
+      matchLibraryTrack(p, selectedLibraryTrack.value)
+    )
+  );
+
+  function toPublicProgramCode(code: string): string {
+    const { roadmap_code } = normalizeCurriculumRoadmapCode(code);
+    return roadmap_code.startsWith("RM-") ? roadmap_code : code;
+  }
+
+  function getKogumaBadge(code: string, durationWeeks: number): string {
+    const meta = parseKogumaProgramMeta(code, durationWeeks);
+    if (meta.koguma_variant === "year-02") {
+      return "Koguma 36w · Chặng 2";
+    }
+    if (meta.koguma_variant === "year-01") {
+      return "Koguma 36w · Chặng 1";
+    }
+    if (meta.koguma_variant === "02") {
+      return "Koguma 12w · HK2";
+    }
+    return "Koguma 12w · HK1";
+  }
+
+  function formatSafeViLabel(value: string): string {
+    return value.replace(/\s*&\s*/g, " và ");
+  }
+
   const bannerMessage = ref<string | null>(null);
   const errorMessage = ref<string | null>(null);
   const isSubmitting = ref(false);
@@ -687,10 +583,16 @@
   const modalTitle = computed(() =>
     activeModal.value ? MODAL_TITLES[activeModal.value] : null
   );
+
+  function onKogumaEnrolled(payload: { title: string }): void {
+    bannerMessage.value = `Đã kích hoạt ${payload.title} cho bé thành công.`;
+  }
+
   function closeModals() {
     activeModal.value = null;
   }
-  function defaultCreateForm() {
+
+  function defaultCreateForm(): CreateCurriculumFormState {
     return {
       title: "",
       duration_weeks: 8,
@@ -699,8 +601,13 @@
       age_max: 5,
     };
   }
-  const createForm = ref(defaultCreateForm());
-  const copyForm = ref({ system_curriculum_code: "", title: "" });
+
+  const createForm = ref<CreateCurriculumFormState>(defaultCreateForm());
+  const copyForm = ref<CopyCurriculumFormState>({
+    system_curriculum_code: "",
+    title: "",
+  });
+
   async function runAction(fallbackMsg: string, action: () => Promise<void>) {
     isSubmitting.value = true;
     errorMessage.value = null;
@@ -712,13 +619,16 @@
       isSubmitting.value = false;
     }
   }
+
   function openCopyWithProgram(prog: ProgramCardPublic) {
     copyForm.value = {
-      system_curriculum_code: prog.code,
+      system_curriculum_code: normalizeCurriculumRoadmapCode(prog.code)
+        .curriculum_code,
       title: `Bản sao - ${prog.title}`,
     };
     activeModal.value = "copy";
   }
+
   async function handleCreateSubmit() {
     await runAction("Không thể tạo lộ trình.", async () => {
       const created = await api<PersonalCurriculumItem>(
@@ -732,6 +642,7 @@
       await router.push(`/curricula/${created.uuid}`);
     });
   }
+
   async function handleCopySubmit() {
     await runAction("Không thể sao chép lộ trình.", async () => {
       const copied = await api<PersonalCurriculumItem>(
@@ -745,11 +656,13 @@
       await router.push(`/curricula/${copied.uuid}`);
     });
   }
+
   function openEnrollModal(item: PersonalCurriculumItem) {
     activeCurriculum.value = item;
     selectedChildUuid.value = childrenList.value[0]?.uuid || null;
     activeModal.value = "enroll";
   }
+
   async function handleEnrollSubmit() {
     const childUuid = selectedChildUuid.value;
     const curriculum = activeCurriculum.value;
@@ -765,10 +678,12 @@
       bannerMessage.value = "Đã ghi danh lộ trình thành công cho bé.";
     });
   }
+
   function confirmDelete(item: PersonalCurriculumItem) {
     deletingCurriculum.value = item;
     activeModal.value = "delete";
   }
+
   async function handleDeleteSubmit() {
     const item = deletingCurriculum.value;
     if (!item) {
@@ -781,9 +696,12 @@
       await refresh();
     });
   }
+
   useSeoMeta({
     title: "Lộ trình học cá nhân — MindKid",
     description:
       "Xây dựng, tùy biến và theo dõi tiến độ lộ trình học toán tư duy dành riêng cho con bạn.",
   });
 </script>
+
+<style scoped></style>

@@ -1,15 +1,11 @@
-import { childProfiles, consentLogs, getOwnerDb } from "@mindkid/db";
 import { ValidationError } from "@mindkid/errors/common";
-import { and, eq } from "drizzle-orm";
 import { defineEventHandler, deleteCookie, getHeader, readBody } from "h3";
 import { z } from "zod";
-
+import { withdrawUserConsent } from "#server/services/consent-service";
 import {
   getVerifiedRemoteIp,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
-import { executeArchiveChildProfile } from "#server/utils/child-archive-runtime";
-import { invalidateUserConsentCache } from "#server/utils/consent-guard";
 import { requireReauth } from "#server/utils/reauth-runtime";
 
 const WithdrawConsentSchema = z
@@ -28,7 +24,6 @@ export default defineEventHandler(async (event) => {
   const userSession = requireWebUserSession(event);
   const userId = Number(userSession.user_id);
 
-  // Require recent reauth (≤ 5 min)
   requireReauth(event);
 
   const eventBody = (event.context as { body?: RawWithdrawConsentBody })?.body;
@@ -44,68 +39,29 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  const { consent_type: consentType } = parsed.data;
-  const ipAddress = getVerifiedRemoteIp(event);
-  const userAgent = getHeader(event, "user-agent") || "unknown";
-  const now = new Date();
-
-  const db = getOwnerDb();
-
-  // BR-CSM-01: INSERT-only record into consent_logs
-  await db.insert(consentLogs).values({
+  const result = await withdrawUserConsent({
     userId,
-    consentType,
-    action: "withdrawn",
-    ipAddress,
-    userAgent,
-    createdAt: now,
+    consentType: parsed.data.consent_type,
+    ipAddress: getVerifiedRemoteIp(event),
+    userAgent: getHeader(event, "user-agent") || "unknown",
   });
 
-  await invalidateUserConsentCache(userId);
-
-  if (consentType === "child_data") {
-    const purgeAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-
-    // Find all active child profiles belonging to user
-    const children = await db
-      .select({ id: childProfiles.id, uuid: childProfiles.uuid })
-      .from(childProfiles)
-      .where(
-        and(
-          eq(childProfiles.userId, userId),
-          eq(childProfiles.status, "active")
-        )
-      );
-
-    // D-IG & BR-CSM-06: Use canonical executeArchiveChildProfile to archive child profiles with 30-day grace
-    for (const child of children) {
-      await executeArchiveChildProfile({
-        childId: child.id,
-        userId,
-        reason: "consent_withdrawn",
-        purgeAt,
-      });
-    }
-
-    // Clear active_child_id cookie
+  if (result.shouldClearActiveChildCookie) {
     deleteCookie(event, "active_child_id", { path: "/" });
-
     return {
-      consent_type: "child_data" as const,
-      status: "withdrawn" as const,
-      consequence: `Đã rút đồng ý thu thập dữ liệu trẻ em. ${children.length} hồ sơ trẻ đã được chuyển sang trạng thái lưu trữ trong 30 ngày.`,
-      archived_children_count: children.length,
-      grace_period_days: 30,
-      purge_at: purgeAt.toISOString(),
+      consent_type: result.consent_type,
+      status: result.status,
+      consequence: result.consequence,
+      archived_children_count: result.archived_children_count,
+      grace_period_days: result.grace_period_days,
+      purge_at: result.purge_at,
     };
   }
 
-  // Terms or privacy withdrawal leads to account deletion
   return {
-    consent_type: consentType,
-    status: "withdrawn" as const,
-    consequence:
-      "Từ chối điều khoản yêu cầu xoá tài khoản. Vui lòng hoàn tất tại trang Xoá tài khoản.",
-    deletion_url: "/me/settings/delete",
+    consent_type: result.consent_type,
+    status: result.status,
+    consequence: result.consequence,
+    deletion_url: result.deletion_url,
   };
 });

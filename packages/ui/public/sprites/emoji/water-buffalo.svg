@@ -1,75 +1,25 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Con trâu nước</title>
   <defs>
-    <radialGradient cx="40%" cy="32%" id="wbGrey" r="70%">
-      <stop offset="0%" stop-color="#94a3b8" />
-      <stop offset="58%" stop-color="#64748b" />
-      <stop offset="100%" stop-color="#475569" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="g_waterbuffalo" r="70%"><stop offset="0%" stop-color="#94a3b8" /><stop offset="55%" stop-color="#64748b" /><stop offset="100%" stop-color="#475569" /></radialGradient>
   </defs>
-  <ellipse cx="62" cy="103" fill="#334155" opacity="0.28" rx="42" ry="5.5" />
-  <rect
-    fill="#475569"
-    height="22"
-    rx="4"
-    stroke="#1e293b"
-    stroke-width="3.6"
-    width="10"
-    x="42"
-    y="78"
-  />
-  <rect
-    fill="#475569"
-    height="22"
-    rx="4"
-    stroke="#1e293b"
-    stroke-width="3.6"
-    width="10"
-    x="80"
-    y="78"
-  />
-  <ellipse
-    cx="69"
-    cy="68"
-    fill="url(#wbGrey)"
-    rx="31"
-    ry="22"
-    stroke="#1e293b"
-    stroke-width="4"
-  />
-  <path
-    d="M98 62C106 66 107 78 102 85"
-    stroke="#1e293b"
-    stroke-linecap="round"
-    stroke-width="3.8"
-  />
-  <path
-    d="M26 39C12 37 10 21 22 18C18 25 22 31 32 32ZM56 39C70 37 72 21 60 18C64 25 60 31 50 32Z"
-    fill="#cbd5e1"
-    stroke="#334155"
-    stroke-linejoin="round"
-    stroke-width="3.6"
-  />
-  <ellipse
-    cx="41"
-    cy="54"
-    fill="url(#wbGrey)"
-    rx="22"
-    ry="19"
-    stroke="#1e293b"
-    stroke-width="4"
-  />
-  <ellipse
-    cx="41"
-    cy="64"
-    fill="#cbd5e1"
-    rx="15"
-    ry="10"
-    stroke="#334155"
-    stroke-width="3.4"
-  />
-  <circle cx="33" cy="49" fill="#1c1917" r="3" />
-  <circle cx="49" cy="49" fill="#1c1917" r="3" />
-  <circle cx="36" cy="64" fill="#334155" r="2.2" />
-  <circle cx="46" cy="64" fill="#334155" r="2.2" />
+  <ellipse cx="62" cy="106" fill="#1e293b" opacity="0.22" rx="40" ry="5.5" />
+    <path d="M95 62C103 68 104 80 100 88" stroke="#1e293b" stroke-linecap="round" stroke-width="3.6" />
+    <!-- Far legs -->
+    <path d="M47 80L44 102H51L53 80ZM81 80L79 102H86L88 80Z" fill="#475569" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.4" />
+    <path d="M44 98H51V103H44ZM79 98H86V103H79Z" fill="#1e293b" />
+    <!-- Torso & Neck -->
+    <path d="M35 55C41 50 32 48 64 48C96 48 100 63 96 73C92 86 38 86 34 71C30 63 31 65 35 55Z" fill="url(#g_waterbuffalo)" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M46 81C56 87 74 87 84 81" fill="#94a3b8" opacity="0.85" />
+    
+    <!-- Near legs -->
+    <path d="M39 78L36 104H44L47 78ZM73 78L71 104H79L81 78Z" fill="url(#g_waterbuffalo)" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M36 99H44V104H36ZM71 99H79V104H71Z" fill="#1e293b" stroke="#1e293b" stroke-linejoin="round" stroke-width="2.2" />
+    <!-- Head -->
+    <ellipse cx="29" cy="49" fill="url(#g_waterbuffalo)" rx="15" ry="12" stroke="#1e293b" stroke-width="3.8" />
+    <ellipse cx="18" cy="53" fill="#cbd5e1" rx="7.5" ry="6" stroke="#1e293b" stroke-width="3.2" />
+    <circle cx="16" cy="52" fill="#1e293b" r="1.8" />
+    <path d="M16 56C19 58 22 57 23 55" stroke="#1e293b" stroke-linecap="round" stroke-width="2.2" />
+    <circle cx="27" cy="46" fill="#1c1917" r="2.7" /><circle cx="26.2" cy="45.2" fill="#ffffff" r="1" />
+    <path d="M22 39C9 35 8 20 20 18C16 25 20 31 28 33ZM36 39C49 35 52 20 40 18C44 25 40 31 32 33Z" fill="#cbd5e1" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.6" />
 </svg>

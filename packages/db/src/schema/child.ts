@@ -1,47 +1,34 @@
 import { sql } from "drizzle-orm";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import {
-  bigint,
-  index,
-  pgEnum,
-  pgTable,
-  smallint,
-  timestamp,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
-import { idPk, timestamps } from "./columns.ts";
+  CHILD_STATUS,
+  type ChildRelationship,
+  type ChildStatus,
+} from "#src/constants/identity-enums";
+import { idPk, timestampMs, timestamps, uuidCol } from "./columns.ts";
 import { users } from "./identity.ts";
 
-export const childRelationshipEnum = pgEnum("child_relationship", [
-  "child",
-  "student",
-  "other",
-]);
-
-export const childStatusEnum = pgEnum("child_status", [
-  "active",
-  "archived",
-  "pending_deletion",
-]);
-
-export const childProfiles = pgTable(
+export const childProfiles = sqliteTable(
   "child_profiles",
   {
     id: idPk(),
-    uuid: uuid("uuid").defaultRandom().notNull().unique(),
-    userId: bigint("user_id", { mode: "number" })
+    uuid: uuidCol("uuid").unique(),
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    displayName: varchar("display_name", { length: 40 }).notNull(),
-    birthYear: smallint("birth_year").notNull(),
-    avatarId: varchar("avatar_id", { length: 24 }).notNull(),
-    relationship: childRelationshipEnum("relationship"),
-    currentCurriculumId: bigint("current_curriculum_id", { mode: "number" }),
-    dailyPlayCapMinutes: smallint("daily_play_cap_minutes")
+    displayName: text("display_name").notNull(),
+    birthYear: integer("birth_year").notNull(),
+    avatarId: text("avatar_id").notNull(),
+    relationship: integer("relationship").$type<ChildRelationship>(),
+    currentCurriculumId: integer("current_curriculum_id"),
+    dailyPlayCapMinutes: integer("daily_play_cap_minutes")
       .notNull()
       .default(60),
-    status: childStatusEnum("status").notNull().default("active"),
-    purgeAt: timestamp("purge_at", { withTimezone: true }),
+    status: integer("status")
+      .$type<ChildStatus>()
+      .notNull()
+      .default(CHILD_STATUS.ACTIVE),
+    purgeAt: timestampMs("purge_at"),
     ...timestamps(),
   },
   (table) => [

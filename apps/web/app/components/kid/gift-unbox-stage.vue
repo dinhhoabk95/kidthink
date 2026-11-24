@@ -74,7 +74,10 @@
     playSfx("gift_rustle");
     playSfx("gift_pop");
     isUnboxed.value = true;
-    emit("unboxed", `Quà mới cho bé: ${props.sticker.label}!`);
+    emit(
+      "unboxed",
+      `Tùng dinh dinh! Hộp quà mây mở tặng bé ${props.sticker.label}!`
+    );
   }
 
   function handleKeydown(event: KeyboardEvent): void {
@@ -138,6 +141,13 @@
     border-radius: 1.35rem;
     border: 3px solid var(--color-warning-500);
     background-color: var(--color-warning-100);
+    background-image: repeating-linear-gradient(
+      45deg,
+      var(--color-warning-100) 0px,
+      var(--color-warning-100) 8px,
+      var(--color-warning-200) 8px,
+      var(--color-warning-200) 16px
+    );
     box-shadow: 0 5px 0 var(--color-warning-500);
     display: flex;
     align-items: center;

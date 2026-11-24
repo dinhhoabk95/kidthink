@@ -19,7 +19,9 @@ depends_on:
 ## 1. Objective
 
 Việc chậm, việc theo lịch, và việc được phép thất bại không nằm trong đường request.
-BullMQ trên Valkey; producer ở `packages/queue`, consumer ở `apps/worker`.
+Producer ở `packages/queue`, consumer ở `apps/worker` qua giao diện Pluggable `QueueDriver`:
+- **Giai đoạn 1 (`QUEUE_DRIVER=cloudflare-do`, `< 1.000 DAU`):** Đẩy lô qua `waitUntil` vào `JobQueueDO` (Durable Objects SQLite + cơ chế `Single-Pending-Alarm` gom lô cửa sổ `3–5s`, đáp ứng `50.000–200.000+ jobs/ngày` trên gói Free) kết hợp 1 Cron Dispatcher `*/15 * * * *` và cảm biến `ops:graduation-check` (cảnh báo ở `850 DAU` hoặc `65%` quota ngày).
+- **Giai đoạn 2 (`QUEUE_DRIVER=bullmq`, `≥ 1.000 DAU`):** BullMQ trên Valkey 9 chạy trong tiến trình `apps/worker` trên VPS.
 
 Hỏng đắt nhất của job nền: **worker bị tắt mà không ai biết**. Producer vẫn đẩy job, không
 consumer nào lấy ra, email và export im lặng không chạy. Spec này ép alert cho tình huống

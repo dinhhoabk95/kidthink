@@ -9,6 +9,7 @@ import {
   createRng,
   resolveItemAsset,
   safeGetItem,
+  sanitizeChildPrompt,
   shuffleDeterministic,
 } from "./utils.js";
 
@@ -65,9 +66,14 @@ export const projectGT023: Projection<"GT-023"> = {
       name: `Mảnh ${i + 1}`,
     }));
 
+    const prompt = sanitizeChildPrompt(
+      `Bé thử ghép các mảnh gỗ thành ${baseItem.label} nhé!`,
+      "Bé ghép các mảnh thành hình hoàn chỉnh nhé!"
+    );
+
     return {
       content_pack: {
-        prompt: `Bé hãy ghép các mảnh thành ${baseItem.label} nhé!`,
+        prompt,
         target_model: {
           name: baseItem.label,
           asset: resolveItemAsset(baseItem, true),

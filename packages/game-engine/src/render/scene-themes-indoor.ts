@@ -7,6 +7,15 @@ import {
 } from "./cache.js";
 import { alpha } from "./color-utils.js";
 import { drawScenicCloud, drawScenicFlowerDots } from "./scene-decor.js";
+import {
+  drawBambooGrove,
+  drawDoPaperFiberMarks,
+  drawFolkLantern,
+  drawLotusBlossom,
+  drawPaperKite,
+  drawRattleDrumMotif,
+  drawWovenSedgeStrip,
+} from "./vn-folk-motifs.js";
 
 const SCHOOL_CHALK_DOTS: readonly [number, number, string][] = [
   [60, 12, alpha(designTokens.colors.surface[0], 0.6)],
@@ -52,7 +61,8 @@ export function drawSchoolScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let grad = getCachedGradient(
     ctx,
@@ -62,9 +72,9 @@ export function drawSchoolScene(
   );
   if (!grad) {
     grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, designTokens.colors.semantic.warning[50]);
+    grad.addColorStop(0, designTokens.colors.vnMaterials.doPaper.sheet);
     grad.addColorStop(0.55, designTokens.colors.semantic.warning[100]);
-    grad.addColorStop(1, designTokens.colors.cta[200]);
+    grad.addColorStop(1, designTokens.colors.vnMaterials.bamboo.light);
     setCachedGradient(
       ctx,
       rs.paintGeneration,
@@ -76,33 +86,27 @@ export function drawSchoolScene(
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
 
-  // Blackboard banner at top
-  ctx.fillStyle = alpha(designTokens.colors.scene.slate, 0.85);
+  // Blackboard banner at top with warm bamboo rail
+  ctx.fillStyle = alpha(designTokens.colors.scene.slate, 0.82);
   ctx.fillRect(0, 0, w, 24);
-  ctx.fillStyle = alpha(designTokens.colors.scene.wood.light, 0.5);
+  ctx.fillStyle = alpha(designTokens.colors.vnMaterials.bamboo.joint, 0.6);
   ctx.fillRect(0, 24, w, 4);
 
   // Chalk dots
   drawScenicFlowerDots(ctx, SCHOOL_CHALK_DOTS);
 
-  // Wooden classroom floor
-  ctx.fillStyle = alpha(designTokens.colors.retry[600], 0.15);
-  ctx.fillRect(0, 480, w, 60);
-  ctx.strokeStyle = alpha(designTokens.colors.scene.wood.light, 0.15);
-  ctx.lineWidth = 2;
-  for (let x = 160; x < w; x += 160) {
-    ctx.beginPath();
-    ctx.moveTo(x, 480);
-    ctx.lineTo(x, h);
-    ctx.stroke();
-  }
+  // Chiếu cói góc lớp mầm non & sàn gỗ ấm
+  drawWovenSedgeStrip(ctx, 0, 482, w, 58);
+  drawBambooGrove(ctx, 36, 484, 96, 0.72, timeMs);
+  drawRattleDrumMotif(ctx, w - 48, 462, 0.85, timeMs);
 }
 
 export function drawHomeScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let grad = getCachedGradient(
     ctx,
@@ -112,9 +116,9 @@ export function drawHomeScene(
   );
   if (!grad) {
     grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, designTokens.colors.cta[50]);
+    grad.addColorStop(0, designTokens.colors.vnMaterials.doPaper.sheet);
     grad.addColorStop(0.5, designTokens.colors.cta[100]);
-    grad.addColorStop(1, designTokens.colors.cta[200]);
+    grad.addColorStop(1, designTokens.colors.vnMaterials.sedgeMat.base);
     setCachedGradient(
       ctx,
       rs.paintGeneration,
@@ -136,22 +140,17 @@ export function drawHomeScene(
   ctx.closePath();
   ctx.fill();
 
-  // Wooden toy shelf baseboard
-  ctx.fillStyle = alpha(designTokens.colors.scene.wood.deep, 0.18);
-  ctx.fillRect(0, 480, w, 60);
-  ctx.strokeStyle = alpha(designTokens.colors.scene.wood.deep, 0.3);
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(0, 480);
-  ctx.lineTo(w, 480);
-  ctx.stroke();
+  // Đèn lồng giấy ấm bên hiên & chiếu cói trải sàn nhà
+  drawFolkLantern(ctx, w - 72, 0, 0.9, "amber", timeMs);
+  drawWovenSedgeStrip(ctx, 0, 480, w, 60);
 }
 
 export function drawFoodScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let grad = getCachedGradient(
     ctx,
@@ -161,7 +160,7 @@ export function drawFoodScene(
   );
   if (!grad) {
     grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, designTokens.colors.cta[50]);
+    grad.addColorStop(0, designTokens.colors.vnMaterials.doPaper.sheet);
     grad.addColorStop(0.5, designTokens.colors.retry[100]);
     grad.addColorStop(1, designTokens.colors.semantic.success[50]);
     setCachedGradient(
@@ -175,23 +174,20 @@ export function drawFoodScene(
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
 
-  // Picnic cloth strip along bottom
-  ctx.fillStyle = alpha(designTokens.colors.montessori.coral, 0.14);
-  ctx.fillRect(0, 485, w, 55);
-  ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.25);
-  for (let x = 0; x < w; x += 40) {
-    ctx.fillRect(x, 485, 20, 55);
-  }
+  // Chiếu cói mâm quà quê dọc chân màn
+  drawWovenSedgeStrip(ctx, 0, 485, w, 55);
+  drawLotusBlossom(ctx, 56, 482, 0.82, timeMs);
 
   // Gentle berry dots in background
-  drawScenicFlowerDots(ctx, FOOD_BERRY_DOTS);
+  drawScenicFlowerDots(ctx, FOOD_BERRY_DOTS, timeMs);
 }
 
 export function drawArtScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let grad = getCachedGradient(
     ctx,
@@ -201,8 +197,8 @@ export function drawArtScene(
   );
   if (!grad) {
     grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, designTokens.colors.surface[50]);
-    grad.addColorStop(0.4, designTokens.colors.surface[50]);
+    grad.addColorStop(0, designTokens.colors.vnMaterials.doPaper.sheet);
+    grad.addColorStop(0.45, designTokens.colors.surface[50]);
     grad.addColorStop(1, designTokens.colors.montessori.indigoLight);
     setCachedGradient(
       ctx,
@@ -215,7 +211,7 @@ export function drawArtScene(
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
 
-  // Watercolor splash arcs
+  // Watercolor splash arcs on handmade Dó paper
   ctx.fillStyle = alpha(designTokens.colors.scene.violet[400], 0.16);
   ctx.beginPath();
   ctx.arc(80, 80, 65, 0, Math.PI * 2);
@@ -235,13 +231,18 @@ export function drawArtScene(
   ctx.beginPath();
   ctx.arc(100, 480, 65, 0, Math.PI * 2);
   ctx.fill();
+
+  drawDoPaperFiberMarks(ctx, 24, 24, w - 48, h - 48);
+  drawWovenSedgeStrip(ctx, 0, 488, w, 52);
+  drawRattleDrumMotif(ctx, w - 52, 468, 0.82, timeMs);
 }
 
 export function drawFamilyScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let grad = getCachedGradient(
     ctx,
@@ -251,9 +252,9 @@ export function drawFamilyScene(
   );
   if (!grad) {
     grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, designTokens.colors.cta[50]);
+    grad.addColorStop(0, designTokens.colors.vnMaterials.doPaper.sheet);
     grad.addColorStop(0.5, designTokens.colors.cta[100]);
-    grad.addColorStop(1, designTokens.colors.cta[200]);
+    grad.addColorStop(1, designTokens.colors.vnMaterials.sedgeMat.base);
     setCachedGradient(
       ctx,
       rs.paintGeneration,
@@ -271,22 +272,18 @@ export function drawFamilyScene(
   ctx.arc(480, 180, 110, 0, Math.PI * 2);
   ctx.fill();
 
-  // Garden terrace strip at bottom
-  ctx.fillStyle = alpha(designTokens.colors.scene.wood.warm, 0.16);
-  ctx.fillRect(0, 485, w, 55);
-  ctx.strokeStyle = alpha(designTokens.colors.scene.wood.warm, 0.22);
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(0, 485);
-  ctx.lineTo(w, 485);
-  ctx.stroke();
+  // Hiên nhà trải chiếu cói & luỹ tre ngà ấm cúng
+  drawWovenSedgeStrip(ctx, 0, 485, w, 55);
+  drawBambooGrove(ctx, w - 42, 486, 108, 0.78, timeMs);
+  drawLotusBlossom(ctx, 64, 483, 0.85, timeMs);
 }
 
 export function drawBodyScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let grad = getCachedGradient(
     ctx,
@@ -296,8 +293,8 @@ export function drawBodyScene(
   );
   if (!grad) {
     grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, designTokens.colors.semantic.success[50]);
-    grad.addColorStop(0.5, designTokens.colors.semantic.success[100]);
+    grad.addColorStop(0, designTokens.colors.vnMaterials.doPaper.sheet);
+    grad.addColorStop(0.5, designTokens.colors.semantic.success[50]);
     grad.addColorStop(1, designTokens.colors.semantic.success[100]);
     setCachedGradient(
       ctx,
@@ -317,7 +314,7 @@ export function drawBodyScene(
   ctx.arc(480, 0, 220, 0, Math.PI);
   ctx.stroke();
 
-  // Active park lawn
+  // Active park lawn with morning bamboo & kite
   ctx.fillStyle = alpha(designTokens.colors.semantic.success[400], 0.22);
   ctx.beginPath();
   ctx.moveTo(0, 480);
@@ -326,13 +323,17 @@ export function drawBodyScene(
   ctx.lineTo(0, h);
   ctx.closePath();
   ctx.fill();
+
+  drawBambooGrove(ctx, 36, 486, 98, 0.74, timeMs);
+  drawPaperKite(ctx, w - 78, 66, 0.72, timeMs);
 }
 
 export function drawFestivalScene(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   w: number,
-  h: number
+  h: number,
+  timeMs = 0
 ): void {
   let grad = getCachedGradient(
     ctx,
@@ -342,9 +343,9 @@ export function drawFestivalScene(
   );
   if (!grad) {
     grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, designTokens.colors.cta[50]);
+    grad.addColorStop(0, designTokens.colors.vnMaterials.doPaper.sheet);
     grad.addColorStop(0.5, designTokens.colors.semantic.warning[50]);
-    grad.addColorStop(1, designTokens.colors.scene.sky[100]);
+    grad.addColorStop(1, designTokens.colors.vnMaterials.sedgeMat.base);
     setCachedGradient(
       ctx,
       rs.paintGeneration,
@@ -357,7 +358,7 @@ export function drawFestivalScene(
   ctx.fillRect(0, 0, w, h);
 
   // Party bunting string across top
-  ctx.strokeStyle = alpha(designTokens.colors.surface[400], 0.45);
+  ctx.strokeStyle = alpha(designTokens.colors.vnMaterials.bamboo.joint, 0.45);
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(0, 12);
@@ -370,7 +371,7 @@ export function drawFestivalScene(
     const fy = 14 + Math.sin((i / 8) * Math.PI) * 10;
     const color =
       FESTIVAL_FLAG_COLORS[i % FESTIVAL_FLAG_COLORS.length] ??
-      alpha(designTokens.colors.montessori.coral, 0.45);
+      alpha(designTokens.colors.vnMaterials.terracotta.clay, 0.45);
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.moveTo(fx - 14, fy);
@@ -380,8 +381,14 @@ export function drawFestivalScene(
     ctx.fill();
   }
 
+  // Đèn lồng Hội An / Trung Thu & trống bỏi dân gian hai góc hội làng
+  drawFolkLantern(ctx, 56, 14, 0.92, "amber", timeMs);
+  drawFolkLantern(ctx, w - 56, 14, 0.92, "lotus", timeMs);
+  drawRattleDrumMotif(ctx, 54, 488, 0.88, timeMs);
+  drawLotusBlossom(ctx, w - 62, 500, 0.85, timeMs);
+
   // Confetti dots
-  drawScenicFlowerDots(ctx, FESTIVAL_CONFETTI_DOTS);
+  drawScenicFlowerDots(ctx, FESTIVAL_CONFETTI_DOTS, timeMs);
 }
 
 export function drawDefaultScene(
@@ -391,8 +398,9 @@ export function drawDefaultScene(
   h: number,
   timeMs = 0
 ): void {
-  // Default / general / classroom: Cheerful sunny sky & paper base
-  ctx.fillStyle = designTokens.colors.surface[50];
+  // Default "Tuổi thơ Việt × Giấy Gỗ Mộc": mặt giấy dó nắng ấm, khóm tre ngà,
+  // cánh diều xa và dải chiếu cói mộc dịu mắt (giữ đúng 1 gradient BG_DEFAULT).
+  ctx.fillStyle = designTokens.colors.vnMaterials.doPaper.sheet;
   ctx.fillRect(0, 0, w, h);
 
   let grad = getCachedGradient(
@@ -402,8 +410,11 @@ export function drawDefaultScene(
     0
   );
   if (!grad) {
-    grad = ctx.createLinearGradient(0, 0, 0, h * 0.45);
-    grad.addColorStop(0, alpha(designTokens.colors.surface[50], 0.65));
+    grad = ctx.createLinearGradient(0, 0, 0, h * 0.48);
+    grad.addColorStop(
+      0,
+      alpha(designTokens.colors.vnMaterials.bamboo.light, 0.62)
+    );
     grad.addColorStop(1, alpha(designTokens.colors.montessori.paper, 0));
     setCachedGradient(
       ctx,
@@ -416,11 +427,16 @@ export function drawDefaultScene(
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
 
-  // Playful sunny clouds
+  // Playful sunny clouds & distant paper kite
   const cloudDrift =
     timeMs > 0 ? Math.sin((timeMs / 9500) * Math.PI * 2) * 14 : 0;
   drawScenicCloud(ctx, 160 + cloudDrift, 68, 0.9);
   drawScenicCloud(ctx, 800 - cloudDrift * 0.75, 80, 0.75);
+  drawPaperKite(ctx, w - 76, 62, 0.72, timeMs);
+
+  // Dải chiếu cói mảnh ở chân trang & khóm tre ngà góc sân
+  drawWovenSedgeStrip(ctx, 0, h - 24, w, 24);
+  drawBambooGrove(ctx, 32, h - 22, 92, 0.68, timeMs);
 
   // Cheerful pastel flower dots along bottom
   drawScenicFlowerDots(ctx, DEFAULT_FLOWER_DOTS, timeMs);

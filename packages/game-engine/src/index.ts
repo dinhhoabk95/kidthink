@@ -396,16 +396,58 @@ export {
   type TraceWaypoint,
 } from "./systems/trace-system.js";
 export type {
+  GT000Asset,
+  GT000AssetRepresentation,
   GT000Content,
   GT000Difficulty,
+  GT000InteractionHint,
+  GT000PartWholeOperation,
+  GT000QuantityRepKind,
+  GT000RuleMemoryVariant,
+  GT000SceneBoard,
+  GT000SceneBoardMode,
+  GT000Segment,
+  GT000ShapeBadge,
+  GT000SortingBasket,
+  GT000SpatialAnchorProp,
+  GT000SpatialRelation,
+  GT000Step,
+  GT000StoryContext,
+  GT000ToneMark,
 } from "./templates/GT-000/template.js";
 export type {
   GT001Content,
   GT001Difficulty,
 } from "./templates/GT-001/template.js";
+export {
+  GT002_ALL_STORY_LINES,
+  GT002_DEFAULT_STORY_LINE,
+  GT002_DEFAULT_THEME_PROFILE,
+  GT002_OCEAN_STORY_LINE,
+  GT002_THEME_PROFILES,
+  GT002_THEME_STORIES,
+  type GT002BoardStyle,
+  type GT002SelectSfx,
+  type GT002ThemeProfile,
+  resolveGT002StoryLine,
+  resolveGT002ThemeProfile,
+} from "./templates/GT-002/gt002-story-lines.js";
 export type {
+  GT002ColorToken,
+  GT002CompareRelation,
   GT002Content,
+  GT002CriterionAnchor,
+  GT002CriterionAnchorKind,
   GT002Difficulty,
+  GT002GeometricSpec,
+  GT002Item,
+  GT002LeafCriterionAnchor,
+  GT002PhonicsMode,
+  GT002PlateVariant,
+  GT002QuantityRep,
+  GT002SelectionMode,
+  GT002ShapeForm,
+  GT002SizeTier,
 } from "./templates/GT-002/template.js";
 export type {
   GT003Content,

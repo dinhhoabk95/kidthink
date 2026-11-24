@@ -1,7 +1,11 @@
 import { createParentGateToken } from "@mindkid/auth";
 import {
+  ACCESS_TIER,
+  CONSENT_ACTION,
+  CONSENT_TYPE,
   childDailyStats,
   childProfiles,
+  consentLogs,
   gameLevels,
   getOwnerDb,
   users,
@@ -94,6 +98,14 @@ async function createTestUserWithChildren() {
     })
     .returning();
 
+  await db.insert(consentLogs).values({
+    userId: user.id,
+    consentType: CONSENT_TYPE.CHILD_DATA,
+    action: CONSENT_ACTION.ACCEPTED,
+    ipAddress: "127.0.0.1",
+    userAgent: "vitest",
+  });
+
   const [childA] = await db
     .insert(childProfiles)
     .values({
@@ -148,7 +160,7 @@ async function seedPublishedFreeLevel(): Promise<string> {
       ],
     },
     difficultyParams: {},
-    accessTier: "free",
+    accessTier: ACCESS_TIER.FREE,
     ageMin: 3,
     ageMax: 6,
   });
@@ -198,14 +210,41 @@ describe("Healthy Play Limits API (BR-HPL-01..08 & Task #293 S1-S2)", () => {
     expect(res.resets_at).toBeDefined();
   });
 
-  it("BR-HPL-08: PATCH /settings rejects cap > package cap with 422", async () => {
+  it("BR-HPL-08: PATCH /settings rejects request without valid gate_token with 403 PARENT_GATE_REQUIRED", async () => {
     const { user, childA } = await createTestUserWithChildren();
 
     const event = mockEvent(
       "PATCH",
       user,
       { uuid: childA.uuid },
-      { daily_play_cap_minutes: 90 }
+      { daily_play_cap_minutes: 20 }
+    );
+
+    try {
+      await updateSettingsHandler(event);
+      expect.fail("Should have thrown 403 PARENT_GATE_REQUIRED");
+    } catch (err) {
+      const { status, code } = extractErrorStatusAndCode(
+        err instanceof Object ? err : null
+      );
+      expect(status).toBe(403);
+      expect(code).toBe("PARENT_GATE_REQUIRED");
+    }
+  });
+
+  it("BR-HPL-08: PATCH /settings rejects cap > package cap with 422", async () => {
+    const { user, childA } = await createTestUserWithChildren();
+    const validGateToken = createParentGateToken(
+      user.id,
+      Date.now() + 300_000,
+      PARENT_GATE_SECRET
+    );
+
+    const event = mockEvent(
+      "PATCH",
+      user,
+      { uuid: childA.uuid },
+      { daily_play_cap_minutes: 90, gate_token: validGateToken }
     );
 
     try {

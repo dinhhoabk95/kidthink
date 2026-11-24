@@ -1,11 +1,23 @@
+import { createParentGateToken } from "@mindkid/auth";
 import { describe, expect, it } from "vitest";
 import activateHandler from "#server/api/users/children/[uuid]/activate.post";
 import clearActiveHandler from "#server/api/users/children/active.delete";
 
+interface HttpErrorLike {
+  statusCode?: number;
+  status?: number;
+  code?: string;
+}
+
+function getErrorStatus(err: object): number | undefined {
+  const shaped = err as HttpErrorLike;
+  return shaped.statusCode ?? shaped.status;
+}
+
 function mockEvent(
   method: string,
   userId = 301,
-  body: any = {},
+  body: Record<string, string> = {},
   routerParams: Record<string, string> = {},
   cookies: Record<string, string> = {}
 ) {
@@ -48,7 +60,7 @@ function mockEvent(
       params: routerParams,
     },
     _body: body,
-  } as any;
+  } as Parameters<typeof activateHandler>[0];
 }
 
 describe("Child Profile Switching API (BR-CPS-01..07 & BR-PEN-01..02)", () => {
@@ -64,8 +76,8 @@ describe("Child Profile Switching API (BR-CPS-01..07 & BR-PEN-01..02)", () => {
     try {
       await activateHandler(event);
       expect.fail("Should have thrown 403 or 404");
-    } catch (err: any) {
-      const status = err.statusCode || err.status;
+    } catch (err) {
+      const status = err instanceof Object ? getErrorStatus(err) : undefined;
       expect([403, 404]).toContain(status);
     }
   });
@@ -81,8 +93,8 @@ describe("Child Profile Switching API (BR-CPS-01..07 & BR-PEN-01..02)", () => {
     try {
       await activateHandler(event);
       expect.fail("Should have thrown 404 NOT_FOUND");
-    } catch (err: any) {
-      const status = err.statusCode || err.status;
+    } catch (err) {
+      const status = err instanceof Object ? getErrorStatus(err) : undefined;
       expect(status).toBe(404);
     }
   });
@@ -98,17 +110,38 @@ describe("Child Profile Switching API (BR-CPS-01..07 & BR-PEN-01..02)", () => {
     try {
       await activateHandler(event);
       expect.fail("Should have thrown 404 for archived child");
-    } catch (err: any) {
-      const status = err.statusCode || err.status;
+    } catch (err) {
+      const status = err instanceof Object ? getErrorStatus(err) : undefined;
       expect(status).toBe(404);
     }
   });
 
-  it("DELETE /api/users/children/active clears active child cookie", async () => {
+  it("DELETE /api/users/children/active rejects missing gate_token with 403 PARENT_GATE_REQUIRED", async () => {
     const event = mockEvent(
       "DELETE",
       304,
       {},
+      {},
+      { active_child_id: "some-uuid" }
+    );
+
+    await expect(clearActiveHandler(event)).rejects.toMatchObject({
+      statusCode: 403,
+      code: "PARENT_GATE_REQUIRED",
+    });
+  });
+
+  it("DELETE /api/users/children/active clears active child cookie when gate_token is valid", async () => {
+    const secret = process.env.PARENT_GATE_SECRET ?? "";
+    const validGateToken = createParentGateToken(
+      304,
+      Date.now() + 300_000,
+      secret
+    );
+    const event = mockEvent(
+      "DELETE",
+      304,
+      { gate_token: validGateToken },
       {},
       { active_child_id: "some-uuid" }
     );

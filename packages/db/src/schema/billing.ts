@@ -1,105 +1,83 @@
 import { sql } from "drizzle-orm";
 import {
-  bigint,
-  boolean,
   index,
   integer,
-  jsonb,
-  pgEnum,
-  pgTable,
+  sqliteTable,
   text,
-  timestamp,
   unique,
   uniqueIndex,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
-import { idPk, timestamps } from "./columns.ts";
+} from "drizzle-orm/sqlite-core";
+import {
+  ENTITLEMENT_STATUS,
+  type EntitlementGroup,
+  type EntitlementSource,
+  type EntitlementStatus,
+  PACKAGE_STATUS,
+  PAYMENT_ORDER_STATUS,
+  type PackageStatus,
+  type PaymentOrderStatus,
+  RECURRING_SUBSCRIPTION_STATUS,
+  type RecurringSubscriptionStatus,
+} from "#src/constants/billing-ops-enums";
+import type { JsonRecord, JsonValue } from "#src/constants/json";
+import {
+  idPk,
+  nowTimestampMs,
+  timestampMs,
+  timestamps,
+  uuidCol,
+} from "./columns.ts";
 import { managers, users } from "./identity.ts";
 
-export const entitlementGroupEnum = pgEnum("entitlement_group", [
-  "content",
-  "account",
-  "report",
-  "creator",
-  "ai",
-]);
-
-export const packageStatusEnum = pgEnum("package_status", [
-  "active",
-  "retired",
-]);
-
-export const entitlementSourceEnum = pgEnum("entitlement_source", [
-  "package_order",
-  "manual_grant",
-  "trial",
-  "promo",
-]);
-
-export const entitlementStatusEnum = pgEnum("entitlement_status", [
-  "pending",
-  "soft_unlock",
-  "active",
-  "grace_period",
-  "expired",
-  "cancelled",
-]);
-
-export const paymentOrderStatusEnum = pgEnum("payment_order_status", [
-  "draft",
-  "pending",
-  "pending_proof",
-  "submitted",
-  "under_review",
-  "approved",
-  "rejected",
-  "expired",
-  "cancelled",
-]);
-
-export const entitlementKeys = pgTable("entitlement_keys", {
-  key: varchar("key", { length: 60 }).primaryKey(),
-  group: entitlementGroupEnum("group").notNull(),
-  label: varchar("label", { length: 100 }).notNull(),
+export const entitlementKeys = sqliteTable("entitlement_keys", {
+  key: text("key").primaryKey(),
+  group: integer("group").$type<EntitlementGroup>().notNull(),
+  label: text("label").notNull(),
   description: text("description"),
-  isMvp: boolean("is_mvp").notNull().default(true),
+  isMvp: integer("is_mvp", { mode: "boolean" }).notNull().default(true),
   ...timestamps(),
 });
 
-export const packages = pgTable("packages", {
-  code: varchar("code", { length: 40 }).primaryKey(),
-  name: varchar("name", { length: 100 }).notNull(),
-  audience: varchar("audience", { length: 100 }).notNull(),
+export const packages = sqliteTable("packages", {
+  code: text("code").primaryKey(),
+  name: text("name").notNull(),
+  audience: text("audience").notNull(),
   description: text("description"),
-  isPublic: boolean("is_public").notNull().default(true),
-  isFeatured: boolean("is_featured").notNull().default(false),
-  status: packageStatusEnum("status").notNull().default("active"),
-  offers: jsonb("offers").notNull(),
-  quotas: jsonb("quotas"),
+  isPublic: integer("is_public", { mode: "boolean" }).notNull().default(true),
+  isFeatured: integer("is_featured", { mode: "boolean" })
+    .notNull()
+    .default(false),
+  status: integer("status")
+    .$type<PackageStatus>()
+    .notNull()
+    .default(PACKAGE_STATUS.ACTIVE),
+  offers: text("offers", { mode: "json" }).$type<JsonValue>().notNull(),
+  quotas: text("quotas", { mode: "json" }).$type<JsonRecord>(),
   ...timestamps(),
 });
 
-export const entitlements = pgTable(
+export const entitlements = sqliteTable(
   "entitlements",
   {
     id: idPk(),
-    userId: bigint("user_id", { mode: "number" })
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    entitlementKey: varchar("entitlement_key", { length: 60 })
+    entitlementKey: text("entitlement_key")
       .notNull()
       .references(() => entitlementKeys.key, { onDelete: "restrict" }),
-    source: entitlementSourceEnum("source").notNull(),
-    sourceRef: uuid("source_ref"),
-    status: entitlementStatusEnum("status").notNull().default("pending"),
-    grantedAt: timestamp("granted_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    expiresAt: timestamp("expires_at", { withTimezone: true }),
-    grantedByManagerId: bigint("granted_by_manager_id", {
-      mode: "number",
-    }).references(() => managers.id, { onDelete: "set null" }),
+    source: integer("source").$type<EntitlementSource>().notNull(),
+    sourceRef: text("source_ref"),
+    status: integer("status")
+      .$type<EntitlementStatus>()
+      .notNull()
+      .default(ENTITLEMENT_STATUS.PENDING),
+    grantedAt: nowTimestampMs("granted_at"),
+    expiresAt: timestampMs("expires_at"),
+    grantedByManagerId: integer("granted_by_manager_id").references(
+      () => managers.id,
+      { onDelete: "set null" }
+    ),
     grantReason: text("grant_reason"),
     ...timestamps(),
   },
@@ -117,34 +95,41 @@ export const entitlements = pgTable(
     index("idx_entitlements_granted_by_manager")
       .on(table.grantedByManagerId)
       .where(sql`${table.grantedByManagerId} IS NOT NULL`),
+    uniqueIndex("uq_entitlements_user_key_live")
+      .on(table.userId, table.entitlementKey)
+      .where(sql`${table.status} IN (2, 3, 4)`),
   ]
 );
 
-export const paymentOrders = pgTable(
+export const paymentOrders = sqliteTable(
   "payment_orders",
   {
     id: idPk(),
-    uuid: uuid("uuid").defaultRandom().notNull().unique(),
-    userId: bigint("user_id", { mode: "number" })
+    uuid: uuidCol("uuid").unique(),
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
-    packageCode: varchar("package_code", { length: 40 })
+    packageCode: text("package_code")
       .notNull()
       .references(() => packages.code, { onDelete: "restrict" }),
-    offerCode: varchar("offer_code", { length: 40 }).notNull(),
-    amountVnd: bigint("amount_vnd", { mode: "number" }).notNull(),
-    currency: varchar("currency", { length: 3 }).notNull().default("VND"),
-    status: paymentOrderStatusEnum("status").notNull().default("pending"),
-    transferNote: varchar("transfer_note", { length: 100 }).unique(),
-    bankTxnRef: varchar("bank_txn_ref", { length: 100 }),
+    offerCode: text("offer_code").notNull(),
+    amountVnd: integer("amount_vnd").notNull(),
+    currency: text("currency").notNull().default("VND"),
+    status: integer("status")
+      .$type<PaymentOrderStatus>()
+      .notNull()
+      .default(PAYMENT_ORDER_STATUS.PENDING),
+    transferNote: text("transfer_note").unique(),
+    bankTxnRef: text("bank_txn_ref"),
     proofPath: text("proof_path"),
-    submittedAt: timestamp("submitted_at", { withTimezone: true }),
-    reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
-    reviewedByManagerId: bigint("reviewed_by_manager_id", {
-      mode: "number",
-    }).references(() => managers.id, { onDelete: "set null" }),
+    submittedAt: timestampMs("submitted_at"),
+    reviewedAt: timestampMs("reviewed_at"),
+    reviewedByManagerId: integer("reviewed_by_manager_id").references(
+      () => managers.id,
+      { onDelete: "set null" }
+    ),
     adminNote: text("admin_note"),
-    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    expiresAt: timestampMs("expires_at"),
     ...timestamps(),
   },
   (table) => [
@@ -164,21 +149,24 @@ export const paymentOrders = pgTable(
     index("idx_payment_orders_reviewed_by_manager")
       .on(table.reviewedByManagerId)
       .where(sql`${table.reviewedByManagerId} IS NOT NULL`),
+    uniqueIndex("uq_payment_orders_user_pkg_open")
+      .on(table.userId, table.packageCode)
+      .where(sql`${table.status} IN (1, 2, 3, 4)`),
   ]
 );
 
-export const quotaUsage = pgTable(
+export const quotaUsage = sqliteTable(
   "quota_usage",
   {
     id: idPk(),
-    userId: bigint("user_id", { mode: "number" })
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    quotaKey: varchar("quota_key", { length: 60 }).notNull(),
-    periodStart: timestamp("period_start", { withTimezone: true }).notNull(),
+    quotaKey: text("quota_key").notNull(),
+    periodStart: timestampMs("period_start").notNull(),
     used: integer("used").notNull().default(0),
     limitSnapshot: integer("limit_snapshot").notNull(),
-    periodEnd: timestamp("period_end", { withTimezone: true }).notNull(),
+    periodEnd: timestampMs("period_end").notNull(),
     ...timestamps(),
   },
   (table) => [
@@ -190,26 +178,20 @@ export const quotaUsage = pgTable(
   ]
 );
 
-export const recurringSubscriptionStatusEnum = pgEnum(
-  "recurring_subscription_status",
-  ["active", "past_due", "cancelled", "expired"]
-);
-
-export const paymentTransactions = pgTable(
+export const paymentTransactions = sqliteTable(
   "payment_transactions",
   {
     id: idPk(),
-    provider: varchar("provider", { length: 30 }).notNull(),
-    providerEventId: varchar("provider_event_id", { length: 120 }).notNull(),
-    orderId: bigint("order_id", { mode: "number" }).references(
-      () => paymentOrders.id,
-      { onDelete: "set null" }
-    ),
-    orderUuid: uuid("order_uuid").notNull(),
-    amountVnd: bigint("amount_vnd", { mode: "number" }).notNull(),
-    status: varchar("status", { length: 30 }).notNull(),
-    rawPayload: jsonb("raw_payload"),
-    reconciledAt: timestamp("reconciled_at", { withTimezone: true }),
+    provider: text("provider").notNull(),
+    providerEventId: text("provider_event_id").notNull(),
+    orderId: integer("order_id").references(() => paymentOrders.id, {
+      onDelete: "set null",
+    }),
+    orderUuid: text("order_uuid").notNull(),
+    amountVnd: integer("amount_vnd").notNull(),
+    status: text("status").notNull(),
+    rawPayload: text("raw_payload", { mode: "json" }).$type<JsonRecord>(),
+    reconciledAt: timestampMs("reconciled_at"),
     ...timestamps(),
   },
   (table) => [
@@ -225,38 +207,37 @@ export const paymentTransactions = pgTable(
   ]
 );
 
-export const recurringSubscriptions = pgTable(
+export const recurringSubscriptions = sqliteTable(
   "recurring_subscriptions",
   {
     id: idPk(),
-    userId: bigint("user_id", { mode: "number" })
+    userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    packageCode: varchar("package_code", { length: 40 })
+    packageCode: text("package_code")
       .notNull()
       .references(() => packages.code, { onDelete: "restrict" }),
-    offerCode: varchar("offer_code", { length: 40 }).notNull(),
-    billingPeriod: varchar("billing_period", { length: 20 }).notNull(),
-    priceVnd: bigint("price_vnd", { mode: "number" }).notNull(),
-    autoRenew: boolean("auto_renew").notNull().default(false),
-    status: recurringSubscriptionStatusEnum("status")
+    offerCode: text("offer_code").notNull(),
+    billingPeriod: text("billing_period").notNull(),
+    priceVnd: integer("price_vnd").notNull(),
+    autoRenew: integer("auto_renew", { mode: "boolean" })
       .notNull()
-      .default("active"),
-    currentPeriodStart: timestamp("current_period_start", {
-      withTimezone: true,
-    }).notNull(),
-    currentPeriodEnd: timestamp("current_period_end", {
-      withTimezone: true,
-    }).notNull(),
-    nextBillingAt: timestamp("next_billing_at", { withTimezone: true }),
+      .default(false),
+    status: integer("status")
+      .$type<RecurringSubscriptionStatus>()
+      .notNull()
+      .default(RECURRING_SUBSCRIPTION_STATUS.ACTIVE),
+    currentPeriodStart: timestampMs("current_period_start").notNull(),
+    currentPeriodEnd: timestampMs("current_period_end").notNull(),
+    nextBillingAt: timestampMs("next_billing_at"),
     dunningAttempts: integer("dunning_attempts").notNull().default(0),
-    lastDunningAt: timestamp("last_dunning_at", { withTimezone: true }),
-    consentTermsVersion: varchar("consent_terms_version", {
-      length: 40,
-    }).notNull(),
-    consentSnapshot: jsonb("consent_snapshot"),
-    cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
-    cancelledBy: varchar("cancelled_by", { length: 30 }),
+    lastDunningAt: timestampMs("last_dunning_at"),
+    consentTermsVersion: text("consent_terms_version").notNull(),
+    consentSnapshot: text("consent_snapshot", {
+      mode: "json",
+    }).$type<JsonRecord>(),
+    cancelledAt: timestampMs("cancelled_at"),
+    cancelledBy: text("cancelled_by"),
     cancelReason: text("cancel_reason"),
     cancelNote: text("cancel_note"),
     ...timestamps(),

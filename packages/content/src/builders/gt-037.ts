@@ -7,6 +7,7 @@ import type {
 } from "@mindkid/shared";
 import {
   createRng,
+  pickAgeBandPrompt,
   resolveItemAsset,
   safeGetItem,
   shuffleDeterministic,
@@ -76,9 +77,19 @@ export const projectGT037: Projection<"GT-037"> = {
       ? `nhóm ${targetItem.label}`
       : targetItem.label;
 
+    const prompt = pickAgeBandPrompt(
+      opts.band,
+      {
+        mam: `Bé tinh mắt chạm tất cả ${targetPhrase} nhé!`,
+        choi: `Đố bé tìm đủ tất cả ${targetPhrase} nhé!`,
+        la: `Bé rà kỹ tìm tất cả ${targetPhrase} xem!`,
+      },
+      "Đố bé tìm tất cả hình mục tiêu nhé!"
+    );
+
     return {
       content_pack: {
-        prompt: `Bé hãy tìm tất cả ${targetPhrase} nhé!`,
+        prompt,
         target_ids: [targetItem.id],
         item_count: itemCount,
         target_copies: targetCopies,

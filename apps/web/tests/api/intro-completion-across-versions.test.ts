@@ -1,13 +1,15 @@
 import crypto from "node:crypto";
 import {
+  ACCESS_TIER,
   childProfiles,
   gameLevels,
   getOwnerDb,
+  PLAY_COMPLETION_STATUS,
   playSessions,
   telemetryEvents,
   users,
 } from "@mindkid/db";
-import { eq, inArray } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
   findCompletedIntroLevelIds,
@@ -35,7 +37,7 @@ async function insertLevel(code: string): Promise<number> {
       title: `Level ${code}`,
       contentPack: {},
       difficultyParams: {},
-      accessTier: "free",
+      accessTier: ACCESS_TIER.FREE,
     })
     .returning();
   if (!level) {
@@ -75,7 +77,7 @@ describe("cổng làm quen & tiếp tục phân đoạn dở (BR-CIR-18)", () =>
       childProfileId: childId,
       gameLevelId: publishedId,
       templateCode: "GT-000",
-      completionStatus: "completed",
+      completionStatus: PLAY_COMPLETION_STATUS.COMPLETED,
     });
   });
 
@@ -86,12 +88,7 @@ describe("cổng làm quen & tiếp tục phân đoạn dở (BR-CIR-18)", () =>
         .delete(telemetryEvents)
         .where(inArray(telemetryEvents.sessionUuid, createdSessionUuids));
     }
-    await db.delete(users).where(eq(users.id, userId));
-    await db
-      .delete(gameLevels)
-      .where(
-        inArray(gameLevels.id, [publishedId, otherPublishedId, resumeLevelId])
-      );
+    // Không xoá users / gameLevels vì cascade sẽ chạm play_sessions đã completed (BR-SPT-07).
   });
 
   it("level làm quen hoàn thành được nhận diện đúng theo mã level", async () => {
@@ -127,7 +124,7 @@ describe("cổng làm quen & tiếp tục phân đoạn dở (BR-CIR-18)", () =>
       childProfileId: childId,
       gameLevelId: resumeLevelId,
       templateCode: "GT-000",
-      completionStatus: "abandoned",
+      completionStatus: PLAY_COMPLETION_STATUS.ABANDONED,
       isPreview: false,
     });
 
@@ -159,7 +156,7 @@ describe("cổng làm quen & tiếp tục phân đoạn dở (BR-CIR-18)", () =>
       childProfileId: childId,
       gameLevelId: resumeLevelId,
       templateCode: "GT-000",
-      completionStatus: "completed",
+      completionStatus: PLAY_COMPLETION_STATUS.COMPLETED,
       isPreview: false,
     });
 

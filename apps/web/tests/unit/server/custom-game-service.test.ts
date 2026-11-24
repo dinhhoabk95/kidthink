@@ -1,4 +1,10 @@
-import { childProfiles, getOwnerDb, users } from "@mindkid/db";
+import {
+  CHILD_STATUS,
+  CUSTOM_GAME_STATUS,
+  childProfiles,
+  getOwnerDb,
+  users,
+} from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
@@ -102,7 +108,7 @@ describe("P4.5 Custom Game DB Service (BR-CGB-01..10)", () => {
         displayName: "Bé Bông",
         birthYear: 2022,
         avatarId: "avatar_1",
-        status: "active",
+        status: CHILD_STATUS.ACTIVE,
       })
       .returning();
     if (!cA) {
@@ -118,7 +124,7 @@ describe("P4.5 Custom Game DB Service (BR-CGB-01..10)", () => {
       status: "draft",
     });
     expect(draftGame.id).toBeDefined();
-    expect(draftGame.status).toBe("draft");
+    expect(draftGame.status).toBe(CUSTOM_GAME_STATUS.DRAFT);
     expect(draftGame.version).toBe(1);
 
     // 2. Create ready game
@@ -126,7 +132,7 @@ describe("P4.5 Custom Game DB Service (BR-CGB-01..10)", () => {
       ...validGT001Input,
       status: "ready",
     });
-    expect(readyGame.status).toBe("ready");
+    expect(readyGame.status).toBe(CUSTOM_GAME_STATUS.READY);
 
     // 3. Fails when creating ready game with invalid content
     await expect(
@@ -215,7 +221,7 @@ describe("P4.5 Custom Game DB Service (BR-CGB-01..10)", () => {
       status: "ready",
       expected_version: 2,
     });
-    expect(ready.status).toBe("ready");
+    expect(ready.status).toBe(CUSTOM_GAME_STATUS.READY);
   });
 
   it("Scenario: deleteCustomGame removes game and frees slot", async () => {

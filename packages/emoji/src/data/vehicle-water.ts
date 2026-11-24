@@ -3,6 +3,8 @@ import type { EmojiEntry } from "#src/types";
 export const VEHICLE_WATER_EMOJIS: EmojiEntry[] = [
   {
     emoji: "🚀",
+    slug: "rocket",
+    svg_path: "/sprites/emoji/rocket.svg",
     name: "Tên lửa",
     categories: ["sky-space", "vehicle-water"],
     curriculum_themes: ["nuoc_hien_tuong_tu_nhien", "phuong_tien"],
@@ -11,6 +13,8 @@ export const VEHICLE_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🚢",
+    slug: "ship",
+    svg_path: "/sprites/emoji/ship.svg",
     name: "Tàu lớn",
     categories: ["vehicle-water"],
     curriculum_themes: ["phuong_tien"],
@@ -19,6 +23,8 @@ export const VEHICLE_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⛵",
+    slug: "sailboat",
+    svg_path: "/sprites/emoji/sailboat.svg",
     name: "Thuyền buồm",
     categories: ["vehicle-water"],
     curriculum_themes: ["phuong_tien"],
@@ -27,6 +33,8 @@ export const VEHICLE_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🚤",
+    slug: "speedboat",
+    svg_path: "/sprites/emoji/speedboat.svg",
     name: "Ca nô",
     categories: ["vehicle-water"],
     curriculum_themes: ["phuong_tien"],
@@ -35,6 +43,8 @@ export const VEHICLE_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🛥️",
+    slug: "motor-yacht",
+    svg_path: "/sprites/emoji/motor-yacht.svg",
     name: "Du thuyền nhỏ",
     categories: ["vehicle-water"],
     curriculum_themes: ["phuong_tien"],
@@ -43,6 +53,8 @@ export const VEHICLE_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🚣",
+    slug: "rowboat",
+    svg_path: "/sprites/emoji/rowboat.svg",
     name: "Chèo thuyền",
     categories: ["vehicle-water"],
     curriculum_themes: ["phuong_tien"],
@@ -51,6 +63,8 @@ export const VEHICLE_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🛶",
+    slug: "canoe",
+    svg_path: "/sprites/emoji/canoe.svg",
     name: "Thuyền độc mộc",
     categories: ["vehicle-water"],
     curriculum_themes: ["phuong_tien"],
@@ -59,6 +73,8 @@ export const VEHICLE_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⛴️",
+    slug: "passenger-ferry",
+    svg_path: "/sprites/emoji/passenger-ferry.svg",
     name: "Phà",
     categories: ["vehicle-water"],
     curriculum_themes: ["phuong_tien"],
@@ -67,6 +83,8 @@ export const VEHICLE_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⚓",
+    slug: "anchor",
+    svg_path: "/sprites/emoji/anchor.svg",
     name: "Neo",
     categories: ["vehicle-water"],
     curriculum_themes: ["phuong_tien"],
@@ -75,10 +93,45 @@ export const VEHICLE_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🛳️",
+    slug: "cruise-ship",
+    svg_path: "/sprites/emoji/cruise-ship.svg",
     name: "Du thuyền",
     categories: ["vehicle-water"],
     curriculum_themes: ["phuong_tien"],
     keywords: ["passenger ship", "cruise", "du thuyền", "tàu du lịch", "biển"],
+    age_min: 4,
+  },
+  {
+    emoji: "🛟",
+    slug: "rescue-lifebuoy",
+    svg_path: "/sprites/emoji/rescue-lifebuoy.svg",
+    name: "Phao cứu sinh tròn",
+    categories: ["vehicle-water", "sport-game"],
+    curriculum_themes: ["phuong_tien", "nuoc_hien_tuong_tu_nhien"],
+    keywords: [
+      "ring buoy",
+      "lifebuoy",
+      "life preserver",
+      "phao cứu sinh",
+      "phao bơi",
+      "an toàn nước",
+    ],
+    age_min: 3,
+  },
+  {
+    emoji: "☸️",
+    slug: "helm-wheel",
+    svg_path: "/sprites/emoji/helm-wheel.svg",
+    name: "Bánh lái tàu thuỷ",
+    categories: ["vehicle-water"],
+    curriculum_themes: ["phuong_tien"],
+    keywords: [
+      "ship wheel",
+      "helm",
+      "bánh lái tàu",
+      "vô lăng tàu thuỷ",
+      "thuyền trưởng",
+    ],
     age_min: 4,
   },
 ];

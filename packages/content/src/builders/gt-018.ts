@@ -9,6 +9,7 @@ import {
   createRng,
   resolveItemAsset,
   safeGetItem,
+  sanitizeChildPrompt,
   shuffleDeterministic,
 } from "./utils.js";
 
@@ -54,7 +55,10 @@ export const projectGT018: Projection<"GT-018"> = {
       })),
     ];
 
-    const audioText = `Bé hãy nghe và tìm ${targetItem.label}`;
+    const audioText = sanitizeChildPrompt(
+      `Bé lắng tai nghe rồi tìm ${targetItem.label} nhé!`,
+      "Bé lắng tai nghe rồi chạm đúng hình nhé!"
+    );
 
     return {
       content_pack: {

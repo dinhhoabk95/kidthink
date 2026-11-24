@@ -3,15 +3,16 @@ import {
   MECHANIC_TAG_MAP as TAXONOMY_MECHANIC_TAG_MAP,
   normalizeMechanicTagCode as taxonomyNormalizeMechanicTagCode,
 } from "@mindkid/taxonomy";
-import { and, eq, inArray, isNull, or, sql } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { DbExecutor } from "#src/client";
-import { curricula } from "#src/schema/curriculum";
-import { gameLevels } from "#src/schema/game";
 import {
-  contentSkillMap,
-  contentTagMap,
-  contentTags,
-} from "#src/schema/tagging";
+  CONTENT_ENTITY_TYPE,
+  type ContentEntityType,
+  TAG_AXIS,
+  TAG_STATUS,
+  type TagAxis,
+} from "#src/constants/learning-enums";
+import { contentTagMap } from "#src/schema/tagging";
 
 export interface SkillMapInput {
   skillId: number;
@@ -19,28 +20,24 @@ export interface SkillMapInput {
 }
 
 export interface TagAssignmentInput {
-  entityType: "game_level" | "curriculum";
+  entityType: ContentEntityType;
   entityId: number;
   tagCodes: string[];
   mechanicTagCode?: string;
 }
 
-/**
- * BR-TAG-01: Reject tag codes outside active content_tags vocabulary with 422 UNPROCESSABLE_ENTITY.
- * BR-TAG-02: Require >= 1 tag on each pedagogical axis (what, thinking, mechanic) before publication. (theme exempt - D-HB).
- */
 export const MECHANIC_TAG_MAP: Record<string, string> =
   TAXONOMY_MECHANIC_TAG_MAP;
 export const normalizeMechanicTagCode: (code?: string) => string | undefined =
   taxonomyNormalizeMechanicTagCode;
 
 async function resolveAndEnsureTags(db: DbExecutor, tagList: string[]) {
-  const matchedTags = await db
-    .select()
-    .from(contentTags)
-    .where(
-      and(inArray(contentTags.code, tagList), eq(contentTags.status, "active"))
-    );
+  const matchedTags = await db.query.contentTags.findMany({
+    where: {
+      code: { in: tagList },
+      status: TAG_STATUS.ACTIVE,
+    },
+  });
 
   if (matchedTags.length === tagList.length) {
     return matchedTags;
@@ -54,14 +51,16 @@ async function resolveAndEnsureTags(db: DbExecutor, tagList: string[]) {
   );
 }
 
-function validatePublishAxes(matchedTags: Array<{ axis: string }>) {
+function validatePublishAxes(matchedTags: ReadonlyArray<{ axis: TagAxis }>) {
   const axesPresent = new Set(matchedTags.map((t) => t.axis));
-  const requiredAxes: Array<"what" | "thinking" | "mechanic"> = [
-    "what",
-    "thinking",
-    "mechanic",
+  const requiredAxes: readonly [TagAxis, string][] = [
+    [TAG_AXIS.WHAT, "what"],
+    [TAG_AXIS.THINKING, "thinking"],
+    [TAG_AXIS.MECHANIC, "mechanic"],
   ];
-  const missingAxes = requiredAxes.filter((axis) => !axesPresent.has(axis));
+  const missingAxes = requiredAxes
+    .filter(([axis]) => !axesPresent.has(axis))
+    .map(([, label]) => label);
   if (missingAxes.length > 0) {
     throw new ValidationError(
       `Thiếu tag cho trục sư phạm: ${missingAxes.join(", ")}. theme là trục tuỳ chọn.`
@@ -71,11 +70,11 @@ function validatePublishAxes(matchedTags: Array<{ axis: string }>) {
 
 export async function assignTagsToEntity(
   db: DbExecutor,
-  entityType: TagAssignmentInput["entityType"],
+  entityType: ContentEntityType,
   entityId: number,
   tagIds: number[]
 ) {
-  const runAssign = async (tx: DbExecutor) => {
+  await db.transaction(async (tx) => {
     await tx
       .delete(contentTagMap)
       .where(
@@ -94,15 +93,7 @@ export async function assignTagsToEntity(
     if (newEntries.length > 0) {
       await tx.insert(contentTagMap).values(newEntries);
     }
-  };
-
-  if (typeof db.transaction === "function") {
-    await db.transaction(async (tx) => {
-      await runAssign(tx);
-    });
-  } else {
-    await runAssign(db);
-  }
+  });
 }
 
 export async function validateAndAssignTags(
@@ -122,7 +113,7 @@ export async function validateAndAssignTags(
   if (tagList.length === 0) {
     if (isPublishing) {
       throw new ValidationError(
-        "Nội dung phải có ít nhất 1 tag cho mỗi trục sư phạm (what, thinking, mechanic);."
+        "Nội dung phải có ít nhất 1 tag cho mỗi trục sư phạm (what, thinking, mechanic)."
       );
     }
     return;
@@ -130,7 +121,7 @@ export async function validateAndAssignTags(
 
   const matchedTags = await resolveAndEnsureTags(db, tagList);
 
-  if (isPublishing && entityType === "game_level") {
+  if (isPublishing && entityType === CONTENT_ENTITY_TYPE.GAME_LEVEL) {
     validatePublishAxes(matchedTags);
   }
 
@@ -142,10 +133,6 @@ export async function validateAndAssignTags(
   );
 }
 
-/**
- * BR-TAG-03 & BR-TAG-04: Validate content_skill_map entries.
- * Weight in (0, 1]. Exactly ONE primary skill entry with weight = 1.0.
- */
 export function validateContentSkillMap(entries: SkillMapInput[]) {
   if (entries.length === 0) {
     throw new ValidationError("Nội dung phải liên kết với ít nhất 1 kỹ năng.");
@@ -165,78 +152,53 @@ export function validateContentSkillMap(entries: SkillMapInput[]) {
 
   if (primaryCount !== 1) {
     throw new ValidationError(
-      `Nội dung phải có đúng 1 kỹ năng chính với weight = 1.0 (hiện có ${primaryCount});.`
+      `Nội dung phải có đúng 1 kỹ năng chính với weight = 1.0 (hiện có ${primaryCount}).`
     );
   }
 }
 
-/**
- * BR-TAG-07 & BR-DM-04: Phát hiện hàng mồ côi trong `content_tag_map` trên cả
- * hai nhánh đa hình (`game_level` và `curriculum`) thuần bằng Drizzle query builder.
- */
 export async function detectOrphanedContentTags(
   db: DbExecutor
 ): Promise<number> {
-  const [row] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(contentTagMap)
-    .leftJoin(
-      gameLevels,
-      and(
-        eq(contentTagMap.entityType, "game_level"),
-        eq(contentTagMap.entityId, gameLevels.id)
-      )
-    )
-    .leftJoin(
-      curricula,
-      and(
-        eq(contentTagMap.entityType, "curriculum"),
-        eq(contentTagMap.entityId, curricula.id)
-      )
-    )
-    .where(
-      or(
-        and(eq(contentTagMap.entityType, "game_level"), isNull(gameLevels.id)),
-        and(eq(contentTagMap.entityType, "curriculum"), isNull(curricula.id))
-      )
-    );
+  const rows = await db.query.contentTagMap.findMany({
+    columns: { entityType: true },
+    with: {
+      gameLevel: { columns: { id: true } },
+      curriculum: { columns: { id: true } },
+    },
+  });
 
-  return Number(row?.count ?? 0);
+  let orphans = 0;
+  for (const row of rows) {
+    if (
+      (row.entityType === CONTENT_ENTITY_TYPE.GAME_LEVEL && !row.gameLevel) ||
+      (row.entityType === CONTENT_ENTITY_TYPE.CURRICULUM && !row.curriculum)
+    ) {
+      orphans += 1;
+    }
+  }
+  return orphans;
 }
 
-/**
- * BR-DM-04: Phát hiện hàng mồ côi trong `content_skill_map` trên cả hai nhánh
- * đa hình (`game_level` và `curriculum`).
- */
 export async function detectOrphanedContentSkillMaps(
   db: DbExecutor
 ): Promise<number> {
-  const [row] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(contentSkillMap)
-    .leftJoin(
-      gameLevels,
-      and(
-        eq(contentSkillMap.entityType, "game_level"),
-        eq(contentSkillMap.entityId, gameLevels.id)
-      )
-    )
-    .leftJoin(
-      curricula,
-      and(
-        eq(contentSkillMap.entityType, "curriculum"),
-        eq(contentSkillMap.entityId, curricula.id)
-      )
-    )
-    .where(
-      or(
-        and(
-          eq(contentSkillMap.entityType, "game_level"),
-          isNull(gameLevels.id)
-        ),
-        and(eq(contentSkillMap.entityType, "curriculum"), isNull(curricula.id))
-      )
-    );
+  const rows = await db.query.contentSkillMap.findMany({
+    columns: { entityType: true },
+    with: {
+      gameLevel: { columns: { id: true } },
+      curriculum: { columns: { id: true } },
+    },
+  });
 
-  return Number(row?.count ?? 0);
+  let orphans = 0;
+  for (const row of rows) {
+    if (
+      (row.entityType === CONTENT_ENTITY_TYPE.GAME_LEVEL && !row.gameLevel) ||
+      (row.entityType === CONTENT_ENTITY_TYPE.CURRICULUM && !row.curriculum)
+    ) {
+      orphans += 1;
+    }
+  }
+  return orphans;
 }

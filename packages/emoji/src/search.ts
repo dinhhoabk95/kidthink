@@ -1,38 +1,91 @@
 /**
  * @mindkid/emoji — Search
- * Fuzzy search qua name và keywords.
- * Case-insensitive, diacritics-insensitive (không cần dấu).
+ * Fuzzy search qua name và keywords (lazy pre-indexed, không dấu + có dấu).
  */
 
-import { ALL_EMOJIS } from "./registry";
-import type { EmojiEntry } from "./types";
+import { ALL_EMOJIS } from "#src/registry";
+import type { EmojiEntry } from "#src/types";
 
-/**
- * Normalize text for diacritics-insensitive search.
- * Removes Vietnamese diacritical marks and converts to lowercase.
- */
-function normalize(text: string): string {
-  return (
-    text
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      // Handle Vietnamese special characters that NFD doesn't decompose
-      .replace(/đ/g, "d")
-      .replace(/Đ/g, "d")
-  );
+const DIACRITICS_RE = /[\u0300-\u036f]/g;
+const VIETNAMESE_D_RE = /[đĐ]/g;
+
+const DEFAULT_SEARCH_LIMIT = 50;
+const SCORE_EXACT_NAME = 100;
+const SCORE_EXACT_GLYPH = 100;
+const SCORE_EXACT_KEYWORD = 90;
+const SCORE_PARTIAL_NAME = 80;
+const SCORE_PARTIAL_KEYWORD = 60;
+
+interface IndexedEmojiEntry {
+  readonly entry: EmojiEntry;
+  readonly normalizedKeywords: readonly string[];
+  readonly normalizedName: string;
 }
 
-/**
- * Search emoji by query string.
- * Searches across name and keywords.
- * Case-insensitive and diacritics-tolerant.
- *
- * @param query - Search query (Vietnamese or English)
- * @param limit - Maximum number of results (default: 50)
- * @returns Matching emoji entries sorted by relevance
- */
-export function searchEmoji(query: string, limit = 50): EmojiEntry[] {
+let searchIndexCache: readonly IndexedEmojiEntry[] | null = null;
+
+function normalizeSearchText(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(DIACRITICS_RE, "")
+    .replace(VIETNAMESE_D_RE, "d");
+}
+
+function getSearchIndex(): readonly IndexedEmojiEntry[] {
+  if (!searchIndexCache) {
+    searchIndexCache = ALL_EMOJIS.map((entry) => ({
+      entry,
+      normalizedName: normalizeSearchText(entry.name),
+      normalizedKeywords: entry.keywords.map(normalizeSearchText),
+    }));
+  }
+  return searchIndexCache;
+}
+
+function scoreKeywords(
+  normalizedKeywords: readonly string[],
+  normalizedQuery: string
+): number {
+  let best = 0;
+  for (const keyword of normalizedKeywords) {
+    if (keyword === normalizedQuery) {
+      return SCORE_EXACT_KEYWORD;
+    }
+    if (keyword.includes(normalizedQuery)) {
+      best = SCORE_PARTIAL_KEYWORD;
+    }
+  }
+  return best;
+}
+
+function scoreIndexedEntry(
+  indexed: IndexedEmojiEntry,
+  normalizedQuery: string,
+  trimmedQuery: string
+): number {
+  if (indexed.normalizedName === normalizedQuery) {
+    return SCORE_EXACT_NAME;
+  }
+  if (indexed.normalizedName.includes(normalizedQuery)) {
+    return SCORE_PARTIAL_NAME;
+  }
+
+  const keywordScore = scoreKeywords(
+    indexed.normalizedKeywords,
+    normalizedQuery
+  );
+  if (keywordScore > 0) {
+    return keywordScore;
+  }
+
+  return indexed.entry.emoji === trimmedQuery ? SCORE_EXACT_GLYPH : 0;
+}
+
+export function searchEmoji(
+  query: string,
+  limit = DEFAULT_SEARCH_LIMIT
+): EmojiEntry[] {
   if (!query) {
     return [];
   }
@@ -41,75 +94,18 @@ export function searchEmoji(query: string, limit = 50): EmojiEntry[] {
     return [];
   }
 
-  const normalizedQuery = normalize(trimmed);
-  const results: Array<{ entry: EmojiEntry; score: number }> = [];
+  const normalizedQuery = normalizeSearchText(trimmed);
+  const matched: Array<{ entry: EmojiEntry; score: number }> = [];
 
-  for (const entry of ALL_EMOJIS) {
-    const score = scoreEntry(entry, normalizedQuery, trimmed);
+  for (const indexed of getSearchIndex()) {
+    const score = scoreIndexedEntry(indexed, normalizedQuery, trimmed);
     if (score > 0) {
-      results.push({ entry, score });
+      matched.push({ entry: indexed.entry, score });
     }
   }
 
-  return results
+  return matched
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
-    .map((r) => r.entry);
-}
-
-/**
- * Score a keyword list: exact match wins immediately, partial match is the
- * fallback. Mirrors the priority order documented on {@link scoreEntry}.
- */
-function scoreKeywords(
-  keywords: readonly string[],
-  normalizedQuery: string,
-  normalizeKeyword: (keyword: string) => string,
-  exactScore: number,
-  partialScore: number
-): number {
-  let best = 0;
-  for (const keyword of keywords) {
-    const normalizedKeyword = normalizeKeyword(keyword);
-    if (normalizedKeyword === normalizedQuery) {
-      return exactScore;
-    }
-    if (normalizedKeyword.includes(normalizedQuery)) {
-      best = partialScore;
-    }
-  }
-  return best;
-}
-
-/**
- * Relevance score for one entry. Higher wins.
- *
- * name exact 100 · keyword exact 90 · name partial 80 · keyword partial 60
- * · emoji character 100 · 0 = no match
- */
-function scoreEntry(
-  entry: EmojiEntry,
-  normalizedQuery: string,
-  trimmedQuery: string
-): number {
-  const normalizedName = normalize(entry.name);
-  if (normalizedName === normalizedQuery) {
-    return 100;
-  }
-  if (normalizedName.includes(normalizedQuery)) {
-    return 80;
-  }
-
-  const keywordScore = scoreKeywords(
-    entry.keywords,
-    normalizedQuery,
-    normalize,
-    90,
-    60
-  );
-  if (keywordScore > 0) {
-    return keywordScore;
-  }
-
-  return entry.emoji === trimmedQuery ? 100 : 0;
+    .map((item) => item.entry);
 }

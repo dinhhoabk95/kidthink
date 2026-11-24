@@ -1,5 +1,8 @@
 import {
+  CHILD_STATUS,
   childProfiles,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
@@ -128,8 +131,8 @@ describe("Task 4 — Package Catalog Admin & Subscribers Suite (BR-PCA-01..06, D
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "play_standard_games",
-      source: "package_order",
-      status: "active",
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+      status: ENTITLEMENT_STATUS.ACTIVE,
       expiresAt: new Date(Date.now() + 30 * 86_400_000),
     });
 
@@ -158,15 +161,15 @@ describe("Task 4 — Package Catalog Admin & Subscribers Suite (BR-PCA-01..06, D
       displayName: "Bé Siêu Bí Mật",
       birthYear: 2021,
       avatarId: "avatar-01",
-      status: "active",
+      status: CHILD_STATUS.ACTIVE,
     });
 
     // Insert entitlement for PKG-standard
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "play_standard_games",
-      source: "package_order",
-      status: "active",
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+      status: ENTITLEMENT_STATUS.ACTIVE,
       expiresAt: new Date(Date.now() + 30 * 86_400_000),
     });
 
@@ -209,15 +212,15 @@ describe("Task 4 — Package Catalog Admin & Subscribers Suite (BR-PCA-01..06, D
       {
         userId: u1.id,
         entitlementKey: "play_standard_games",
-        source: "package_order",
-        status: "active",
+        source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+        status: ENTITLEMENT_STATUS.ACTIVE,
         expiresAt: new Date(Date.now() + 30 * 86_400_000),
       },
       {
         userId: u2.id,
         entitlementKey: "play_standard_games",
-        source: "package_order",
-        status: "active",
+        source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+        status: ENTITLEMENT_STATUS.ACTIVE,
         expiresAt: new Date(Date.now() + 30 * 86_400_000),
       },
     ]);

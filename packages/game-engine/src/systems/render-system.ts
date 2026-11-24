@@ -11,6 +11,7 @@ import {
   type LogicSpace,
 } from "#src/layout/constants";
 import { alpha } from "#src/render/color-utils.js";
+import { getEmojiSprite } from "#src/render/sprite-registry.js";
 import { designTokens } from "./designTokens";
 
 /** Phần viền đậm lòi ra mỗi bên nét gợi ý. */
@@ -443,6 +444,11 @@ export class RenderSystem {
     ctx.arc(x, y + 24, 14, 0, Math.PI * 2);
     ctx.fill();
 
+    const handSprite = getEmojiSprite("\u{1F446}");
+    if (handSprite) {
+      ctx.drawImage(handSprite, x - 22, y, 44, 44);
+      return;
+    }
     ctx.font = `44px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "top";

@@ -1,63 +1,18 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <title>Gà trống</title>
+  <title>Con gà trống</title>
   <defs>
-    <radialGradient cx="42%" cy="35%" id="rsBody" r="68%">
-      <stop offset="0%" stop-color="#fef3c7" />
-      <stop offset="55%" stop-color="#f59e0b" />
-      <stop offset="100%" stop-color="#c2410c" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="rstBody" r="70%"><stop offset="0%" stop-color="#fdba74" /><stop offset="55%" stop-color="#ea580c" /><stop offset="100%" stop-color="#9a3412" /></radialGradient><linearGradient id="rstTail" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#0f766e" /><stop offset="100%" stop-color="#1e3a8a" /></linearGradient>
   </defs>
-  <ellipse cx="58" cy="105" fill="#7c2d12" opacity="0.24" rx="32" ry="5" />
-  <path
-    d="M52 88V102H44M66 88V102H58"
-    stroke="#78350f"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <path
-    d="M78 58C94 42 108 52 103 70C99 62 91 63 86 71C96 71 101 81 93 87C86 80 80 80 75 83"
-    fill="#0f766e"
-    stroke="#115e59"
-    stroke-linejoin="round"
-    stroke-width="3.8"
-  />
-  <path
-    d="M33 34C31 23 39 18 44 25C47 16 56 17 56 27C62 21 68 27 62 35Z"
-    fill="#ef4444"
-    stroke="#7f1d1d"
-    stroke-linejoin="round"
-    stroke-width="3.6"
-  />
-  <path
-    d="M34 46C34 33 44 29 53 33C60 36 62 46 66 52C78 52 86 60 84 72C82 85 69 91 52 91C37 91 28 81 30 67C31 59 34 53 34 46Z"
-    fill="url(#rsBody)"
-    stroke="#7c2d12"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <path
-    d="M34 46L20 51L34 56Z"
-    fill="#fbbf24"
-    stroke="#78350f"
-    stroke-linejoin="round"
-    stroke-width="3.6"
-  />
-  <circle
-    cx="34"
-    cy="61"
-    fill="#ef4444"
-    r="5"
-    stroke="#7f1d1d"
-    stroke-width="3.2"
-  />
-  <circle cx="44" cy="45" fill="#1c1917" r="3.6" />
-  <circle cx="43" cy="44" fill="#ffffff" r="1.3" />
-  <path
-    d="M48 66C56 62 66 66 64 76C57 80 48 76 48 66Z"
-    fill="#dc2626"
-    stroke="#7f1d1d"
-    stroke-linejoin="round"
-    stroke-width="3.4"
-  />
+  <ellipse cx="56" cy="106" fill="#431407" opacity="0.22" rx="34" ry="5" />
+    <path d="M48 86V103M42 103H53M61 86V103M55 103H66" stroke="#92400e" stroke-linecap="round" stroke-width="3.8" />
+    <!-- Arching iridescent sickle tail feathers -->
+    <path d="M72 56C82 34 102 32 106 52C100 46 90 48 83 58C95 52 107 58 105 72C97 65 87 65 78 72Z" fill="url(#rstTail)" stroke="#134e4a" stroke-linejoin="round" stroke-width="3.6" />
+    <!-- Crown comb & wattle -->
+    <path d="M28 30C25 19 33 16 36 24C39 16 46 18 45 26C49 21 54 25 49 33Z" fill="#ef4444" stroke="#7f1d1d" stroke-linejoin="round" stroke-width="3.2" />
+    <ellipse cx="29" cy="48" fill="#ef4444" rx="4" ry="5.5" stroke="#7f1d1d" stroke-width="2.6" />
+    <!-- Proud chest, golden hackle & wing -->
+    <path d="M36 30C45 30 49 38 50 48C60 50 72 52 78 60C80 76 68 88 51 88C36 88 27 76 29 60C30 48 28 30 36 30Z" fill="url(#rstBody)" stroke="#7c2d12" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M46 60C60 56 70 64 66 75C58 80 46 76 46 60Z" fill="#b91c1c" stroke="#7f1d1d" stroke-linejoin="round" stroke-width="3" />
+    <path d="M29 38L19 42L29 45Z" fill="#fbbf24" stroke="#78350f" stroke-linejoin="round" stroke-width="2.8" />
+    <circle cx="36" cy="37" fill="#1c1917" r="2.4" /><circle cx="35.3" cy="36.3" fill="#ffffff" r="0.9" />
 </svg>

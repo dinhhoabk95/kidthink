@@ -209,5 +209,20 @@ export const C5_RHY_01_SEED: SkillSeed = {
       theme: "school",
       rounds: 3,
     },
+    {
+      code: "GL-C5-RHY-INTRO-6001",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 2,
+      theme: "festival",
+    },
+    {
+      code: "GL-C5-RHY-TAP-6002",
+      template: "GT-001",
+      band: "4-5",
+      difficulty: 2,
+      theme: "homeland",
+      rounds: 3,
+    },
   ],
 };

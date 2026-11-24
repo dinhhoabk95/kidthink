@@ -16,17 +16,26 @@ export type MechanicEventPayload = Record<
   string | number | boolean | null | undefined | readonly string[]
 >;
 
-export interface SelectionMechanicOptions {
+export type SelectionCompletionRule = "all_matching" | "exact_count";
+
+export interface SelectionValidationRule {
+  readonly selectionRule?: SelectionCompletionRule;
+  readonly requiredSelectCount?: number;
+}
+
+export interface SelectionMechanicOptions extends SelectionValidationRule {
   readonly mode?: "single" | "multi";
   readonly onEvent?: (eventName: string, payload: MechanicEventPayload) => void;
 }
 
 /**
  * SelectionMechanic — Primitive for single/multiple choice tap mechanics (BR-TAK-05, BR-TAK-06).
- * Agnostic of educational domain, works on abstract SelectionItem ids.
+ * Supports both exhaustive `all_matching` and semi-open `exact_count` subset selection (BR-E002-02).
  */
 export class SelectionMechanic {
   private readonly mode: "single" | "multi";
+  private readonly selectionRule: SelectionCompletionRule;
+  private readonly requiredSelectCount?: number;
   private readonly selectedIds: Set<string> = new Set();
   private readonly onEvent?: (
     eventName: string,
@@ -35,11 +44,26 @@ export class SelectionMechanic {
 
   constructor(options?: SelectionMechanicOptions) {
     this.mode = options?.mode ?? "single";
+    this.selectionRule = options?.selectionRule ?? "all_matching";
+    this.requiredSelectCount = options?.requiredSelectCount;
     this.onEvent = options?.onEvent;
   }
 
   reset(): void {
     this.selectedIds.clear();
+  }
+
+  setSelectedIds(ids: Iterable<string>): void {
+    this.selectedIds.clear();
+    for (const id of ids) {
+      if (!id) {
+        continue;
+      }
+      this.selectedIds.add(id);
+      if (this.mode === "single") {
+        break;
+      }
+    }
   }
 
   getSelectedIds(): readonly string[] {
@@ -93,39 +117,64 @@ export class SelectionMechanic {
     return item.isCorrect ? ACTION_CORRECT : ACTION_RETRY;
   }
 
-  private validateSubmit(items: readonly SelectionItem[]): ActionResult {
+  private matchesSelectionRule(
+    items: readonly SelectionItem[],
+    override?: SelectionValidationRule,
+    requireNonEmptyTargets = false
+  ): boolean {
     const correctIds = new Set(
       items.filter((i) => i.isCorrect).map((i) => i.id)
     );
-    const isExactMatch =
-      this.selectedIds.size === correctIds.size &&
-      Array.from(this.selectedIds).every((id) => correctIds.has(id));
-    return isExactMatch ? ACTION_CORRECT : ACTION_RETRY;
-  }
-
-  /**
-   * Validate action without mutating state (pure).
-   */
-  validate(action: GameAction, items: readonly SelectionItem[]): ActionResult {
-    if (action.type === "tap_option" || action.type === "select_item") {
-      return this.validateTapOption(action, items);
+    const rule = override?.selectionRule ?? this.selectionRule;
+    if (rule === "exact_count") {
+      if (correctIds.size === 0) {
+        return false;
+      }
+      const rawRequired =
+        override?.requiredSelectCount ??
+        this.requiredSelectCount ??
+        correctIds.size;
+      const required = Math.max(
+        1,
+        Math.min(correctIds.size, Math.floor(rawRequired))
+      );
+      return (
+        this.selectedIds.size === required &&
+        Array.from(this.selectedIds).every((id) => correctIds.has(id))
+      );
     }
-    if (action.type === "submit_selection") {
-      return this.validateSubmit(items);
-    }
-    return ACTION_IGNORED;
-  }
-
-  isSelectionComplete(items: readonly SelectionItem[]): boolean {
-    const correctIds = new Set(
-      items.filter((i) => i.isCorrect).map((i) => i.id)
-    );
-    if (correctIds.size === 0) {
+    if (requireNonEmptyTargets && correctIds.size === 0) {
       return false;
     }
     return (
       this.selectedIds.size === correctIds.size &&
       Array.from(this.selectedIds).every((id) => correctIds.has(id))
     );
+  }
+
+  /**
+   * Validate action without mutating state (pure).
+   */
+  validate(
+    action: GameAction,
+    items: readonly SelectionItem[],
+    override?: SelectionValidationRule
+  ): ActionResult {
+    if (action.type === "tap_option" || action.type === "select_item") {
+      return this.validateTapOption(action, items);
+    }
+    if (action.type === "submit_selection") {
+      return this.matchesSelectionRule(items, override, false)
+        ? ACTION_CORRECT
+        : ACTION_RETRY;
+    }
+    return ACTION_IGNORED;
+  }
+
+  isSelectionComplete(
+    items: readonly SelectionItem[],
+    override?: SelectionValidationRule
+  ): boolean {
+    return this.matchesSelectionRule(items, override, true);
   }
 }

@@ -1,0 +1,12 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Ly kem tươi mát</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="sicPink" r="70%"><stop offset="0%" stop-color="#fce7f3" /><stop offset="55%" stop-color="#f472b6" /><stop offset="100%" stop-color="#db2777" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="106" fill="#334155" opacity="0.22" rx="28" ry="5" />
+    <circle cx="48" cy="48" fill="#fef9c3" r="16" stroke="#78350f" stroke-width="3.6" />
+    <circle cx="71" cy="48" fill="url(#sicPink)" r="16" stroke="#831843" stroke-width="3.6" />
+    <circle cx="60" cy="34" fill="#ffffff" r="14" stroke="#475569" stroke-width="3.6" />
+    <circle cx="60" cy="20" fill="#ef4444" r="6" stroke="#7f1d1d" stroke-width="3" />
+    <path d="M28 56H92C90 76 76 86 60 86C44 86 30 76 28 56ZM60 86V100M44 100H76" fill="#bae6fd" stroke="#1e3a8a" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.8" />
+</svg>

@@ -8,6 +8,7 @@ import type {
 import { formatPluralNoun } from "@mindkid/shared";
 import {
   createRng,
+  pickAgeBandPrompt,
   resolveItemAsset,
   safeGetItem,
   shuffleDeterministic,
@@ -71,12 +72,23 @@ export const projectGT022: Projection<"GT-022"> = {
       })),
     ];
 
+    const pluralLabel = formatPluralNoun(targetItem.label, {
+      value: targetItem.value,
+      glyph: targetItem.glyph,
+    });
+    const prompt = pickAgeBandPrompt(
+      opts.band,
+      {
+        mam: `Bé tinh mắt tìm ${pluralLabel} nhé!`,
+        choi: `Đố bé tìm thấy ${pluralLabel} trong tranh nhé!`,
+        la: `Bé thử quan sát tìm đủ ${pluralLabel} xem!`,
+      },
+      "Đố bé tìm đủ các vật trong tranh nhé!"
+    );
+
     return {
       content_pack: {
-        prompt: `Bé hãy tìm ${formatPluralNoun(targetItem.label, {
-          value: targetItem.value,
-          glyph: targetItem.glyph,
-        })} nhé!`,
+        prompt,
         target_description: targetItem.label,
         scene_objects: shuffleDeterministic(scene_objects, rng),
       },

@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe trượt tuyết gỗ</title>
+  <defs>
+    <linearGradient id="sldWood" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#fde68a" /><stop offset="100%" stop-color="#d97706" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="102" fill="#334155" opacity="0.22" rx="42" ry="5" />
+    <path d="M18 86H94C104 86 108 76 102 68M32 66V86M78 66V86" fill="none" stroke="#475569" stroke-linecap="round" stroke-width="4.5" />
+    <rect fill="url(#sldWood)" height="14" rx="5" stroke="#5c2d16" stroke-width="3.8" width="76" x="18" y="54" />
+</svg>

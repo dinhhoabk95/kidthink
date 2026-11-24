@@ -1,42 +1,26 @@
 import { copySystemCurriculumSchema } from "@mindkid/shared";
-import {
-  defineEventHandler,
-  getRequestHeader,
-  readBody,
-  setResponseStatus,
-} from "h3";
-import { copySystemCurriculum } from "#server/services/index.js";
-import { throwValidationError } from "#server/utils/api-error";
-import {
-  getVerifiedRemoteIp,
-  requireWebUserSession,
-} from "#server/utils/auth-runtime";
+import { getRequestHeader } from "h3";
+import { copySystemCurriculumWithKoguma } from "#server/services/play-experience-service";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
+import { defineApiRoute } from "#server/utils/define-api-route";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
-export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
-  const userId = Number(user.user_id);
+export default defineApiRoute({
+  auth: "user",
+  body: copySystemCurriculumSchema,
+  status: 201,
+  async handler({ event, auth, body }) {
+    const userId = Number(auth.user_id);
+    const entitlements = await resolveUserActiveEntitlements(userId);
 
-  const eventBody =
-    (event.context as { body?: Record<string, unknown> })?.body ||
-    (event as { _body?: Record<string, unknown> })._body;
-  const body = eventBody || (await readBody(event)) || {};
-  const parsed = copySystemCurriculumSchema.safeParse(body);
-  if (!parsed.success) {
-    throwValidationError(parsed.error);
-  }
-
-  const entitlements = await resolveUserActiveEntitlements(userId);
-  const curriculum = await copySystemCurriculum(
-    {
-      userId,
-      entitlements,
-      ip: getVerifiedRemoteIp(event),
-      userAgent: getRequestHeader(event, "user-agent"),
-    },
-    parsed.data
-  );
-
-  setResponseStatus(event, 201);
-  return curriculum;
+    return await copySystemCurriculumWithKoguma(
+      {
+        userId,
+        entitlements,
+        ip: getVerifiedRemoteIp(event),
+        userAgent: getRequestHeader(event, "user-agent"),
+      },
+      body
+    );
+  },
 });

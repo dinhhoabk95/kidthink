@@ -41,7 +41,6 @@
         </div>
       </div>
     </div>
-    <!-- Active Game Viewport -->
     <div
       class="game-viewport"
       v-show="!(isLoading || errorMessage)"
@@ -52,7 +51,6 @@
         :class="{ 'ring-4 ring-brand-400 animate-pulse': isPromptPillPulsing }"
         :style="{ '--hud-touch-floor': `${hudTouchFloorPx}px` }"
       >
-        <!-- Parent Lock (800ms Long-Press) -->
         <button
           aria-label="Cổng phụ huynh / Thoát (nhấn giữ 1 giây)"
           class="btn-parent-lock min-h-16 min-w-16"
@@ -90,14 +88,12 @@
             <UIcon class="w-6 h-6 text-surface-600" name="i-lucide-lock" />
           </div>
         </button>
-        <!-- Round Progress Indicator -->
         <div class="progress-container">
           <KidRoundProgressIndicator
             :current="currentRound"
             :total="totalRounds"
           />
         </div>
-        <!-- Audio Replay -->
         <button
           aria-label="Nghe lại hướng dẫn"
           class="btn-audio-replay clay-button min-h-16 min-w-16"
@@ -107,7 +103,6 @@
           <UIcon class="w-6 h-6 shrink-0" name="i-lucide-volume-2" />
         </button>
       </header>
-      <!-- MAIN ARENA: Montessori Wooden Tray Canvas -->
       <main class="main-arena">
         <div class="wooden-tray-container">
           <canvas
@@ -144,49 +139,15 @@
               {{ PORTRAIT_GATE_PARENT_HINT }}
             </p>
           </div>
-          <div aria-live="polite" class="sr-only" role="status">
-            {{ liveAnnouncement }}
-          </div>
-          <section
-            aria-label="Các đối tượng tương tác"
-            class="absolute inset-0 pointer-events-none z-10"
-          >
-            <button
-              class="sr-only focus:not-sr-only focus:fixed focus:z-40 focus:px-4 focus:py-2 focus:rounded-2xl focus:bg-white focus:text-surface-900 focus:border-[3px] focus:border-brand-600 focus:shadow-2xl focus:ring-4 focus:ring-brand-500/30 focus:ring-offset-2 focus:outline-none focus:font-heading focus:font-bold focus:text-base pointer-events-auto transition-all active:scale-95"
-              type="button"
-              v-for="entity in viewEntities"
-              :key="entity.id"
-              :aria-label="getAccessibleLabel(entity)"
-              :aria-pressed="entity.state === 'selected' ? true : undefined"
-              :class="{
-                'ring-4 ring-warning-500 ring-offset-2 !bg-warning-50':
-                  stagedEntityId === entity.id,
-              }"
-              @click="handleAccessibleEntityTap(entity)"
-              @keydown.enter.prevent="handleAccessibleEntityTap(entity)"
-              @keydown.space.prevent="handleAccessibleEntityTap(entity)"
-            >
-              {{ getAccessibleLabel(entity) }}
-              <span
-                class="ml-1 text-base text-warning-700"
-                v-if="stagedEntityId === entity.id"
-              >
-                (Đang chọn)
-              </span>
-            </button>
-            <button
-              class="sr-only focus:not-sr-only focus:fixed focus:z-40 focus:px-4 focus:py-2 focus:rounded-2xl focus:bg-white focus:text-surface-900 focus:border-[3px] focus:border-brand-600 focus:shadow-2xl focus:ring-4 focus:ring-brand-500/30 focus:ring-offset-2 focus:outline-none focus:font-heading focus:font-bold focus:text-base pointer-events-auto"
-              type="button"
-              v-if="actionButton.visible"
-              :aria-disabled="!actionButton.enabled"
-              :aria-label="actionButton.label"
-              @click="pressActionButton"
-              @keydown.enter.prevent="pressActionButton"
-              @keydown.space.prevent="pressActionButton"
-            >
-              {{ actionButton.label }}
-            </button>
-          </section>
+          <KidPlayAccessibleStage
+            :action-button="actionButton"
+            :current-round="currentRound"
+            :staged-entity-id="stagedEntityId"
+            :total-rounds="totalRounds"
+            :view-entities="viewEntities"
+            @action-press="pressActionButton"
+            @entity-tap="handleAccessibleEntityTap"
+          />
           <button
             aria-label="Bỏ qua câu này"
             class="btn-skip-floating clay-button min-h-16 min-w-16"
@@ -196,50 +157,30 @@
           >
             <UIcon class="w-6 h-6 shrink-0" name="i-lucide-forward" />
           </button>
-          <!-- Nút bước làm quen GT-000: chỉ icon, chữ ở aria-label (`BR-FBK-12`, `BR-PSZ-07`) -->
-          <div
-            class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-6 z-20 pointer-events-auto"
-            v-if="isIntroCardStep"
-          >
-            <button
-              aria-label="Quay lại thẻ trước"
-              class="min-h-16 min-w-16 px-4 justify-center rounded-2xl border-[3px] border-surface-300 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_var(--color-surface-300)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-surface-300)] flex items-center gap-2 cursor-pointer transition-all"
-              style="min-height: var(--hud-touch-floor, 64px); min-width: var(--hud-touch-floor, 64px)"
-              type="button"
-              v-if="introStepIndex > 0"
-              @click="handleIntroPrev"
-            >
-              <UIcon class="w-8 h-8" name="i-lucide-arrow-left" />
-            </button>
-            <button
-              aria-label="Nghe lại mẫu"
-              class="min-h-16 min-w-16 px-4 justify-center rounded-2xl border-[3px] border-surface-300 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_var(--color-surface-300)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-surface-300)] flex items-center gap-2 cursor-pointer transition-all"
-              style="min-height: var(--hud-touch-floor, 64px); min-width: var(--hud-touch-floor, 64px)"
-              type="button"
-              @click="handleEchoReplay"
-            >
-              <UIcon class="w-8 h-8 text-cta" name="i-lucide-volume-2" />
-            </button>
-            <button
-              class="min-h-16 min-w-20 px-6 justify-center rounded-2xl border-[3px] border-cta-hover bg-cta text-white font-heading font-bold text-xl shadow-[0_6px_0_var(--color-cta-hover)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-cta-hover)] flex items-center gap-3 cursor-pointer transition-all"
-              style="min-height: var(--hud-touch-floor, 64px); min-width: var(--hud-touch-floor, 64px)"
-              type="button"
-              :aria-label="isEchoStep ? 'Bé nói theo' : 'Tiếp tục'"
-              @click="handleEchoDone"
-            >
-              <UIcon class="w-8 h-8" name="i-lucide-mic" v-if="isEchoStep" />
-              <UIcon class="w-8 h-8" name="i-lucide-arrow-right" v-else />
-            </button>
-          </div>
         </div>
       </main>
+      <KidPlayIntroControls
+        v-if="isIntroCardStep"
+        :intro-step-index="introStepIndex"
+        :is-echo-step="isEchoStep"
+        @advance="handleEchoDone"
+        @prev="handleIntroPrev"
+        @replay="handleEchoReplay"
+      />
       <KidVictoryModal
+        :age-band="ageBand"
         :celebration="earnedCelebration"
         :is-guest="!loggedIn"
         :is-intro="isIntroLevel"
+        :koguma-unit-code="queryKogumaCode"
+        :level-code="levelCode"
+        :moet-theme-id="queryMoetThemeId"
         :show="showVictoryModal"
+        :skill-code="activeSkillCode"
         :stars="earnedStars"
         :sticker="earnedSticker"
+        :template-code="getCachedPayload()?.template_code"
+        :theme-id="currentThemeId"
         @announce="speakCelebration"
         @continue="handleContinueNext"
         @replay="handleReplayGame"
@@ -274,10 +215,11 @@
     resolveBaseMascotPose,
     type StageZones,
     TemplateGameSession,
-    type ViewEntity,
   } from "@mindkid/game-engine";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
+  import KidPlayAccessibleStage from "~/components/kid/play-accessible-stage.vue";
+  import KidPlayIntroControls from "~/components/kid/play-intro-controls.vue";
   import { resolveNextPlayDestination } from "~/composables/play/adventure-navigation";
   import {
     attachPlayDebugBridge,
@@ -372,6 +314,7 @@
     canvasRef,
     loggedIn,
     syncView: () => gesture.syncView(),
+    onFallbackCue: triggerVisualFallbackCue,
     refreshStageZones: updateStageZones,
     onAfterRender: (ctx, rs, now) => {
       const zones = stageZones.value ?? updateStageZones();
@@ -408,7 +351,7 @@
       if (gestureVisual) {
         drawActiveGestureOverlay(ctx, rs, gestureVisual, now);
       }
-      // Lớp trên cùng: pop/nhịp hổ phách tại điểm chạm (`BR-FBK-05`, `BR-FBK-11`).
+      feedbackOverlay.drawMilestoneBanner(ctx, rs, now, zones.stage);
       drawFeedbackPulses(ctx, feedback.pulses);
     },
   });
@@ -501,11 +444,16 @@
     return zones;
   }
 
+  let roundWonPending = false;
+
   const gesture = usePlayGesture({
     getEngine,
     getAgeBand: () => ageBand.value,
     canvasRef,
-    onRoundWon: playSession.handleRoundWonInternal,
+    onRoundWon: () => {
+      roundWonPending = true;
+      playSession.handleRoundWonInternal();
+    },
     onRetryDisallowed: playSession.handleRetryDisallowed,
     onVerdict: playSession.handleAnswerVerdict,
     getStageZones: () => stageZones.value ?? updateStageZones(),
@@ -540,36 +488,6 @@
       Boolean(route.query.return_level_code)
     );
   });
-
-  /** Câu thông báo cho screen reader — đổi theo lượt chọn và theo vòng chơi. */
-  const liveAnnouncement = computed(() => {
-    const staged = viewEntities.value.find(
-      (entity) => entity.id === stagedEntityId.value
-    );
-    if (staged) {
-      return `Đã chọn ${getAccessibleLabel(staged)}. Chọn ô đích rồi bấm Enter để thả.`;
-    }
-    return `Vòng ${currentRound.value + 1} trên ${totalRounds.value}.`;
-  });
-
-  function getAccessibleLabel(entity: ViewEntity): string {
-    if (entity.spokenLabel) {
-      return entity.spokenLabel;
-    }
-    if (entity.glyph) {
-      return `Ký hiệu ${entity.glyph}`;
-    }
-    if (entity.label) {
-      return entity.label;
-    }
-    if (entity.role === "target") {
-      return `Ô đích ${entity.id}`;
-    }
-    if (entity.role === "source") {
-      return `Vật phẩm ${entity.id}`;
-    }
-    return `Đối tượng ${entity.id}`;
-  }
 
   function triggerVisualFallbackCue(): void {
     const engine = getEngine();
@@ -633,9 +551,19 @@
     router.push(nextDestination());
   }
 
+  const queryKogumaCode = computed(() =>
+    typeof route.query.kgm === "string" ? route.query.kgm : undefined
+  );
+  const queryMoetThemeId = computed(() =>
+    typeof route.query.moet === "string" ? route.query.moet : undefined
+  );
+  const activeSkillCode = computed(() => {
+    const skill = getCachedPayload()?.content_pack?.skill_code;
+    return typeof skill === "string" ? skill : undefined;
+  });
+
   function handleReplayGame(): void {
-    // Dọn lượt cũ (runner, engine, telemetry, hẹn giờ) trước khi dựng lượt mới
-    // (Task #313 B12).
+    roundWonPending = false;
     cleanupSession();
     showVictoryModal.value = false;
     errorMessage.value = null;
@@ -684,11 +612,27 @@
     }
   }
 
-  watch(currentRound, () => feedbackOverlay.reset());
+  watch(currentRound, (next, prev) => {
+    feedbackOverlay.reset();
+    if (roundWonPending && prev !== undefined && next > prev) {
+      roundWonPending = false;
+      feedbackOverlay.triggerMilestone(
+        "praise",
+        ageBand.value,
+        performance.now()
+      );
+    } else {
+      roundWonPending = false;
+    }
+  });
 
   watch(
     [showVictoryModal, showParentGate, isPlayLimitReached],
-    ([victoryOpen, gateOpen, limitReached]) => {
+    ([victoryOpen, gateOpen, limitReached], [prevVictory]) => {
+      if (victoryOpen && !prevVictory) {
+        roundWonPending = false;
+        feedbackOverlay.celebrate(ageBand.value, performance.now());
+      }
       if (victoryOpen || gateOpen || limitReached) {
         let pauseReason = "parent_gate";
         if (limitReached) {

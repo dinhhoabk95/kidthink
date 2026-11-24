@@ -90,7 +90,7 @@ export const projectGT011: Projection<"GT-011"> = {
 
     return {
       content_pack: {
-        prompt: "Bé hãy tìm hình thích hợp vào ô trống nhé!",
+        prompt: "Đố bé tìm mảnh hình còn thiếu ở góc trống nhé!",
         matrix: {
           rows: 2 as const,
           cols: 2 as const,

@@ -5,7 +5,12 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
-import { createRng, resolveItemAsset, shuffleDeterministic } from "./utils.js";
+import {
+  createRng,
+  pickAgeBandPrompt,
+  resolveItemAsset,
+  shuffleDeterministic,
+} from "./utils.js";
 
 /** Số mảnh tối đa của band: sàn chạm làm band 4-5 không chứa quá 3 mảnh, band 5-6 tối đa 4 mảnh trên màn dọc (BR-PSZ-13). */
 const MAX_PIECES_BY_BAND: Record<string, number> = { "4-5": 3, "5-6": 4 };
@@ -49,9 +54,19 @@ export const projectGT021: Projection<"GT-021"> = {
       asset_ref: item.id,
     }));
 
+    const prompt = pickAgeBandPrompt(
+      opts.band,
+      {
+        mam: "Bé xếp nửa bên kia soi gương cân đối nhé!",
+        choi: "Đố bé ghép nửa hoa văn đối xứng qua gương!",
+        la: "Bé hoàn thiện nửa hình phản chiếu qua trục nhé!",
+      },
+      "Bé ghép nửa hình đối xứng qua trục nhé!"
+    );
+
     return {
       content_pack: {
-        prompt: "Bé hãy ghép hình đối xứng qua trục nhé!",
+        prompt,
         axis: "vertical" as const,
         reference_pattern,
         target_slots,

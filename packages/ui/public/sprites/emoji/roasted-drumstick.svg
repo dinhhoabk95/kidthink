@@ -1,0 +1,12 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đùi gà nướng vàng</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="drmGold" r="70%"><stop offset="0%" stop-color="#fde68a" /><stop offset="55%" stop-color="#ea580c" /><stop offset="100%" stop-color="#9a3412" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#431407" opacity="0.22" rx="36" ry="5" />
+    <path d="M74 74L94 94" stroke="#78350f" stroke-linecap="round" stroke-width="10" />
+    <path d="M74 74L94 94" stroke="#fef3c7" stroke-linecap="round" stroke-width="3" />
+    <circle cx="97" cy="91" fill="#fffbeb" r="6" stroke="#78350f" stroke-width="3.2" />
+    <circle cx="91" cy="97" fill="#fffbeb" r="6" stroke="#78350f" stroke-width="3.2" />
+    <path d="M28 32C42 18 68 22 78 40C86 54 84 70 74 78C64 86 48 84 34 70C18 56 16 44 28 32Z" fill="url(#drmGold)" stroke="#5c2d16" stroke-linejoin="round" stroke-width="3.8" />
+</svg>

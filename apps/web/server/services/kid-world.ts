@@ -1,11 +1,8 @@
+import type { DbExecutor } from "@mindkid/db";
 import {
-  childBadges,
-  childMascotGear,
-  childStickerPlacements,
-  childStickers,
-  gameLevels,
-  type getOwnerDb,
-} from "@mindkid/db";
+  createRepositories,
+  type MindKidRepositories,
+} from "@mindkid/db/repositories";
 import { ValidationError } from "@mindkid/errors/common";
 import {
   type AccessTier,
@@ -21,14 +18,12 @@ import {
   type StickerDioramaPutResponse,
   type StickerDioramaResponse,
 } from "@mindkid/shared";
-import { and, asc, eq } from "drizzle-orm";
 import { checkLevelIntroRequired } from "#server/utils/concept-intro-runtime";
+import { useOwnerRepositories } from "#server/utils/repositories";
 import {
   getRecommendationsForChild,
   resolveThumbnailEmoji,
 } from "./recommendation.js";
-
-type Db = ReturnType<typeof getOwnerDb>;
 
 export interface GetDailyAdventureInput {
   readonly userId: number;
@@ -39,16 +34,32 @@ export interface GetDailyAdventureInput {
   readonly guestDeviceId?: string;
 }
 
+export interface GetStickerDioramaInput {
+  readonly childId: number;
+  readonly themeCode?: string;
+}
+
+function isRepositories(
+  target: DbExecutor | MindKidRepositories
+): target is MindKidRepositories {
+  return "kidWorld" in target;
+}
+
+function toRepositories(
+  target?: DbExecutor | MindKidRepositories
+): MindKidRepositories {
+  if (!target) {
+    return useOwnerRepositories();
+  }
+  return isRepositories(target) ? target : createRepositories(target);
+}
+
 async function prependRequiredIntroStep(
-  db: Db,
+  repos: MindKidRepositories,
   firstLevelCode: string,
   input: GetDailyAdventureInput
 ): Promise<AdventureStepItem | null> {
-  const [targetRow] = await db
-    .select()
-    .from(gameLevels)
-    .where(eq(gameLevels.code, firstLevelCode))
-    .limit(1);
+  const targetRow = await repos.gameLevels.findByCode(firstLevelCode);
   if (!targetRow || targetRow.templateCode === "GT-000") {
     return null;
   }
@@ -71,16 +82,7 @@ async function prependRequiredIntroStep(
     return null;
   }
 
-  const [introLevel] = await db
-    .select({
-      code: gameLevels.code,
-      title: gameLevels.title,
-      thumbnailEmoji: gameLevels.thumbnailEmoji,
-    })
-    .from(gameLevels)
-    .where(eq(gameLevels.code, introCode))
-    .limit(1);
-
+  const introLevel = await repos.gameLevels.findByCode(introCode);
   if (!introLevel) {
     return null;
   }
@@ -99,10 +101,23 @@ async function prependRequiredIntroStep(
  * Không chứa bất kỳ bộ đếm chuỗi ngày (streak) hay đồng hồ đếm ngược nào.
  */
 export async function getDailyAdventure(
-  db: Db,
   input: GetDailyAdventureInput
+): Promise<DailyAdventureResponse>;
+export async function getDailyAdventure(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  input: GetDailyAdventureInput
+): Promise<DailyAdventureResponse>;
+export async function getDailyAdventure(
+  first: DbExecutor | MindKidRepositories | GetDailyAdventureInput,
+  maybeInput?: GetDailyAdventureInput
 ): Promise<DailyAdventureResponse> {
-  const recPayload = await getRecommendationsForChild(db, {
+  const isLegacyCall = maybeInput !== undefined;
+  const repos = isLegacyCall
+    ? toRepositories(first as DbExecutor | MindKidRepositories)
+    : useOwnerRepositories();
+  const input = isLegacyCall ? maybeInput : (first as GetDailyAdventureInput);
+
+  const recPayload = await getRecommendationsForChild(repos, {
     childId: input.childId,
     allowedTiers: input.allowedTiers,
     limit: MAX_ADVENTURE_STEPS,
@@ -119,7 +134,7 @@ export async function getDailyAdventure(
   const firstItem = candidateItems[0];
   if (firstItem) {
     const introStep = await prependRequiredIntroStep(
-      db,
+      repos,
       firstItem.level_code,
       input
     );
@@ -169,24 +184,26 @@ export async function getDailyAdventure(
  * Đọc phụ kiện kỷ niệm đã mở và phụ kiện đang đội của Gấu Con (`BR-MPR-01..03`).
  */
 export async function getChildMascotGear(
-  db: Db,
   childId: number
+): Promise<MascotGearResponse>;
+export async function getChildMascotGear(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  childId: number
+): Promise<MascotGearResponse>;
+export async function getChildMascotGear(
+  first: DbExecutor | MindKidRepositories | number,
+  maybeChildId?: number
 ): Promise<MascotGearResponse> {
-  const [badgeRows, [gearRow]] = await Promise.all([
-    db
-      .select({ badgeCode: childBadges.badgeCode })
-      .from(childBadges)
-      .where(eq(childBadges.childProfileId, childId)),
-    db
-      .select({ equippedGearCode: childMascotGear.equippedGearCode })
-      .from(childMascotGear)
-      .where(eq(childMascotGear.childProfileId, childId))
-      .limit(1),
+  const isLegacyCall = typeof first !== "number";
+  const repos = isLegacyCall ? toRepositories(first) : useOwnerRepositories();
+  const childId = isLegacyCall ? (maybeChildId as number) : first;
+
+  const [badgeCodes, gearRow] = await Promise.all([
+    repos.badges.listBadgeCodesForChild(childId),
+    repos.kidWorld.getEquippedGear(childId),
   ]);
 
-  const unlocked = resolveUnlockedMascotGear(
-    badgeRows.map((row) => row.badgeCode)
-  );
+  const unlocked = resolveUnlockedMascotGear(badgeCodes);
   const unlockedCodes = new Set(unlocked.map((item) => item.code));
   const candidateEquipped = gearRow?.equippedGearCode ?? null;
   const equippedGearCode =
@@ -211,18 +228,29 @@ export async function getChildMascotGear(
  * Từ chối 422 nếu phụ kiện chưa được trẻ mở khoá qua huy hiệu.
  */
 export async function updateChildMascotGear(
-  db: Db,
   childId: number,
   input: MascotGearPutInput
+): Promise<MascotGearPutResponse>;
+export async function updateChildMascotGear(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  childId: number,
+  input: MascotGearPutInput
+): Promise<MascotGearPutResponse>;
+export async function updateChildMascotGear(
+  first: DbExecutor | MindKidRepositories | number,
+  second: number | MascotGearPutInput,
+  third?: MascotGearPutInput
 ): Promise<MascotGearPutResponse> {
+  const isLegacyCall = typeof first !== "number";
+  const repos = isLegacyCall ? toRepositories(first) : useOwnerRepositories();
+  const childId = isLegacyCall ? (second as number) : first;
+  const input = isLegacyCall
+    ? (third as MascotGearPutInput)
+    : (second as MascotGearPutInput);
+
   if (input.equipped_gear_code !== null) {
-    const badgeRows = await db
-      .select({ badgeCode: childBadges.badgeCode })
-      .from(childBadges)
-      .where(eq(childBadges.childProfileId, childId));
-    const unlocked = resolveUnlockedMascotGear(
-      badgeRows.map((row) => row.badgeCode)
-    );
+    const badgeCodes = await repos.badges.listBadgeCodesForChild(childId);
+    const unlocked = resolveUnlockedMascotGear(badgeCodes);
     const isUnlocked = unlocked.some(
       (item) => item.code === input.equipped_gear_code
     );
@@ -236,76 +264,36 @@ export async function updateChildMascotGear(
     }
   }
 
-  const now = new Date();
-  await db
-    .insert(childMascotGear)
-    .values({
-      childProfileId: childId,
-      equippedGearCode: input.equipped_gear_code,
-      createdAt: now,
-      updatedAt: now,
-    })
-    .onConflictDoUpdate({
-      target: childMascotGear.childProfileId,
-      set: {
-        equippedGearCode: input.equipped_gear_code,
-        updatedAt: now,
-      },
-    });
+  await repos.kidWorld.upsertEquippedGear(childId, input.equipped_gear_code);
 
   return {
     equipped_gear_code: input.equipped_gear_code,
   };
 }
 
-export interface GetStickerDioramaInput {
-  readonly childId: number;
-  readonly themeCode?: string;
-}
-
 /**
  * Tải bố cục bày sticker bối cảnh của trẻ (`sticker-diorama.md` §8).
  */
 export async function getStickerDiorama(
-  db: Db,
   input: GetStickerDioramaInput
+): Promise<StickerDioramaResponse>;
+export async function getStickerDiorama(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  input: GetStickerDioramaInput
+): Promise<StickerDioramaResponse>;
+export async function getStickerDiorama(
+  first: DbExecutor | MindKidRepositories | GetStickerDioramaInput,
+  maybeInput?: GetStickerDioramaInput
 ): Promise<StickerDioramaResponse> {
-  const placementFilters = [
-    eq(childStickerPlacements.childProfileId, input.childId),
-    ...(input.themeCode
-      ? [eq(childStickerPlacements.themeCode, input.themeCode)]
-      : []),
-  ];
-  const stickerFilters = [
-    eq(childStickers.childProfileId, input.childId),
-    ...(input.themeCode ? [eq(childStickers.themeCode, input.themeCode)] : []),
-  ];
+  const isLegacyCall = maybeInput !== undefined;
+  const repos = isLegacyCall
+    ? toRepositories(first as DbExecutor | MindKidRepositories)
+    : useOwnerRepositories();
+  const input = isLegacyCall ? maybeInput : (first as GetStickerDioramaInput);
 
   const [placementRows, stickerRows] = await Promise.all([
-    db
-      .select({
-        themeCode: childStickerPlacements.themeCode,
-        emoji: childStickerPlacements.emoji,
-        instanceIndex: childStickerPlacements.instanceIndex,
-        normX: childStickerPlacements.normX,
-        normY: childStickerPlacements.normY,
-        scale: childStickerPlacements.scale,
-      })
-      .from(childStickerPlacements)
-      .where(and(...placementFilters))
-      .orderBy(
-        asc(childStickerPlacements.themeCode),
-        asc(childStickerPlacements.instanceIndex),
-        asc(childStickerPlacements.id)
-      ),
-    db
-      .select({
-        themeCode: childStickers.themeCode,
-        emoji: childStickers.emoji,
-        label: childStickers.label,
-      })
-      .from(childStickers)
-      .where(and(...stickerFilters)),
+    repos.kidWorld.listPlacements(input.childId, input.themeCode),
+    repos.childStickers.listByChild(input.childId, input.themeCode),
   ]);
 
   const labelMap = new Map<string, string>();
@@ -342,22 +330,30 @@ export async function getStickerDiorama(
  * Tuyệt đối không UPDATE hay DELETE bảng `child_stickers` (`BR-STK-02`).
  */
 export async function saveStickerDiorama(
-  db: Db,
   childId: number,
   payload: StickerDioramaPutInput
+): Promise<StickerDioramaPutResponse>;
+export async function saveStickerDiorama(
+  dbOrRepos: DbExecutor | MindKidRepositories,
+  childId: number,
+  payload: StickerDioramaPutInput
+): Promise<StickerDioramaPutResponse>;
+export async function saveStickerDiorama(
+  first: DbExecutor | MindKidRepositories | number,
+  second: number | StickerDioramaPutInput,
+  third?: StickerDioramaPutInput
 ): Promise<StickerDioramaPutResponse> {
-  const ownedRows = await db
-    .select({
-      emoji: childStickers.emoji,
-      label: childStickers.label,
-    })
-    .from(childStickers)
-    .where(
-      and(
-        eq(childStickers.childProfileId, childId),
-        eq(childStickers.themeCode, payload.theme_code)
-      )
-    );
+  const isLegacyCall = typeof first !== "number";
+  const repos = isLegacyCall ? toRepositories(first) : useOwnerRepositories();
+  const childId = isLegacyCall ? (second as number) : first;
+  const payload = isLegacyCall
+    ? (third as StickerDioramaPutInput)
+    : (second as StickerDioramaPutInput);
+
+  const ownedRows = await repos.childStickers.listByChild(
+    childId,
+    payload.theme_code
+  );
 
   const ownedLabelByEmoji = new Map<string, string>();
   for (const row of ownedRows) {
@@ -378,33 +374,17 @@ export async function saveStickerDiorama(
     }
   }
 
-  const now = new Date();
-  await db.transaction(async (tx) => {
-    await tx
-      .delete(childStickerPlacements)
-      .where(
-        and(
-          eq(childStickerPlacements.childProfileId, childId),
-          eq(childStickerPlacements.themeCode, payload.theme_code)
-        )
-      );
-
-    if (payload.placements.length > 0) {
-      await tx.insert(childStickerPlacements).values(
-        payload.placements.map((item) => ({
-          childProfileId: childId,
-          themeCode: payload.theme_code,
-          emoji: item.emoji,
-          instanceIndex: item.instance_index,
-          normX: item.norm_x,
-          normY: item.norm_y,
-          scale: item.scale,
-          createdAt: now,
-          updatedAt: now,
-        }))
-      );
-    }
-  });
+  await repos.kidWorld.replaceThemePlacements(
+    childId,
+    payload.theme_code,
+    payload.placements.map((item) => ({
+      emoji: item.emoji,
+      instanceIndex: item.instance_index,
+      normX: item.norm_x,
+      normY: item.norm_y,
+      scale: item.scale,
+    }))
+  );
 
   return {
     theme_code: payload.theme_code,

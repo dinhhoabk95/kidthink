@@ -16,40 +16,49 @@ import {
   isPointInSlot,
   TAP_TOLERANCE_PX,
 } from "#src/layout/hit-test";
+import { isPointInZone, type ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
+import { drawGT000BoundedCurtains } from "#src/render/gt-000-scene-shapes.js";
 import {
   drawGT000EchoWaves,
   drawGT000GridItemAccent,
   drawGT000LinkConnector,
   drawGT000RePresentSpotlight,
   drawGT000ReplayRipple,
-  drawGT000SegmentProgress,
-  type GT000SegmentProgressInfo,
   resolveGT000FlashcardRect,
 } from "#src/render/gt-000-shapes.js";
 import {
-  curtainGeometry,
-  drawCurtains,
+  drawEncouragementBanner,
   drawFlashcard,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
-  drawSubPromptText,
   type ItemVisualState,
   type RenderAsset,
   type RenderItem,
 } from "#src/render/index.js";
+import {
+  drawStorybookPageTurnOverlay,
+  drawStorybookSpreadFrame,
+  type StorybookFrameState,
+} from "#src/render/storybook-frame.js";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { GT000ComputedStepLayout } from "./scene-board-layout.js";
+import {
+  EMPTY_PRECOMPUTED_SHOWCASE,
+  type GT000PrecomputedShowcase,
+  renderGT000SceneBoardShowcase,
+} from "./scene-board-renderers.js";
 import {
   computeGT000CardPose,
   extractAssetId,
+  type GT000ActionPayload,
   type GT000Asset,
   type GT000Step,
   resolveRecallCorrectAssetId,
   type SpeakAlongMode,
-} from "#src/templates/GT-000/template.js";
+} from "./template.js";
 
 /** Trần chờ câu hỏi của bước đọc xong (`BR-E000-12`, `BR-PNR-09`). */
 export const STEP_PROMPT_SETTLE_TIMEOUT_MS = 12_000;
@@ -72,12 +81,21 @@ export function createRenderItem(
   state: ItemVisualState = "idle"
 ): RenderItem {
   const fmt = { value: asset.value, glyph: asset.glyph };
+  const rep = asset.representation;
+  const safeRep =
+    rep &&
+    rep.kind !== "finger" &&
+    rep.kind !== "numeral" &&
+    rep.kind !== "discrete-object"
+      ? { kind: rep.kind, count: rep.count, max: rep.max }
+      : undefined;
   return {
     id: asset.asset_id,
     label: formatDisplayLabel(asset.label, fmt),
     text: asset.glyph ?? asset.text,
     asset: resolveRenderAsset(asset),
     state,
+    ...(safeRep ? { representation: safeRep } : {}),
   };
 }
 
@@ -102,10 +120,13 @@ export function buildGT000BaseRenderItems(
 }
 
 export function decorateGT000RenderItems(
-  baseItems: readonly RenderItem[],
+  baseItems: RenderItem[],
   states: ReadonlyMap<string, ItemVisualState>,
   hoveredSlotIndex: number | null
 ): RenderItem[] {
+  if (states.size === 0 && hoveredSlotIndex === null) {
+    return baseItems;
+  }
   return baseItems.map((item, idx) => ({
     ...item,
     state:
@@ -150,21 +171,24 @@ export function toGT000ViewEntity(
   slotIndex: number,
   isCard: boolean,
   asset: GT000Asset | undefined,
-  logic: LogicSpace = DEFAULT_LOGIC_SPACE
+  logic: LogicSpace = DEFAULT_LOGIC_SPACE,
+  cardBounds?: ZoneRect
 ): ViewEntity {
   const spokenLabel = asset
     ? formatSpokenLabel(asset.label, { value: asset.value, glyph: asset.glyph })
     : item.label;
   const emojiRef =
     asset?.image_ref?.kind === "emoji" ? asset.image_ref.ref : undefined;
-  const cardRect = isCard ? resolveGT000FlashcardRect(logic, slot) : null;
+  const cardRect = isCard
+    ? resolveGT000FlashcardRect(logic, slot, cardBounds)
+    : null;
   return {
     id: item.id,
     slotIndex,
     role: isCard ? "neutral" : "source",
     state: resolveItemState(item.state),
-    x: slot.x,
-    y: slot.y,
+    x: cardRect ? cardRect.x : slot.x,
+    y: cardRect ? cardRect.y : slot.y,
     w: cardRect ? cardRect.w : slot.w,
     h: cardRect ? cardRect.h : slot.h,
     hitShape: isCard ? "square" : "circle",
@@ -180,7 +204,8 @@ export function buildGT000ViewEntities(
   renderItems: readonly RenderItem[],
   slots: readonly Slot[],
   assets: readonly GT000Asset[],
-  logic: LogicSpace
+  logic: LogicSpace,
+  cardBounds?: ZoneRect
 ): ViewEntity[] {
   const isCard = step.action === "present" || step.action === "echo";
   const entities: ViewEntity[] = [];
@@ -189,45 +214,29 @@ export function buildGT000ViewEntities(
     const slot = slots[i];
     if (item && slot) {
       const asset = assets.find((a) => a.asset_id === item.id);
-      entities.push(toGT000ViewEntity(item, slot, i, isCard, asset, logic));
+      entities.push(
+        toGT000ViewEntity(item, slot, i, isCard, asset, logic, cardBounds)
+      );
     }
   }
   return entities;
 }
 
-function drawRecallCurtains(
-  ctx: CanvasRenderingContext2D,
-  rs: RenderSystem,
-  slots: readonly Slot[],
-  openness: number | undefined
-): void {
-  if (openness === undefined) {
-    return;
-  }
-  const boxes = slots.map((s) => ({
-    x: s.x - s.hitW / 2,
-    y: s.y - s.hitH / 2,
-    w: s.hitW,
-    h: s.hitH,
-  }));
-  const curtains = curtainGeometry(boxes, rs.LOGIC_WIDTH, openness);
-  if (curtains) {
-    drawCurtains(ctx, curtains);
-  }
-}
-
 export interface GT000RenderOptions {
   readonly themeId?: string;
   readonly step?: GT000Step;
-  readonly promptText: string;
-  readonly conceptLabel: string;
+  readonly completionLine: string;
+  readonly layout: GT000ComputedStepLayout;
+  readonly frameState: StorybookFrameState;
+  readonly precomputedShowcase: GT000PrecomputedShowcase;
   readonly renderItems: readonly RenderItem[];
   readonly slots: readonly Slot[];
   readonly targetAsset?: GT000Asset;
   readonly speakAlong?: SpeakAlongMode;
   readonly stepElapsedMs?: number;
   readonly cardBounceMs?: number;
-  readonly segmentProgress?: GT000SegmentProgressInfo;
+  readonly exploredCount: number;
+  readonly lastExploredAtMs: number;
   readonly rePresentSpotlight?: {
     readonly assetId: string;
     readonly timerMs: number;
@@ -256,15 +265,20 @@ function renderGT000CardLayer(
   if (!(item && slot && options.targetAsset)) {
     return;
   }
-  const rect = resolveGT000FlashcardRect(rs.logicSpace, slot);
+  const zone = options.layout.interactiveZone;
+  const rect = resolveGT000FlashcardRect(rs.logicSpace, slot, zone);
+  const cardSlot: Slot =
+    rect.w === slot.w && rect.h === slot.h
+      ? slot
+      : { ...slot, x: rect.x, y: rect.y, w: rect.w, h: rect.h };
   const elapsedMs = options.stepElapsedMs ?? 0;
   const bounceMs = options.cardBounceMs ?? 0;
 
   if (step.action === "echo" && options.speakAlong === "tap") {
-    drawGT000EchoWaves(ctx, rs, rect, elapsedMs);
+    drawGT000EchoWaves(ctx, rs, rect, elapsedMs, zone);
   }
   const pose = computeGT000CardPose(elapsedMs, bounceMs, rs.reducedMotion);
-  drawFlashcard(ctx, rs, slot, options.targetAsset, item.label, {
+  drawFlashcard(ctx, rs, cardSlot, options.targetAsset, item.label, {
     state: item.state,
     depressed: pose.depressed,
     scale: pose.scale,
@@ -272,7 +286,7 @@ function renderGT000CardLayer(
     softShadowsEnabled: rs.softShadowsEnabled,
   });
   if (bounceMs > 0) {
-    drawGT000ReplayRipple(ctx, rs, rect, bounceMs);
+    drawGT000ReplayRipple(ctx, rs, rect, bounceMs, zone);
   }
 }
 
@@ -283,6 +297,7 @@ function renderGT000GridLayer(
   options: GT000RenderOptions
 ): void {
   const nudge = options.tappedNudge;
+  const stageBounds = options.layout.stage;
   for (let i = 0; i < options.renderItems.length; i++) {
     const item = options.renderItems[i];
     const slot = options.slots[i];
@@ -294,7 +309,14 @@ function renderGT000GridLayer(
         item.state === "selected" ||
         nudgeMs > 0
       ) {
-        drawGT000GridItemAccent(ctx, rs, slot, item.state, nudgeMs);
+        drawGT000GridItemAccent(
+          ctx,
+          rs,
+          slot,
+          item.state,
+          nudgeMs,
+          stageBounds
+        );
       }
     }
   }
@@ -306,10 +328,10 @@ function renderGT000GridLayer(
     );
   }
   if (step.action === "recall") {
-    drawRecallCurtains(
+    drawGT000BoundedCurtains(
       ctx,
-      rs,
-      options.slots.slice(0, options.renderItems.length),
+      options.slots,
+      options.layout.spread.innerRect,
       options.curtainOpenness
     );
   }
@@ -326,7 +348,13 @@ function renderGT000FeedbackLayer(
     const idx = options.renderItems.findIndex((it) => it.id === spot.assetId);
     const targetSlot = idx >= 0 ? options.slots[idx] : undefined;
     if (targetSlot) {
-      drawGT000RePresentSpotlight(ctx, rs, targetSlot, spot.timerMs);
+      drawGT000RePresentSpotlight(
+        ctx,
+        rs,
+        targetSlot,
+        spot.timerMs,
+        options.layout.stage
+      );
     }
   }
   if (
@@ -338,22 +366,48 @@ function renderGT000FeedbackLayer(
   }
 }
 
+/**
+ * Vẽ một khung hình của `GT-000` bên trong `zones.stage` (`usesPromptZone = true`).
+ * 0 gọi `drawPromptText` / `drawSubPromptText` / `drawGT000SegmentProgress` cũ (`BR-PSZ-06`, `BR-PSZ-08`).
+ */
 export function renderGT000Step(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   options: GT000RenderOptions
 ): void {
   drawSceneBackground(ctx, rs, options.themeId);
+  drawStorybookSpreadFrame(
+    ctx,
+    rs,
+    options.layout.spread,
+    options.frameState,
+    options.layout.hasTwoPages
+  );
+
   if (!options.step) {
-    drawPromptText(ctx, rs, "Bé đã hoàn thành bài làm quen!");
+    drawEncouragementBanner(
+      ctx,
+      rs,
+      options.completionLine,
+      "celebrate",
+      options.layout.interactiveZone
+    );
     renderGT000FeedbackLayer(ctx, rs, true, options);
     return;
   }
-  drawPromptText(ctx, rs, options.promptText);
-  drawSubPromptText(ctx, rs, options.conceptLabel);
-  if (options.segmentProgress) {
-    drawGT000SegmentProgress(ctx, rs, options.segmentProgress);
+
+  if (options.layout.hasTwoPages && options.layout.showcaseZone) {
+    renderGT000SceneBoardShowcase(ctx, rs, {
+      board: options.layout.board,
+      step: options.step,
+      showcaseZone: options.layout.showcaseZone,
+      targetAsset: options.targetAsset,
+      precomputed: options.precomputedShowcase ?? EMPTY_PRECOMPUTED_SHOWCASE,
+      exploredCount: options.exploredCount,
+      lastExploredAtMs: options.lastExploredAtMs,
+    });
   }
+
   const isCard =
     options.step.action === "present" || options.step.action === "echo";
   if (isCard) {
@@ -361,6 +415,13 @@ export function renderGT000Step(
   } else {
     renderGT000GridLayer(ctx, rs, options.step, options);
   }
+
+  drawStorybookPageTurnOverlay(
+    ctx,
+    options.layout.spread,
+    options.frameState.turnProgress,
+    rs.reducedMotion
+  );
   renderGT000FeedbackLayer(ctx, rs, isCard, options);
 }
 
@@ -369,7 +430,9 @@ export function findTappedItem(
   step: GT000Step,
   renderItems: readonly RenderItem[],
   slots: readonly Slot[],
-  logic: LogicSpace = DEFAULT_LOGIC_SPACE
+  logic: LogicSpace = DEFAULT_LOGIC_SPACE,
+  cardBounds?: ZoneRect,
+  showcaseZone?: ZoneRect | null
 ): { itemId: string; isLink: boolean; slotIndex: number } | null {
   if (step.action === "present" || step.action === "echo") {
     const item = renderItems[0];
@@ -377,22 +440,31 @@ export function findTappedItem(
     if (!(item && slot)) {
       return null;
     }
-    const rect = resolveGT000FlashcardRect(logic, slot);
+    const rect = resolveGT000FlashcardRect(logic, slot, cardBounds);
     const cardSlot: Slot = {
       ...slot,
+      x: rect.x,
+      y: rect.y,
       w: rect.w,
       h: rect.h,
-      hitW: rect.w,
-      hitH: rect.h,
+      hitW: Math.max(slot.hitW, rect.w),
+      hitH: Math.max(slot.hitH, rect.h),
     };
-    const hit = isPointInSlot(
+    const hitCard = isPointInSlot(
       cardSlot,
       gesture.x,
       gesture.y,
       "square",
       TAP_TOLERANCE_PX
     );
-    return hit ? { itemId: item.id, isLink: false, slotIndex: 0 } : null;
+    const hitShowcase =
+      step.action === "present" &&
+      showcaseZone !== null &&
+      showcaseZone !== undefined &&
+      isPointInZone(gesture.x, gesture.y, showcaseZone);
+    return hitCard || hitShowcase
+      ? { itemId: item.id, isLink: false, slotIndex: 0 }
+      : null;
   }
   const hitIdx = findHitSlotIndex(
     slots.slice(0, renderItems.length),
@@ -522,7 +594,7 @@ function handlePresentAction(ctx: StepActionContext): ActionResult {
 
 function handleEchoAction(
   step: Extract<GT000Step, { action: "echo" }>,
-  payload: Record<string, string | boolean | number>,
+  payload: GT000ActionPayload,
   ctx: StepActionContext
 ): ActionResult {
   const stepId = `step_${ctx.currentStepIndex}`;
@@ -547,7 +619,7 @@ function handleEchoAction(
 
 function handleRecogniseAction(
   step: Extract<GT000Step, { action: "recognise" }>,
-  payload: Record<string, string | boolean | number>,
+  payload: GT000ActionPayload,
   ctx: StepActionContext
 ): ActionResult {
   const selectedId = String(payload.item_id ?? payload.asset_id ?? "");
@@ -588,7 +660,7 @@ function handleRecogniseAction(
 
 function handleLinkAction(
   step: Extract<GT000Step, { action: "link" }>,
-  payload: Record<string, string | boolean | number>,
+  payload: GT000ActionPayload,
   ctx: StepActionContext
 ): ActionResult {
   const sId = String(payload.source_id ?? "");
@@ -622,7 +694,7 @@ function handleLinkAction(
 
 function handleRecallAction(
   step: Extract<GT000Step, { action: "recall" }>,
-  payload: Record<string, string | boolean | number>,
+  payload: GT000ActionPayload,
   ctx: StepActionContext
 ): ActionResult {
   const selectedId = extractAssetId(payload);
@@ -645,7 +717,7 @@ function handleRecallAction(
 
 export function handleGT000Action(
   step: GT000Step,
-  payload: Record<string, string | boolean | number>,
+  payload: GT000ActionPayload,
   ctx: StepActionContext
 ): ActionResult {
   switch (step.action) {

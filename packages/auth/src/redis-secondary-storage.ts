@@ -16,6 +16,7 @@ export interface MinimalRedisClient {
   del(...keys: string[]): Promise<number>;
   incr(key: string): Promise<number>;
   expire?(key: string, seconds: number): Promise<number>;
+  readonly deleteByPrefix?: (prefix: string) => Promise<number>;
 }
 
 interface StoredEntry {
@@ -113,6 +114,18 @@ export class InMemoryRedisClient implements MinimalRedisClient {
       expiresAtMs: Date.now() + seconds * 1000,
     });
     return Promise.resolve(1);
+  }
+
+  deleteByPrefix(prefix: string): Promise<number> {
+    this.assertHealthy();
+    let count = 0;
+    for (const key of this.store.keys()) {
+      if (key.startsWith(prefix)) {
+        this.store.delete(key);
+        count++;
+      }
+    }
+    return Promise.resolve(count);
   }
 }
 

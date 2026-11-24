@@ -24,6 +24,7 @@ export const GT002Generator: LevelGenerator = {
     const targets = sampleUnique(rng, nouns, targetCount);
     const foils = sampleUnique(rng, contrast.nouns, totalCount - targetCount);
     const themeLabel = vocabulary.label_vi ?? vocabulary.theme;
+    const cueEmoji = vocabulary.icon_emoji_ref ?? targets[0]?.emoji_ref ?? "🧺";
 
     const items = shuffle(
       [
@@ -34,6 +35,7 @@ export const GT002Generator: LevelGenerator = {
     ).map(({ item, is_correct }, idx) => ({
       item_id: `item_${idx + 1}`,
       asset: { kind: "emoji" as const, ref: item.emoji_ref },
+      label: item.label_vi?.slice(0, 40),
       is_correct,
     }));
 
@@ -41,9 +43,16 @@ export const GT002Generator: LevelGenerator = {
       content_pack: {
         prompt: `Bé hãy chọn tất cả các hình thuộc chủ đề ${themeLabel} nhé!`,
         target_criterion: `Thuộc chủ đề ${themeLabel}`,
+        criterion_anchor: {
+          kind: "category" as const,
+          cue_asset: { kind: "emoji" as const, ref: cueEmoji },
+          category_code: vocabulary.theme,
+          label_vi: themeLabel.slice(0, 40),
+        },
         items,
       },
       difficulty_params: {
+        item_count: totalCount,
         distractor_count: totalCount - targetCount,
         target_count: targetCount,
         hint_after_ms: 12_000,

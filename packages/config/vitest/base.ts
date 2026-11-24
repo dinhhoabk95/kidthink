@@ -155,6 +155,8 @@ export const WORKSPACE_TEST_EXCLUDE: readonly string[] = [
 const NO_DATABASE_URL =
   "postgresql://mindkid_no_db:mindkid_no_db@127.0.0.1:5433/mindkid_khong_co_database_cho_test_thuan";
 
+const TEST_SQLITE_DATA_DIR = path.join(REPO_ROOT, ".data", "sqlite-test");
+
 export interface WorkspaceTestOptions {
   readonly database?: boolean;
 }
@@ -174,8 +176,18 @@ export function defineWorkspaceTest(
       exclude: [...WORKSPACE_TEST_EXCLUDE],
       testTimeout: BASE_TIMEOUT_MS,
       env: usesDatabase
-        ? { DATABASE_URL: owner, DATABASE_URL_APP: app }
-        : { DATABASE_URL: NO_DATABASE_URL, DATABASE_URL_APP: NO_DATABASE_URL },
+        ? {
+            DB_CONNECTION: "sqlite",
+            SQLITE_DATA_DIR: TEST_SQLITE_DATA_DIR,
+            DATABASE_URL: owner,
+            DATABASE_URL_APP: app,
+          }
+        : {
+            DB_CONNECTION: "sqlite",
+            SQLITE_DATA_DIR: ":memory:",
+            DATABASE_URL: NO_DATABASE_URL,
+            DATABASE_URL_APP: NO_DATABASE_URL,
+          },
       ...(usesDatabase ? { globalSetup: [DATABASE_GLOBAL_SETUP] } : {}),
       ...(usesDatabase ? SEQUENTIAL_DEFAULTS : PARALLEL_DEFAULTS),
     },

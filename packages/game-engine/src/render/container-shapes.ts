@@ -1,5 +1,3 @@
-import { SLOT_GAP_PX } from "#src/layout/constants";
-import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
@@ -9,12 +7,24 @@ import {
   setCachedGradient,
 } from "./cache.js";
 import { alpha, readableTextOn } from "./color-utils.js";
+import type { ContainerBox } from "./container-effects.js";
 import { resolveEmojiGlyph } from "./shared-render.js";
+import { getEmojiSprite } from "./sprite-registry.js";
 import {
   applyCanvasFontAtSize,
   applyEmojiFont,
   legibleFontPx,
 } from "./type-scale.js";
+import { drawBambooJointAccent } from "./vn-folk-motifs.js";
+
+const BASKET_WEAVE_STROKE = alpha(
+  designTokens.colors.vnMaterials.sedgeMat.weft,
+  0.42
+);
+const TRAY_WOOD_GROOVE_STROKE = alpha(
+  designTokens.colors.vnMaterials.woodGrain.groove,
+  0.34
+);
 
 // ── Bục nấm / Target Go-NoGo (GT-026) ────────────────────────────────
 export function drawPedestalTarget(
@@ -26,24 +36,24 @@ export function drawPedestalTarget(
   const r = slot.w * 0.42;
 
   ctx.save();
-  // Bục gỗ tròn
+  // Bục gỗ mộc tròn
   ctx.save();
   ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.2);
   ctx.shadowBlur = 10;
   ctx.shadowOffsetY = 6;
-  ctx.fillStyle = designTokens.colors.surface[100];
+  ctx.fillStyle = designTokens.colors.vnMaterials.woodGrain.surface;
   ctx.beginPath();
   ctx.ellipse(cx, cy, r, r * 0.35, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
-  ctx.strokeStyle = designTokens.colors.montessori.woodBevel;
+  ctx.strokeStyle = designTokens.colors.vnMaterials.bamboo.joint;
   ctx.lineWidth = 3;
   ctx.stroke();
   ctx.restore();
 }
 
-// ── Rổ đựng hoa quả (GT-004) ─────────────────────────────────────────
+// ── Rổ tre đan đựng hoa quả (GT-004) ──────────────────────────────────
 export function drawBasketSlot(
   ctx: CanvasRenderingContext2D,
   slot: Slot,
@@ -54,24 +64,42 @@ export function drawBasketSlot(
   const cy = slot.y;
   const w = slot.w * 0.9;
   const h = slot.h * 0.75;
+  const x0 = cx - w / 2;
+  const y0 = cy - h / 2;
 
   ctx.save();
-  // Thân rổ gỗ
+  // Thân rổ tre cói đan mộc
   ctx.save();
   ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.18);
   ctx.shadowBlur = 10;
   ctx.shadowOffsetY = 5;
-  ctx.fillStyle = designTokens.colors.montessori.basket;
+  ctx.fillStyle = designTokens.colors.vnMaterials.sedgeMat.base;
   ctx.beginPath();
-  ctx.roundRect(cx - w / 2, cy - h / 2, w, h, 16);
+  ctx.roundRect(x0, y0, w, h, 16);
   ctx.fill();
   ctx.restore();
 
-  // Viền nơ màu sắc (Đỏ hoặc Vàng)
+  // Nan đan chéo rổ tre mảnh tinh tế trong lòng rổ
+  ctx.strokeStyle = BASKET_WEAVE_STROKE;
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  const rowY1 = y0 + h * 0.38;
+  const rowY2 = y0 + h * 0.66;
+  ctx.moveTo(x0 + 10, rowY1);
+  ctx.lineTo(x0 + w - 10, rowY1);
+  ctx.moveTo(x0 + 10, rowY2);
+  ctx.lineTo(x0 + w - 10, rowY2);
+  ctx.stroke();
+
+  if (w >= 72) {
+    drawBambooJointAccent(ctx, x0 + 16, y0 + h - 6, x0 + w - 16, y0 + h - 6, 2);
+  }
+
+  // Viền màu nhóm quanh cạp rổ
   ctx.strokeStyle = rimColor;
   ctx.lineWidth = 4;
   ctx.beginPath();
-  ctx.roundRect(cx - w / 2, cy - h / 2, w, h, 16);
+  ctx.roundRect(x0, y0, w, h, 16);
   ctx.stroke();
 
   // Dải ruy băng nhãn — cao theo cỡ chữ, chữ đổi màu theo nền nơ.
@@ -94,25 +122,6 @@ export function drawBasketSlot(
   ctx.restore();
 }
 
-/**
- * Hộp vẽ của đích chứa — KHÔNG phải `slot.w`/`slot.h`.
- *
- * Bố cục lưỡng phân cấp cho slot đích cùng cỡ với slot nguồn (120x100), nên vẽ
- * đúng cỡ slot thì cái chứa nhỏ hơn cái được bỏ vào — đúng ca sai mà
- * `GT-003.md` §14 gọi tên. Engine tính hộp lớn hơn rồi dùng **cùng** hộp đó cho
- * cả vẽ lẫn chạm (`getContainerBox`).
- */
-export interface ContainerBox {
-  readonly x: number;
-  readonly y: number;
-  readonly w: number;
-  readonly h: number;
-}
-
-/**
- * Quầng sáng đích — gradient toả tròn, KHÔNG phải viền chữ nhật cứng.
- * Dày lên khi vật đủ gần: trạng thái "đích đang nhận" của `GT-003.md` §12.
- */
 function drawContainerAura(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
@@ -164,7 +173,6 @@ function drawContainerAura(
   ctx.restore();
 }
 
-/** Vật đã bỏ vào — xếp thành hàng trong lòng khay, co giãn theo số lượng. */
 function drawContainerPlacedItems(
   ctx: CanvasRenderingContext2D,
   box: ContainerBox,
@@ -192,26 +200,29 @@ function drawContainerPlacedItems(
     const chipX = startX + i * spacing;
 
     ctx.save();
-    ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.85);
+    ctx.fillStyle = alpha(designTokens.colors.vnMaterials.doPaper.sheet, 0.88);
     ctx.beginPath();
     ctx.arc(chipX, chipY, chipR, 0, Math.PI * 2);
     ctx.fill();
 
-    applyEmojiFont(ctx, Math.round(chipR * 1.6));
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
     const glyph = item.asset.ref ? resolveEmojiGlyph(item.asset.ref) : "";
     if (glyph) {
-      ctx.fillText(glyph, chipX, chipY);
+      const sprite = getEmojiSprite(glyph);
+      if (sprite) {
+        const chipSize = Math.round(chipR * 1.72);
+        const half = chipSize / 2;
+        ctx.drawImage(sprite, chipX - half, chipY - half, chipSize, chipSize);
+      } else {
+        applyEmojiFont(ctx, Math.round(chipR * 1.6));
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(glyph, chipX, chipY);
+      }
     }
     ctx.restore();
   }
 }
 
-/**
- * Nhãn rổ kèm bộ đếm `đã bỏ/cần bỏ` — kênh đề thứ hai của `GT-003.md` §4 N2,
- * để trẻ tắt âm vẫn biết cần bao nhiêu vật.
- */
 function drawContainerBadge(
   ctx: CanvasRenderingContext2D,
   box: ContainerBox,
@@ -228,10 +239,10 @@ function drawContainerBadge(
   ctx.save();
   ctx.fillStyle = isComplete
     ? designTokens.colors.semantic.success[500]
-    : designTokens.colors.surface[0];
+    : designTokens.colors.vnMaterials.doPaper.sheet;
   ctx.strokeStyle = isComplete
     ? designTokens.colors.semantic.success[600]
-    : designTokens.colors.montessori.woodBevel;
+    : designTokens.colors.vnMaterials.bamboo.joint;
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.roundRect(box.x - pillW / 2, pillY, pillW, pillH, 14);
@@ -240,7 +251,7 @@ function drawContainerBadge(
 
   ctx.fillStyle = isComplete
     ? designTokens.colors.surface[0]
-    : designTokens.colors.surface[800];
+    : designTokens.colors.vnMaterials.doPaper.ink;
   applyCanvasFontAtSize(ctx, fontPx, "heading", "bold");
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -254,11 +265,6 @@ function drawContainerBadge(
 }
 
 // ── Đích chứa kiểu khay gỗ Montessori (GT-003) ──────────────────────────────
-/**
- * Khay đích của `drag-to-container`. Thân khay vẽ bằng `rs.drawClayContainer`
- * theo hợp đồng vẽ `GT-003.md` §12 lớp 2 — trước đây là `drawNestTarget`, một
- * cái tổ chim vẽ cho mọi chủ đề, kể cả "kéo rác vào thùng rác".
- */
 export function drawContainerTarget(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
@@ -286,7 +292,7 @@ export function drawContainerTarget(
     box.h,
     isHovered
       ? designTokens.colors.montessori.woodTrayHigh
-      : designTokens.colors.montessori.woodTray,
+      : designTokens.colors.vnMaterials.woodGrain.surface,
     isHovered
       ? designTokens.colors.montessori.amber
       : designTokens.colors.montessori.woodBorder
@@ -302,169 +308,6 @@ export function drawContainerTarget(
   ctx.restore();
 }
 
-// ── Lọ nhặt sao (GT-037, `BR-E037-14`) ───────────────────────────────
-
-/** Thời gian ngôi sao bay từ ô đích vào miệng lọ. */
-export const JAR_STAR_FLIGHT_MS = 600;
-
-/** Mỗi sao thêm làm lọ đầy thêm phần này của chỗ còn trống khi không biết tổng. */
-const JAR_OPEN_ENDED_STEP = 0.15;
-const JAR_MAX_LEVEL = 0.92;
-const JAR_STAR_ARC_RATIO = 0.18;
-const JAR_STAR_END_SCALE = 0.55;
-
-export interface JarPoint {
-  readonly x: number;
-  readonly y: number;
-}
-
-export interface StarFlightPose {
-  readonly x: number;
-  readonly y: number;
-  readonly scale: number;
-}
-
-/**
- * Chỗ đặt lọ: phần mép sân khấu mà bố cục khung năm vùng để trống — cột phải
- * (landscape) hoặc dải đáy (portrait) — nên lọ không bao giờ che ô chạm.
- * Trả `null` khi mép không đủ rộng để vẽ.
- */
-export function collectJarBox(
-  stage: ZoneRect,
-  logicW: number,
-  logicH: number
-): ContainerBox | null {
-  const isLandscape = logicW >= logicH;
-  const box: ContainerBox = isLandscape
-    ? (() => {
-        const x = stage.x + stage.w + SLOT_GAP_PX;
-        const w = logicW - SLOT_GAP_PX - x;
-        return { x, y: stage.y, w, h: Math.min(w * 1.25, stage.h * 0.5) };
-      })()
-    : (() => {
-        const y = stage.y + stage.h + SLOT_GAP_PX;
-        const h = logicH - SLOT_GAP_PX - y;
-        return { x: stage.x, y, w: h, h };
-      })();
-  return box.w > 0 && box.h > 0 ? box : null;
-}
-
-/** Mức đầy 0..1 của lọ. `total` là `null` khi không được lộ tổng: lọ đầy dần nhưng không bao giờ đầy. */
-export function jarFillLevel(landed: number, total: number | null): number {
-  const count = Math.max(0, landed);
-  if (total === null || total <= 0) {
-    return JAR_MAX_LEVEL * (1 - (1 - JAR_OPEN_ENDED_STEP) ** count);
-  }
-  return Math.min(1, count / total);
-}
-
-/** Điểm miệng lọ mà sao bay tới. */
-export function jarMouth(box: ContainerBox): JarPoint {
-  return { x: box.x + box.w / 2, y: box.y + box.h * 0.2 };
-}
-
-/**
- * Tư thế sao bay ở `elapsedMs` — hàm thuần. `null` khi đã vào lọ hoặc khi
- * reduced-motion (trạng thái cuối: sao đã nằm trong lọ, không bay).
- */
-export function starFlightPose(
-  from: JarPoint,
-  to: JarPoint,
-  elapsedMs: number,
-  reducedMotion: boolean
-): StarFlightPose | null {
-  if (reducedMotion || elapsedMs >= JAR_STAR_FLIGHT_MS) {
-    return null;
-  }
-  const t = Math.min(1, Math.max(0, elapsedMs / JAR_STAR_FLIGHT_MS));
-  const eased = t * t * (3 - 2 * t);
-  const arc = Math.abs(to.x - from.x) * JAR_STAR_ARC_RATIO + 24;
-  return {
-    x: from.x + (to.x - from.x) * eased,
-    y: from.y + (to.y - from.y) * eased - arc * Math.sin(Math.PI * t),
-    scale: 1 - (1 - JAR_STAR_END_SCALE) * eased,
-  };
-}
-
-function traceStar(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  outer: number
-): void {
-  const inner = outer * 0.45;
-  ctx.beginPath();
-  for (let i = 0; i < 10; i++) {
-    const radius = i % 2 === 0 ? outer : inner;
-    const angle = -Math.PI / 2 + (i * Math.PI) / 5;
-    const px = cx + Math.cos(angle) * radius;
-    const py = cy + Math.sin(angle) * radius;
-    if (i === 0) {
-      ctx.moveTo(px, py);
-    } else {
-      ctx.lineTo(px, py);
-    }
-  }
-  ctx.closePath();
-}
-
-/** Lọ thuỷ tinh, phần đã nhặt dâng từ đáy theo `level` (0..1). */
-export function drawCollectJar(
-  ctx: CanvasRenderingContext2D,
-  box: ContainerBox,
-  level: number
-): void {
-  const neckH = box.h * 0.12;
-  const bodyY = box.y + neckH;
-  const bodyH = box.h - neckH;
-  const radius = Math.min(box.w, bodyH) * 0.2;
-  ctx.save();
-  ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.7);
-  ctx.beginPath();
-  ctx.roundRect(box.x, bodyY, box.w, bodyH, radius);
-  ctx.fill();
-
-  const fillH = bodyH * Math.min(1, Math.max(0, level));
-  if (fillH > 0) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.roundRect(box.x, bodyY, box.w, bodyH, radius);
-    ctx.clip();
-    ctx.fillStyle = designTokens.colors.montessori.amberBright;
-    ctx.fillRect(box.x, bodyY + bodyH - fillH, box.w, fillH);
-    ctx.restore();
-  }
-
-  ctx.strokeStyle = designTokens.colors.montessori.woodBorder;
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.roundRect(box.x, bodyY, box.w, bodyH, radius);
-  ctx.stroke();
-  ctx.fillStyle = designTokens.colors.montessori.woodBevel;
-  ctx.beginPath();
-  ctx.roundRect(box.x + box.w * 0.2, box.y, box.w * 0.6, neckH, neckH / 3);
-  ctx.fill();
-  ctx.stroke();
-  ctx.restore();
-}
-
-/** Ngôi sao đang bay; `size` là bán kính ngoài lúc chưa thu nhỏ. */
-export function drawFlyingStar(
-  ctx: CanvasRenderingContext2D,
-  pose: StarFlightPose,
-  size: number
-): void {
-  ctx.save();
-  ctx.fillStyle = designTokens.colors.montessori.amber;
-  ctx.strokeStyle = designTokens.colors.montessori.amberDeep;
-  ctx.lineWidth = 2;
-  ctx.lineJoin = "round";
-  traceStar(ctx, pose.x, pose.y, size * pose.scale);
-  ctx.fill();
-  ctx.stroke();
-  ctx.restore();
-}
-
 // ── Đèn giao thông của trò chơi đèn xanh/đèn đỏ (GT-026, `BR-E026-12`) ──
 
 export type TrafficLamp = "red" | "green";
@@ -473,7 +316,6 @@ const LAMP_ON_MS = 220;
 const LIGHT_WIDTH_RATIO = 0.34;
 const LIGHT_GAP_PX = 12;
 
-/** Độ sáng 0..1 của đèn vừa bật: ramp trong 220 ms; reduced-motion thì sáng đủ ngay. */
 export function trafficLampGlow(
   elapsedMs: number,
   reducedMotion: boolean
@@ -484,7 +326,6 @@ export function trafficLampGlow(
   return Math.min(1, Math.max(0, elapsedMs / LAMP_ON_MS));
 }
 
-/** Hộp đèn: dải bên trái ô kích thích, cao bằng ô. */
 export function trafficLightBox(slot: Slot): ContainerBox {
   return {
     x: slot.x - slot.w / 2,
@@ -494,7 +335,6 @@ export function trafficLightBox(slot: Slot): ContainerBox {
   };
 }
 
-/** Phần ô còn lại bên phải đèn, dành cho vật kích thích và bục của nó. */
 export function trafficStimulusSlot(slot: Slot): Slot {
   const light = trafficLightBox(slot);
   const left = light.x + light.w + LIGHT_GAP_PX;
@@ -536,10 +376,6 @@ function drawLamp(
   ctx.restore();
 }
 
-/**
- * Đèn giao thông hai bóng: đỏ ở trên, xanh ở dưới như đèn thật (vị trí là tín
- * hiệu thứ hai cho trẻ khó phân biệt màu). Chỉ bóng `lit` sáng, bóng kia mờ.
- */
 export function drawTrafficLight(
   ctx: CanvasRenderingContext2D,
   box: ContainerBox,
@@ -577,16 +413,10 @@ export function drawTrafficLight(
 
 // ── Rổ rung nhẹ khi vật rơi vào (GT-003, `BR-E003-09`) ────────────────
 
-/** Rổ rung trong ngần này ms kể từ lúc vật rơi vào. */
 export const BASKET_SHAKE_MS = 320;
 const BASKET_SHAKE_AMPLITUDE_PX = 5;
 const BASKET_SHAKE_CYCLES = 3;
 
-/**
- * Độ lệch ngang của rổ ở `elapsedMs` kể từ lúc có vật rơi vào — hàm thuần,
- * sóng sin tắt dần về 0 đúng lúc hết nhịp. `reduced_motion` hoặc hết nhịp thì
- * không lệch (trạng thái cuối tĩnh, `BR-FBK-09`).
- */
 export function basketShakeOffset(
   elapsedMs: number,
   reducedMotion: boolean
@@ -612,26 +442,15 @@ export interface TrayRect {
 }
 
 export interface SortTrayGeometry {
-  /** Thân khay (cùng cỡ thân rổ cũ: 0,9 × 0,75 slot). */
   readonly body: TrayRect;
-  /** Thẻ kiểm tra hình: hình của nhóm, vuông, ở mặt trước ngăn kéo. */
   readonly card: TrayRect;
-  /** Mặt trước ngăn kéo — nửa dưới thân khay. */
   readonly front: TrayRect;
-  /** Tay nắm ngăn kéo, cạnh thẻ. */
   readonly handle: TrayRect;
-  /** Dải nhãn nhóm, nhô lên mép trên thân khay. */
   readonly label: TrayRect;
 }
 
 const TRAY_FRONT_RATIO = 0.45;
 
-/**
- * Hình học khay phân loại — hàm thuần để vẽ và test dùng chung một nguồn.
- * Nửa trên để trống cho vật đã xếp; nửa dưới là mặt trước ngăn kéo mang thẻ
- * kiểm tra hình (control card Montessori) và tay nắm. Thẻ chỉ là hình nhóm
- * đã có trên màn nên không lộ đáp án, và không đổi vùng thả của slot.
- */
 export function sortTrayGeometry(slot: Slot): SortTrayGeometry {
   const w = slot.w * 0.9;
   const h = slot.h * 0.75;
@@ -670,10 +489,6 @@ export function sortTrayGeometry(slot: Slot): SortTrayGeometry {
   return { body, card, front, handle, label };
 }
 
-/**
- * Vẽ khay phân loại: thân gỗ, mặt trước ngăn kéo, khung thẻ kiểm tra, tay nắm
- * và dải nhãn. Hình của nhóm do engine vẽ vào `card` bằng `drawGlyphInSlot`.
- */
 export function drawSortTray(
   ctx: CanvasRenderingContext2D,
   slot: Slot,
@@ -682,25 +497,34 @@ export function drawSortTray(
 ): void {
   const { body, card, front, handle, label: ribbon } = sortTrayGeometry(slot);
   const wood = designTokens.colors.montessori;
+  const vn = designTokens.colors.vnMaterials;
 
   ctx.save();
   ctx.save();
   ctx.shadowColor = alpha(wood.woodBorder, 0.18);
   ctx.shadowBlur = 10;
   ctx.shadowOffsetY = 5;
-  ctx.fillStyle = wood.woodTray;
+  ctx.fillStyle = vn.woodGrain.surface;
   ctx.beginPath();
   ctx.roundRect(body.x, body.y, body.w, body.h, 14);
   ctx.fill();
   ctx.restore();
 
-  // Mặt trước ngăn kéo
-  ctx.fillStyle = wood.basket;
+  // Mặt trước ngăn kéo tre gỗ mộc
+  ctx.fillStyle = vn.bamboo.light;
   ctx.beginPath();
   ctx.roundRect(front.x, front.y, front.w, front.h, 10);
   ctx.fill();
-  ctx.strokeStyle = wood.woodBevel;
+  ctx.strokeStyle = vn.bamboo.joint;
   ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Đường vân gỗ ngang trên ngăn kéo
+  ctx.strokeStyle = TRAY_WOOD_GROOVE_STROKE;
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(handle.x, front.y + front.h * 0.78);
+  ctx.lineTo(handle.x + handle.w, front.y + front.h * 0.78);
   ctx.stroke();
 
   // Viền màu nhóm quanh thân khay
@@ -710,8 +534,8 @@ export function drawSortTray(
   ctx.roundRect(body.x, body.y, body.w, body.h, 14);
   ctx.stroke();
 
-  // Khung thẻ kiểm tra hình
-  ctx.fillStyle = wood.paper;
+  // Khung thẻ kiểm tra hình trên nền giấy dó
+  ctx.fillStyle = vn.doPaper.sheet;
   ctx.beginPath();
   ctx.roundRect(card.x, card.y, card.w, card.h, 6);
   ctx.fill();
@@ -719,7 +543,7 @@ export function drawSortTray(
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  // Tay nắm
+  // Tay nắm gỗ sậm
   ctx.fillStyle = wood.woodBorder;
   ctx.beginPath();
   ctx.roundRect(handle.x, handle.y, handle.w, handle.h, handle.h / 2);
@@ -742,131 +566,6 @@ export function drawSortTray(
   ctx.restore();
 }
 
-// ── Đom đóm nhấp nháy dưới nắp chuông thuỷ tinh (GT-012, `BR-E012-08`) ──
-
-/** Một nhịp nhấp nháy của đom đóm. */
-export const FIREFLY_PERIOD_MS = 1200;
-/** Nắp chuông nhấc lên (đầu pha nhìn) và hạ xuống (cuối pha nhìn) trong ngần này ms. */
-export const BELL_LIFT_MS = 250;
-const FIREFLY_MIN_GLOW = 0.35;
-const FIREFLY_PHASE_STEP = 0.37;
-const BELL_LIFT_FRACTION_OF_RADIUS = 0.55;
-
-function smoothstep01(t: number): number {
-  const c = Math.min(1, Math.max(0, t));
-  return c * c * (3 - 2 * c);
-}
-
-/**
- * Độ sáng của đom đóm thứ `index` ở `elapsedMs` kể từ lúc mở nắp: sóng sin
- * trong [0,35; 1], mỗi con lệch pha. `reduced_motion` sáng tĩnh ở mức cao nhất.
- * Chỉ là độ sáng quầng — vật luôn vẽ đủ, nên nhấp nháy không giấu số lượng.
- */
-export function fireflyGlow(
-  elapsedMs: number,
-  index: number,
-  reducedMotion: boolean
-): number {
-  if (reducedMotion) {
-    return 1;
-  }
-  const phase = elapsedMs / FIREFLY_PERIOD_MS + index * FIREFLY_PHASE_STEP;
-  const mid = (1 + FIREFLY_MIN_GLOW) / 2;
-  const amp = (1 - FIREFLY_MIN_GLOW) / 2;
-  return mid + amp * Math.sin(Math.PI * 2 * phase);
-}
-
-/** Bán kính quầng sáng theo độ sáng — dùng chung cho vẽ và test. */
-export function fireflyHaloRadius(slot: Slot, glow: number): number {
-  return Math.min(slot.w, slot.h) * (0.5 + 0.3 * glow);
-}
-
-/** Quầng sáng vàng nhạt quanh một đom đóm; vẽ trước vật để vật luôn rõ. */
-export function drawFireflyGlow(
-  ctx: CanvasRenderingContext2D,
-  slot: Slot,
-  glow: number
-): void {
-  const r = fireflyHaloRadius(slot, glow);
-  const g = ctx.createRadialGradient(
-    slot.x,
-    slot.y,
-    r * 0.1,
-    slot.x,
-    slot.y,
-    r
-  );
-  g.addColorStop(
-    0,
-    alpha(designTokens.colors.montessori.amberGlow, 0.35 + 0.5 * glow)
-  );
-  g.addColorStop(1, alpha(designTokens.colors.montessori.amberGlow, 0));
-  ctx.save();
-  ctx.fillStyle = g;
-  ctx.beginPath();
-  ctx.arc(slot.x, slot.y, r, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-}
-
-/**
- * Độ nhấc của nắp chuông trong [0,1] ở `elapsedMs` kể từ lúc mở nắp: lên ở
- * `BELL_LIFT_MS` đầu, hạ ở `BELL_LIFT_MS` cuối của `durationMs`, ngoài pha nhìn
- * thì đậy kín (0). `reduced_motion` mở hẳn trong pha, không chuyển tiếp.
- */
-export function bellLiftProgress(
-  elapsedMs: number,
-  durationMs: number,
-  reducedMotion: boolean
-): number {
-  if (elapsedMs < 0 || elapsedMs >= durationMs) {
-    return 0;
-  }
-  if (reducedMotion) {
-    return 1;
-  }
-  const rise = smoothstep01(elapsedMs / BELL_LIFT_MS);
-  const fall = smoothstep01((durationMs - elapsedMs) / BELL_LIFT_MS);
-  return Math.min(rise, fall);
-}
-
-/**
- * Nắp chuông thuỷ tinh đặt trên đĩa: vòm trong mờ, vệt sáng và núm. `lift`
- * (0..1) nhấc nắp lên và làm nó mờ đi. Không che gì dưới nó — vật chỉ hiện khi
- * engine vẽ vật, nên nắp đậy không lộ đáp án.
- */
-export function drawGlassBell(
-  ctx: CanvasRenderingContext2D,
-  slot: Slot,
-  lift: number
-): void {
-  const r = Math.min(slot.w, slot.h) / 2;
-  const bellR = r * 0.82;
-  ctx.save();
-  ctx.translate(0, -lift * r * BELL_LIFT_FRACTION_OF_RADIUS);
-  ctx.globalAlpha = 1 - 0.5 * lift;
-  ctx.fillStyle = alpha(designTokens.colors.surface[100], 0.45);
-  ctx.strokeStyle = designTokens.colors.surface[400];
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.arc(slot.x, slot.y, bellR, Math.PI, 0, false);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-  // Vệt sáng trên vòm
-  ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.85);
-  ctx.lineWidth = 4;
-  ctx.lineCap = "round";
-  ctx.beginPath();
-  ctx.arc(slot.x, slot.y, bellR * 0.78, Math.PI * 1.15, Math.PI * 1.4, false);
-  ctx.stroke();
-  // Núm cầm
-  ctx.fillStyle = designTokens.colors.montessori.amber;
-  ctx.strokeStyle = designTokens.colors.montessori.amberDark;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(slot.x, slot.y - bellR - 6, 8, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
-  ctx.restore();
-}
+// Re-export giữ tương thích mọi import hiện có vào `#src/render/container-shapes`
+// biome-ignore lint/performance/noBarrelFile: giữ tương thích import sau khi tách file dưới 800 dòng
+export * from "./container-effects.js";

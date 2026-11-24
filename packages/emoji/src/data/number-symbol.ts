@@ -2,60 +2,9 @@ import type { EmojiEntry } from "#src/types";
 
 export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   {
-    emoji: "⬆️",
-    name: "Mũi tên lên",
-    categories: ["flag-symbol", "shape-color", "number-symbol"],
-    curriculum_themes: ["ban_than"],
-    keywords: ["up arrow", "mũi tên lên", "hướng lên", "arrow up", "up", "lên"],
-    age_min: 3,
-  },
-  {
-    emoji: "⬇️",
-    name: "Mũi tên xuống",
-    categories: ["flag-symbol", "shape-color", "number-symbol"],
-    curriculum_themes: ["ban_than"],
-    keywords: [
-      "down arrow",
-      "mũi tên xuống",
-      "hướng xuống",
-      "arrow down",
-      "down",
-      "xuống",
-    ],
-    age_min: 3,
-  },
-  {
-    emoji: "⬅️",
-    name: "Mũi tên trái",
-    categories: ["flag-symbol", "shape-color", "number-symbol"],
-    curriculum_themes: ["ban_than"],
-    keywords: [
-      "left arrow",
-      "mũi tên trái",
-      "hướng trái",
-      "arrow left",
-      "left",
-      "trái",
-    ],
-    age_min: 3,
-  },
-  {
-    emoji: "➡️",
-    name: "Mũi tên phải",
-    categories: ["flag-symbol", "shape-color", "number-symbol"],
-    curriculum_themes: ["ban_than"],
-    keywords: [
-      "right arrow",
-      "mũi tên phải",
-      "hướng phải",
-      "arrow right",
-      "right",
-      "phải",
-    ],
-    age_min: 3,
-  },
-  {
     emoji: "0️⃣",
+    slug: "keycap-zero",
+    svg_path: "/sprites/emoji/keycap-zero.svg",
     name: "Số không",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -64,6 +13,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "1️⃣",
+    slug: "keycap-one",
+    svg_path: "/sprites/emoji/keycap-one.svg",
     name: "Số một",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -72,6 +23,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "2️⃣",
+    slug: "keycap-two",
+    svg_path: "/sprites/emoji/keycap-two.svg",
     name: "Số hai",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -80,6 +33,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "3️⃣",
+    slug: "keycap-three",
+    svg_path: "/sprites/emoji/keycap-three.svg",
     name: "Số ba",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -88,6 +43,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "4️⃣",
+    slug: "keycap-four",
+    svg_path: "/sprites/emoji/keycap-four.svg",
     name: "Số bốn",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -96,6 +53,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "5️⃣",
+    slug: "keycap-five",
+    svg_path: "/sprites/emoji/keycap-five.svg",
     name: "Số năm",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -104,6 +63,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "6️⃣",
+    slug: "keycap-six",
+    svg_path: "/sprites/emoji/keycap-six.svg",
     name: "Số sáu",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -112,6 +73,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "7️⃣",
+    slug: "keycap-seven",
+    svg_path: "/sprites/emoji/keycap-seven.svg",
     name: "Số bảy",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -120,6 +83,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "8️⃣",
+    slug: "keycap-eight",
+    svg_path: "/sprites/emoji/keycap-eight.svg",
     name: "Số tám",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -128,6 +93,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "9️⃣",
+    slug: "keycap-nine",
+    svg_path: "/sprites/emoji/keycap-nine.svg",
     name: "Số chín",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -136,6 +103,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔟",
+    slug: "number-ten",
+    svg_path: "/sprites/emoji/number-ten.svg",
     name: "Số mười",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -144,6 +113,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "➕",
+    slug: "plus-sign",
+    svg_path: "/sprites/emoji/plus-sign.svg",
     name: "Cộng",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -152,6 +123,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "➖",
+    slug: "minus-sign",
+    svg_path: "/sprites/emoji/minus-sign.svg",
     name: "Trừ",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -160,6 +133,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "✖️",
+    slug: "multiply-sign",
+    svg_path: "/sprites/emoji/multiply-sign.svg",
     name: "Nhân",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -168,6 +143,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "➗",
+    slug: "divide-sign",
+    svg_path: "/sprites/emoji/divide-sign.svg",
     name: "Chia",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -176,6 +153,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "♾️",
+    slug: "infinity-loop",
+    svg_path: "/sprites/emoji/infinity-loop.svg",
     name: "Vô cực",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -184,6 +163,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "💯",
+    slug: "hundred-score",
+    svg_path: "/sprites/emoji/hundred-score.svg",
     name: "Một trăm",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -192,6 +173,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "❓",
+    slug: "question-mark",
+    svg_path: "/sprites/emoji/question-mark.svg",
     name: "Dấu hỏi",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -200,6 +183,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "❗",
+    slug: "exclamation-mark",
+    svg_path: "/sprites/emoji/exclamation-mark.svg",
     name: "Dấu chấm than",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -208,6 +193,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "✅",
+    slug: "check-mark",
+    svg_path: "/sprites/emoji/check-mark.svg",
     name: "Đúng",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -216,6 +203,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "❌",
+    slug: "cross-mark",
+    svg_path: "/sprites/emoji/cross-mark.svg",
     name: "Sai",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -224,6 +213,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "#️⃣",
+    slug: "hash-keycap",
+    svg_path: "/sprites/emoji/hash-keycap.svg",
     name: "Dấu thăng",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -232,6 +223,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🪙",
+    slug: "coin",
+    svg_path: "/sprites/emoji/coin.svg",
     name: "Đồng xu",
     categories: ["number-symbol", "tool"],
     curriculum_themes: ["truong_mam_non", "ban_than"],
@@ -239,23 +232,9 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
     age_min: 3,
   },
   {
-    emoji: "🔘",
-    name: "Nút chọn",
-    categories: ["shape-color", "number-symbol"],
-    curriculum_themes: ["ban_than"],
-    keywords: ["radio button", "button", "nút", "nút chọn", "tròn"],
-    age_min: 3,
-  },
-  {
-    emoji: "🔁",
-    name: "Lặp lại",
-    categories: ["shape-color", "number-symbol"],
-    curriculum_themes: ["ban_than"],
-    keywords: ["repeat", "lặp lại", "vòng lặp"],
-    age_min: 3,
-  },
-  {
     emoji: "↔️",
+    slug: "left-right-arrow",
+    svg_path: "/sprites/emoji/left-right-arrow.svg",
     name: "Mũi tên hai chiều",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],
@@ -264,6 +243,8 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔀",
+    slug: "shuffle-arrows",
+    svg_path: "/sprites/emoji/shuffle-arrows.svg",
     name: "Mũi tên đan chéo",
     categories: ["number-symbol"],
     curriculum_themes: ["truong_mam_non"],

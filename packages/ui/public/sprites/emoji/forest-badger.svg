@@ -1,0 +1,25 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Con lửng rừng</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="g_forestbadger" r="70%"><stop offset="0%" stop-color="#d6d3d1" /><stop offset="55%" stop-color="#78716c" /><stop offset="100%" stop-color="#44403c" /></radialGradient>
+  </defs>
+  <ellipse cx="62" cy="106" fill="#1c1917" opacity="0.22" rx="40" ry="5.5" />
+    <path d="M92 66C103 65 109 72 106 80C101 83 94 79 90 74Z" fill="#78716c" stroke="#1c1917" stroke-linejoin="round" stroke-width="3.6" />
+    <!-- Far legs -->
+    <path d="M47 80L44 102H51L53 80ZM81 80L79 102H86L88 80Z" fill="#44403c" stroke="#1c1917" stroke-linejoin="round" stroke-width="3.4" />
+    <path d="M44 98H51V103H44ZM79 98H86V103H79Z" fill="#1c1917" />
+    <!-- Torso & Neck -->
+    <path d="M34 64C40 56 33 54 64 54C95 54 99 66 95 76C91 86 39 86 35 74C31 66 30 74 34 64Z" fill="url(#g_forestbadger)" stroke="#1c1917" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M46 81C56 87 74 87 84 81" fill="#292524" opacity="0.85" />
+    
+    <!-- Near legs -->
+    <path d="M39 78L36 104H44L47 78ZM73 78L71 104H79L81 78Z" fill="url(#g_forestbadger)" stroke="#1c1917" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M36 99H44V104H36ZM71 99H79V104H71Z" fill="#1c1917" stroke="#1c1917" stroke-linejoin="round" stroke-width="2.2" />
+    <!-- Head -->
+    <ellipse cx="28" cy="58" fill="url(#g_forestbadger)" rx="15" ry="11" stroke="#1c1917" stroke-width="3.8" />
+    <ellipse cx="17" cy="62" fill="#fafaf9" rx="7.5" ry="6" stroke="#1c1917" stroke-width="3.2" />
+    <circle cx="15" cy="61" fill="#1c1917" r="1.8" />
+    <path d="M15 65C18 67 21 66 22 64" stroke="#1c1917" stroke-linecap="round" stroke-width="2.2" />
+    <circle cx="26" cy="55" fill="#1c1917" r="2.7" /><circle cx="25.2" cy="54.2" fill="#ffffff" r="1" />
+    <path d="M18 55L38 49L40 55L20 60Z" fill="#fafaf9" /><path d="M22 51L37 47M22 61L37 59" stroke="#1c1917" stroke-linecap="round" stroke-width="4.2" /><circle cx="36" cy="47" fill="#fafaf9" r="4.5" stroke="#1c1917" stroke-width="3.2" />
+</svg>

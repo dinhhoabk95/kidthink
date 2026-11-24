@@ -1,20 +1,24 @@
-import { spawn } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
+import { DatabaseSync } from "node:sqlite";
 import { pipeline } from "node:stream/promises";
 import { createGunzip } from "node:zlib";
 import { requireEnv } from "@mindkid/config";
 import { BACKUP_DIR } from "@mindkid/config/backup";
-import { backupLog, getOwnerDb } from "@mindkid/db";
 import { alert } from "@mindkid/queue";
-import { and, desc, eq } from "drizzle-orm";
-import postgres from "postgres";
+import {
+  createLocalBackupLog,
+  findLatestLocalBackupLogByTypeAndStatus,
+  updateLocalBackupLog,
+} from "#src/backup/backup-log-store";
 import { readErrorMessage } from "#src/errors";
 import { logJobDone } from "#src/log";
 import type { Consumer } from "./types.js";
 
-const dbNameRegex = /\/[^/]+(\?.*)?$/;
+const SQLITE_HEADER_MAGIC = "SQLite format 3\0";
+const ENCRYPTION_KEY_BYTES = 32;
 
 /** Same seam as runPostgresBackup: injected for tests, never configurable. */
 export interface VerifyOptions {
@@ -26,13 +30,25 @@ async function openEncryptedBackupStream(
   encryptionKey: string
 ): Promise<{ fileStream: fs.ReadStream; decipher: crypto.DecipherGCM }> {
   const fileHandle = await fs.promises.open(backupFile, "r");
-  const iv = Buffer.alloc(16);
-  await fileHandle.read(iv, 0, 16, 0);
+  let iv: Buffer;
+  let authTag: Buffer;
+  let totalSize: number;
 
-  const stats = await fileHandle.stat();
-  const authTag = Buffer.alloc(16);
-  await fileHandle.read(authTag, 0, 16, stats.size - 16);
-  await fileHandle.close();
+  try {
+    const stats = await fileHandle.stat();
+    totalSize = stats.size;
+    if (totalSize <= 32) {
+      throw new Error("Encrypted backup file is corrupted or truncated");
+    }
+
+    iv = Buffer.alloc(16);
+    await fileHandle.read(iv, 0, 16, 0);
+
+    authTag = Buffer.alloc(16);
+    await fileHandle.read(authTag, 0, 16, totalSize - 16);
+  } finally {
+    await fileHandle.close();
+  }
 
   const decipher = crypto.createDecipheriv(
     "aes-256-gcm",
@@ -43,81 +59,65 @@ async function openEncryptedBackupStream(
 
   const fileStream = fs.createReadStream(backupFile, {
     start: 16,
-    end: stats.size - 17,
+    end: totalSize - 17,
   });
 
   return { fileStream, decipher };
 }
 
-async function createTempDatabase(
-  dbUrl: string,
-  tempDbName: string
-): Promise<void> {
-  const sqlAdmin = postgres(dbUrl);
+function assertSqliteHeader(sqlitePath: string): void {
+  const fd = fs.openSync(sqlitePath, "r");
   try {
-    await sqlAdmin.unsafe(`CREATE DATABASE ${tempDbName}`);
+    const header = Buffer.alloc(16);
+    const bytesRead = fs.readSync(fd, header, 0, 16, 0);
+    if (bytesRead < 16 || header.toString("utf8") !== SQLITE_HEADER_MAGIC) {
+      throw new Error("Verify failed: invalid SQLite header");
+    }
   } finally {
-    await sqlAdmin.end();
+    fs.closeSync(fd);
   }
 }
 
-async function dropTempDatabase(
-  dbUrl: string,
-  tempDbName: string
-): Promise<void> {
-  const sqlAdminCleanup = postgres(dbUrl);
+function verifySqliteDatabase(sqlitePath: string): number {
+  assertSqliteHeader(sqlitePath);
+
+  const db = new DatabaseSync(sqlitePath, { readOnly: true });
   try {
-    await sqlAdminCleanup.unsafe(`DROP DATABASE IF EXISTS ${tempDbName}`);
-  } finally {
-    await sqlAdminCleanup.end();
-  }
-}
+    const integrity = db.prepare("PRAGMA integrity_check").get() as
+      | { readonly integrity_check?: string }
+      | undefined;
+    if (integrity?.integrity_check !== "ok") {
+      throw new Error(
+        `Verify failed: integrity_check=${integrity?.integrity_check ?? "unknown"}`
+      );
+    }
 
-async function restorePsqlDump(
-  tempDbUrl: string,
-  fileStream: fs.ReadStream,
-  decipher: crypto.DecipherGCM
-): Promise<void> {
-  const gunzip = createGunzip();
-  const psqlProcess = spawn("psql", [tempDbUrl], {
-    stdio: ["pipe", "ignore", "pipe"],
-  });
+    const tables = db
+      .prepare(
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'"
+      )
+      .all() as Array<{ readonly name: string }>;
 
-  let psqlStderr = "";
-  psqlProcess.stderr.on("data", (data) => {
-    psqlStderr += data.toString();
-  });
+    if (tables.length === 0) {
+      throw new Error("Verify failed: restored 0 tables");
+    }
 
-  const psqlPromise = new Promise<void>((resolve, reject) => {
-    psqlProcess.on("close", (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`psql restore failed: ${psqlStderr}`));
-      }
-    });
-    psqlProcess.on("error", reject);
-  });
+    let restoredRows = 0;
+    for (const table of tables) {
+      const quotedName = `"${table.name.replace(/"/g, '""')}"`;
+      const row = db
+        .prepare(`SELECT COUNT(*) AS cnt FROM ${quotedName}`)
+        .get() as { readonly cnt?: number } | undefined;
+      restoredRows += Number(row?.cnt ?? 0);
+    }
 
-  await Promise.all([
-    pipeline(fileStream, decipher, gunzip, psqlProcess.stdin),
-    psqlPromise,
-  ]);
-}
-
-async function verifyTableCount(tempDbUrl: string): Promise<number> {
-  const sqlVerify = postgres(tempDbUrl);
-  try {
-    const result = await sqlVerify.unsafe<{ count: string }[]>(`
-      SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public'
-    `);
-    const count = Number.parseInt(result[0]?.count ?? "0", 10);
-    if (count === 0) {
+    if (restoredRows === 0) {
       throw new Error("Verify failed: restored 0 rows");
     }
-    return count;
+
+    return restoredRows;
   } finally {
-    await sqlVerify.end();
+    db.close();
   }
 }
 
@@ -127,36 +127,29 @@ export async function runVerifyBackup(
 ) {
   const directory = options.directory ?? BACKUP_DIR;
   const encryptionKey = requireEnv("BACKUP_ENCRYPTION_KEY");
-  if (encryptionKey.length !== 32) {
-    throw new Error("BACKUP_ENCRYPTION_KEY must be a 32-character string");
+  if (encryptionKey.length !== ENCRYPTION_KEY_BYTES) {
+    throw new Error(
+      `BACKUP_ENCRYPTION_KEY must be a ${ENCRYPTION_KEY_BYTES}-character string`
+    );
   }
 
-  // Create an initial backup_log entry for verify
-  const [log] = await getOwnerDb()
-    .insert(backupLog)
-    .values({
-      backupType: "verify",
-      status: "started",
-      startedAt: new Date(),
-    })
-    .returning();
+  const log = createLocalBackupLog(directory, {
+    backupType: "verify",
+    status: "started",
+    startedAt: new Date(),
+  });
 
-  if (!log) {
-    throw new Error("Failed to create backup log");
-  }
-
-  let tempDbName = "";
+  const tempSqlitePath = path.join(
+    os.tmpdir(),
+    `mindkid-verify-${crypto.randomBytes(6).toString("hex")}.sqlite`
+  );
 
   try {
-    // 1. Find the latest backup log with status 'success'
-    const [latestBackup] = await getOwnerDb()
-      .select()
-      .from(backupLog)
-      .where(
-        and(eq(backupLog.backupType, "dump"), eq(backupLog.status, "success"))
-      )
-      .orderBy(desc(backupLog.startedAt))
-      .limit(1);
+    const latestBackup = findLatestLocalBackupLogByTypeAndStatus(
+      directory,
+      "dump",
+      "success"
+    );
 
     if (!latestBackup?.storagePath) {
       throw new Error("No successful backup found to verify");
@@ -171,52 +164,26 @@ export async function runVerifyBackup(
       throw new Error(`Backup file not found: ${backupFile}`);
     }
 
-    // 2. Read IV and create decipher
     const { fileStream, decipher } = await openEncryptedBackupStream(
       backupFile,
       encryptionKey
     );
 
-    // 3. Create temp database
-    const dbUrl = requireEnv("DATABASE_URL");
-    tempDbName = `verify_${crypto.randomBytes(4).toString("hex")}`;
-    await createTempDatabase(dbUrl, tempDbName);
+    await pipeline(
+      fileStream,
+      decipher,
+      createGunzip(),
+      fs.createWriteStream(tempSqlitePath)
+    );
 
-    // 4. Restore via psql
-    const tempDbUrl = dbUrl.replace(dbNameRegex, `/${tempDbName}$1`);
-    if (!tempDbName.startsWith("verify_")) {
-      throw new Error(
-        "Safety check failed: target DB must be a verify temp DB"
-      );
-    }
+    const restoredRows = verifySqliteDatabase(tempSqlitePath);
 
-    await restorePsqlDump(tempDbUrl, fileStream, decipher);
-
-    // 5. Verify schema / rows
-    const restoredRows = await verifyTableCount(tempDbUrl);
-
-    // 6. Cleanup temp DB
-    await dropTempDatabase(dbUrl, tempDbName);
-
-    // 7. Update log
-    await getOwnerDb()
-      .update(backupLog)
-      .set({
-        status: "success",
-        restoredRows,
-        finishedAt: new Date(),
-      })
-      .where(eq(backupLog.id, log.id));
+    updateLocalBackupLog(directory, log.id, {
+      status: "success",
+      restoredRows,
+      finishedAt: new Date(),
+    });
   } catch (error) {
-    if (tempDbName) {
-      try {
-        const dbUrl = requireEnv("DATABASE_URL");
-        await dropTempDatabase(dbUrl, tempDbName);
-      } catch {
-        // Ignore cleanup errors
-      }
-    }
-
     const sanitizedError = readErrorMessage(error).replace(
       /(:\/\/[^:\s/]+:)[^@\s]+@/g,
       "$1[REDACTED]@"
@@ -227,16 +194,15 @@ export async function runVerifyBackup(
       error: sanitizedError,
     });
 
-    await getOwnerDb()
-      .update(backupLog)
-      .set({
-        status: "failed",
-        errorMessage: sanitizedError,
-        finishedAt: new Date(),
-      })
-      .where(eq(backupLog.id, log.id));
+    updateLocalBackupLog(directory, log.id, {
+      status: "failed",
+      errorMessage: sanitizedError,
+      finishedAt: new Date(),
+    });
 
     throw error;
+  } finally {
+    fs.rmSync(tempSqlitePath, { force: true });
   }
 }
 

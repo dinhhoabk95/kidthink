@@ -212,5 +212,12 @@ export const C5_RHY_03_SEED: SkillSeed = {
       theme: "nature",
       rounds: 3,
     },
+    {
+      code: "GL-C5-RHY-INTRO-6003",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 2,
+      theme: "festival",
+    },
   ],
 };

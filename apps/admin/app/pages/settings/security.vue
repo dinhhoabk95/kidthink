@@ -159,41 +159,61 @@
       </div>
 
       <div class="space-y-4 pt-2" v-else>
-        <form
-          class="flex flex-col sm:flex-row gap-3 items-end"
-          @submit.prevent="handleDisableMfa"
+        <p
+          class="rounded-2xl border border-warning-200 bg-warning-50 p-3.5 text-sm font-medium text-warning-900 dark:border-warning-800 dark:bg-warning-950/40 dark:text-warning-200"
         >
-          <div class="flex-1 w-full">
+          Tài khoản quản trị không thể tự tắt MFA. Nếu mất thiết bị xác thực,
+          vui lòng liên hệ một Super Admin khác để đặt lại MFA.
+        </p>
+
+        <form
+          class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end"
+          @submit.prevent="handleRegenerateBackupCodes"
+        >
+          <div class="sm:col-span-5">
             <label
               class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1"
-              for="adminDisableMfaPassword"
+              for="adminRegenerateMfaPassword"
             >
-              Mật khẩu xác nhận (để tắt MFA hoặc cấp lại mã dự phòng)
+              Mật khẩu xác nhận *
             </label>
             <input
               autocomplete="current-password"
               class="w-full min-h-11 px-3.5 py-2 rounded-2xl border-2 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 text-base text-surface-900 dark:text-surface-100"
-              id="adminDisableMfaPassword"
+              id="adminRegenerateMfaPassword"
               required
               type="password"
               v-model="mfaActionPassword"
             >
           </div>
-          <button
-            class="min-h-11 px-4 py-2.5 rounded-2xl border-2 border-surface-300 dark:border-surface-600 text-sm font-bold text-surface-800 dark:text-surface-100 shrink-0 disabled:opacity-50"
-            type="button"
-            :disabled="isBusy || !mfaActionPassword"
-            @click="handleRegenerateBackupCodes"
-          >
-            Sinh lại 10 mã dự phòng
-          </button>
-          <button
-            class="min-h-11 px-4 py-2.5 rounded-2xl border-2 border-danger-200 bg-danger-50 text-danger-700 text-sm font-bold shrink-0 disabled:opacity-50"
-            type="submit"
-            :disabled="isBusy || !mfaActionPassword"
-          >
-            Tắt MFA
-          </button>
+          <div class="sm:col-span-4">
+            <label
+              class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1"
+              for="adminRegenerateMfaTotp"
+            >
+              Mã TOTP 6 số *
+            </label>
+            <input
+              autocomplete="one-time-code"
+              class="w-full min-h-11 px-3.5 py-2 rounded-2xl border-2 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 text-base font-mono tracking-widest text-surface-900 dark:text-surface-100"
+              id="adminRegenerateMfaTotp"
+              inputmode="numeric"
+              maxlength="6"
+              placeholder="123456"
+              required
+              type="text"
+              v-model.trim="mfaActionTotp"
+            >
+          </div>
+          <div class="sm:col-span-3">
+            <button
+              class="w-full min-h-11 px-4 py-2.5 rounded-2xl border-2 border-surface-300 dark:border-surface-600 text-sm font-bold text-surface-800 dark:text-surface-100 disabled:opacity-50"
+              type="submit"
+              :disabled="isBusy || !mfaActionPassword || mfaActionTotp.length !== 6"
+            >
+              Sinh lại 10 mã dự phòng
+            </button>
+          </div>
         </form>
       </div>
 
@@ -379,13 +399,111 @@
         </div>
       </div>
     </section>
+
+    <!-- STEP-UP REAUTH MODAL FOR PASSKEYS -->
+    <div
+      aria-labelledby="admin-passkey-reauth-title"
+      aria-modal="true"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-950/60 backdrop-blur-sm"
+      role="dialog"
+      v-if="passkeyReauthModal.isOpen"
+    >
+      <div
+        class="w-full max-w-md bg-white dark:bg-surface-900 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4"
+      >
+        <div class="flex items-center justify-between gap-2">
+          <h3
+            class="text-lg font-bold font-heading text-surface-900 dark:text-surface-100"
+            id="admin-passkey-reauth-title"
+          >
+            Xác thực lại thao tác Passkey
+          </h3>
+          <button
+            aria-label="Đóng hộp thoại xác thực"
+            class="min-w-11 min-h-11 inline-flex items-center justify-center rounded-xl text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-800"
+            type="button"
+            @click="closePasskeyReauthModal"
+          >
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
+          </button>
+        </div>
+
+        <p class="text-sm text-surface-600 dark:text-surface-300">
+          Vui lòng xác thực lại bằng mật khẩu hoặc mã TOTP 6 số để thêm/xoá
+          Passkey quản trị.
+        </p>
+
+        <form class="space-y-4" @submit.prevent="submitPasskeyReauth">
+          <div>
+            <label
+              class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1"
+              for="adminPasskeyReauthPassword"
+            >
+              Mật khẩu quản trị
+            </label>
+            <input
+              autocomplete="current-password"
+              class="w-full min-h-11 px-3.5 py-2 rounded-2xl border-2 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 text-base text-surface-900 dark:text-surface-100"
+              id="adminPasskeyReauthPassword"
+              type="password"
+              v-model="passkeyReauthModal.password"
+            >
+          </div>
+
+          <div v-if="isMfaEnabled">
+            <label
+              class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1"
+              for="adminPasskeyReauthTotp"
+            >
+              Hoặc mã TOTP 6 số
+            </label>
+            <input
+              autocomplete="one-time-code"
+              class="w-full min-h-11 px-3.5 py-2 rounded-2xl border-2 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 text-base font-mono tracking-widest text-surface-900 dark:text-surface-100"
+              id="adminPasskeyReauthTotp"
+              inputmode="numeric"
+              maxlength="6"
+              placeholder="123456"
+              type="text"
+              v-model.trim="passkeyReauthModal.totp"
+            >
+          </div>
+
+          <p
+            class="text-sm font-semibold text-danger-600 dark:text-danger-400"
+            v-if="passkeyReauthModal.error"
+          >
+            {{ passkeyReauthModal.error }}
+          </p>
+
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              class="min-h-11 px-4 py-2 rounded-2xl border-2 border-surface-200 dark:border-surface-700 text-sm font-bold text-surface-700 dark:text-surface-200"
+              type="button"
+              @click="closePasskeyReauthModal"
+            >
+              Huỷ
+            </button>
+            <button
+              class="min-h-11 px-5 py-2 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold font-heading disabled:opacity-50"
+              type="submit"
+              :disabled="isBusy || (!passkeyReauthModal.password.trim() && passkeyReauthModal.totp.length !== 6)"
+            >
+              {{ isBusy ? "Đang xác thực..." : "Xác nhận & Tiếp tục" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+  import { normalizeApiError } from "@mindkid/errors/client";
   import { computed, onMounted, reactive, ref } from "vue";
   import { definePageMeta, useHead } from "#imports";
   import { useAdminAuth } from "~/composables/use-admin-auth";
+  import { apiFetch } from "~/composables/use-api-client";
   import { useManagerAuthClient } from "~/composables/use-manager-auth-client";
 
   definePageMeta({
@@ -426,11 +544,45 @@
     code: "",
   });
   const mfaActionPassword = ref("");
+  const mfaActionTotp = ref("");
   const backupCodesDisplay = ref<string[]>([]);
 
   const newPasskeyName = ref("");
   const passkeys = ref<AdminPasskeyRow[]>([]);
   const sessions = ref<AdminSessionRow[]>([]);
+
+  const passkeyReauthModal = reactive<{
+    isOpen: boolean;
+    password: string;
+    totp: string;
+    error: string;
+    pendingAction:
+      | { readonly type: "add"; readonly name: string }
+      | { readonly type: "delete"; readonly id: string }
+      | null;
+  }>({
+    isOpen: false,
+    password: "",
+    totp: "",
+    error: "",
+    pendingAction: null,
+  });
+
+  function isReauthErrorPayload(
+    err: { code?: string; status?: number } | null | undefined
+  ): boolean {
+    return Boolean(
+      err && (err.code === "REAUTH_REQUIRED" || err.status === 428)
+    );
+  }
+
+  function closePasskeyReauthModal(): void {
+    passkeyReauthModal.isOpen = false;
+    passkeyReauthModal.password = "";
+    passkeyReauthModal.totp = "";
+    passkeyReauthModal.error = "";
+    passkeyReauthModal.pendingAction = null;
+  }
 
   function formatDate(iso: string): string {
     try {
@@ -524,55 +676,62 @@
     }
   }
 
-  async function handleDisableMfa(): Promise<void> {
-    isBusy.value = true;
-    errorBanner.value = "";
-    try {
-      const res = await authClient.twoFactor.disable({
-        password: mfaActionPassword.value,
-      });
-      if (res.error) {
-        errorBanner.value =
-          res.error.message || "Mật khẩu xác thực không chính xác.";
-        return;
-      }
-      mfaActionPassword.value = "";
-      backupCodesDisplay.value = [];
-      successBanner.value = "Đã tắt xác thực hai yếu tố.";
-      await loadAdminSecurityState();
-    } finally {
-      isBusy.value = false;
-    }
-  }
-
   async function handleRegenerateBackupCodes(): Promise<void> {
+    const totp = mfaActionTotp.value.trim();
+    if (!mfaActionPassword.value.trim() || totp.length !== 6) {
+      return;
+    }
     isBusy.value = true;
     errorBanner.value = "";
     try {
-      const res = await authClient.twoFactor.generateBackupCodes({
-        password: mfaActionPassword.value,
+      await apiFetch("/api/managers/auth/reauth", {
+        method: "POST",
+        body: {
+          password: mfaActionPassword.value,
+          totp,
+        },
       });
+      const res = await authClient.twoFactor.generateBackupCodes(
+        {
+          password: mfaActionPassword.value,
+        },
+        {
+          headers: {
+            "x-mindkid-totp": totp,
+          },
+        }
+      );
       if (res.error || !res.data) {
         errorBanner.value =
-          res.error?.message || "Mật khẩu xác thực không chính xác.";
+          res.error?.message || "Mật khẩu hoặc mã TOTP không chính xác.";
         return;
       }
       mfaActionPassword.value = "";
+      mfaActionTotp.value = "";
       backupCodesDisplay.value = res.data.backupCodes ?? [];
       successBanner.value = "Đã sinh lại 10 mã khôi phục dự phòng mới.";
+    } catch (err) {
+      errorBanner.value =
+        normalizeApiError(err).message || "Mật khẩu hoặc mã TOTP không chính xác.";
     } finally {
       isBusy.value = false;
     }
   }
 
-  async function handleAddPasskey(): Promise<void> {
+  async function executeAddPasskey(name: string): Promise<void> {
     isBusy.value = true;
     errorBanner.value = "";
     try {
-      const res = await authClient.passkey.addPasskey({
-        name: newPasskeyName.value,
-      });
+      const res = await authClient.passkey.addPasskey({ name });
       if (res.error) {
+        if (isReauthErrorPayload(res.error as { code?: string; status?: number })) {
+          passkeyReauthModal.password = "";
+          passkeyReauthModal.totp = "";
+          passkeyReauthModal.error = "";
+          passkeyReauthModal.pendingAction = { type: "add", name };
+          passkeyReauthModal.isOpen = true;
+          return;
+        }
         errorBanner.value =
           res.error.message || "Không thể đăng ký Passkey trên thiết bị này.";
         return;
@@ -588,17 +747,64 @@
     }
   }
 
+  async function handleAddPasskey(): Promise<void> {
+    if (!newPasskeyName.value) {
+      return;
+    }
+    await executeAddPasskey(newPasskeyName.value);
+  }
+
   async function handleDeletePasskey(id: string): Promise<void> {
     isBusy.value = true;
     errorBanner.value = "";
     try {
       const res = await authClient.passkey.deletePasskey({ id });
       if (res.error) {
+        if (isReauthErrorPayload(res.error as { code?: string; status?: number })) {
+          passkeyReauthModal.password = "";
+          passkeyReauthModal.totp = "";
+          passkeyReauthModal.error = "";
+          passkeyReauthModal.pendingAction = { type: "delete", id };
+          passkeyReauthModal.isOpen = true;
+          return;
+        }
         errorBanner.value = res.error.message || "Không thể xoá Passkey.";
         return;
       }
       successBanner.value = "Đã xoá Passkey quản trị.";
       await loadAdminSecurityState();
+    } finally {
+      isBusy.value = false;
+    }
+  }
+
+  async function submitPasskeyReauth(): Promise<void> {
+    const pending = passkeyReauthModal.pendingAction;
+    if (!pending) {
+      return;
+    }
+    const totp = passkeyReauthModal.totp.trim();
+    const password = passkeyReauthModal.password;
+    if (!password.trim() && totp.length !== 6) {
+      return;
+    }
+    isBusy.value = true;
+    passkeyReauthModal.error = "";
+    try {
+      await apiFetch("/api/managers/auth/reauth", {
+        method: "POST",
+        body: totp.length === 6 ? { totp } : { password },
+      });
+      closePasskeyReauthModal();
+      if (pending.type === "add") {
+        await executeAddPasskey(pending.name);
+      } else {
+        await handleDeletePasskey(pending.id);
+      }
+    } catch (err) {
+      passkeyReauthModal.error =
+        normalizeApiError(err).message ||
+        "Xác thực lại thất bại. Vui lòng kiểm tra mật khẩu hoặc mã TOTP.";
     } finally {
       isBusy.value = false;
     }

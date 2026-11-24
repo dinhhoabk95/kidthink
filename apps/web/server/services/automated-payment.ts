@@ -1,10 +1,17 @@
+import { writeAudit } from "@mindkid/audit";
 import {
-  auditLogs,
-  entitlements,
-  getOwnerDb,
-  paymentOrders,
-  paymentTransactions,
+  ACTOR_TYPE,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
+  ENTITLEMENT_STATUS_CODEC,
+  PAYMENT_ORDER_STATUS,
+  PAYMENT_ORDER_STATUS_CODEC,
+  type PaymentOrderEntity,
 } from "@mindkid/db";
+import {
+  createRepositories,
+  type MindKidRepositories,
+} from "@mindkid/db/repositories";
 import {
   OrderNotFoundError,
   ReconciliationMismatchError,
@@ -14,12 +21,15 @@ import { ValidationError } from "@mindkid/errors/common";
 import {
   type AutomatedPaymentProvider,
   type AutomatedPaymentWebhookPayload,
+  activeStackBase,
   assertPaymentOrderTransition,
   canTransitionPaymentOrderStatus,
+  computeStackedExpiryDate,
   isWebhookWithinReplayWindow,
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
-import { and, eq, inArray } from "drizzle-orm";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 /** Nguồn duy nhất được dùng cạnh bổ sung của máy trạng thái (BR-APM-08). */
 const WEBHOOK_TRANSITION = { source: "verified_gateway_webhook" } as const;
@@ -32,141 +42,135 @@ export interface ProcessWebhookResult {
   mismatchReason?: string;
 }
 
+export interface RunReconciliationWithAuditInput {
+  readonly managerId: number;
+  readonly provider: AutomatedPaymentProvider;
+  readonly records: Array<{
+    providerEventId: string;
+    orderUuid: string;
+    amountVnd: number;
+    status: string;
+    timestamp: Date;
+  }>;
+  readonly reason: string;
+  readonly ipAddress: string;
+  readonly userAgent: string;
+}
+
+function toWebhookJsonPayload(
+  payload: AutomatedPaymentWebhookPayload
+): Record<string, string | number | boolean | null> {
+  return {
+    provider: payload.provider,
+    provider_event_id: payload.provider_event_id,
+    order_uuid: payload.order_uuid,
+    amount_vnd: payload.amount_vnd,
+    status: payload.status,
+    timestamp_seconds: payload.timestamp_seconds,
+    merchant_id: payload.merchant_id,
+    mode: payload.mode,
+  };
+}
+
 async function grantOrStackEntitlements(
-  tx: Parameters<
-    Parameters<ReturnType<typeof getOwnerDb>["transaction"]>[0]
-  >[0],
+  txRepos: MindKidRepositories,
   userId: number,
   packageCode: string,
   offerCode: string,
   orderUuid: string,
   now: Date
-) {
+): Promise<void> {
   const pkgDef = PACKAGE_CATALOG[packageCode];
   if (!pkgDef) {
     throw new ValidationError(`Gói cước không hợp lệ: ${packageCode}`);
   }
   const offerDef = pkgDef.offers.find((o) => o.offer_code === offerCode);
-  const durationDays = offerDef?.duration_days ?? 365;
-  const newExpiry = new Date(
-    now.getTime() + durationDays * 24 * 60 * 60 * 1000
-  );
+  const durationDays = offerDef ? offerDef.duration_days : 365;
   const entitlementKeysToGrant = pkgDef.entitlements;
 
-  const existingRows = await tx
-    .select()
-    .from(entitlements)
-    .where(
-      and(
-        eq(entitlements.userId, userId),
-        inArray(entitlements.entitlementKey, entitlementKeysToGrant),
-        inArray(entitlements.status, ["active", "soft_unlock", "grace_period"])
-      )
-    )
-    .catch(() => [] as (typeof entitlements.$inferSelect)[]);
-
-  const existingMap = new Map<string, typeof entitlements.$inferSelect>();
-  for (const row of existingRows) {
-    if (!existingMap.has(row.entitlementKey)) {
-      existingMap.set(row.entitlementKey, row);
-    }
-  }
-
   for (const key of entitlementKeysToGrant) {
-    let existingEntitlement = existingMap.get(key);
-    if (!existingEntitlement && existingRows.length === 0) {
-      const [singleRow] = await tx
-        .select()
-        .from(entitlements)
-        .where(
-          and(
-            eq(entitlements.userId, userId),
-            eq(entitlements.entitlementKey, key),
-            inArray(entitlements.status, [
-              "active",
-              "soft_unlock",
-              "grace_period",
-            ])
-          )
-        )
-        .limit(1)
-        .catch(() => [] as (typeof entitlements.$inferSelect)[]);
-      existingEntitlement = singleRow;
-    }
+    const existingEntitlement = await txRepos.entitlements.findByUserAndKey(
+      userId,
+      key
+    );
 
-    if (
-      existingEntitlement?.expiresAt &&
-      new Date(existingEntitlement.expiresAt) > now
-    ) {
-      const currentExpiry = new Date(existingEntitlement.expiresAt);
-      const stackedExpiry = new Date(
-        currentExpiry.getTime() + durationDays * 24 * 60 * 60 * 1000
+    if (existingEntitlement) {
+      const stackBase = activeStackBase({
+        status: ENTITLEMENT_STATUS_CODEC.toLabel(existingEntitlement.status),
+        expiresAt: existingEntitlement.expiresAt,
+      });
+      const stackedExpiry = computeStackedExpiryDate(
+        stackBase,
+        durationDays,
+        0,
+        now
       );
-      await tx
-        .update(entitlements)
-        .set({
-          status: "active",
-          expiresAt: stackedExpiry,
-          sourceRef: orderUuid,
-          updatedAt: now,
-        })
-        .where(eq(entitlements.id, existingEntitlement.id));
+      await txRepos.entitlements.updateEntitlementById(existingEntitlement.id, {
+        status: ENTITLEMENT_STATUS.ACTIVE,
+        source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+        sourceRef: orderUuid,
+        grantedAt:
+          existingEntitlement.status === ENTITLEMENT_STATUS.ACTIVE
+            ? existingEntitlement.grantedAt
+            : now,
+        expiresAt: stackedExpiry,
+        updatedAt: now,
+      });
     } else {
-      await tx.insert(entitlements).values({
+      const freshExpiry = computeStackedExpiryDate(
+        undefined,
+        durationDays,
+        0,
+        now
+      );
+      await txRepos.entitlements.grantEntitlement({
         userId,
         entitlementKey: key,
-        source: "package_order",
+        source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
         sourceRef: orderUuid,
-        status: "active",
+        status: ENTITLEMENT_STATUS.ACTIVE,
         grantedAt: now,
-        expiresAt: newExpiry,
-        createdAt: now,
-        updatedAt: now,
+        expiresAt: freshExpiry,
       });
     }
   }
 }
 
 async function handleNonSuccessWebhook(
-  tx: Parameters<
-    Parameters<ReturnType<typeof getOwnerDb>["transaction"]>[0]
-  >[0],
-  order: typeof paymentOrders.$inferSelect,
+  txRepos: MindKidRepositories,
+  order: PaymentOrderEntity,
   payload: AutomatedPaymentWebhookPayload,
   now: Date
-) {
-  await tx.insert(paymentTransactions).values({
+): Promise<ProcessWebhookResult> {
+  await txRepos.recurringSubscriptions.insertTransaction({
     provider: payload.provider,
     providerEventId: payload.provider_event_id,
     orderId: order.id,
     orderUuid: payload.order_uuid,
     amountVnd: payload.amount_vnd,
     status: payload.status,
-    rawPayload: payload,
+    rawPayload: toWebhookJsonPayload(payload),
     createdAt: now,
   });
 
   const isPendingOrDraft =
-    order.status === "pending" || order.status === "draft";
+    order.status === PAYMENT_ORDER_STATUS.PENDING ||
+    order.status === PAYMENT_ORDER_STATUS.DRAFT;
   let finalOrderStatus = order.status;
   if (isPendingOrDraft) {
-    finalOrderStatus = payload.status === "cancelled" ? "cancelled" : "expired";
-  }
-
-  if (order.status === "pending" || order.status === "draft") {
-    await tx
-      .update(paymentOrders)
-      .set({
-        status: finalOrderStatus,
-        updatedAt: now,
-      })
-      .where(eq(paymentOrders.id, order.id));
+    finalOrderStatus =
+      payload.status === "cancelled"
+        ? PAYMENT_ORDER_STATUS.CANCELLED
+        : PAYMENT_ORDER_STATUS.EXPIRED;
+    await txRepos.orders.updateOrderStatus(order.id, finalOrderStatus, {
+      updatedAt: now,
+    });
   }
 
   return {
     success: true,
     orderUuid: order.uuid,
-    orderStatus: finalOrderStatus,
+    orderStatus: PAYMENT_ORDER_STATUS_CODEC.toLabel(finalOrderStatus),
     isDuplicate: false,
   };
 }
@@ -178,56 +182,55 @@ const MISMATCH_FLAGGED = Symbol("mismatch_flagged");
  * `under_review` nếu máy trạng thái cho phép, ghi audit. Không cấp quyền.
  */
 async function flagAmountMismatch(
-  tx: Parameters<
-    Parameters<ReturnType<typeof getOwnerDb>["transaction"]>[0]
-  >[0],
-  order: typeof paymentOrders.$inferSelect,
+  txRepos: MindKidRepositories,
+  order: PaymentOrderEntity,
   payload: AutomatedPaymentWebhookPayload,
   now: Date
-) {
-  await tx.insert(paymentTransactions).values({
+): Promise<void> {
+  await txRepos.recurringSubscriptions.insertTransaction({
     provider: payload.provider,
     providerEventId: payload.provider_event_id,
     orderId: order.id,
     orderUuid: payload.order_uuid,
     amountVnd: payload.amount_vnd,
     status: "mismatch",
-    rawPayload: payload,
+    rawPayload: toWebhookJsonPayload(payload),
     createdAt: now,
   });
 
+  const currentStatusLabel = PAYMENT_ORDER_STATUS_CODEC.toLabel(order.status);
   const movesToReview =
-    order.status !== "under_review" &&
+    order.status !== PAYMENT_ORDER_STATUS.UNDER_REVIEW &&
     canTransitionPaymentOrderStatus(
-      order.status,
+      currentStatusLabel,
       "under_review",
       WEBHOOK_TRANSITION
     );
   if (movesToReview) {
-    await tx
-      .update(paymentOrders)
-      .set({
-        status: "under_review",
+    await txRepos.orders.updateOrderStatus(
+      order.id,
+      PAYMENT_ORDER_STATUS.UNDER_REVIEW,
+      {
         adminNote: `Lệch số tiền từ cổng [${payload.provider}:${payload.provider_event_id}]: đơn ${order.amountVnd}, cổng báo ${payload.amount_vnd}`,
         updatedAt: now,
-      })
-      .where(eq(paymentOrders.id, order.id));
+      }
+    );
   }
 
-  await tx.insert(auditLogs).values({
-    actorType: "system",
+  await txRepos.auditLogs.insertLog({
+    actorType: ACTOR_TYPE.SYSTEM,
     actorId: null,
     action: "payment_order.mismatch_flagged",
     entityType: "payment_order",
     entityId: String(order.id),
-    beforeData: { status: order.status },
+    beforeData: { status: currentStatusLabel },
     afterData: {
       order_uuid: order.uuid,
       provider: payload.provider,
       provider_event_id: payload.provider_event_id,
       expected_amount_vnd: order.amountVnd,
       reported_amount_vnd: payload.amount_vnd,
-      status: movesToReview ? "under_review" : order.status,
+      status: movesToReview ? "under_review" : currentStatusLabel,
     },
     createdAt: now,
   });
@@ -243,7 +246,6 @@ export async function processAutomatedPaymentWebhook(
 ): Promise<ProcessWebhookResult> {
   const currentTimestampSeconds = Math.floor(now.getTime() / 1000);
 
-  // 1. Replay window check (≤ 300 seconds)
   if (
     !isWebhookWithinReplayWindow(
       payload.timestamp_seconds,
@@ -253,98 +255,83 @@ export async function processAutomatedPaymentWebhook(
     throw new WebhookReplayDetectedError();
   }
 
-  const db = getOwnerDb();
+  const repos = useOwnerRepositories();
+  let approvedUserId = 0;
 
-  const outcome = await db.transaction(
+  const outcome = await repos.orders.transaction(
     async (tx): Promise<ProcessWebhookResult | typeof MISMATCH_FLAGGED> => {
-      // 2. Check Idempotency via (provider, provider_event_id)
-      const existingTx = await tx
-        .select()
-        .from(paymentTransactions)
-        .where(
-          and(
-            eq(paymentTransactions.provider, payload.provider),
-            eq(paymentTransactions.providerEventId, payload.provider_event_id)
-          )
-        )
-        .limit(1);
+      const txRepos = createRepositories(tx);
 
-      if (existingTx.length > 0) {
-        // Duplicate delivery -> idempotent success without re-applying side effects
-        const [existingOrder] = await tx
-          .select()
-          .from(paymentOrders)
-          .where(eq(paymentOrders.uuid, payload.order_uuid))
-          .limit(1);
+      const existingTx =
+        await txRepos.recurringSubscriptions.findTransactionByProviderEvent(
+          payload.provider,
+          payload.provider_event_id
+        );
+
+      if (existingTx) {
+        const existingOrder = await txRepos.orders.findByUuid(
+          payload.order_uuid
+        );
 
         return {
           success: true,
           orderUuid: payload.order_uuid,
-          orderStatus: existingOrder?.status ?? "unknown",
+          orderStatus: existingOrder
+            ? PAYMENT_ORDER_STATUS_CODEC.toLabel(existingOrder.status)
+            : "unknown",
           isDuplicate: true,
         };
       }
 
-      // 3. Lookup Order — khoá hàng để hai webhook khác `provider_event_id`
-      // cho cùng một đơn chạy tuần tự: đơn chỉ được duyệt và cấp quyền một lần.
-      const [order] = await tx
-        .select()
-        .from(paymentOrders)
-        .where(eq(paymentOrders.uuid, payload.order_uuid))
-        .limit(1)
-        .for("update");
+      const order = await txRepos.orders.findByUuidForUpdate(
+        payload.order_uuid
+      );
 
       if (!order) {
         throw new OrderNotFoundError(payload.order_uuid);
       }
 
-      // 4. Lệch tiền chỉ tính trên tiền thực thu, tức webhook `success`
-      // (automated-payment §5, BR-APM-08). Webhook failed/cancelled không có
-      // tiền về nên không đẩy đơn sang `under_review`.
       if (
         payload.status === "success" &&
         order.amountVnd !== payload.amount_vnd
       ) {
-        await flagAmountMismatch(tx, order, payload, now);
+        await flagAmountMismatch(txRepos, order, payload, now);
         return MISMATCH_FLAGGED;
       }
 
-      // 5. If webhook status is failed or cancelled
       if (payload.status !== "success") {
-        return await handleNonSuccessWebhook(tx, order, payload, now);
+        return await handleNonSuccessWebhook(txRepos, order, payload, now);
       }
 
-      // 6. Webhook status is success -> Atomic state transition + Entitlements + Audit
-      if (order.status !== "approved") {
+      if (order.status !== PAYMENT_ORDER_STATUS.APPROVED) {
         assertPaymentOrderTransition(
-          order.status,
+          PAYMENT_ORDER_STATUS_CODEC.toLabel(order.status),
           "approved",
           WEBHOOK_TRANSITION
         );
 
-        // Transition order to approved
-        await tx
-          .update(paymentOrders)
-          .set({
-            status: "approved",
+        await txRepos.orders.updateOrderStatus(
+          order.id,
+          PAYMENT_ORDER_STATUS.APPROVED,
+          {
             reviewedAt: now,
             adminNote: `Approved via automated gateway webhook [${payload.provider}:${payload.provider_event_id}]`,
             updatedAt: now,
-          })
-          .where(eq(paymentOrders.id, order.id));
+          }
+        );
 
         await grantOrStackEntitlements(
-          tx,
+          txRepos,
           order.userId,
           order.packageCode,
           order.offerCode,
           order.uuid,
           now
         );
+        approvedUserId = order.userId;
 
-        // Write Audit Log
-        await tx.insert(auditLogs).values({
-          actorType: "system",
+        await txRepos.auditLogs.insertLog({
+          actorType: ACTOR_TYPE.SYSTEM,
           actorId: null,
           action: "payment_order.approved_webhook",
           entityType: "payment_order",
@@ -360,15 +347,14 @@ export async function processAutomatedPaymentWebhook(
         });
       }
 
-      // Insert payment_transactions record
-      await tx.insert(paymentTransactions).values({
+      await txRepos.recurringSubscriptions.insertTransaction({
         provider: payload.provider,
         providerEventId: payload.provider_event_id,
         orderId: order.id,
         orderUuid: payload.order_uuid,
         amountVnd: payload.amount_vnd,
         status: "success",
-        rawPayload: payload,
+        rawPayload: toWebhookJsonPayload(payload),
         reconciledAt: now,
         createdAt: now,
       });
@@ -382,17 +368,16 @@ export async function processAutomatedPaymentWebhook(
     }
   );
 
-  // Ném SAU khi transaction đã commit để dấu `mismatch` + `under_review` còn lại.
+  if (approvedUserId > 0) {
+    await invalidateUserEntitlementsCache(approvedUserId);
+  }
+
   if (outcome === MISMATCH_FLAGGED) {
     throw new ReconciliationMismatchError();
   }
   return outcome;
 }
 
-/**
- * Reconcile internal ledger against external provider transactions.
- * BR-APM-06: Flag mismatches, do not auto-modify amounts or blindly grant entitlements.
- */
 function normalizeTxStatus(
   status: string
 ): "success" | "cancelled" | "failed" | "other" {
@@ -409,6 +394,10 @@ function normalizeTxStatus(
   return "other";
 }
 
+/**
+ * Reconcile internal ledger against external provider transactions.
+ * BR-APM-06: Flag mismatches, do not auto-modify amounts or blindly grant entitlements.
+ */
 export async function reconcileAutomatedPayments(params: {
   provider: AutomatedPaymentProvider;
   records: Array<{
@@ -428,7 +417,7 @@ export async function reconcileAutomatedPayments(params: {
     reason: string;
   }>;
 }> {
-  const db = getOwnerDb();
+  const repos = useOwnerRepositories();
   const mismatches: Array<{
     providerEventId: string;
     orderUuid: string;
@@ -440,15 +429,10 @@ export async function reconcileAutomatedPayments(params: {
   const eventIds = params.records.map((r) => r.providerEventId).filter(Boolean);
   const existingTxs =
     eventIds.length > 0
-      ? await db
-          .select()
-          .from(paymentTransactions)
-          .where(
-            and(
-              eq(paymentTransactions.provider, params.provider),
-              inArray(paymentTransactions.providerEventId, eventIds)
-            )
-          )
+      ? await repos.recurringSubscriptions.listTransactionsByProviderEvents(
+          params.provider,
+          eventIds
+        )
       : [];
 
   const txMap = new Map(existingTxs.map((tx) => [tx.providerEventId, tx]));
@@ -494,5 +478,95 @@ export async function reconcileAutomatedPayments(params: {
     matchedCount,
     mismatchedCount: mismatches.length,
     mismatches,
+  };
+}
+
+export async function getAutomatedPaymentReconciliation(
+  provider: AutomatedPaymentProvider,
+  limit: number
+) {
+  const repos = useOwnerRepositories();
+  const transactions =
+    await repos.recurringSubscriptions.listTransactionsByProvider(
+      provider,
+      limit
+    );
+
+  const orderUuids = transactions.map((t) => t.orderUuid);
+  const orders = await repos.orders.listByUuids(orderUuids);
+
+  const orderAmountByUuid = new Map<string, number>();
+  for (const o of orders) {
+    orderAmountByUuid.set(o.uuid, o.amountVnd);
+  }
+
+  const report = await reconcileAutomatedPayments({
+    provider,
+    records: transactions.map((t) => ({
+      providerEventId: t.providerEventId,
+      orderUuid: t.orderUuid,
+      amountVnd: orderAmountByUuid.get(t.orderUuid) ?? t.amountVnd,
+      status: t.status,
+      timestamp: t.createdAt,
+    })),
+  });
+
+  return {
+    provider,
+    items: transactions.map((t) => ({
+      id: t.id,
+      provider: t.provider,
+      provider_event_id: t.providerEventId,
+      order_uuid: t.orderUuid,
+      amount_vnd: t.amountVnd,
+      status: t.status,
+      reconciled_at: t.reconciledAt,
+      created_at: t.createdAt,
+    })),
+    summary: {
+      total_checked: report.totalChecked,
+      matched_count: report.matchedCount,
+      mismatched_count: report.mismatchedCount,
+    },
+    mismatches: report.mismatches,
+  };
+}
+
+export async function runAutomatedPaymentReconciliation(
+  input: RunReconciliationWithAuditInput
+) {
+  const report = await reconcileAutomatedPayments({
+    provider: input.provider,
+    records: input.records,
+  });
+
+  const repos = useOwnerRepositories();
+  await repos.orders.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: input.managerId,
+      action: "data_exported",
+      reason: input.reason,
+      entity_type: "payment_reconciliation",
+      entity_id: input.provider,
+      after_data: {
+        provider: input.provider,
+        total_checked: report.totalChecked,
+        matched_count: report.matchedCount,
+        mismatched_count: report.mismatchedCount,
+        mismatches: report.mismatches,
+      },
+      ip_address: input.ipAddress,
+      user_agent: input.userAgent,
+    });
+  });
+
+  return {
+    ok: true,
+    provider: input.provider,
+    total_checked: report.totalChecked,
+    matched_count: report.matchedCount,
+    mismatched_count: report.mismatchedCount,
+    mismatches: report.mismatches,
   };
 }

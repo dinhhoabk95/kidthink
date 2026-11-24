@@ -1,46 +1,13 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <title>Lạc đà một bướu</title>
+  <title>Con lạc đà một bướu</title>
   <defs>
-    <radialGradient cx="42%" cy="28%" id="ohcGold" r="70%">
-      <stop offset="0%" stop-color="#fef08a" />
-      <stop offset="55%" stop-color="#fb923c" />
-      <stop offset="100%" stop-color="#c2410c" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="cm1Tan" r="70%"><stop offset="0%" stop-color="#fef08a" /><stop offset="55%" stop-color="#f59e0b" /><stop offset="100%" stop-color="#b45309" /></radialGradient>
   </defs>
-  <ellipse cx="62" cy="104" fill="#7c2d12" opacity="0.24" rx="38" ry="6" />
-  <path
-    d="M42 78V100M52 76V100M74 78V100M84 76V100"
-    stroke="#7c2d12"
-    stroke-linecap="round"
-    stroke-width="4.2"
-  />
-  <path
-    d="M92 66C92 56 84 54 78 52C73 30 53 30 48 52C40 54 36 64 40 76H86C90 76 92 71 92 66Z"
-    fill="url(#ohcGold)"
-    stroke="#7c2d12"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <path
-    d="M44 62C34 60 30 46 30 32C30 24 20 24 16 30C12 35 17 41 24 41C25 54 30 70 44 74"
-    fill="url(#ohcGold)"
-    stroke="#7c2d12"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <path
-    d="M55 48H71L68 62H58Z"
-    fill="#ef4444"
-    stroke="#7f1d1d"
-    stroke-linejoin="round"
-    stroke-width="3.4"
-  />
-  <circle cx="24" cy="30" fill="#1c1917" r="2.4" />
-  <path
-    d="M92 62L100 73"
-    stroke="#7c2d12"
-    stroke-linecap="round"
-    stroke-width="3.6"
-  />
+  <ellipse cx="60" cy="107" fill="#451a03" opacity="0.22" rx="38" ry="5" />
+    <path d="M48 76L46 105H52L54 76ZM79 76L78 105H84L85 76Z" fill="#92400e" stroke="#451a03" stroke-linejoin="round" stroke-width="3.2" />
+    <!-- S-neck + ONE prominent sculpted hump -->
+    <path d="M25 30C32 30 36 34 35 40C34 50 37 58 45 58C52 39 71 39 79 58C88 60 91 68 88 76C84 82 47 82 41 75C31 73 26 62 27 46L26 41C19 42 15 39 15 35C15 31 20 30 25 30Z" fill="url(#cm1Tan)" stroke="#451a03" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M89 65C95 70 96 79 93 85" stroke="#451a03" stroke-linecap="round" stroke-width="3.2" />
+    <path d="M42 76L40 106H47L49 76ZM73 76L71 106H78L80 76Z" fill="url(#cm1Tan)" stroke="#451a03" stroke-linejoin="round" stroke-width="3.5" />
+    <circle cx="23" cy="34" fill="#1c1917" r="2.2" /><circle cx="22.4" cy="33.3" fill="#ffffff" r="0.9" />
 </svg>

@@ -3,11 +3,15 @@ import fs from "node:fs";
 import * as adaptive from "@mindkid/adaptive";
 import { repoPath } from "@mindkid/config/paths";
 import {
+  ACCESS_TIER,
+  CHILD_STATUS,
+  CONTENT_ENTITY_TYPE,
   childProfiles,
   competencies,
   contentSkillMap,
   gameLevels,
   getOwnerDb,
+  PLAY_COMPLETION_STATUS,
   playSessions,
   skills,
   strands,
@@ -49,7 +53,7 @@ async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
       instruction: "Instruction",
       contentPack: {},
       difficultyParams: {},
-      accessTier: "free",
+      accessTier: ACCESS_TIER.FREE,
     })
     .returning();
 
@@ -68,7 +72,7 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         gameLevelId: glId,
         templateCode,
         guestDeviceId: "device-batch-3",
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       })
       .returning();
 
@@ -106,7 +110,7 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         gameLevelId: glId,
         templateCode,
         guestDeviceId: "device-idempotent",
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       })
       .returning();
 
@@ -144,7 +148,7 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         gameLevelId: glId,
         templateCode,
         guestDeviceId: "device-dup-seq",
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       })
       .returning();
 
@@ -176,7 +180,7 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         gameLevelId: glId,
         templateCode,
         guestDeviceId: "device-seq-order",
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       })
       .returning();
 
@@ -220,7 +224,7 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         gameLevelId: glId,
         templateCode,
         guestDeviceId: "device-intro-payload",
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       })
       .returning();
 
@@ -264,7 +268,7 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         gameLevelId: glId,
         templateCode,
         guestDeviceId: "device-terminal",
-        completionStatus: "completed",
+        completionStatus: PLAY_COMPLETION_STATUS.COMPLETED,
       })
       .returning();
 
@@ -312,7 +316,7 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         displayName: "Kid Test",
         birthYear: 2021,
         avatarId: "bear",
-        status: "active",
+        status: CHILD_STATUS.ACTIVE,
       })
       .returning();
 
@@ -384,7 +388,7 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
     await db
       .insert(contentSkillMap)
       .values({
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: glId,
         skillId,
         weight: "1.00",
@@ -397,7 +401,7 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         gameLevelId: glId,
         templateCode,
         childProfileId: child.id,
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       })
       .returning();
 
@@ -444,7 +448,9 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         .from(playSessions)
         .where(eq(playSessions.sessionUuid, uuid));
 
-      expect(updatedSession?.completionStatus).toBe("in_progress");
+      expect(updatedSession?.completionStatus).toBe(
+        PLAY_COMPLETION_STATUS.IN_PROGRESS
+      );
     } finally {
       computeSpy.mockRestore();
     }

@@ -11,6 +11,7 @@ export interface PatternUnitInventoryItem {
   readonly signature: string;
   readonly period: number;
   readonly group: string;
+  readonly vn_rhythm_example?: string;
 }
 
 export const C1_PATTERN_UNIT_INVENTORY: readonly PatternUnitInventoryItem[] = [
@@ -20,6 +21,7 @@ export const C1_PATTERN_UNIT_INVENTORY: readonly PatternUnitInventoryItem[] = [
     signature: "AB",
     period: 2,
     group: "C1.PAT.01",
+    vn_rhythm_example: "Đèn lồng đỏ – ngôi sao vàng xen kẽ",
   },
   {
     id: "pat_aab",
@@ -27,6 +29,7 @@ export const C1_PATTERN_UNIT_INVENTORY: readonly PatternUnitInventoryItem[] = [
     signature: "AAB",
     period: 3,
     group: "C1.PAT.03",
+    vn_rhythm_example: "Tùng – tùng – cắc theo nhịp trống hội",
   },
   {
     id: "pat_abb",
@@ -34,6 +37,7 @@ export const C1_PATTERN_UNIT_INVENTORY: readonly PatternUnitInventoryItem[] = [
     signature: "ABB",
     period: 3,
     group: "C1.PAT.02",
+    vn_rhythm_example: "Một bông sen hồng – hai chiếc lá xanh",
   },
   {
     id: "pat_abc",
@@ -41,6 +45,7 @@ export const C1_PATTERN_UNIT_INVENTORY: readonly PatternUnitInventoryItem[] = [
     signature: "ABC",
     period: 3,
     group: "C1.PAT.04",
+    vn_rhythm_example: "Xoài chín – chuối vàng – cam tươi nối đuôi",
   },
   {
     id: "pat_abba",
@@ -48,6 +53,7 @@ export const C1_PATTERN_UNIT_INVENTORY: readonly PatternUnitInventoryItem[] = [
     signature: "ABBA",
     period: 4,
     group: "C1.PAT.05",
+    vn_rhythm_example: "Nan chiếu đối xứng đỏ – vàng – vàng – đỏ",
   },
   {
     id: "pat_aabb",
@@ -55,5 +61,6 @@ export const C1_PATTERN_UNIT_INVENTORY: readonly PatternUnitInventoryItem[] = [
     signature: "AABB",
     period: 4,
     group: "C1.PAT.05",
+    vn_rhythm_example: "Hai cánh diều xanh – hai đám mây trắng",
   },
 ] as const;

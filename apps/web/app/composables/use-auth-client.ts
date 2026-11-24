@@ -2,7 +2,7 @@ import {
   createMindKidUserAuthClient,
   type MindKidUserAuthClient,
 } from "@mindkid/auth/client";
-import { computed, type Ref, ref } from "vue";
+import { computed } from "vue";
 import { useRequestHeaders, useRuntimeConfig, useState } from "#imports";
 
 export interface AppUserSessionIdentity {
@@ -75,27 +75,15 @@ interface RawBetterAuthSessionPayload {
   };
 }
 
-function createUserSessionState(): Ref<AppUserSessionState> {
-  const initial = (): AppUserSessionState => ({
-    user: null,
-    sessionId: null,
-    sessionToken: null,
-  });
-  try {
-    if (typeof useState === "function") {
-      return useState<AppUserSessionState>(
-        "mindkid-user-auth-session",
-        initial
-      );
-    }
-  } catch {
-    // Fallback for component tests that mock "#imports" without useState
-  }
-  return ref<AppUserSessionState>(initial());
-}
-
 export function useUserSession() {
-  const state = createUserSessionState();
+  const state = useState<AppUserSessionState>(
+    "mindkid-user-auth-session",
+    () => ({
+      user: null,
+      sessionId: null,
+      sessionToken: null,
+    })
+  );
 
   async function fetchSession(): Promise<boolean> {
     const client = useUserAuthClient();

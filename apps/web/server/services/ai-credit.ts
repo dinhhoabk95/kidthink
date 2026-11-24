@@ -5,14 +5,16 @@
 
 import { writeAudit } from "@mindkid/audit";
 import {
-  type AiCreditBalance,
-  type AiCreditLedgerEntry,
-  aiCreditBalance,
-  aiCreditLedger,
-  getDb,
-  notifications,
-  users,
+  AI_CREDIT_REASON_CODEC,
+  type AiCreditBalanceEntity,
+  type AiCreditLedgerEntity,
+  type DbExecutor,
+  RECIPIENT_TYPE,
 } from "@mindkid/db";
+import {
+  createRepositories,
+  type MindKidRepositories,
+} from "@mindkid/db/repositories";
 import { UserNotFoundError } from "@mindkid/errors/account";
 import { InsufficientCreditsError } from "@mindkid/errors/billing";
 import { ValidationError } from "@mindkid/errors/common";
@@ -22,11 +24,7 @@ import {
   type ManualGrantCreditsInput,
   MIN_MANUAL_GRANT_REASON_LENGTH,
 } from "@mindkid/shared";
-import { desc, eq, sql } from "drizzle-orm";
-
-type DbTx = Parameters<
-  Parameters<ReturnType<typeof getDb>["transaction"]>[0]
->[0];
+import { useRepositories } from "#server/utils/repositories";
 
 export interface GrantCreditsParams {
   userId: number;
@@ -39,7 +37,7 @@ export interface GrantCreditsParams {
   grantReason?: string;
   idempotencyKey?: string;
   notifyUser?: boolean;
-  tx?: DbTx;
+  tx?: DbExecutor;
 }
 
 export interface DebitCreditsParams {
@@ -49,7 +47,7 @@ export interface DebitCreditsParams {
   refType?: string;
   refId?: string;
   idempotencyKey?: string;
-  tx?: DbTx;
+  tx?: DbExecutor;
 }
 
 export interface RefundCreditsParams {
@@ -58,7 +56,7 @@ export interface RefundCreditsParams {
   debitRefId?: string;
   reason?: string;
   idempotencyKey?: string;
-  tx?: DbTx;
+  tx?: DbExecutor;
 }
 
 export interface ManualGrantParams {
@@ -69,19 +67,19 @@ export interface ManualGrantParams {
   userAgent?: string | null;
 }
 
+function getRepos(tx?: DbExecutor): MindKidRepositories {
+  return tx ? createRepositories(tx) : useRepositories();
+}
+
 /**
  * Gets credit balance info for a user (BR-ACL-01).
  */
 export async function getCreditBalance(
   userId: number,
-  tx?: DbTx
-): Promise<AiCreditBalance> {
-  const runner = tx ?? getDb();
-  const [row] = await runner
-    .select()
-    .from(aiCreditBalance)
-    .where(eq(aiCreditBalance.userId, userId))
-    .limit(1);
+  tx?: DbExecutor
+): Promise<AiCreditBalanceEntity> {
+  const repos = getRepos(tx);
+  const row = await repos.aiCredits.getBalance(userId);
 
   if (!row) {
     // Chưa có hàng ví: trả số dư rỗng, chưa ghi DB. `id: 0` là chỗ giữ chỗ cho
@@ -101,150 +99,38 @@ export async function getCreditBalance(
   return row;
 }
 
-async function findExistingByIdempotency(
-  activeTx: DbTx,
-  idempotencyKey?: string
-): Promise<AiCreditLedgerEntry | null> {
-  if (!idempotencyKey) {
-    return null;
-  }
-  const [existing] = await activeTx
-    .select()
-    .from(aiCreditLedger)
-    .where(eq(aiCreditLedger.idempotencyKey, idempotencyKey))
-    .limit(1);
-  return existing ?? null;
-}
-
-async function checkAndSendLowBalanceWarning(
-  activeTx: DbTx,
-  userId: number,
-  prevBalance: number,
-  newBalance: number,
-  totalGranted: number
-): Promise<void> {
-  const threshold = Math.max(
-    10,
-    Math.floor(totalGranted * LOW_CREDIT_WARNING_THRESHOLD_PERCENT)
-  );
-
-  if (prevBalance >= threshold && newBalance < threshold) {
-    await activeTx.insert(notifications).values({
-      recipientType: "user",
-      recipientId: userId,
-      templateCode: "ai_credits_low",
-      payload: {
-        remaining_credits: newBalance,
-        threshold,
-      },
-    });
-  }
-}
-
 /**
  * Grants AI credits to a user (append-only ledger + cache projection) (BR-ACL-01, BR-ACL-07).
  */
-async function applyCreditGrantBalance(
-  activeTx: DbTx,
-  userId: number,
-  delta: number,
-  reason: string,
-  now: Date
-): Promise<number> {
-  const [existingBal] = await activeTx
-    .select()
-    .from(aiCreditBalance)
-    .where(eq(aiCreditBalance.userId, userId))
-    .for("update");
-
-  if (existingBal) {
-    const updatedBalance = existingBal.balance + delta;
-    await activeTx
-      .update(aiCreditBalance)
-      .set({
-        balance: updatedBalance,
-        totalGranted:
-          existingBal.totalGranted + (reason === "refund" ? 0 : delta),
-        version: existingBal.version + 1,
-        updatedAt: now,
-      })
-      .where(eq(aiCreditBalance.userId, userId));
-    return updatedBalance;
-  }
-
-  await activeTx.insert(aiCreditBalance).values({
-    userId,
-    balance: delta,
-    totalGranted: delta,
-    totalUsed: 0,
-    version: 1,
-    updatedAt: now,
-  });
-  return delta;
-}
-
 export async function grantCredits(
   params: GrantCreditsParams
-): Promise<{ ledgerEntry: AiCreditLedgerEntry; balance: number }> {
-  const db = getDb();
-  const now = new Date();
+): Promise<{ ledgerEntry: AiCreditLedgerEntity; balance: number }> {
+  const repos = getRepos(params.tx);
+  const res = await repos.aiCredits.grantCreditsAtomic({
+    userId: params.userId,
+    delta: params.delta,
+    reason: AI_CREDIT_REASON_CODEC.toCode(params.reason),
+    refType: params.refType ?? null,
+    refId: params.refId ?? null,
+    feature: params.feature ?? null,
+    grantedByManagerId: params.grantedByManagerId ?? null,
+    grantReason: params.grantReason ?? null,
+    idempotencyKey: params.idempotencyKey ?? null,
+  });
 
-  const executeInTransaction = async (activeTx: DbTx) => {
-    const existing = await findExistingByIdempotency(
-      activeTx,
-      params.idempotencyKey
-    );
-    if (existing) {
-      const bal = await getCreditBalance(params.userId, activeTx);
-      return { ledgerEntry: existing, balance: bal.balance };
-    }
-
-    const updatedBalance = await applyCreditGrantBalance(
-      activeTx,
-      params.userId,
-      params.delta,
-      params.reason,
-      now
-    );
-
-    const [ledgerEntry] = await activeTx
-      .insert(aiCreditLedger)
-      .values({
-        userId: params.userId,
-        delta: params.delta,
+  if (params.notifyUser && !res.alreadyProcessed) {
+    await repos.notifications.createInAppNotification({
+      recipientType: RECIPIENT_TYPE.USER,
+      recipientId: params.userId,
+      templateCode: "ai_credits_granted",
+      payload: {
+        credits: params.delta,
         reason: params.reason,
-        refType: params.refType ?? null,
-        refId: params.refId ?? null,
-        feature: params.feature ?? null,
-        grantedByManagerId: params.grantedByManagerId ?? null,
-        grantReason: params.grantReason ?? null,
-        idempotencyKey: params.idempotencyKey ?? null,
-      })
-      .returning();
-
-    if (!ledgerEntry) {
-      throw new Error("Failed to create ledger entry");
-    }
-
-    if (params.notifyUser) {
-      await activeTx.insert(notifications).values({
-        recipientType: "user",
-        recipientId: params.userId,
-        templateCode: "ai_credits_granted",
-        payload: {
-          credits: params.delta,
-          reason: params.reason,
-        },
-      });
-    }
-
-    return { ledgerEntry, balance: updatedBalance };
-  };
-
-  if (params.tx) {
-    return await executeInTransaction(params.tx);
+      },
+    });
   }
-  return await db.transaction(executeInTransaction);
+
+  return { ledgerEntry: res.ledgerEntry, balance: res.balance };
 }
 
 /**
@@ -253,93 +139,53 @@ export async function grantCredits(
 export async function debitCredits(params: DebitCreditsParams): Promise<{
   success: boolean;
   newBalance: number;
-  ledgerEntry: AiCreditLedgerEntry;
+  ledgerEntry: AiCreditLedgerEntity;
 }> {
-  const db = getDb();
-  const now = new Date();
+  const repos = getRepos(params.tx);
+  const res = await repos.aiCredits.debitCreditsAtomic({
+    userId: params.userId,
+    cost: params.cost,
+    feature: params.feature,
+    refType: params.refType ?? null,
+    refId: params.refId ?? null,
+    idempotencyKey: params.idempotencyKey ?? null,
+  });
 
-  const executeInTransaction = async (activeTx: DbTx) => {
-    const existing = await findExistingByIdempotency(
-      activeTx,
-      params.idempotencyKey
+  if (!res.ok) {
+    throw new InsufficientCreditsError(
+      `Số dư AI credit không đủ. Bạn cần ${params.cost} credit nhưng hiện chỉ còn ${res.currentBalance} credit.`,
+      {
+        cause: {
+          required: params.cost,
+          current: res.currentBalance,
+        },
+      }
     );
-    if (existing) {
-      const bal = await getCreditBalance(params.userId, activeTx);
-      return {
-        success: true,
-        newBalance: bal.balance,
-        ledgerEntry: existing,
-      };
-    }
-
-    const [existingBal] = await activeTx
-      .select()
-      .from(aiCreditBalance)
-      .where(eq(aiCreditBalance.userId, params.userId))
-      .for("update");
-
-    const currentBalance = existingBal?.balance ?? 0;
-    if (currentBalance < params.cost) {
-      throw new InsufficientCreditsError(
-        `Số dư AI credit không đủ. Bạn cần ${params.cost} credit nhưng hiện chỉ còn ${currentBalance} credit.`,
-        {
-          cause: {
-            required: params.cost,
-            current: currentBalance,
-          },
-        }
-      );
-    }
-
-    const [ledgerEntry] = await activeTx
-      .insert(aiCreditLedger)
-      .values({
-        userId: params.userId,
-        delta: -params.cost,
-        reason: "usage",
-        feature: params.feature,
-        refType: params.refType ?? null,
-        refId: params.refId ?? null,
-        idempotencyKey: params.idempotencyKey ?? null,
-      })
-      .returning();
-
-    if (!ledgerEntry) {
-      throw new Error("Failed to create ledger entry");
-    }
-
-    const newBalance = currentBalance - params.cost;
-    const newTotalUsed = (existingBal?.totalUsed ?? 0) + params.cost;
-
-    await activeTx
-      .update(aiCreditBalance)
-      .set({
-        balance: newBalance,
-        totalUsed: newTotalUsed,
-        version: (existingBal?.version ?? 1) + 1,
-        updatedAt: now,
-      })
-      .where(eq(aiCreditBalance.userId, params.userId));
-
-    await checkAndSendLowBalanceWarning(
-      activeTx,
-      params.userId,
-      currentBalance,
-      newBalance,
-      existingBal?.totalGranted ?? 100
-    );
-
-    return {
-      success: true,
-      newBalance,
-      ledgerEntry,
-    };
-  };
-
-  if (params.tx) {
-    return await executeInTransaction(params.tx);
   }
-  return await db.transaction(executeInTransaction);
+
+  if (!res.alreadyProcessed) {
+    const threshold = Math.max(
+      10,
+      Math.floor(res.totalGranted * LOW_CREDIT_WARNING_THRESHOLD_PERCENT)
+    );
+    if (res.prevBalance >= threshold && res.newBalance < threshold) {
+      await repos.notifications.createInAppNotification({
+        recipientType: RECIPIENT_TYPE.USER,
+        recipientId: params.userId,
+        templateCode: "ai_credits_low",
+        payload: {
+          remaining_credits: res.newBalance,
+          threshold,
+        },
+      });
+    }
+  }
+
+  return {
+    success: true,
+    newBalance: res.newBalance,
+    ledgerEntry: res.ledgerEntry,
+  };
 }
 
 /**
@@ -348,73 +194,22 @@ export async function debitCredits(params: DebitCreditsParams): Promise<{
 export async function refundCredits(params: RefundCreditsParams): Promise<{
   success: boolean;
   newBalance: number;
-  ledgerEntry: AiCreditLedgerEntry;
+  ledgerEntry: AiCreditLedgerEntity;
 }> {
-  const db = getDb();
-  const now = new Date();
+  const repos = getRepos(params.tx);
+  const res = await repos.aiCredits.refundCreditsAtomic({
+    userId: params.userId,
+    cost: params.cost,
+    debitRefId: params.debitRefId ?? null,
+    reason: params.reason ?? null,
+    idempotencyKey: params.idempotencyKey ?? null,
+  });
 
-  const executeInTransaction = async (activeTx: DbTx) => {
-    const existing = await findExistingByIdempotency(
-      activeTx,
-      params.idempotencyKey
-    );
-    if (existing) {
-      const bal = await getCreditBalance(params.userId, activeTx);
-      return {
-        success: true,
-        newBalance: bal.balance,
-        ledgerEntry: existing,
-      };
-    }
-
-    const [existingBal] = await activeTx
-      .select()
-      .from(aiCreditBalance)
-      .where(eq(aiCreditBalance.userId, params.userId))
-      .for("update");
-
-    const currentBalance = existingBal?.balance ?? 0;
-    const newBalance = currentBalance + params.cost;
-    const currentTotalUsed = existingBal?.totalUsed ?? 0;
-
-    await activeTx
-      .update(aiCreditBalance)
-      .set({
-        balance: newBalance,
-        totalUsed: Math.max(0, currentTotalUsed - params.cost),
-        version: (existingBal?.version ?? 1) + 1,
-        updatedAt: now,
-      })
-      .where(eq(aiCreditBalance.userId, params.userId));
-
-    const [ledgerEntry] = await activeTx
-      .insert(aiCreditLedger)
-      .values({
-        userId: params.userId,
-        delta: params.cost,
-        reason: "refund",
-        refType: "refund",
-        refId: params.debitRefId ?? null,
-        grantReason: params.reason ?? "Hoàn trả do lỗi hệ thống AI",
-        idempotencyKey: params.idempotencyKey ?? null,
-      })
-      .returning();
-
-    if (!ledgerEntry) {
-      throw new Error("Failed to create ledger entry");
-    }
-
-    return {
-      success: true,
-      newBalance,
-      ledgerEntry,
-    };
+  return {
+    success: true,
+    newBalance: res.newBalance,
+    ledgerEntry: res.ledgerEntry,
   };
-
-  if (params.tx) {
-    return await executeInTransaction(params.tx);
-  }
-  return await db.transaction(executeInTransaction);
 }
 
 /**
@@ -426,17 +221,12 @@ export async function reconcileCreditBalance(userId: number): Promise<{
   cachedBalance: number;
   diff: number;
 }> {
-  const db = getDb();
+  const repos = useRepositories();
+  const [computedSum, balanceRow] = await Promise.all([
+    repos.aiCredits.sumLedgerDeltaForUser(userId),
+    getCreditBalance(userId),
+  ]);
 
-  const [sumRow] = await db
-    .select({
-      totalDelta: sql<number>`COALESCE(SUM(${aiCreditLedger.delta}), 0)::int`,
-    })
-    .from(aiCreditLedger)
-    .where(eq(aiCreditLedger.userId, userId));
-
-  const computedSum = sumRow?.totalDelta ?? 0;
-  const balanceRow = await getCreditBalance(userId);
   const cachedBalance = balanceRow.balance;
   const diff = computedSum - cachedBalance;
   const isMatched = diff === 0;
@@ -471,7 +261,7 @@ export async function manualGrantCredits(params: ManualGrantParams): Promise<{
   credits_granted: number;
   new_balance: number;
 }> {
-  const db = getDb();
+  const repos = useRepositories();
 
   if (
     params.input.grant_reason.trim().length < MIN_MANUAL_GRANT_REASON_LENGTH
@@ -481,17 +271,12 @@ export async function manualGrantCredits(params: ManualGrantParams): Promise<{
     );
   }
 
-  const [user] = await db
-    .select({ id: users.id, uuid: users.uuid, email: users.email })
-    .from(users)
-    .where(eq(users.uuid, params.userUuid))
-    .limit(1);
-
+  const user = await repos.users.findByUuid(params.userUuid);
   if (!user) {
     throw new UserNotFoundError(params.userUuid);
   }
 
-  const result = await db.transaction(async (tx) => {
+  const result = await repos.aiCredits.transaction(async (tx) => {
     const granted = await grantCredits({
       userId: user.id,
       delta: params.input.credits,
@@ -535,28 +320,19 @@ export async function manualGrantCredits(params: ManualGrantParams): Promise<{
 export async function listCreditTransactions(
   userId: number,
   options?: { limit?: number; offset?: number }
-): Promise<{ items: AiCreditLedgerEntry[]; total: number }> {
-  const db = getDb();
+): Promise<{ items: AiCreditLedgerEntity[]; total: number }> {
+  const repos = useRepositories();
   const limit = Math.min(Math.max(1, options?.limit ?? 20), 100);
   const offset = Math.max(0, options?.offset ?? 0);
 
-  const [items, [countRow]] = await Promise.all([
-    db
-      .select()
-      .from(aiCreditLedger)
-      .where(eq(aiCreditLedger.userId, userId))
-      .orderBy(desc(aiCreditLedger.createdAt))
-      .limit(limit)
-      .offset(offset),
-    db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(aiCreditLedger)
-      .where(eq(aiCreditLedger.userId, userId)),
-  ]);
+  const pageResult = await repos.aiCredits.listLedgerByUser(userId, {
+    limit,
+    offset,
+  });
 
   return {
-    items,
-    total: countRow?.count ?? 0,
+    items: [...pageResult.items],
+    total: pageResult.total,
   };
 }
 

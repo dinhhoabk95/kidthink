@@ -1,5 +1,8 @@
 import {
   childProfiles,
+  ENTITLEMENT_GROUP,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
@@ -92,7 +95,7 @@ describe("Adult Progress & Mastery Report API (BR-PRG-05, BR-PRG-08, D-MO)", () 
       .values({
         key: "view_basic_report",
         label: "Xem báo cáo cơ bản",
-        group: "report",
+        group: ENTITLEMENT_GROUP.REPORT,
         isMvp: true,
       })
       .onConflictDoNothing();
@@ -100,8 +103,8 @@ describe("Adult Progress & Mastery Report API (BR-PRG-05, BR-PRG-08, D-MO)", () 
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "view_basic_report",
-      status: "active",
-      source: "package_order",
+      status: ENTITLEMENT_STATUS.ACTIVE,
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
     });
 
     await invalidateUserEntitlementsCache(user.id);

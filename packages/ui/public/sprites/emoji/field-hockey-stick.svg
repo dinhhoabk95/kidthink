@@ -1,0 +1,7 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Gậy khúc côn cầu cỏ</title>
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.22" rx="30" ry="5" />
+    <path d="M84 20L46 88C40 98 24 96 26 84C28 76 36 78 36 84" fill="none" stroke="#15803d" stroke-linecap="round" stroke-linejoin="round" stroke-width="9" />
+    <path d="M84 20L46 88C40 98 24 96 26 84" fill="none" stroke="#14532d" stroke-linecap="round" stroke-width="3.6" />
+    <circle cx="74" cy="88" fill="#facc15" r="10" stroke="#78350f" stroke-width="3.6" />
+</svg>

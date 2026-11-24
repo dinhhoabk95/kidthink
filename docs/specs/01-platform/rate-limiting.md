@@ -34,8 +34,7 @@ chặn quét diện rộng. Chỉ một trục thì trục còn lại là lỗ h
 
 ## 3. Entry points
 
-Middleware trước mọi route. `packages/cache` bọc `rate-limiter-flexible` trên một singleton
-`ioredis`; app không import package nền và không tạo kết nối Valkey theo request.
+Middleware trước mọi route. `packages/cache` cung cấp giao diện giới hạn tần suất hai chế độ: trên VPS (`MINDKID_RUNTIME=vps`) bọc `rate-limiter-flexible` trên một singleton `ioredis` (Valkey 9); trên Cloudflare (`MINDKID_RUNTIME=cloudflare`) kết hợp luật chặn sớm tại biên Cloudflare WAF (5 Custom Rules) và bộ đếm nhất quán trên `AuthCoordinatorDO` / `RateLimiterDO`; app không import package nền trực tiếp.
 
 ## 4. Main flow
 

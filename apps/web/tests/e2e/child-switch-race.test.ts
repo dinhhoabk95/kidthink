@@ -1,12 +1,17 @@
 import {
+  ACCESS_TIER,
+  CONTENT_ENTITY_TYPE,
+  CURRICULUM_PROGRESS_STATUS,
   childProfiles,
   curricula,
   curriculumEnrollments,
   curriculumItemProgress,
   curriculumItems,
   curriculumWeeks,
+  ENROLLMENT_STATUS,
   gameLevels,
   getOwnerDb,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
@@ -58,7 +63,7 @@ describe("Task #82 E2E Simulation — Multi-Child Switch Race & Isolation (BR-MD
         email: `race_user_${ts}_${rand}@tinimath.test`,
         passwordHash: "hash123",
         displayName: "Race Test Parent",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     userId = u.id;
@@ -110,7 +115,7 @@ describe("Task #82 E2E Simulation — Multi-Child Switch Race & Isolation (BR-MD
         templateCode,
         difficulty: 1,
         title: "Đếm số trái cây",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         contentPack: { items: ["apple"] },
         difficultyParams: { count: 3 },
       })
@@ -122,7 +127,7 @@ describe("Task #82 E2E Simulation — Multi-Child Switch Race & Isolation (BR-MD
       .values({
         code: `CUR-RACE-A-${ts}-${rand}`.slice(0, 50),
         title: "Lộ trình tư duy mầm non 4-5 tuổi",
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         durationWeeks: 4,
         sessionsPerWeek: 3,
       })
@@ -141,7 +146,7 @@ describe("Task #82 E2E Simulation — Multi-Child Switch Race & Isolation (BR-MD
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gl.id,
         isRequired: true,
       })
@@ -152,7 +157,7 @@ describe("Task #82 E2E Simulation — Multi-Child Switch Race & Isolation (BR-MD
       .values({
         childId: childAId,
         curriculumId: currA.id,
-        status: "active",
+        status: ENROLLMENT_STATUS.ACTIVE,
       })
       .returning();
 
@@ -160,7 +165,7 @@ describe("Task #82 E2E Simulation — Multi-Child Switch Race & Isolation (BR-MD
       enrollmentId: enrA.id,
       childId: childAId,
       curriculumItemId: cItemA.id,
-      status: "completed",
+      status: CURRICULUM_PROGRESS_STATUS.COMPLETED,
       completedAt: new Date(),
     });
   });

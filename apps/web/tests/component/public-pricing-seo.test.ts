@@ -57,6 +57,7 @@ vi.mock("#imports", () => ({
   useUserSession: () => ({
     loggedIn: ref(false),
   }),
+  useState: <T>(_key: string, init: () => T) => ref(init()),
   useApi: () => vi.fn(),
   definePageMeta: vi.fn(),
 }));
@@ -82,6 +83,7 @@ vi.stubGlobal("useApi", () => vi.fn());
 vi.stubGlobal("useUserSession", () => ({
   loggedIn: ref(false),
 }));
+vi.stubGlobal("useState", <T>(_key: string, init: () => T) => ref(init()));
 vi.stubGlobal("useFetch", () =>
   Promise.resolve({
     data: ref(null),

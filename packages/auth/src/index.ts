@@ -18,6 +18,14 @@ export {
   type UserTokenPayload,
 } from "./contracts.js";
 export {
+  DB_AUTH_METHOD,
+  DB_MANAGER_ROLE,
+  DB_USER_STATUS,
+  decodeManagerRoleValue,
+  decodeUserStatusValue,
+  encodeUserStatusValue,
+} from "./enum-values.js";
+export {
   type AuthInstanceNamespace,
   deriveInstanceSecret,
 } from "./hmac-secret.js";
@@ -46,8 +54,12 @@ export {
 } from "./parent-gate.js";
 export {
   generateSecureToken,
+  getDummyPasswordHash,
   hashPassword,
+  hashPasswordPbkdf2,
   hashSecureToken,
+  needsPasswordRehash,
+  PBKDF2_ITERATIONS,
   validatePasswordStrength,
   verifyPassword,
 } from "./password.js";
@@ -79,7 +91,14 @@ export {
   SENSITIVE_REAUTH_ROUTES,
   type SensitiveRouteDefinition,
 } from "./reauth-routes.js";
-export { getAuthRedisClient, setAuthRedisClient } from "./redis-client.js";
+export {
+  type AuthCoordinatorRpcPort,
+  createDurableObjectRedisClient,
+  enterAuthCoordinatorPort,
+  getAuthRedisClient,
+  registerAuthCoordinatorPort,
+  setAuthRedisClient,
+} from "./redis-client.js";
 export {
   buildAuthSentinelKey,
   consumeSocialSignupConsentTicket,

@@ -3,15 +3,8 @@
  * Business rules: BR-AIA-01..11
  */
 
-import {
-  aiUsageLog,
-  childProfiles,
-  gameLevels,
-  getDb,
-  masteryState,
-  playSessions,
-  skills,
-} from "@mindkid/db";
+import { ACCESS_TIER_CODEC } from "@mindkid/db";
+import { EntitlementRequiredError } from "@mindkid/errors/billing";
 import { ChildNotFoundError } from "@mindkid/errors/child";
 import { ServiceUnavailableError } from "@mindkid/errors/common";
 import { ModerationBlockedError } from "@mindkid/errors/content";
@@ -23,11 +16,11 @@ import {
   allowedTiers,
   deriveAgeBand,
 } from "@mindkid/shared";
-import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
-import { debitCredits, refundCredits } from "./ai-credit.ts";
-import { validateAiReportEgress } from "./ai-egress-guard.ts";
-import { aiProvider } from "./ai-provider.ts";
+import { useRepositories } from "#server/utils/repositories";
+import { debitCredits, refundCredits } from "./ai-credit.js";
+import { validateAiReportEgress } from "./ai-egress-guard.js";
+import { aiProvider } from "./ai-provider.js";
 
 const MEDICAL_DIAGNOSIS_PATTERNS = [
   /\bchẩn đoán\b/i,
@@ -49,29 +42,38 @@ function checkMedicalDiagnosisProhibition(text: string): boolean {
   return true;
 }
 
+async function assertAiAnalysisEntitlement(userId: number): Promise<void> {
+  const activeEntitlements = await resolveUserActiveEntitlements(userId);
+  if (!activeEntitlements.includes("use_ai_analysis")) {
+    throw new EntitlementRequiredError(
+      {
+        required_entitlement: "use_ai_analysis",
+      },
+      "Tài khoản cần có gói bổ sung AI để sử dụng tính năng trợ lý AI."
+    );
+  }
+}
+
 export class AiAssistantService {
   /**
    * Helper to verify child ownership (IDOR protection, returns 404).
    */
   async getOwnedChild(userId: number, childUuid: string) {
-    const db = getDb();
-    const [child] = await db
-      .select({
-        id: childProfiles.id,
-        uuid: childProfiles.uuid,
-        birthYear: childProfiles.birthYear,
-      })
-      .from(childProfiles)
-      .where(
-        and(eq(childProfiles.uuid, childUuid), eq(childProfiles.userId, userId))
-      )
-      .limit(1);
+    const repos = useRepositories();
+    const child = await repos.childProfiles.findByUuidForUser(
+      childUuid,
+      userId
+    );
 
     if (!child) {
       throw new ChildNotFoundError(childUuid);
     }
 
-    return child;
+    return {
+      id: child.id,
+      uuid: child.uuid,
+      birthYear: child.birthYear,
+    };
   }
 
   /**
@@ -83,43 +85,20 @@ export class AiAssistantService {
     birthYear: number,
     periodDays: number
   ) {
-    const db = getDb();
+    const repos = useRepositories();
     const currentYear = new Date().getFullYear();
     const ageBand: AgeBand = deriveAgeBand(birthYear, currentYear);
     const sinceDate = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000);
 
-    // Fetch aggregate sessions & recent mastery skills in parallel
-    const [[sessionStats], masteryRows] = await Promise.all([
-      db
-        .select({
-          totalSessions: sql<number>`count(*)::int`,
-          totalMinutes: sql<number>`coalesce(sum(${playSessions.durationSeconds}), 0)::int / 60`,
-          completedSessions: sql<number>`coalesce(sum(case when ${playSessions.completionStatus} = 'completed' then 1 else 0 end), 0)::int`,
-        })
-        .from(playSessions)
-        .where(
-          and(
-            eq(playSessions.childProfileId, childId),
-            gte(playSessions.startedAt, sinceDate)
-          )
-        ),
-      db
-        .select({
-          skillCode: skills.code,
-          skillName: skills.name,
-          pLearn: masteryState.pLearn,
-          attempts: masteryState.attemptsTotal,
-        })
-        .from(masteryState)
-        .innerJoin(skills, eq(masteryState.skillId, skills.id))
-        .where(eq(masteryState.childProfileId, childId))
-        .limit(5),
+    const [sessionStats, masteryRows] = await Promise.all([
+      repos.playSessions.getChildAggregateSince(childId, sinceDate),
+      repos.mastery.listForChildWithSkillInfo(childId, 5),
     ]);
 
-    const sessions = sessionStats?.totalSessions ?? 0;
-    const minutes = sessionStats?.totalMinutes ?? 0;
+    const sessions = sessionStats.totalSessions;
+    const minutes = sessionStats.totalMinutes;
     const completionRate =
-      sessions > 0 ? (sessionStats?.completedSessions ?? 0) / sessions : 1.0;
+      sessions > 0 ? sessionStats.completedSessions / sessions : 1.0;
 
     const formattedSkills = masteryRows.map((m) => {
       const p = Number(m.pLearn ?? 0);
@@ -130,10 +109,10 @@ export class AiAssistantService {
         masteryLabel = "Đang phát triển";
       }
       return {
-        code: m.skillCode,
-        name: m.skillName,
+        code: m.skill.code,
+        name: m.skill.name,
         mastery_label: masteryLabel,
-        attempts: Number(m.attempts ?? 0),
+        attempts: Number(m.attemptsTotal ?? 0),
       };
     });
 
@@ -165,7 +144,8 @@ export class AiAssistantService {
    * Summarize child learning progress report (BR-AIA-01..04, BR-AIA-07..11).
    */
   async summarizeReport(userId: number, childUuid: string, periodDays = 30) {
-    const db = getDb();
+    await assertAiAnalysisEntitlement(userId);
+    const repos = useRepositories();
     const child = await this.getOwnedChild(userId, childUuid);
     const payload = await this.buildReportPayload(
       child.id,
@@ -201,7 +181,6 @@ export class AiAssistantService {
       );
     }
 
-    // Moderation & Medical Diagnosis gate (BR-AIA-04, BR-AIA-09)
     const modResult = moderateText(completion.text);
     const medicalPassed = checkMedicalDiagnosisProhibition(completion.text);
 
@@ -214,7 +193,7 @@ export class AiAssistantService {
         idempotencyKey: `refund-sum-mod:${debit.ledgerEntry.id}`,
       });
 
-      await db.insert(aiUsageLog).values({
+      await repos.aiCredits.insertUsageLog({
         userId,
         feature: "report_summary",
         creditsSpent: 0,
@@ -231,8 +210,7 @@ export class AiAssistantService {
       );
     }
 
-    // Usage log (BR-AIA-07, BR-AIA-11)
-    await db.insert(aiUsageLog).values({
+    await repos.aiCredits.insertUsageLog({
       userId,
       feature: "report_summary",
       creditsSpent: 1,
@@ -256,7 +234,8 @@ export class AiAssistantService {
    * Explain child learning report in plain language for parents (BR-AIA-01..04, BR-AIA-07..11).
    */
   async explainReport(userId: number, childUuid: string, periodDays = 30) {
-    const db = getDb();
+    await assertAiAnalysisEntitlement(userId);
+    const repos = useRepositories();
     const child = await this.getOwnedChild(userId, childUuid);
     const payload = await this.buildReportPayload(
       child.id,
@@ -304,7 +283,7 @@ export class AiAssistantService {
         idempotencyKey: `refund-exp-mod:${debit.ledgerEntry.id}`,
       });
 
-      await db.insert(aiUsageLog).values({
+      await repos.aiCredits.insertUsageLog({
         userId,
         feature: "report_explanation",
         creditsSpent: 0,
@@ -321,7 +300,7 @@ export class AiAssistantService {
       );
     }
 
-    await db.insert(aiUsageLog).values({
+    await repos.aiCredits.insertUsageLog({
       userId,
       feature: "report_explanation",
       creditsSpent: 1,
@@ -354,7 +333,8 @@ export class AiAssistantService {
       limit?: number;
     } = {}
   ) {
-    const db = getDb();
+    await assertAiAnalysisEntitlement(userId);
+    const repos = useRepositories();
     if (options.childUuid) {
       await this.getOwnedChild(userId, options.childUuid);
     }
@@ -379,27 +359,24 @@ export class AiAssistantService {
       activeKeys
     );
 
-    const levels = await db
-      .select({
-        code: gameLevels.code,
-        title: gameLevels.title,
-        thumbnailEmoji: gameLevels.thumbnailEmoji,
-        accessTier: gameLevels.accessTier,
-      })
-      .from(gameLevels)
-      .orderBy(desc(gameLevels.id))
-      .limit(safeLimit);
+    const allLevels = await repos.gameLevels.listPublished({ limit: 500 });
+    const levels = [...allLevels]
+      .sort((a, b) => b.id - a.id)
+      .slice(0, safeLimit);
 
-    const suggestions = levels.map((lvl) => ({
-      code: lvl.code,
-      title: lvl.title,
-      type: "game",
-      thumbnail_emoji: lvl.thumbnailEmoji ?? "🎮",
-      access_tier: lvl.accessTier,
-      locked: !allowed.includes(lvl.accessTier as AccessTier),
-    }));
+    const suggestions = levels.map((lvl) => {
+      const accessTier = ACCESS_TIER_CODEC.toLabel(lvl.accessTier);
+      return {
+        code: lvl.code,
+        title: lvl.title,
+        type: "game",
+        thumbnail_emoji: lvl.thumbnailEmoji ?? "🎮",
+        access_tier: accessTier,
+        locked: !allowed.includes(accessTier as AccessTier),
+      };
+    });
 
-    await db.insert(aiUsageLog).values({
+    await repos.aiCredits.insertUsageLog({
       userId,
       feature: "content_recommendation",
       creditsSpent: 1,
@@ -427,7 +404,8 @@ export class AiAssistantService {
     guideText: string,
     targetAudience: "home" | "class" = "home"
   ) {
-    const db = getDb();
+    await assertAiAnalysisEntitlement(userId);
+    const repos = useRepositories();
     const idempotencyKey = `rew-gd:${userId}:${Date.now()}`;
     const debit = await debitCredits({
       userId,
@@ -468,7 +446,7 @@ export class AiAssistantService {
         idempotencyKey: `refund-rew-mod:${debit.ledgerEntry.id}`,
       });
 
-      await db.insert(aiUsageLog).values({
+      await repos.aiCredits.insertUsageLog({
         userId,
         feature: "instruction_rewrite",
         creditsSpent: 0,
@@ -485,7 +463,7 @@ export class AiAssistantService {
       );
     }
 
-    await db.insert(aiUsageLog).values({
+    await repos.aiCredits.insertUsageLog({
       userId,
       feature: "instruction_rewrite",
       creditsSpent: 2,

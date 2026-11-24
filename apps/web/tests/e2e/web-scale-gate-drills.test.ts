@@ -1,14 +1,20 @@
 import {
+  ACCESS_TIER,
+  ACTOR_TYPE,
   auditLogs,
+  CHILD_STATUS,
+  CONTENT_ENTITY_TYPE,
   childProfiles,
   curricula,
   curriculumItems,
   gameLevels,
   getOwnerDb,
+  PLAY_COMPLETION_STATUS,
   playSessions,
   telemetryEvents,
   users,
 } from "@mindkid/db";
+import { TierLockedError } from "@mindkid/errors/billing";
 import {
   AutomatedPaymentWebhookPayloadSchema,
   canCancelRecurringSubscription,
@@ -56,7 +62,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
         birthYear: 2021,
         birthMonth: 5,
         avatarId: "dog",
-        status: "active",
+        status: CHILD_STATUS.ACTIVE,
       })
       .returning({ id: childProfiles.id });
     testChildProfileId = child?.id ?? 0;
@@ -83,7 +89,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
         code: glCode,
         title: "Game Level Scale",
         difficulty: 1,
-        accessTier: "standard",
+        accessTier: ACCESS_TIER.STANDARD,
         contentPack: { items: [{ id: 1, name: "Apple" }] },
         difficultyParams: { count: 3 },
         templateCode,
@@ -199,7 +205,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
         .values({
           code: curriculumCode,
           title: "Chương trình Web Scale",
-          accessTier: "standard",
+          accessTier: ACCESS_TIER.STANDARD,
           durationWeeks: 1,
         })
         .returning({ id: curricula.id });
@@ -210,12 +216,17 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: gameLevelId,
       });
 
       const manifest = await generateOfflineCurriculumPackManifest(
-        { userId: testUserId, ip: "127.0.0.1", userAgent: "Vitest Drill" },
+        {
+          userId: testUserId,
+          entitlements: ["play_standard_games"],
+          ip: "127.0.0.1",
+          userAgent: "Vitest Drill",
+        },
         curriculumCode,
         1
       );
@@ -232,6 +243,46 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
       expect(OFFLINE_PACK_MAX_LEASE_DAYS).toBe(7);
     });
 
+    it("rejects offline curriculum pack manifest for STANDARD tier with TierLockedError when user lacks entitlement", async () => {
+      const curriculumCode =
+        `CUR-WL-${Date.now()}-${Math.floor(Math.random() * 8999 + 1000)}`.slice(
+          0,
+          50
+        );
+      const [curr] = await db
+        .insert(curricula)
+        .values({
+          code: curriculumCode,
+          title: "Chương trình Standard Khóa",
+          accessTier: ACCESS_TIER.STANDARD,
+          durationWeeks: 1,
+        })
+        .returning({ id: curricula.id });
+
+      const currId = curr?.id ?? 0;
+      await db.insert(curriculumItems).values({
+        curriculumId: currId,
+        weekNo: 1,
+        sessionNo: 1,
+        position: 1,
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
+        entityId: gameLevelId,
+      });
+
+      await expect(
+        generateOfflineCurriculumPackManifest(
+          { userId: testUserId, ip: "127.0.0.1", userAgent: "Vitest Drill" },
+          curriculumCode,
+          1
+        )
+      ).rejects.toSatisfy(
+        (err: object) =>
+          err instanceof TierLockedError &&
+          err.status === 403 &&
+          err.code === "TIER_LOCKED"
+      );
+    });
+
     it("syncs offline telemetry events idempotently and handles child profile isolation", async () => {
       const sessionUuid = crypto.randomUUID();
 
@@ -242,7 +293,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
         gameLevelId,
         templateCode,
         startedAt: new Date(),
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       });
 
       const events = [
@@ -288,7 +339,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
         gameLevelId,
         templateCode,
         startedAt: new Date(),
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       });
 
       await syncOfflinePlayEvents(
@@ -310,7 +361,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
 
       expect(logs.length).toBeGreaterThan(0);
       for (const log of logs) {
-        expect(log.actorType).toBe("user");
+        expect(log.actorType).toBe(ACTOR_TYPE.USER);
         expect(log.createdAt).toBeInstanceOf(Date);
       }
     });

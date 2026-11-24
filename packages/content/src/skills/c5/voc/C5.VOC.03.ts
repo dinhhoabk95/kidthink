@@ -237,5 +237,20 @@ export const C5_VOC_03_SEED: SkillSeed = {
       theme: "weather",
       rounds: 3,
     },
+    {
+      code: "GL-C5-VOC-INTRO-6003",
+      template: "GT-000",
+      band: "4-5",
+      difficulty: 2,
+      theme: "job",
+    },
+    {
+      code: "GL-C5-VOC-TAP-6004",
+      template: "GT-001",
+      band: "4-5",
+      difficulty: 2,
+      theme: "job",
+      rounds: 3,
+    },
   ],
 };

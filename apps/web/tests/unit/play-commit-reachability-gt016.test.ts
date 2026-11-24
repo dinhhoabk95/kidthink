@@ -66,12 +66,12 @@ function makeRunner(): RoundRunner {
     ],
     ageBand: "5-6",
     layoutSeed: 1,
-    sessionFactory: (contentPack, difficultyParams, roundSeed) =>
+    sessionFactory: (contentPack, difficultyParams) =>
       createGameSessionSync("GT-016", {
         ...GT016_ENGINE_CONFIG,
         content_pack: contentPack,
         difficulty_params: difficultyParams,
-        layout_seed: roundSeed,
+        layout_seed: 0,
       }),
     onPlayNarration: () => undefined,
   });
@@ -148,11 +148,14 @@ function tapAt(
   } as PointerEvent);
 }
 
-/** Chạm hai lần cùng điểm: tap không bao giờ nộp giờ ở `mode = set`. */
+/** Chạm hai lần cùng điểm: tap mặt đồng hồ chỉ xoay kim chứ không nộp giờ ở `mode = set`. */
 function sweepAllCanvas(
   gesture: ReturnType<typeof usePlayGesture>,
   session: GameSession
 ): void {
+  const clockSession = session as GameSession & {
+    setHour?: (hour: number) => void;
+  };
   for (
     let y = 0;
     y <= LOGIC_H && !session.checkWinCondition();
@@ -163,6 +166,7 @@ function sweepAllCanvas(
       x <= LOGIC_W && !session.checkWinCondition();
       x += SWEEP_STEP_PX
     ) {
+      clockSession.setHour?.(4);
       tapAt(gesture, x, y, 10);
       if (!session.checkWinCondition()) {
         tapAt(gesture, x, y, 40);

@@ -1,9 +1,7 @@
-import { getOwnerDb, users } from "@mindkid/db";
-import { NotFoundError, ValidationError } from "@mindkid/errors/common";
-import { eq } from "drizzle-orm";
+import { ValidationError } from "@mindkid/errors/common";
 import { defineEventHandler } from "h3";
 import { z } from "zod";
-
+import { updateUserProfile } from "#server/services/identity-service";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { readBodyWithLimit } from "#server/utils/request-body";
 
@@ -18,27 +16,10 @@ export default defineEventHandler(async (event) => {
   const userId = Number(userSession.user_id);
 
   const rawBody = await readBodyWithLimit(event);
-
   const parsed = ProfileUpdateSchema.safeParse(rawBody);
   if (!parsed.success) {
     throw new ValidationError("Tên hiển thị không hợp lệ (1–60 ký tự).");
   }
 
-  const db = getOwnerDb();
-  const [updated] = await db
-    .update(users)
-    .set({
-      displayName: parsed.data.display_name,
-      updatedAt: new Date(),
-    })
-    .where(eq(users.id, userId))
-    .returning();
-
-  if (!updated) {
-    throw new NotFoundError("NOT_FOUND");
-  }
-
-  return {
-    display_name: updated.displayName,
-  };
+  return await updateUserProfile(userId, parsed.data.display_name);
 });

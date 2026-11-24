@@ -18,6 +18,7 @@
     "@mindkid/errors": "workspace:*",
     "@mindkid/game-engine": "workspace:*",
     "@mindkid/shared": "workspace:*",
+    "@mindkid/storage": "workspace:*",
     "@mindkid/taxonomy": "workspace:*",
     "drizzle-orm": "1.0.0-rc.5",
     "postgres": "^4.1.1",
@@ -29,7 +30,11 @@
   },
   "scripts": {
     "test": "vitest run",
-    "seed:all": "tsx src/cli/seed-all.ts"
+    "seed:all": "tsx src/cli/seed-all.ts",
+    "voice:audition": "tsx src/cli/voice-audition.ts",
+    "voice:extract": "tsx src/cli/voice-extract.ts",
+    "voice:generate": "tsx src/cli/voice-generate.ts",
+    "voice:verify": "tsx src/cli/voice-verify.ts"
   },
   "imports": {
     "#src/*": "./src/*.ts",

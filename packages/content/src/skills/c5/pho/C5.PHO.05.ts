@@ -264,5 +264,20 @@ export const C5_PHO_05_SEED: SkillSeed = {
       theme: "home",
       rounds: 3,
     },
+    {
+      code: "GL-C5-PHO-INTRO-6005",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 3,
+      theme: "festival",
+    },
+    {
+      code: "GL-C5-PHO-TAP-6006",
+      template: "GT-001",
+      band: "5-6",
+      difficulty: 3,
+      theme: "homeland",
+      rounds: 3,
+    },
   ],
 };

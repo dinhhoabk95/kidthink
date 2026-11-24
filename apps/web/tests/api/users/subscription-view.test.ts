@@ -1,9 +1,13 @@
 import {
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
+  PAYMENT_ORDER_STATUS,
   packages,
   paymentOrders,
+  RECURRING_SUBSCRIPTION_STATUS,
   recurringSubscriptions,
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
@@ -76,7 +80,7 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
       packageCode: "PKG-premium",
       offerCode: "annual",
       amountVnd: 490_000,
-      status: "approved",
+      status: PAYMENT_ORDER_STATUS.APPROVED,
     });
 
     const eventA = mockUserEvent(userA.id);
@@ -103,8 +107,8 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "play_standard_games",
-      source: "package_order",
-      status: "active",
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
+      status: ENTITLEMENT_STATUS.ACTIVE,
       expiresAt: futureExpiry,
     });
 
@@ -112,8 +116,8 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
     await db.insert(entitlements).values({
       userId: user.id,
       entitlementKey: "create_custom_curriculum",
-      source: "manual_grant",
-      status: "active",
+      source: ENTITLEMENT_SOURCE.MANUAL_GRANT,
+      status: ENTITLEMENT_STATUS.ACTIVE,
       expiresAt: futureExpiry,
       grantReason: "Cấp quyền đối tác nội bộ 60 ngày.",
     });
@@ -170,7 +174,7 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
       packageCode: "PKG-standard",
       offerCode: "annual",
       amountVnd: 299_000,
-      status: "approved",
+      status: PAYMENT_ORDER_STATUS.APPROVED,
     });
 
     // Rejected order with internal admin note
@@ -179,7 +183,7 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
       packageCode: "PKG-premium",
       offerCode: "annual",
       amountVnd: 490_000,
-      status: "rejected",
+      status: PAYMENT_ORDER_STATUS.REJECTED,
       adminNote: JSON.stringify({
         internal_fraud_flag: true,
         secret_manager_comment: "Nghi vấn làm giả sao kê ngân hàng VCB.",
@@ -245,7 +249,7 @@ describe("Task 6 — User Subscription View Suite (BR-SBV-01..07, D-JQ)", () => 
       billingPeriod: "monthly",
       priceVnd: 49_000,
       autoRenew: true,
-      status: "active",
+      status: RECURRING_SUBSCRIPTION_STATUS.ACTIVE,
       currentPeriodStart: now,
       currentPeriodEnd: periodEnd,
       nextBillingAt: periodEnd,

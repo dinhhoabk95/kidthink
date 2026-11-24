@@ -148,7 +148,7 @@
                   :class="[
                     'w-5 h-5',
                     s <= game.best_stars
-                      ? 'text-amber-400 fill-amber-400'
+                      ? 'text-warning-400 fill-warning-400'
                       : 'text-surface-200'
                   ]"
                 />

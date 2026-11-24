@@ -396,8 +396,8 @@
       </div>
     </main>
 
-    <PublicFooter />
-    <CookieNoticeBanner />
+    <LazyPublicFooter hydrate-on-visible />
+    <LazyCookieNoticeBanner hydrate-on-idle />
   </div>
 </template>
 
@@ -414,10 +414,7 @@
   } from "@mindkid/shared/client";
   import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, onMounted, ref } from "vue";
-  import { useRoute } from "vue-router";
-  import { definePageMeta, useFetch, useUserSession } from "#imports";
-  import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
-  import PublicFooter from "~/components/public-footer.vue";
+  import { definePageMeta, useFetch, useRoute, useUserSession } from "#imports";
   import PublicNavbar from "~/components/public-navbar.vue";
   import { useApi } from "~/composables/use-api";
   import {
@@ -429,6 +426,7 @@
     type UserAccessContext,
     useGameDetailSeo,
   } from "~/composables/use-game-detail-seo";
+  import { trimGameDetailPayload } from "~/utils/seo-payload";
 
   definePageMeta({ layout: false });
 
@@ -451,7 +449,10 @@
   });
 
   const { data: gameData, error } = await useFetch<GameDetailResponse>(
-    () => `/api/guest/levels/${code.value}`
+    () => `/api/guest/levels/${code.value}`,
+    {
+      transform: trimGameDetailPayload,
+    }
   );
 
   const hasError = computed(() => Boolean(error.value));

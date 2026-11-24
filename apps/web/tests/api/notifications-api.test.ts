@@ -1,8 +1,10 @@
 import {
   getOwnerDb,
+  NOTIFICATION_ENDPOINT_STATUS,
   notificationEndpoints,
   notificationReads,
   notifications,
+  RECIPIENT_TYPE,
   users,
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
@@ -111,7 +113,7 @@ describe("Notification Inbox & Endpoints API Integration Tests", () => {
       const [n1] = await db
         .insert(notifications)
         .values({
-          recipientType: "user",
+          recipientType: RECIPIENT_TYPE.USER,
           recipientId: userId,
           templateCode: `${tag}_1`,
           payload: {
@@ -125,7 +127,7 @@ describe("Notification Inbox & Endpoints API Integration Tests", () => {
       const [n2] = await db
         .insert(notifications)
         .values({
-          recipientType: "user",
+          recipientType: RECIPIENT_TYPE.USER,
           recipientId: userId,
           templateCode: `${tag}_2`,
           payload: {
@@ -175,7 +177,7 @@ describe("Notification Inbox & Endpoints API Integration Tests", () => {
       const [n] = await db
         .insert(notifications)
         .values({
-          recipientType: "user",
+          recipientType: RECIPIENT_TYPE.USER,
           recipientId: ownerUserId,
           templateCode: "CROSS_USER_TEST",
           payload: { title: "Private", body: "Private info" },
@@ -218,7 +220,7 @@ describe("Notification Inbox & Endpoints API Integration Tests", () => {
       const [n] = await db
         .insert(notifications)
         .values({
-          recipientType: "user",
+          recipientType: RECIPIENT_TYPE.USER,
           recipientId: userId,
           templateCode: "READ_ALL_TEST",
           payload: { title: "Title", body: "Body" },
@@ -292,7 +294,7 @@ describe("Notification Inbox & Endpoints API Integration Tests", () => {
         .from(notificationEndpoints)
         .where(eq(notificationEndpoints.uuid, response.uuid));
 
-      expect(revokedEndpoint.status).toBe("revoked");
+      expect(revokedEndpoint.status).toBe(NOTIFICATION_ENDPOINT_STATUS.REVOKED);
 
       await db
         .delete(notificationEndpoints)

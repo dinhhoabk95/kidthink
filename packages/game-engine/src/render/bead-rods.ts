@@ -3,7 +3,6 @@ import { designTokens } from "#src/systems/designTokens";
 import type { SceneBox } from "./types.js";
 
 // ── Bàn tính Rekenrek Montessori (BR-NRL-07 / T4.5 / T4.6) ─────────────
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Rekenrek dual-row Montessori bead renderer
 export function drawRekenrek(
   ctx: CanvasRenderingContext2D,
   box: SceneBox,
@@ -116,7 +115,6 @@ export function drawRekenrek(
 }
 
 // ── Thanh số Montessori Number Rod (BR-NRL-05 / T4.7) ─────────────────
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Montessori number rod multi-segment renderer
 export function drawNumberRod(
   ctx: CanvasRenderingContext2D,
   box: SceneBox,

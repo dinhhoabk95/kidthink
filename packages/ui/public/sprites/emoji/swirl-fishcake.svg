@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Khoanh chả cá xoắn</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="swfWhite" r="70%"><stop offset="0%" stop-color="#ffffff" /><stop offset="55%" stop-color="#f8fafc" /><stop offset="100%" stop-color="#e2e8f0" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#475569" opacity="0.22" rx="34" ry="5" />
+    <path d="M60 20L67 25L76 23L80 31L89 33L89 42L96 48L93 57L97 65L90 72L90 81L81 84L77 92L68 91L60 96L52 91L43 92L39 84L30 81L30 72L23 65L27 57L24 48L31 42L31 33L40 31L44 23L53 25Z" fill="url(#swfWhite)" stroke="#475569" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M60 58C60 52 68 52 68 60C68 70 50 72 48 58C46 42 74 38 78 58" fill="none" stroke="#be185d" stroke-linecap="round" stroke-width="5" />
+</svg>

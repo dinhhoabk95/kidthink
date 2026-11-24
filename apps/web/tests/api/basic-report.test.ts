@@ -6,6 +6,9 @@ import { validateReportLanguage } from "@mindkid/adaptive";
 import {
   childProfiles,
   type contentSkillMap,
+  ENTITLEMENT_GROUP,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   type gameLevels,
@@ -517,7 +520,7 @@ describe("Basic Child Report API — GET /api/users/children/[uuid]/reports/basi
         .values({
           key: "view_advanced_report",
           label: "Xem báo cáo nâng cao",
-          group: "report",
+          group: ENTITLEMENT_GROUP.REPORT,
           isMvp: true,
         })
         .onConflictDoNothing();
@@ -525,8 +528,8 @@ describe("Basic Child Report API — GET /api/users/children/[uuid]/reports/basi
       await db.insert(entitlements).values({
         userId: user.id,
         entitlementKey: "view_advanced_report",
-        status: "active",
-        source: "package_order",
+        status: ENTITLEMENT_STATUS.ACTIVE,
+        source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
       });
       await invalidateUserEntitlementsCache(user.id);
 

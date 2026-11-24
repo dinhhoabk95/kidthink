@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bánh gói lá chuối</title>
+  <defs>
+    <linearGradient id="blLeaf" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#86efac" /><stop offset="100%" stop-color="#15803d" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#14532d" opacity="0.22" rx="38" ry="5.5" />
+    <rect fill="url(#blLeaf)" height="48" rx="14" stroke="#14532d" stroke-width="3.8" transform="rotate(-12 60 62)" width="78" x="21" y="38" />
+    <path d="M26 56L92 42M29 72L95 58" stroke="#166534" stroke-linecap="round" stroke-width="2.6" />
+    <path d="M44 38L53 84M68 33L77 79" stroke="#78350f" stroke-linecap="round" stroke-width="4.6" />
+    <path d="M44 38L53 84M68 33L77 79" stroke="#fef3c7" stroke-linecap="round" stroke-width="2.4" />
+</svg>

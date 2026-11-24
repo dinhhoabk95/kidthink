@@ -1,0 +1,6 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Tàu lượn công viên</title>
+  <path d="M24 98V54M48 98V36M72 98V62M96 98V42" stroke="#475569" stroke-width="3.5" />
+    <path d="M12 76C26 76 34 32 50 32C66 32 66 64 80 64C92 64 98 38 108 38" fill="none" stroke="#1e293b" stroke-linecap="round" stroke-width="5" />
+    <rect fill="#ef4444" height="14" rx="4" stroke="#7f1d1d" stroke-width="3.4" transform="rotate(-24 38 42)" width="22" x="27" y="35" />
+</svg>

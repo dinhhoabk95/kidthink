@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Bàn xoay chỉnh âm</title>
+  <defs>
+    <linearGradient id="mckPanel" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#e2e8f0" /><stop offset="100%" stop-color="#94a3b8" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="105" fill="#1e293b" opacity="0.22" rx="38" ry="5" />
+    <rect fill="url(#mckPanel)" height="76" rx="12" stroke="#1e293b" stroke-width="3.8" width="76" x="22" y="22" />
+    <circle cx="44" cy="44" fill="#334155" r="11" stroke="#1e293b" stroke-width="3.2" /><circle cx="76" cy="44" fill="#334155" r="11" stroke="#1e293b" stroke-width="3.2" />
+    <circle cx="44" cy="76" fill="#334155" r="11" stroke="#1e293b" stroke-width="3.2" /><circle cx="76" cy="76" fill="#334155" r="11" stroke="#1e293b" stroke-width="3.2" />
+    <path d="M44 44L38 38M76 44L82 38M44 76L44 67M76 76L84 76" stroke="#38bdf8" stroke-linecap="round" stroke-width="3" />
+</svg>

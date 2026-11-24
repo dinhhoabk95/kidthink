@@ -1,4 +1,7 @@
 import {
+  CONTENT_ENTITY_TYPE,
+  EXPORT_JOB_KIND,
+  EXPORT_JOB_STATUS,
   exportJobs,
   getOwnerDb,
   personalCurricula,
@@ -58,7 +61,7 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
         weekNo: 1,
         sessionNo: 1,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: 101,
       },
       {
@@ -66,7 +69,7 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
         weekNo: 1,
         sessionNo: 2,
         position: 1,
-        entityType: "game_level",
+        entityType: CONTENT_ENTITY_TYPE.GAME_LEVEL,
         entityId: 102,
       },
     ]);
@@ -91,7 +94,7 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       .where(eq(exportJobs.uuid, res.job_uuid));
 
     expect(jobInDb).toBeDefined();
-    expect(jobInDb?.status).toBe("queued");
+    expect(jobInDb?.status).toBe(EXPORT_JOB_STATUS.QUEUED);
     expect(jobInDb?.userId).toBe(testUserId);
     expect(jobInDb?.refId).toBe(testPlanUuid);
   });
@@ -114,9 +117,9 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
     for (let i = 0; i < MONTHLY_PDF_EXPORT_QUOTA; i++) {
       await db.insert(exportJobs).values({
         userId: testUserId,
-        kind: "curriculum_plan",
+        kind: EXPORT_JOB_KIND.CURRICULUM_PLAN,
         refId: testPlanUuid,
-        status: "done",
+        status: EXPORT_JOB_STATUS.DONE,
         pageCount: 2,
         createdAt: new Date(),
       });
@@ -177,9 +180,9 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       .insert(exportJobs)
       .values({
         userId: testUserId,
-        kind: "curriculum_plan",
+        kind: EXPORT_JOB_KIND.CURRICULUM_PLAN,
         refId: "99999999-9999-9999-9999-999999999999",
-        status: "queued",
+        status: EXPORT_JOB_STATUS.QUEUED,
       })
       .returning();
 
@@ -195,7 +198,7 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       .from(exportJobs)
       .where(eq(exportJobs.id, brokenJob.id));
 
-    expect(updatedJob?.status).toBe("failed");
+    expect(updatedJob?.status).toBe(EXPORT_JOB_STATUS.FAILED);
     expect(updatedJob?.error).toBeDefined();
 
     // Verify failed jobs do not count towards monthly quota (BR-PDF-09 / refund)
@@ -212,9 +215,9 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
       .insert(exportJobs)
       .values({
         userId: testUserId,
-        kind: "curriculum_plan",
+        kind: EXPORT_JOB_KIND.CURRICULUM_PLAN,
         refId: testPlanUuid,
-        status: "done",
+        status: EXPORT_JOB_STATUS.DONE,
         filePath: `exports/${testUserId}/expired-job.pdf`,
         pageCount: 2,
         createdAt: pastDate,

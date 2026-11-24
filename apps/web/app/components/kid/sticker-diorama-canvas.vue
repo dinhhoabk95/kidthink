@@ -8,7 +8,7 @@
       ref="stageRef"
       :class="`diorama-stage--${sceneVariant}`"
     >
-      <!-- Phong cảnh minh hoạ SVG thuần vector theo chủ đề (không chữ, không số) -->
+      <!-- Phong cảnh minh hoạ SVG thuần vector Làng Quê & Tuổi Thơ Việt (không chữ, không số) -->
       <svg
         aria-hidden="true"
         class="diorama-backdrop-svg"
@@ -23,9 +23,51 @@
           class="diorama-hill-back"
           d="M 0 240 Q 220 155, 450 230 T 800 210 L 800 360 L 0 360 Z"
         />
+        <!-- Mái ngói trường làng / nhà quê Việt Nam ở xa -->
+        <rect
+          class="diorama-village-wall"
+          height="36"
+          rx="4"
+          width="64"
+          x="560"
+          y="196"
+        />
+        <polygon
+          class="diorama-village-roof"
+          points="548,198 592,168 636,198"
+        />
         <path
           class="diorama-hill-front"
           d="M 0 275 Q 260 215, 540 270 T 800 255 L 800 360 L 0 360 Z"
+        />
+        <!-- Khóm tre làng xanh mát bên bờ đê -->
+        <path
+          class="diorama-bamboo-stalk"
+          d="M 54 340 Q 58 230, 70 130 M 82 340 Q 88 245, 104 162"
+          fill="none"
+          stroke-linecap="round"
+          stroke-width="6"
+        />
+        <path
+          class="diorama-bamboo-leaf"
+          d="M 68 158 Q 92 146, 94 162 Q 78 168, 68 158 Z M 62 204 Q 38 192, 36 208 Q 52 214, 62 204 Z M 96 192 Q 120 182, 122 196 Q 106 202, 96 192 Z"
+        />
+        <!-- Lá sen gợn sóng khi bối cảnh ao hồ / biển cả -->
+        <ellipse
+          class="diorama-lotus-pad"
+          cx="290"
+          cy="312"
+          rx="36"
+          ry="11"
+          v-if="sceneVariant === 'water'"
+        />
+        <ellipse
+          class="diorama-lotus-pad"
+          cx="510"
+          cy="326"
+          rx="44"
+          ry="13"
+          v-if="sceneVariant === 'water'"
         />
       </svg>
 
@@ -379,6 +421,31 @@
 
   .diorama-stage--warm .diorama-hill-front {
     fill: var(--color-warning-300);
+    opacity: 0.55;
+  }
+
+  .diorama-village-wall {
+    fill: var(--color-warning-100);
+    opacity: 0.85;
+  }
+
+  .diorama-village-roof {
+    fill: var(--color-cta);
+    opacity: 0.65;
+  }
+
+  .diorama-bamboo-stalk {
+    stroke: var(--color-success-600);
+    opacity: 0.55;
+  }
+
+  .diorama-bamboo-leaf {
+    fill: var(--color-brand-600);
+    opacity: 0.55;
+  }
+
+  .diorama-lotus-pad {
+    fill: var(--color-success-500);
     opacity: 0.55;
   }
 

@@ -1,0 +1,9 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Máy bay cất cánh</title>
+  <defs>
+    <linearGradient id="toaJet" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#f8fafc" /><stop offset="100%" stop-color="#cbd5e1" /></linearGradient>
+  </defs>
+  <path d="M14 98H106" stroke="#475569" stroke-linecap="round" stroke-width="5" />
+    <path d="M20 74L44 64L38 42L48 39L64 56L92 44C101 41 106 46 102 52L76 66L68 84L58 86L60 72L32 82L20 79Z" fill="url(#toaJet)" stroke="#1e293b" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M20 74L28 60L36 67" fill="#2563eb" stroke="#1e3a8a" stroke-linejoin="round" stroke-width="3.2" />
+</svg>

@@ -223,5 +223,23 @@ export const C1_ORD_06_SEED: SkillSeed = {
       theme: "weather",
       rounds: 3,
     },
+    {
+      code: "GL-C1-ORD-INTRO-6006",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 3,
+      theme: "family",
+      rounds: 3,
+      sequence_no: 61,
+    },
+    {
+      code: "GL-C1-ORD-BOND-6004",
+      template: "GT-007",
+      band: "5-6",
+      difficulty: 4,
+      theme: "weather",
+      rounds: 3,
+      sequence_no: 63,
+    },
   ],
 };

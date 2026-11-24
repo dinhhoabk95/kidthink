@@ -1,0 +1,12 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Xe lam ba bánh</title>
+  <defs>
+    <linearGradient id="tukBlue" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" stop-color="#60a5fa" /><stop offset="100%" stop-color="#1d4ed8" /></linearGradient>
+  </defs>
+  <ellipse cx="60" cy="104" fill="#1e293b" opacity="0.22" rx="40" ry="5" />
+    <path d="M28 32H88C94 32 98 37 98 44H24Z" fill="#facc15" stroke="#78350f" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M24 58L34 44H94V86H24Z" fill="url(#tukBlue)" stroke="#1e3a8a" stroke-linejoin="round" stroke-width="3.8" />
+    <rect fill="#e0f2fe" height="20" rx="4" stroke="#1e3a8a" stroke-width="3" width="22" x="34" y="48" />
+    <rect fill="#e0f2fe" height="20" rx="4" stroke="#1e3a8a" stroke-width="3" width="26" x="62" y="48" />
+    <circle cx="28" cy="90" fill="#1e293b" r="10" stroke="#475569" stroke-width="3.4" /><circle cx="82" cy="90" fill="#1e293b" r="10" stroke="#475569" stroke-width="3.4" />
+</svg>

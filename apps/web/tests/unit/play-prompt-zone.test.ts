@@ -1,9 +1,12 @@
 import {
+  type ActionResult,
   createGameSessionSync,
   type EngineConfig,
+  type EngineView,
   type GT028Content,
   type GT028Difficulty,
   preloadGameSession,
+  type Slot,
   TemplateGameSession,
 } from "@mindkid/game-engine";
 import { beforeAll, describe, expect, it } from "vitest";
@@ -83,5 +86,52 @@ describe("Task #283 N0 — shell chỉ vẽ lời dẫn khi session khai usesPro
     expect(resolveZonePromptText(session)).not.toBe(
       legacyShellPromptText(session)
     );
+  });
+
+  it("session dạy học theo bước (GT-000): ưu tiên activePrompt động của từng bước thay vì kẹt ở content.prompt tĩnh", () => {
+    interface StepPromptContent {
+      readonly prompt: string;
+    }
+    class DynamicStepPromptSession extends TemplateGameSession<
+      StepPromptContent,
+      Record<string, number>
+    > {
+      override readonly usesPromptZone = true;
+      currentStepPrompt = "Đây là quả táo đỏ";
+
+      override setupEntities(): void {
+        /* noop */
+      }
+      override validateAction(): ActionResult {
+        return { valid: true, feedback: "none" };
+      }
+      override checkWinCondition(): boolean {
+        return false;
+      }
+      protected override computeSlots(): readonly Slot[] {
+        return [];
+      }
+      override getView(): EngineView {
+        return {
+          entities: [],
+          activePrompt: this.currentStepPrompt || undefined,
+        };
+      }
+    }
+
+    const session = new DynamicStepPromptSession(
+      { prompt: "Làm quen quả táo" },
+      {}
+    );
+
+    expect(resolveZonePromptText(session)).toBe("Đây là quả táo đỏ");
+
+    session.currentStepPrompt = "Đố bé tìm quả táo đỏ ở đâu nào?";
+    expect(resolveZonePromptText(session)).toBe(
+      "Đố bé tìm quả táo đỏ ở đâu nào?"
+    );
+
+    session.currentStepPrompt = "";
+    expect(resolveZonePromptText(session)).toBe("Làm quen quả táo");
   });
 });

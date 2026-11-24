@@ -283,5 +283,12 @@ export const C3_ANA_02_SEED: SkillSeed = {
       theme: "art",
       rounds: 3,
     },
+    {
+      code: "GL-C3-ANA-INTRO-6002",
+      template: "GT-000",
+      band: "5-6",
+      difficulty: 3,
+      theme: "job",
+    },
   ],
 };

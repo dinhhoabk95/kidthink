@@ -1,28 +1,44 @@
-/**
- * Hàng dữ liệu nền suy ra từ catalog trong `@mindkid/shared`, đã đúng hình dạng
- * để `insert` bằng Drizzle.
- *
- * Tách khỏi `seed.ts` ngày 2026-09-03 (Task #208 giai đoạn 1). Lý do: `seed.ts`
- * nhập tĩnh `runSeedContent`, chuỗi đó kéo ~44.000 dòng kho nội dung vào **mọi**
- * nơi dùng `@mindkid/db`. Bốn hằng số dưới đây thì thuần — chỉ đọc catalog và
- * đổi tên trường sang `camelCase` của Drizzle — nên chúng ở lại bề mặt công khai
- * của package, còn `seed()` lui về lối vào riêng `@mindkid/db/seed`.
- *
- * `PACKAGE_CATALOG` là nguồn sự thật duy nhất cho giá và quyền lợi (`BR-PKG-01`);
- * file này ❌ NEVER khai lại giá trị nào của nó.
- */
-
 import {
   ENTITLEMENT_KEYS,
+  type Offer,
   PACKAGE_CATALOG,
+  type PackageDefinition,
   PENDING_PRICE_VND as PENDING_PRICE,
 } from "@mindkid/shared";
+import {
+  ENTITLEMENT_GROUP_CODEC,
+  type EntitlementGroupLabel,
+  PACKAGE_STATUS_CODEC,
+  type PackageStatusLabel,
+} from "#src/constants/billing-ops-enums";
+import type { JsonRecord, JsonValue } from "#src/constants/json";
 
 export const PENDING_PRICE_VND = PENDING_PRICE;
 
+function serializeOffers(offers: readonly Offer[]): JsonValue {
+  return offers.map(
+    (offer): JsonRecord => ({
+      offer_code: offer.offer_code,
+      billing_period: offer.billing_period,
+      price_vnd: offer.price_vnd,
+      duration_days: offer.duration_days,
+    })
+  );
+}
+
+function serializeQuotas(quotas: PackageDefinition["quotas"]): JsonRecord {
+  const out: Record<string, JsonValue> = {};
+  for (const [key, value] of Object.entries(quotas)) {
+    if (value !== undefined) {
+      out[key] = value;
+    }
+  }
+  return out;
+}
+
 export const SEED_ENTITLEMENT_KEYS = ENTITLEMENT_KEYS.map((item) => ({
   key: item.key,
-  group: item.group,
+  group: ENTITLEMENT_GROUP_CODEC.toCode(item.group as EntitlementGroupLabel),
   label: item.label,
   isMvp: item.is_mvp,
 }));
@@ -32,9 +48,9 @@ export const SEED_PACKAGES = Object.values(PACKAGE_CATALOG).map((pkg) => ({
   name: pkg.name,
   audience: pkg.audience,
   description: pkg.description,
-  status: pkg.status,
-  offers: pkg.offers,
-  quotas: pkg.quotas,
+  status: PACKAGE_STATUS_CODEC.toCode(pkg.status as PackageStatusLabel),
+  offers: serializeOffers(pkg.offers),
+  quotas: serializeQuotas(pkg.quotas),
   isPublic: pkg.is_public,
   isFeatured: pkg.is_featured,
 }));

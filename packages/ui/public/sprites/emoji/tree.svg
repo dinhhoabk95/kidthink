@@ -1,34 +1,12 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <title>Cây xanh</title>
   <defs>
-    <radialGradient cx="38%" cy="28%" id="treeCanopy" r="70%">
-      <stop offset="0%" stop-color="#bbf7d0" />
-      <stop offset="48%" stop-color="#22c55e" />
-      <stop offset="100%" stop-color="#15803d" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="trLeaf" r="70%"><stop offset="0%" stop-color="#86efac" /><stop offset="55%" stop-color="#22c55e" /><stop offset="100%" stop-color="#15803d" /></radialGradient>
   </defs>
-  <ellipse cx="60" cy="104" fill="#78350f" opacity="0.28" rx="34" ry="6" />
-  <path
-    d="M51 66H69L74 102H46Z"
-    fill="#b45309"
-    stroke="#78350f"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <path
-    d="M60 15C73 15 83 23 85 35C96 38 103 48 100 59C98 70 88 76 76 76H44C32 76 22 70 20 59C17 48 24 38 35 35C37 23 47 15 60 15Z"
-    fill="url(#treeCanopy)"
-    stroke="#14532d"
-    stroke-linejoin="round"
-    stroke-width="4"
-  />
-  <ellipse
-    cx="47"
-    cy="31"
-    fill="#ffffff"
-    fill-opacity="0.42"
-    rx="9"
-    ry="4"
-    transform="rotate(-20 47 31)"
-  />
+  <ellipse cx="60" cy="105" fill="#14532d" opacity="0.22" rx="38" ry="5.5" />
+    <!-- Flared roots, textured trunk & visible main branches -->
+    <path d="M42 104C48 96 51 82 51 64L42 52L47 49L55 58V48L63 48V58L72 49L77 53L68 64C68 82 71 96 78 104Z" fill="#92400e" stroke="#451a03" stroke-linejoin="round" stroke-width="3.8" />
+    <!-- Multi-clustered lush foliage canopy -->
+    <path d="M60 14C72 14 82 21 84 31C96 33 104 43 102 55C100 66 90 73 78 72C72 76 48 76 42 72C30 73 20 66 18 55C16 43 24 33 36 31C38 21 48 14 60 14Z" fill="url(#trLeaf)" stroke="#14532d" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M36 48C42 42 50 43 54 48M68 46C74 40 82 41 86 47" stroke="#bbf7d0" stroke-linecap="round" stroke-opacity="0.65" stroke-width="3" />
 </svg>

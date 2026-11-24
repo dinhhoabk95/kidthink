@@ -1,33 +1,18 @@
-import {
-  childDailyStats,
-  contentSkillMap,
-  entitlements,
-  gameLevels,
-  getOwnerDb,
-  levelDailyStats,
-  playSessions,
-  skillDailyStats,
-  telemetryEvents,
-} from "@mindkid/db";
+import { invalidateUserEntitlementsCache } from "@mindkid/cache";
+import { getOwnerDb, type OwnerDb, PLAY_COMPLETION_STATUS } from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import {
   computePausedDurationMs,
   computeSessionResult,
   getDateIct,
   type TelemetryEventInput,
 } from "@mindkid/shared";
-import { and, count, eq, gte, inArray, isNotNull, lt, sql } from "drizzle-orm";
 
 export interface RollupDailyResult {
   dateIct: string;
   childStatsCount: number;
   levelStatsCount: number;
   skillStatsCount: number;
-}
-
-function isPayloadRecord(
-  val: typeof telemetryEvents.$inferSelect.payload
-): val is NonNullable<TelemetryEventInput["payload"]> {
-  return typeof val === "object" && val !== null && !Array.isArray(val);
 }
 
 export function computeNetSessionDurationSeconds(
@@ -50,44 +35,34 @@ export function computeNetSessionDurationSeconds(
 }
 
 async function fetchSessionEventsByUuid(
-  db: ReturnType<typeof getOwnerDb>,
+  db: OwnerDb,
   sessionUuids: string[]
 ): Promise<Map<string, TelemetryEventInput[]>> {
   const EVENT_CHUNK_SIZE = 200;
+  const repos = createRepositories(db);
   const eventsBySession = new Map<string, TelemetryEventInput[]>();
+  const chunkEvents = await repos.telemetry.listBySessions(
+    sessionUuids,
+    EVENT_CHUNK_SIZE
+  );
 
-  for (let i = 0; i < sessionUuids.length; i += EVENT_CHUNK_SIZE) {
-    const chunkUuids = sessionUuids.slice(i, i + EVENT_CHUNK_SIZE);
-    const chunkEvents = await db
-      .select({
-        sessionUuid: telemetryEvents.sessionUuid,
-        seq: telemetryEvents.seq,
-        eventName: telemetryEvents.eventName,
-        occurredAtMs: telemetryEvents.occurredAtMs,
-        payload: telemetryEvents.payload,
-      })
-      .from(telemetryEvents)
-      .where(inArray(telemetryEvents.sessionUuid, chunkUuids))
-      .orderBy(telemetryEvents.seq);
-
-    for (const e of chunkEvents) {
-      const list = eventsBySession.get(e.sessionUuid) ?? [];
-      list.push({
-        sessionUuid: e.sessionUuid,
-        seq: e.seq,
-        eventName: e.eventName,
-        occurredAtMs: e.occurredAtMs,
-        payload: isPayloadRecord(e.payload) ? e.payload : null,
-      });
-      eventsBySession.set(e.sessionUuid, list);
-    }
+  for (const e of chunkEvents) {
+    const list = eventsBySession.get(e.sessionUuid) ?? [];
+    list.push({
+      sessionUuid: e.sessionUuid,
+      seq: e.seq,
+      eventName: e.eventName,
+      occurredAtMs: e.occurredAtMs,
+      payload: e.payload,
+    });
+    eventsBySession.set(e.sessionUuid, list);
   }
 
   return eventsBySession;
 }
 
 export async function rollupChildDailyStatsForWindow(
-  db: ReturnType<typeof getOwnerDb>,
+  db: OwnerDb,
   dateIct: string,
   childProfileIdFilter?: number
 ): Promise<number> {
@@ -95,31 +70,13 @@ export async function rollupChildDailyStatsForWindow(
   const endIctIso = `${dateIct}T23:59:59.999+07:00`;
   const startDate = new Date(startIctIso);
   const endDate = new Date(endIctIso);
+  const repos = createRepositories(db);
 
-  const conditions = [
-    isNotNull(playSessions.childProfileId),
-    gte(playSessions.startedAt, startDate),
-    lt(playSessions.startedAt, endDate),
-  ];
-  if (childProfileIdFilter !== undefined) {
-    conditions.push(eq(playSessions.childProfileId, childProfileIdFilter));
-  }
-
-  const sessions = await db
-    .select({
-      sessionUuid: playSessions.sessionUuid,
-      childProfileId: playSessions.childProfileId,
-      gameLevelId: playSessions.gameLevelId,
-      isPreview: playSessions.isPreview,
-      completionStatus: playSessions.completionStatus,
-      durationSeconds: playSessions.durationSeconds,
-      starsEarned: playSessions.starsEarned,
-      startedAt: playSessions.startedAt,
-      completedAt: playSessions.completedAt,
-      score: playSessions.score,
-    })
-    .from(playSessions)
-    .where(and(...conditions));
+  const sessions = await repos.playSessions.listChildSessionsInWindow(
+    startDate,
+    endDate,
+    childProfileIdFilter
+  );
 
   if (sessions.length === 0) {
     return 0;
@@ -158,7 +115,7 @@ export async function rollupChildDailyStatsForWindow(
     current.sessionsCount += 1;
     current.totalPlayTimeSeconds += netSec;
     current.levelIds.add(s.gameLevelId);
-    if (s.completionStatus === "completed") {
+    if (s.completionStatus === PLAY_COMPLETION_STATUS.COMPLETED) {
       current.levelsCompleted += 1;
     }
     current.starsEarned += s.starsEarned ?? 0;
@@ -180,26 +137,7 @@ export async function rollupChildDailyStatsForWindow(
     })
   );
 
-  const UPSERT_BATCH_SIZE = 500;
-  for (let i = 0; i < childRows.length; i += UPSERT_BATCH_SIZE) {
-    const batch = childRows.slice(i, i + UPSERT_BATCH_SIZE);
-    await db
-      .insert(childDailyStats)
-      .values(batch)
-      .onConflictDoUpdate({
-        target: [childDailyStats.childProfileId, childDailyStats.dateIct],
-        set: {
-          sessionsCount: sql`excluded.sessions_count`,
-          totalPlayTimeSeconds: sql`excluded.total_play_time_seconds`,
-          levelsAttempted: sql`excluded.levels_attempted`,
-          levelsCompleted: sql`excluded.levels_completed`,
-          starsEarned: sql`excluded.stars_earned`,
-          updatedAt: now,
-        },
-      });
-  }
-
-  return childRows.length;
+  return await repos.analyticsRollup.upsertChildDailyStatsBatch(childRows, 500);
 }
 
 /**
@@ -213,6 +151,7 @@ export async function runDailyRollup(
   targetDateIct?: string
 ): Promise<RollupDailyResult> {
   const db = getOwnerDb();
+  const repos = createRepositories(db);
   const dateIct = targetDateIct || getDateIct();
 
   // Define date window in UTC corresponding to 00:00 to 23:59:59 ICT
@@ -225,26 +164,10 @@ export async function runDailyRollup(
   const childStatsCount = await rollupChildDailyStatsForWindow(db, dateIct);
 
   // 2. Rollup level_daily_stats (by level_code, date_ict)
-  const levelAggregates = await db
-    .select({
-      levelCode: gameLevels.code,
-      playsCount: count(playSessions.id),
-      completionsCount: sql<number>`COUNT(CASE WHEN ${playSessions.completionStatus} = 'completed' THEN 1 END)::int`,
-      abandonedCount: sql<number>`COUNT(CASE WHEN ${playSessions.completionStatus} = 'abandoned' THEN 1 END)::int`,
-      avgDurationSeconds: sql<number>`COALESCE(AVG(CASE WHEN ${playSessions.completionStatus} = 'completed' THEN ${playSessions.durationSeconds} END), 0)::int`,
-    })
-    .from(playSessions)
-    .innerJoin(gameLevels, eq(playSessions.gameLevelId, gameLevels.id))
-    .where(
-      and(
-        gte(playSessions.startedAt, startDate),
-        lt(playSessions.startedAt, endDate)
-      )
-    )
-    .groupBy(gameLevels.code);
+  const levelAggregates =
+    await repos.analyticsRollup.computeLevelDailyAggregates(startDate, endDate);
 
   const now = new Date();
-  const UPSERT_BATCH_SIZE = 500;
   const levelRows = levelAggregates.map((agg) => ({
     levelCode: agg.levelCode,
     dateIct,
@@ -256,47 +179,12 @@ export async function runDailyRollup(
     updatedAt: now,
   }));
 
-  for (let i = 0; i < levelRows.length; i += UPSERT_BATCH_SIZE) {
-    const batch = levelRows.slice(i, i + UPSERT_BATCH_SIZE);
-    await db
-      .insert(levelDailyStats)
-      .values(batch)
-      .onConflictDoUpdate({
-        target: [levelDailyStats.levelCode, levelDailyStats.dateIct],
-        set: {
-          playsCount: sql`excluded.plays_count`,
-          completionsCount: sql`excluded.completions_count`,
-          abandonedCount: sql`excluded.abandoned_count`,
-          avgDurationSeconds: sql`excluded.avg_duration_seconds`,
-          updatedAt: now,
-        },
-      });
-  }
-  const levelStatsCount = levelRows.length;
+  const levelStatsCount =
+    await repos.analyticsRollup.upsertLevelDailyStatsBatch(levelRows, 500);
 
   // 3. Rollup skill_daily_stats (by skill_id, date_ict; ignoring NULL child_profile_id per BR-TLM-05)
-  const skillAggregates = await db
-    .select({
-      skillId: contentSkillMap.skillId,
-      exposureCount: count(playSessions.id),
-      completions: sql<number>`COUNT(CASE WHEN ${playSessions.completionStatus} = 'completed' THEN 1 END)::int`,
-    })
-    .from(playSessions)
-    .innerJoin(
-      contentSkillMap,
-      and(
-        eq(contentSkillMap.entityType, "game_level"),
-        eq(playSessions.gameLevelId, contentSkillMap.entityId)
-      )
-    )
-    .where(
-      and(
-        isNotNull(playSessions.childProfileId),
-        gte(playSessions.startedAt, startDate),
-        lt(playSessions.startedAt, endDate)
-      )
-    )
-    .groupBy(contentSkillMap.skillId);
+  const skillAggregates =
+    await repos.analyticsRollup.computeSkillDailyAggregates(startDate, endDate);
 
   const skillRows = skillAggregates.map((agg) => ({
     skillId: agg.skillId,
@@ -309,21 +197,8 @@ export async function runDailyRollup(
     updatedAt: now,
   }));
 
-  for (let i = 0; i < skillRows.length; i += UPSERT_BATCH_SIZE) {
-    const batch = skillRows.slice(i, i + UPSERT_BATCH_SIZE);
-    await db
-      .insert(skillDailyStats)
-      .values(batch)
-      .onConflictDoUpdate({
-        target: [skillDailyStats.skillId, skillDailyStats.dateIct],
-        set: {
-          exposureCount: sql`excluded.exposure_count`,
-          avgAccuracyPercent: sql`excluded.avg_accuracy_percent`,
-          updatedAt: now,
-        },
-      });
-  }
-  const skillStatsCount = skillRows.length;
+  const skillStatsCount =
+    await repos.analyticsRollup.upsertSkillDailyStatsBatch(skillRows, 500);
 
   return {
     dateIct,
@@ -339,24 +214,14 @@ export async function runDailyRollup(
 export async function runExpireEntitlements(
   targetDateIct?: string
 ): Promise<{ expiredCount: number }> {
-  const db = getOwnerDb();
+  const repos = createRepositories(getOwnerDb());
   const _dateIct = targetDateIct || getDateIct();
-  const now = new Date();
-
-  const updated = await db
-    .update(entitlements)
-    .set({
-      status: "expired",
-      updatedAt: now,
-    })
-    .where(
-      and(
-        eq(entitlements.status, "active"),
-        isNotNull(entitlements.expiresAt),
-        lt(entitlements.expiresAt, now)
-      )
-    )
-    .returning({ id: entitlements.id });
-
-  return { expiredCount: updated.length };
+  const expiredRows = await repos.entitlements.expireDue(new Date());
+  const distinctUserIds = Array.from(
+    new Set(expiredRows.map((row) => row.userId))
+  );
+  for (const userId of distinctUserIds) {
+    await invalidateUserEntitlementsCache(userId);
+  }
+  return { expiredCount: expiredRows.length };
 }

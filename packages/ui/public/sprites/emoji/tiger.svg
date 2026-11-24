@@ -1,84 +1,25 @@
 <svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <title>Hổ con</title>
+  <title>Con hổ</title>
   <defs>
-    <radialGradient cx="38%" cy="32%" id="tigerBody" r="68%">
-      <stop offset="0%" stop-color="#fed7aa" />
-      <stop offset="45%" stop-color="#fb923c" />
-      <stop offset="100%" stop-color="#ea580c" />
-    </radialGradient>
+    <radialGradient cx="38%" cy="30%" id="g_tiger" r="70%"><stop offset="0%" stop-color="#fed7aa" /><stop offset="55%" stop-color="#fb923c" /><stop offset="100%" stop-color="#ea580c" /></radialGradient>
   </defs>
-  <ellipse cx="60" cy="72" fill="#7c2d12" opacity="0.32" rx="40" ry="35" />
-  <circle
-    cx="32"
-    cy="34"
-    fill="url(#tigerBody)"
-    r="14"
-    stroke="#9a3412"
-    stroke-width="4"
-  />
-  <circle cx="32" cy="34" fill="#fef3c7" r="7" />
-  <circle
-    cx="88"
-    cy="34"
-    fill="url(#tigerBody)"
-    r="14"
-    stroke="#9a3412"
-    stroke-width="4"
-  />
-  <circle cx="88" cy="34" fill="#fef3c7" r="7" />
-  <ellipse
-    cx="60"
-    cy="67"
-    fill="url(#tigerBody)"
-    rx="40"
-    ry="35"
-    stroke="#9a3412"
-    stroke-width="4"
-  />
-  <path
-    d="M60 33V45M50 35L53 45M70 35L67 45M22 61H32M21 69H30M98 61H88M99 69H90"
-    stroke="#451a03"
-    stroke-linecap="round"
-    stroke-width="4.5"
-  />
-  <ellipse
-    cx="60"
-    cy="77"
-    fill="#fffbeb"
-    rx="19"
-    ry="13"
-    stroke="#9a3412"
-    stroke-width="3"
-  />
-  <ellipse
-    cx="60"
-    cy="71"
-    fill="#f43f5e"
-    rx="5.5"
-    ry="3.8"
-    stroke="#881337"
-    stroke-width="2"
-  />
-  <path
-    d="M60 75V81M52 81C55 85 58 85 60 81C62 85 65 85 68 81"
-    stroke="#451a03"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="2.8"
-  />
-  <circle cx="45" cy="59" fill="#1c1917" r="4.8" />
-  <circle cx="43.5" cy="57.2" fill="#ffffff" r="1.9" />
-  <circle cx="75" cy="59" fill="#1c1917" r="4.8" />
-  <circle cx="73.5" cy="57.2" fill="#ffffff" r="1.9" />
-  <circle cx="35" cy="73" fill="#fb7185" fill-opacity="0.45" r="5" />
-  <circle cx="85" cy="73" fill="#fb7185" fill-opacity="0.45" r="5" />
-  <ellipse
-    cx="42"
-    cy="45"
-    fill="#ffffff"
-    fill-opacity="0.38"
-    rx="7"
-    ry="3.5"
-    transform="rotate(-24 42 45)"
-  />
+  <ellipse cx="62" cy="106" fill="#7c2d12" opacity="0.22" rx="40" ry="5.5" />
+    <path d="M92 64C104 62 110 51 106 42" fill="none" stroke="#7c2d12" stroke-linecap="round" stroke-width="5" /><path d="M97 62L99 58M104 55L107 52" stroke="#1c1917" stroke-linecap="round" stroke-width="3" />
+    <!-- Far legs -->
+    <path d="M47 78L44 102H51L53 78ZM81 78L79 102H86L88 78Z" fill="#ea580c" stroke="#7c2d12" stroke-linejoin="round" stroke-width="3.4" />
+    <path d="M44 98H51V103H44ZM79 98H86V103H79Z" fill="#fed7aa" />
+    <!-- Torso & Neck -->
+    <path d="M35 54C41 54 35 52 64 52C93 52 97 64 93 74C89 84 41 84 37 72C33 64 31 64 35 54Z" fill="url(#g_tiger)" stroke="#7c2d12" stroke-linejoin="round" stroke-width="3.8" />
+    <path d="M46 79C56 85 74 85 84 79" fill="#fffbeb" opacity="0.85" />
+    <path d="M52 53L50 66M61 52L60 68M71 53L69 67M80 55L78 66" stroke="#1c1917" stroke-linecap="round" stroke-width="3.2" />
+    <!-- Near legs -->
+    <path d="M39 76L36 104H44L47 76ZM73 76L71 104H79L81 76Z" fill="url(#g_tiger)" stroke="#7c2d12" stroke-linejoin="round" stroke-width="3.6" />
+    <path d="M36 99H44V104H36ZM71 99H79V104H71Z" fill="#fed7aa" stroke="#7c2d12" stroke-linejoin="round" stroke-width="2.2" />
+    <!-- Head -->
+    <ellipse cx="29" cy="48" fill="url(#g_tiger)" rx="14" ry="12" stroke="#7c2d12" stroke-width="3.8" />
+    <ellipse cx="19" cy="52" fill="#fffbeb" rx="7.5" ry="6" stroke="#7c2d12" stroke-width="3.2" />
+    <circle cx="17" cy="51" fill="#7c2d12" r="1.8" />
+    <path d="M17 55C20 57 23 56 24 54" stroke="#7c2d12" stroke-linecap="round" stroke-width="2.2" />
+    <circle cx="27" cy="45" fill="#1c1917" r="2.7" /><circle cx="26.2" cy="44.2" fill="#ffffff" r="1" />
+    <circle cx="23" cy="36" fill="#fb923c" r="4.5" stroke="#7c2d12" stroke-width="3.2" /><circle cx="36" cy="36" fill="#fb923c" r="4.5" stroke="#7c2d12" stroke-width="3.2" /><path d="M29 37V43M35 44L40 46M35 50L40 50" stroke="#1c1917" stroke-linecap="round" stroke-width="2.4" />
 </svg>

@@ -1,15 +1,22 @@
 import {
+  ACTOR_TYPE,
   auditLogs,
   childProfiles,
+  ENTITLEMENT_SOURCE,
+  ENTITLEMENT_STATUS,
   entitlementKeys,
   entitlements,
   getOwnerDb,
+  MANAGER_ROLE,
   managers,
   notifications,
+  PAYMENT_ORDER_STATUS,
+  PAYMENT_ORDER_STATUS_CODEC,
   packages,
   paymentOrders,
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
+  USER_STATUS,
   users,
 } from "@mindkid/db";
 import {
@@ -28,6 +35,8 @@ import {
 } from "#src/services/payment-jobs";
 
 const TRANSFER_NOTE_REGEX = /^TM[0-9A-F]{8}$/;
+const UNIQUE_OPEN_ORDER_REGEX =
+  /UNIQUE constraint failed: payment_orders\.user_id, payment_orders\.package_code/;
 
 describe("Payment Flow Integration & Concurrency (P2.3)", () => {
   const db = getOwnerDb();
@@ -51,7 +60,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
       .values({
         email: `manager-payment-test-${crypto.randomUUID()}@example.com`,
         displayName: "Payment SuperAdmin",
-        role: "super_admin",
+        role: MANAGER_ROLE.SUPER_ADMIN,
         passwordHash: "hash-mock-123456",
       })
       .returning();
@@ -84,7 +93,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
         email: `user-pay-${crypto.randomUUID()}@example.com`,
         displayName: "Payment Parent",
         passwordHash: "hash-mock-user-123456",
-        status: "active",
+        status: USER_STATUS.ACTIVE,
       })
       .returning();
     if (!user) {
@@ -148,7 +157,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
         offerCode: offer.offer_code,
         amountVnd: offer.price_vnd,
         currency: "VND",
-        status: "pending",
+        status: PAYMENT_ORDER_STATUS.PENDING,
         transferNote,
         expiresAt,
       })
@@ -157,7 +166,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
       throw new Error("Failed to insert createdOrder");
     }
 
-    expect(createdOrder.status).toBe("pending");
+    expect(createdOrder.status).toBe(PAYMENT_ORDER_STATUS.PENDING);
     expect(createdOrder.amountVnd).toBe(offer.price_vnd);
     expect(createdOrder.transferNote).toMatch(TRANSFER_NOTE_REGEX);
 
@@ -170,11 +179,11 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
           eq(paymentOrders.userId, testUserId),
           eq(paymentOrders.packageCode, pkg.code),
           inArray(paymentOrders.status, [
-            "draft",
-            "pending",
-            "pending_proof",
-            "submitted",
-            "under_review",
+            PAYMENT_ORDER_STATUS.DRAFT,
+            PAYMENT_ORDER_STATUS.PENDING,
+            PAYMENT_ORDER_STATUS.PENDING_PROOF,
+            PAYMENT_ORDER_STATUS.SUBMITTED,
+            PAYMENT_ORDER_STATUS.UNDER_REVIEW,
           ])
         )
       );
@@ -183,14 +192,17 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
     expect(duplicatePending?.uuid).toBe(orderUuid);
 
     // 3. User cancels pending order
-    assertPaymentOrderTransition(createdOrder.status, "cancelled");
+    assertPaymentOrderTransition(
+      PAYMENT_ORDER_STATUS_CODEC.toLabel(createdOrder.status),
+      "cancelled"
+    );
     const [cancelledOrder] = await db
       .update(paymentOrders)
-      .set({ status: "cancelled", updatedAt: new Date() })
+      .set({ status: PAYMENT_ORDER_STATUS.CANCELLED, updatedAt: new Date() })
       .where(eq(paymentOrders.id, createdOrder.id))
       .returning();
 
-    expect(cancelledOrder?.status).toBe("cancelled");
+    expect(cancelledOrder?.status).toBe(PAYMENT_ORDER_STATUS.CANCELLED);
   });
 
   it("Task 3 / BR-PPU-01: Proof submission grants 3-day soft unlock without granting active status", async () => {
@@ -210,7 +222,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
         offerCode: "annual",
         amountVnd: pkg.offers[0].price_vnd,
         currency: "VND",
-        status: "pending",
+        status: PAYMENT_ORDER_STATUS.PENDING,
         transferNote,
         expiresAt: computeOrderPendingExpiresAt(),
       })
@@ -227,7 +239,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
       await tx
         .update(paymentOrders)
         .set({
-          status: "submitted",
+          status: PAYMENT_ORDER_STATUS.SUBMITTED,
           submittedAt: new Date(),
           bankTxnRef,
           proofPath: `proofs/${order.uuid}/proof.jpg`,
@@ -239,9 +251,9 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
         await tx.insert(entitlements).values({
           userId: testUserId,
           entitlementKey: key,
-          source: "package_order",
+          source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
           sourceRef: order.uuid,
-          status: "soft_unlock",
+          status: ENTITLEMENT_STATUS.SOFT_UNLOCK,
           expiresAt: softUnlockExpiresAt,
         });
       }
@@ -255,7 +267,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
 
     expect(grantedEntitlements.length).toBe(pkg.entitlements.length);
     for (const ent of grantedEntitlements) {
-      expect(ent.status).toBe("soft_unlock"); // NEVER 'active' (BR-PPU-01)
+      expect(ent.status).toBe(ENTITLEMENT_STATUS.SOFT_UNLOCK); // NEVER 'active' (BR-PPU-01)
       expect(ent.sourceRef).toBe(order.uuid);
       expect(ent.expiresAt).toBeDefined();
     }
@@ -276,7 +288,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
       offerCode: "annual",
       amountVnd: pkg.offers[0].price_vnd,
       currency: "VND",
-      status: "submitted",
+      status: PAYMENT_ORDER_STATUS.SUBMITTED,
       transferNote,
       bankTxnRef: "FT24081412345678",
       submittedAt: new Date(),
@@ -286,24 +298,26 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
     const adminNote = "Đã đối soát sao kê MB Bank khớp 100%.";
     const now = new Date();
 
-    // Manager approves with SELECT ... FOR UPDATE (D-JH)
+    // Manager approves inside SQLite write-serialized transaction
     await db.transaction(async (tx) => {
       const [lockedOrder] = await tx
         .select()
         .from(paymentOrders)
-        .where(eq(paymentOrders.uuid, orderUuid))
-        .for("update");
+        .where(eq(paymentOrders.uuid, orderUuid));
       if (!lockedOrder) {
         throw new Error("Failed to lock order");
       }
 
-      expect(lockedOrder.status).toBe("submitted");
-      assertPaymentOrderTransition(lockedOrder.status, "approved");
+      expect(lockedOrder.status).toBe(PAYMENT_ORDER_STATUS.SUBMITTED);
+      assertPaymentOrderTransition(
+        PAYMENT_ORDER_STATUS_CODEC.toLabel(lockedOrder.status),
+        "approved"
+      );
 
       await tx
         .update(paymentOrders)
         .set({
-          status: "approved",
+          status: PAYMENT_ORDER_STATUS.APPROVED,
           reviewedAt: now,
           reviewedByManagerId: testManagerId,
           adminNote,
@@ -322,9 +336,9 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
         await tx.insert(entitlements).values({
           userId: testUserId,
           entitlementKey: key,
-          source: "package_order",
+          source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
           sourceRef: lockedOrder.uuid,
-          status: "active",
+          status: ENTITLEMENT_STATUS.ACTIVE,
           expiresAt: stackedExpiresAt,
           grantedByManagerId: testManagerId,
           grantReason: adminNote,
@@ -332,7 +346,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
       }
 
       await tx.insert(auditLogs).values({
-        actorType: "manager",
+        actorType: ACTOR_TYPE.MANAGER,
         actorId: testManagerId,
         action: "order_approved",
         entityType: "payment_order",
@@ -346,7 +360,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
       .select()
       .from(paymentOrders)
       .where(eq(paymentOrders.uuid, orderUuid));
-    expect(finalOrder?.status).toBe("approved");
+    expect(finalOrder?.status).toBe(PAYMENT_ORDER_STATUS.APPROVED);
 
     // Verify active entitlements granted with stacked expiry
     const activeEnts = await db
@@ -355,7 +369,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
       .where(
         and(
           eq(entitlements.userId, testUserId),
-          eq(entitlements.status, "active")
+          eq(entitlements.status, ENTITLEMENT_STATUS.ACTIVE)
         )
       );
     expect(activeEnts.length).toBe(pkg.entitlements.length);
@@ -389,7 +403,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
         offerCode: "annual",
         amountVnd: pkg.offers[0].price_vnd,
         currency: "VND",
-        status: "submitted",
+        status: PAYMENT_ORDER_STATUS.SUBMITTED,
         bankTxnRef: "FT240814FAKE1234",
         submittedAt: new Date(),
       })
@@ -403,9 +417,9 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
       await db.insert(entitlements).values({
         userId: testUserId,
         entitlementKey: key,
-        source: "package_order",
+        source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
         sourceRef: order.uuid,
-        status: "soft_unlock",
+        status: ENTITLEMENT_STATUS.SOFT_UNLOCK,
         expiresAt: computeSoftUnlockExpiresAt(),
       });
     }
@@ -418,18 +432,20 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
       const [lockedOrder] = await tx
         .select()
         .from(paymentOrders)
-        .where(eq(paymentOrders.uuid, orderUuid))
-        .for("update");
+        .where(eq(paymentOrders.uuid, orderUuid));
       if (!lockedOrder) {
         throw new Error("Failed to lock order");
       }
 
-      assertPaymentOrderTransition(lockedOrder.status, "rejected");
+      assertPaymentOrderTransition(
+        PAYMENT_ORDER_STATUS_CODEC.toLabel(lockedOrder.status),
+        "rejected"
+      );
 
       await tx
         .update(paymentOrders)
         .set({
-          status: "rejected",
+          status: PAYMENT_ORDER_STATUS.REJECTED,
           reviewedAt: new Date(),
           reviewedByManagerId: testManagerId,
           adminNote: rejectionReason,
@@ -440,7 +456,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
       await tx
         .update(entitlements)
         .set({
-          status: "cancelled",
+          status: ENTITLEMENT_STATUS.CANCELLED,
           updatedAt: new Date(),
         })
         .where(
@@ -457,7 +473,9 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
       .from(entitlements)
       .where(eq(entitlements.userId, testUserId));
 
-    expect(postRejectionEnts.every((e) => e.status === "cancelled")).toBe(true);
+    expect(
+      postRejectionEnts.every((e) => e.status === ENTITLEMENT_STATUS.CANCELLED)
+    ).toBe(true);
   });
 
   it("Task 6 / D-JL: Expiry jobs sweep correctly without corrupting submitted order states", async () => {
@@ -472,7 +490,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
         offerCode: "annual",
         amountVnd: 599_000,
         currency: "VND",
-        status: "pending",
+        status: PAYMENT_ORDER_STATUS.PENDING,
         expiresAt: expiredPendingDate,
       })
       .returning();
@@ -480,26 +498,27 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
       throw new Error("Failed to insert expiredPending");
     }
 
-    // 2. Setup submitted order with expired soft_unlock entitlement (> 3 days ago)
+    // 2. Setup submitted order with expired soft_unlock entitlement (> 3 days ago) on another package
     const submittedOrderUuid = crypto.randomUUID();
     await db.insert(paymentOrders).values({
       uuid: submittedOrderUuid,
       userId: testUserId,
-      packageCode: "PKG-standard",
+      packageCode: "PKG-premium",
       offerCode: "annual",
-      amountVnd: 599_000,
+      amountVnd:
+        PACKAGE_CATALOG["PKG-premium"]?.offers[0]?.price_vnd ?? 999_000,
       currency: "VND",
-      status: "submitted",
+      status: PAYMENT_ORDER_STATUS.SUBMITTED,
       submittedAt: new Date(Date.now() - 4 * 24 * 3600 * 1000),
     });
 
     const expiredSoftUnlockDate = new Date(Date.now() - 1 * 3600 * 1000);
     await db.insert(entitlements).values({
       userId: testUserId,
-      entitlementKey: "play_standard_games",
-      source: "package_order",
+      entitlementKey: "play_premium_games",
+      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
       sourceRef: submittedOrderUuid,
-      status: "soft_unlock",
+      status: ENTITLEMENT_STATUS.SOFT_UNLOCK,
       expiresAt: expiredSoftUnlockDate,
     });
 
@@ -509,7 +528,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
       .select()
       .from(paymentOrders)
       .where(eq(paymentOrders.uuid, expiredPending.uuid));
-    expect(refreshedExpiredPending?.status).toBe("expired");
+    expect(refreshedExpiredPending?.status).toBe(PAYMENT_ORDER_STATUS.EXPIRED);
 
     await runExpireSoftUnlockEntitlements();
     const [refreshedEntitlement] = await db
@@ -521,13 +540,72 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
           eq(entitlements.sourceRef, submittedOrderUuid)
         )
       );
-    expect(refreshedEntitlement?.status).toBe("expired");
+    expect(refreshedEntitlement?.status).toBe(ENTITLEMENT_STATUS.EXPIRED);
 
     // D-JL Check: Order MUST STILL be 'submitted' even when soft_unlock expired!
     const [refreshedSubmittedOrder] = await db
       .select()
       .from(paymentOrders)
       .where(eq(paymentOrders.uuid, submittedOrderUuid));
-    expect(refreshedSubmittedOrder?.status).toBe("submitted");
+    expect(refreshedSubmittedOrder?.status).toBe(
+      PAYMENT_ORDER_STATUS.SUBMITTED
+    );
+  });
+
+  it("Task 2 / BR-POC-04: Rejects duplicate open payment orders for the same (user_id, package_code) via uq_payment_orders_user_pkg_open", async () => {
+    const pkg = PACKAGE_CATALOG["PKG-standard"];
+    if (!pkg?.offers[0]) {
+      throw new Error("PKG-standard not found");
+    }
+
+    const [firstOrder] = await db
+      .insert(paymentOrders)
+      .values({
+        uuid: crypto.randomUUID(),
+        userId: testUserId,
+        packageCode: pkg.code,
+        offerCode: pkg.offers[0].offer_code,
+        amountVnd: pkg.offers[0].price_vnd,
+        currency: "VND",
+        status: PAYMENT_ORDER_STATUS.PENDING,
+        expiresAt: computeOrderPendingExpiresAt(),
+      })
+      .returning();
+    if (!firstOrder) {
+      throw new Error("Expected first open order");
+    }
+
+    await expect(
+      db.insert(paymentOrders).values({
+        uuid: crypto.randomUUID(),
+        userId: testUserId,
+        packageCode: pkg.code,
+        offerCode: pkg.offers[0].offer_code,
+        amountVnd: pkg.offers[0].price_vnd,
+        currency: "VND",
+        status: PAYMENT_ORDER_STATUS.SUBMITTED,
+        submittedAt: new Date(),
+      })
+    ).rejects.toThrow(UNIQUE_OPEN_ORDER_REGEX);
+
+    await db
+      .update(paymentOrders)
+      .set({ status: PAYMENT_ORDER_STATUS.CANCELLED, updatedAt: new Date() })
+      .where(eq(paymentOrders.id, firstOrder.id));
+
+    const [replacementOrder] = await db
+      .insert(paymentOrders)
+      .values({
+        uuid: crypto.randomUUID(),
+        userId: testUserId,
+        packageCode: pkg.code,
+        offerCode: pkg.offers[0].offer_code,
+        amountVnd: pkg.offers[0].price_vnd,
+        currency: "VND",
+        status: PAYMENT_ORDER_STATUS.PENDING,
+        expiresAt: computeOrderPendingExpiresAt(),
+      })
+      .returning();
+    expect(replacementOrder?.status).toBe(PAYMENT_ORDER_STATUS.PENDING);
   });
 });

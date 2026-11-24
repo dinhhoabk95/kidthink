@@ -1,9 +1,11 @@
 import {
+  ACCESS_TIER,
   childDailyStats,
   childProfiles,
   childSessionSummaries,
   gameLevels,
   getOwnerDb,
+  PLAY_COMPLETION_STATUS,
   playSessions,
   telemetryEvents,
   users,
@@ -59,7 +61,7 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
         title: "Level Rollup Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .onConflictDoNothing()
       .returning();
@@ -85,7 +87,7 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
         childProfileId: child.id,
         gameLevelId: gl.id,
         templateCode: gtCode,
-        completionStatus: "in_progress",
+        completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       })
       .returning();
 
@@ -160,7 +162,9 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
 
     expect(summaries1.length).toBeGreaterThanOrEqual(1);
     expect(summaries1[0]).toBeDefined();
-    expect(summaries1[0]?.completionStatus).toBe("completed");
+    expect(summaries1[0]?.completionStatus).toBe(
+      PLAY_COMPLETION_STATUS.COMPLETED
+    );
 
     // 6. Run rollup:session job second time -> IDEMPOTENT (BR-JOB-01)
     await runSessionRollup(sessionUuid);
@@ -222,7 +226,7 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
         title: "Level Pause Test",
         contentPack: { test: true },
         difficultyParams: {},
-        accessTier: "free",
+        accessTier: ACCESS_TIER.FREE,
       })
       .returning();
     expect(gl).toBeDefined();
@@ -236,7 +240,7 @@ describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-J
       childProfileId: child.id,
       gameLevelId: gl.id,
       templateCode: "GT-001",
-      completionStatus: "in_progress",
+      completionStatus: PLAY_COMPLETION_STATUS.IN_PROGRESS,
       startedAt: new Date(),
     });
 

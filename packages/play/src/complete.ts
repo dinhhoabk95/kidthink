@@ -1,5 +1,10 @@
 import type { selectNext } from "@mindkid/adaptive";
-import { getOwnerDb, playSessions, telemetryEvents } from "@mindkid/db";
+import {
+  getOwnerDb,
+  PLAY_COMPLETION_STATUS,
+  type TelemetryEventEntity,
+} from "@mindkid/db";
+import { createRepositories } from "@mindkid/db/repositories";
 import { NotFoundError } from "@mindkid/errors/common";
 import {
   SessionAlreadyCompletedError,
@@ -12,13 +17,11 @@ import {
   computeStars,
   formatKidSurfaceResponse,
 } from "@mindkid/shared";
-import { and, eq } from "drizzle-orm";
 import { applySessionMasteryAndBadges } from "#src/mastery";
 import {
   checkSessionOwnership,
   type IngestOptions,
 } from "#src/session/ownership";
-import type { EventPayload } from "#src/types";
 
 export async function completePlaySession(
   sessionUuid: string,
@@ -26,14 +29,9 @@ export async function completePlaySession(
   options: IngestOptions = {}
 ) {
   const db = getOwnerDb();
+  const repos = createRepositories(db);
 
-  const sessionRows = await db
-    .select()
-    .from(playSessions)
-    .where(eq(playSessions.sessionUuid, sessionUuid))
-    .limit(1);
-
-  const session = sessionRows[0];
+  const session = await repos.playSessions.findByUuid(sessionUuid);
   if (!session) {
     throw new NotFoundError();
   }
@@ -41,8 +39,8 @@ export async function completePlaySession(
   await checkSessionOwnership(db, session, options);
 
   if (
-    session.completionStatus === "completed" ||
-    session.completionStatus === "abandoned"
+    session.completionStatus === PLAY_COMPLETION_STATUS.COMPLETED ||
+    session.completionStatus === PLAY_COMPLETION_STATUS.ABANDONED
   ) {
     throw new SessionAlreadyCompletedError();
   }
@@ -50,27 +48,24 @@ export async function completePlaySession(
   const now = new Date();
   const elapsedMs = now.getTime() - new Date(session.startedAt).getTime();
   if (elapsedMs > 4 * 60 * 60 * 1000) {
-    await db
-      .update(playSessions)
-      .set({ completionStatus: "abandoned", updatedAt: now })
-      .where(eq(playSessions.id, session.id));
+    await repos.playSessions.abandonExpiredById(
+      session.id,
+      session.durationSeconds ?? 0,
+      now
+    );
 
     throw new SessionExpiredError();
   }
 
-  const events = await db
-    .select()
-    .from(telemetryEvents)
-    .where(eq(telemetryEvents.sessionUuid, sessionUuid))
-    .orderBy(telemetryEvents.seq);
+  const events = await repos.telemetry.listBySession(sessionUuid);
 
   const scoringResult = computeSessionResult(
-    events.map((e: typeof telemetryEvents.$inferSelect) => ({
+    events.map((e: TelemetryEventEntity) => ({
       sessionUuid: e.sessionUuid,
       seq: e.seq,
       eventName: e.eventName,
       occurredAtMs: e.occurredAtMs,
-      payload: (e.payload as EventPayload | null) ?? null,
+      payload: e.payload,
       clientTimestamp: e.clientTimestamp,
     }))
   );
@@ -83,24 +78,15 @@ export async function completePlaySession(
   const isTeachTemplate = templateDef?.kind === "teach";
 
   // Transaction bọc cập nhật trạng thái completed + mastery + badges (#252)
-  await db.transaction(async (tx) => {
-    const [completed] = await tx
-      .update(playSessions)
-      .set({
-        completionStatus: "completed",
-        completedAt: now,
-        durationSeconds,
-        score: scoringResult.raw_score,
-        starsEarned: stars ?? 0,
-        updatedAt: now,
-      })
-      .where(
-        and(
-          eq(playSessions.id, session.id),
-          eq(playSessions.completionStatus, "in_progress")
-        )
-      )
-      .returning({ id: playSessions.id });
+  await repos.playSessions.transaction(async (tx) => {
+    const txRepos = createRepositories(tx);
+    const completed = await txRepos.playSessions.completeSession(sessionUuid, {
+      completionStatus: PLAY_COMPLETION_STATUS.COMPLETED,
+      completedAt: now,
+      durationSeconds,
+      score: scoringResult.raw_score,
+      starsEarned: stars ?? 0,
+    });
 
     if (!completed) {
       throw new SessionAlreadyCompletedError();

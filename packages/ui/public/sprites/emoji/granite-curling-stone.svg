@@ -1,0 +1,10 @@
+<svg fill="none" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <title>Đá trượt trên băng</title>
+  <defs>
+    <radialGradient cx="38%" cy="30%" id="crlGran" r="70%"><stop offset="0%" stop-color="#cbd5e1" /><stop offset="55%" stop-color="#94a3b8" /><stop offset="100%" stop-color="#64748b" /></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="103" fill="#1e293b" opacity="0.22" rx="38" ry="5.5" />
+    <path d="M46 46V32H80" fill="none" stroke="#dc2626" stroke-linecap="round" stroke-linejoin="round" stroke-width="7" />
+    <rect fill="url(#crlGran)" height="38" rx="19" stroke="#1e293b" stroke-width="3.8" width="76" x="22" y="54" />
+    <path d="M24 73H96" stroke="#dc2626" stroke-width="6" />
+</svg>

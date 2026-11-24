@@ -238,6 +238,27 @@
             </p>
           </div>
 
+          <div v-if="hasTwoFactorEnabled">
+            <label
+              class="mb-1 block font-medium text-sm text-surface-700"
+              for="deletionReauthTotpInput"
+            >
+              Mã xác thực hai lớp (TOTP) *
+            </label>
+            <input
+              autocomplete="one-time-code"
+              class="min-h-11 w-full rounded-2xl border-2 border-surface-200 px-3.5 py-2.5 text-base font-mono tracking-widest text-surface-900 focus:border-danger-600 focus:outline-none"
+              data-testid="deletion-totp-input"
+              id="deletionReauthTotpInput"
+              inputmode="numeric"
+              maxlength="6"
+              placeholder="123456"
+              required
+              type="text"
+              v-model.trim="reauthTotp"
+            >
+          </div>
+
           <p
             class="rounded-2xl border border-amber-200 bg-amber-50 p-3 font-medium text-amber-900 text-sm"
             data-testid="deletion-modal-error"
@@ -273,6 +294,7 @@
   import { getFieldErrors, normalizeApiError } from "@mindkid/errors/client";
   import { computed, onMounted, ref } from "vue";
   import { useApi } from "~/composables/use-api";
+  import { clearOfflinePackClientData } from "~/composables/use-offline-pack";
 
   definePageMeta({
     middleware: ["user-auth"],
@@ -316,7 +338,9 @@
   });
 
   const isReauthModalOpen = ref(false);
+  const hasTwoFactorEnabled = ref(false);
   const reauthPassword = ref("");
+  const reauthTotp = ref("");
   const isSubmittingDelete = ref(false);
   const isCancelling = ref(false);
   const modalError = ref("");
@@ -336,11 +360,14 @@
 
   onMounted(async () => {
     try {
-      const [summaryRes, statusRes] = await Promise.all([
+      const [summaryRes, statusRes, profileRes] = await Promise.all([
         api<DeletionSummary>("/api/users/account/delete-summary").catch(
           () => null
         ),
         api<DeletionStatus>("/api/users/account/delete/status").catch(
+          () => null
+        ),
+        api<{ two_factor_enabled?: boolean }>("/api/users/profile").catch(
           () => null
         ),
       ]);
@@ -350,6 +377,9 @@
       if (statusRes) {
         deletionStatus.value = statusRes;
       }
+      if (profileRes) {
+        hasTwoFactorEnabled.value = Boolean(profileRes.two_factor_enabled);
+      }
     } catch {
       // Non-blocking fallback
     }
@@ -357,6 +387,7 @@
 
   function handleRequestDeletion(): void {
     reauthPassword.value = "";
+    reauthTotp.value = "";
     modalError.value = "";
     fieldErrors.value = {};
     isReauthModalOpen.value = true;
@@ -372,9 +403,12 @@
     isSubmittingDelete.value = true;
 
     try {
+      const trimmedTotp = reauthTotp.value.trim();
       await api("/api/users/auth/reauth", {
         method: "POST",
-        body: { password: reauthPassword.value },
+        body: trimmedTotp
+          ? { password: reauthPassword.value, totp: trimmedTotp }
+          : { password: reauthPassword.value },
       });
 
       const res = await api<{
@@ -385,6 +419,8 @@
         method: "POST",
         body: {},
       });
+
+      await clearOfflinePackClientData({ reason: "logout" });
 
       deletionStatus.value = {
         status: "pending_deletion",

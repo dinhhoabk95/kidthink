@@ -71,7 +71,7 @@ export const projectGT017: Projection<"GT-017"> = {
 
     return {
       content_pack: {
-        prompt: "Bé hãy đếm xem có bao nhiêu khối lập phương nhé!",
+        prompt: "Đố bé có tất cả mấy khối gỗ xếp chồng nhỉ?",
         model,
         question: "count_cubes" as const,
         options,
