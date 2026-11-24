@@ -16,7 +16,6 @@ function setTestEnv(name: string, value: string): void {
 setTestEnv("STORAGE_SIGNING_SECRET", TEST_SECRET);
 setTestEnv("STORAGE_BASE_URL", "http://localhost:3000");
 setTestEnv("SITE_URL", "http://localhost:3000");
-setTestEnv("AWS_S3_PUBLIC_BUCKET", "mindkid-test-public");
 setTestEnv("AWS_S3_PRIVATE_BUCKET", "mindkid-test-private");
 setTestEnv("INITIAL_ADMIN_EMAIL", "admin@mindkid.test");
 setTestEnv("INITIAL_ADMIN_PASSWORD", "test-only-admin-password-0123456789");

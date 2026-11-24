@@ -179,7 +179,6 @@ export function createWebEnv(options: CreateWebEnvOptions = {}) {
         isProduction
       ),
       STORAGE_SIGNING_SECRET: secretSchema,
-      AWS_S3_PUBLIC_BUCKET: nonEmptyString.optional(),
       AWS_S3_PRIVATE_BUCKET: nonEmptyString.optional(),
       AWS_ACCESS_KEY_ID: nonEmptyString.optional(),
       AWS_SECRET_ACCESS_KEY: secretSchema.optional(),

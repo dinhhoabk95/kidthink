@@ -256,14 +256,6 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     note: "Khoá ký URL tài sản riêng tư của trẻ; không có mặc định",
   },
   {
-    name: "AWS_S3_PUBLIC_BUCKET",
-    apps: ["web", "worker"],
-    required: "optional",
-    kind: "text",
-    secret: false,
-    note: "Tên bucket chứa tài sản công khai",
-  },
-  {
     name: "AWS_S3_PRIVATE_BUCKET",
     runtime: false,
     apps: ["web", "worker"],

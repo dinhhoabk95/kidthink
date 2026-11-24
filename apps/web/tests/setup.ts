@@ -18,7 +18,6 @@ setTestEnv("MFA_ENCRYPTION_KEY", "test-mfa-encryption-key-0123456789ab");
 setTestEnv("STORAGE_SIGNING_SECRET", "test-storage-signing-key-0123456789ab");
 setTestEnv("SITE_URL", "http://localhost:3000");
 setTestEnv("STORAGE_BASE_URL", "http://localhost:3000");
-setTestEnv("AWS_S3_PUBLIC_BUCKET", "mindkid-test-public");
 setTestEnv("AWS_S3_PRIVATE_BUCKET", "mindkid-test-private");
 setTestEnv("NUXT_ALLOWED_ORIGINS", "http://localhost:3001");
 // `defineWorkspaceTest` đã đặt `DATABASE_URL`/`DATABASE_URL_APP` trỏ vào
