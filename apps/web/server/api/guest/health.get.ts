@@ -1,19 +1,10 @@
-import { defineEventHandler, setHeader, setResponseStatus } from "h3";
-import {
-  type CloudflareHealthEnv,
-  runSystemHealthCheck,
-} from "#server/services/health-service";
+import { defineEventHandler, setHeader } from "h3";
 
-export default defineEventHandler(async (event) => {
+/**
+ * BR-HLT-07: probe công khai chỉ trả liveness nông — không chạm D1, DO auth hay queue DO.
+ * Kiểm sâu nằm ở `/api/guest/health/deep` sau `x-health-token`.
+ */
+export default defineEventHandler((event) => {
   setHeader(event, "Cache-Control", "no-store");
-
-  const cfEnv = (
-    event.context as { cloudflare?: { env?: CloudflareHealthEnv } } | undefined
-  )?.cloudflare?.env;
-
-  const result = await runSystemHealthCheck(cfEnv);
-  if (!result.ok) {
-    setResponseStatus(event, 503);
-  }
-  return result.body;
+  return { status: "ok" };
 });

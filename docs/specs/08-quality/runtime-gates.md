@@ -48,7 +48,7 @@ Vitest từng workspace (`cd <workspace> && rtk proxy npx vitest run --reporter=
 Node lấy từ `.nvmrc`. Chuỗi: `pnpm install --frozen-lockfile` → `nuxt prepare` (web, admin; env giả) → `pnpm check` →
 Terraform → `sync-wrangler-ids.ts` (sinh `.d1-ddl/{core,logs,blobs}.sql`) → `wrangler d1 execute` →
 `pnpm build` + `verify-cf-budget.ts` (bundle Worker < 64 MiB, không native addon) → `wrangler deploy` →
-smoke `/api/guest/health` kèm rollback (`BR-DEP-08`). CI **không** chạy vitest.
+smoke `/api/guest/health/deep` kèm rollback (`BR-DEP-08`). CI **không** chạy vitest.
 
 ## 2. Cổng trong `<workspace>/tests/gates/`
 

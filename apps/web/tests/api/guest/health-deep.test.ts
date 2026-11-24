@@ -1,0 +1,224 @@
+import fs from "node:fs";
+import { repoPath } from "@mindkid/config/paths";
+import type { H3Event } from "h3";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const mockRedisSet = vi.fn();
+const mockRedisGet = vi.fn();
+const mockRedisDel = vi.fn();
+
+vi.mock("h3", () => ({
+  defineEventHandler: <T>(fn: T): T => fn,
+  getHeader: (event: { headers?: Record<string, string> }, name: string) =>
+    event.headers?.[name.toLowerCase()],
+  setHeader: vi.fn(),
+  setResponseStatus: vi.fn(),
+}));
+
+vi.mock("@mindkid/auth", () => ({
+  buildAuthSentinelKey: (namespace: string, token: string) =>
+    `auth:v1:${namespace}:sentinel:${token}`,
+  generateTokenHex: () => "deadbeefcafebabe",
+  getAuthRedisClient: () => ({
+    set: mockRedisSet,
+    get: mockRedisGet,
+    del: mockRedisDel,
+  }),
+}));
+
+vi.mock("@mindkid/config", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@mindkid/config")>();
+  return {
+    ...actual,
+    getDbConnectionName: () => "postgres" as const,
+  };
+});
+
+vi.mock("@mindkid/db", () => ({
+  getOwnerDb: vi.fn(),
+}));
+
+vi.mock("@mindkid/cache", () => ({
+  ping: vi.fn(),
+}));
+
+vi.mock("@mindkid/queue", () => ({
+  getWaitingCount: vi.fn(),
+  alert: vi.fn(),
+}));
+
+import { ping } from "@mindkid/cache";
+import { getOwnerDb } from "@mindkid/db";
+import { alert, getWaitingCount } from "@mindkid/queue";
+import { setHeader, setResponseStatus } from "h3";
+import handler from "#server/api/guest/health/deep.get";
+
+const mockedGetOwnerDb = vi.mocked(getOwnerDb);
+const mockedPing = vi.mocked(ping);
+const mockedGetWaitingCount = vi.mocked(getWaitingCount);
+
+function setupHealthyDependencies(): void {
+  mockedGetOwnerDb.mockReturnValue({
+    run: vi.fn().mockResolvedValue([{ "?column?": 1 }]),
+  } as never);
+  mockedPing.mockResolvedValue(true);
+  mockedGetWaitingCount.mockResolvedValue(0);
+  mockRedisSet.mockResolvedValue("OK");
+  mockRedisGet.mockResolvedValue("deadbeefcafebabe");
+  mockRedisDel.mockResolvedValue(1);
+}
+
+const HEALTH_TOKEN = "t".repeat(40);
+
+describe("Health Check API (BR-HLT-01..06)", () => {
+  let mockEvent: H3Event;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockEvent = {
+      headers: { "x-health-token": HEALTH_TOKEN },
+    } as never as H3Event;
+    process.env.HEALTHCHECK_TOKEN = HEALTH_TOKEN;
+    setupHealthyDependencies();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    Reflect.deleteProperty(process.env, "HEALTHCHECK_TOKEN");
+  });
+
+  it("BR-HLT-07: thiếu hoặc sai x-health-token → 404, không đụng DB/DO/queue", async () => {
+    const noToken = { headers: {} } as never as H3Event;
+    const wrong = {
+      headers: { "x-health-token": "x".repeat(40) },
+    } as never as H3Event;
+    for (const event of [noToken, wrong]) {
+      await expect(handler(event)).rejects.toMatchObject({
+        statusCode: 404,
+      });
+    }
+    expect(mockedGetOwnerDb).not.toHaveBeenCalled();
+    expect(mockRedisSet).not.toHaveBeenCalled();
+    expect(mockedGetWaitingCount).not.toHaveBeenCalled();
+  });
+
+  it("BR-HLT-07: HEALTHCHECK_TOKEN chưa cấu hình → 404 kể cả khi gửi header rỗng", async () => {
+    Reflect.deleteProperty(process.env, "HEALTHCHECK_TOKEN");
+    await expect(
+      handler({ headers: { "x-health-token": "" } } as never as H3Event)
+    ).rejects.toMatchObject({ statusCode: 404 });
+  });
+
+  it("BR-HLT-02 & BR-HLT-04: kiểm dịch vụ thật (DB, Cache, Queue, Auth sentinel write/read/delete) và không lộ version/hostname/chuỗi kết nối", async () => {
+    const response = await handler(mockEvent);
+
+    expect(response).toEqual({ status: "ok" });
+    expect(response).not.toHaveProperty("version");
+    expect(response).not.toHaveProperty("hostname");
+    expect(response).not.toHaveProperty("dbUrl");
+
+    expect(setHeader).toHaveBeenCalledWith(
+      mockEvent,
+      "Cache-Control",
+      "no-store"
+    );
+
+    const expectedKey = "auth:v1:user:sentinel:deadbeefcafebabe";
+    expect(mockRedisSet).toHaveBeenCalledWith(
+      expectedKey,
+      "deadbeefcafebabe",
+      "EX",
+      5
+    );
+    expect(mockRedisGet).toHaveBeenCalledWith(expectedKey);
+    expect(mockRedisDel).toHaveBeenCalledWith(expectedKey);
+  });
+
+  it("Ca âm BR-HLT-01 & BR-HLT-03: tắt PostgreSQL → 503, không phải 200, phát alert", async () => {
+    mockedGetOwnerDb.mockReturnValue({
+      run: vi.fn().mockRejectedValue(new Error("Connection refused")),
+    } as never);
+
+    const response = await handler(mockEvent);
+
+    expect(response).toEqual({ status: "error" });
+    expect(setResponseStatus).toHaveBeenCalledWith(mockEvent, 503);
+
+    expect(alert).toHaveBeenCalledWith(
+      "error",
+      "Health check failed",
+      expect.objectContaining({
+        error: expect.stringContaining("Connection refused"),
+      })
+    );
+  });
+
+  it("Ca âm BR-HLT-02 & BR-HLT-03: Redis auth ghi được nhưng đọc lại sentinel sai giá trị → 503 + alert và vẫn xoá sentinel", async () => {
+    mockRedisGet.mockResolvedValue("corrupted-value");
+
+    const response = await handler(mockEvent);
+
+    expect(response).toEqual({ status: "error" });
+    expect(setResponseStatus).toHaveBeenCalledWith(mockEvent, 503);
+    expect(mockRedisDel).toHaveBeenCalledWith(
+      "auth:v1:user:sentinel:deadbeefcafebabe"
+    );
+    expect(alert).toHaveBeenCalledWith(
+      "error",
+      "Health check failed",
+      expect.objectContaining({
+        error: expect.stringContaining("sentinel read-back mismatch"),
+      })
+    );
+  });
+
+  it("Ca âm BR-HLT-05 & BR-HLT-03: dịch vụ vượt ngân sách timeout 2s → 503 + alert", async () => {
+    vi.useFakeTimers();
+
+    mockedGetOwnerDb.mockReturnValue({
+      run: vi.fn().mockImplementation(
+        () =>
+          new Promise(() => {
+            /* never resolves */
+          })
+      ),
+    } as never);
+
+    const handlerPromise = handler(mockEvent);
+
+    vi.advanceTimersByTime(2100);
+
+    const response = await handlerPromise;
+
+    expect(response).toEqual({ status: "error" });
+    expect(setResponseStatus).toHaveBeenCalledWith(mockEvent, 503);
+    expect(alert).toHaveBeenCalledWith(
+      "error",
+      "Health check failed",
+      expect.objectContaining({
+        error: expect.stringContaining("Database timed out after 2000ms"),
+      })
+    );
+  });
+
+  it("BR-HLT-06: khi smoke nhận non-200 (503) từ health check, workflow deploy abort và wrangler rollback", async () => {
+    mockRedisSet.mockRejectedValue(new Error("READONLY You can't write"));
+
+    const response = await handler(mockEvent);
+    expect(response).toEqual({ status: "error" });
+    expect(setResponseStatus).toHaveBeenCalledWith(mockEvent, 503);
+
+    const workflow = fs.readFileSync(
+      repoPath(".github/workflows/deploy-cloudflare.yml"),
+      "utf-8"
+    );
+
+    expect(workflow).toContain('if [ "$STATUS" != "200" ]; then');
+    expect(workflow).toContain(
+      "wrangler rollback --config apps/web/wrangler.jsonc"
+    );
+    expect(workflow).toContain(
+      "wrangler rollback --config apps/worker/wrangler.jsonc"
+    );
+  });
+});

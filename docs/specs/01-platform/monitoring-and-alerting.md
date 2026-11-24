@@ -48,7 +48,7 @@ Alert phải **tới được người**, không chỉ ghi vào log mà không a
 
 | Nơi | |
 |---|---|
-| `/api/guest/health` | Kiểm dịch vụ phụ thuộc |
+| `/api/guest/health/deep` (token) | Kiểm dịch vụ phụ thuộc; `/api/guest/health` công khai chỉ liveness nông (`BR-HLT-07`) |
 | `infra/monitoring/alerts.yml` | Định nghĩa ngưỡng |
 | `06-admin/system-activity.md` | Bề mặt xem trong admin |
 

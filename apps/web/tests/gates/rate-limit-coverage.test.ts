@@ -82,7 +82,6 @@ describe("BR-RTL-10: every API route resolves to a rate limit class", () => {
     const allowed = new Set([
       "not-api",
       "provider-webhook",
-      "health-probe",
       "unclassified-user-route",
     ]);
     for (const [key, resolution] of resolutions) {

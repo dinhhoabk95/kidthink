@@ -42,7 +42,7 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 |---|---|
 | `packages/queue/src/jobs/` | Định nghĩa + type payload |
 | `apps/worker/src/consumers/` | Xử lý |
-| `GET /api/guest/health` | Báo trạng thái queue |
+| `GET /api/guest/health/deep` (token) | Báo trạng thái queue |
 
 ## 4. Main flow
 

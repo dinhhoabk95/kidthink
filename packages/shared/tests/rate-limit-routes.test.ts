@@ -73,7 +73,7 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
     });
   });
 
-  it("rules 4-5 — webhooks and the health probe are exempt for a named reason", () => {
+  it("rules 4-5 — webhooks are exempt for a named reason; health is read:public", () => {
     expect(resolve("/api/guest/webhooks/payments/payos", "POST")).toEqual({
       mode: "exempt",
       reason: "provider-webhook",
@@ -82,10 +82,13 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
       mode: "exempt",
       reason: "provider-webhook",
     });
-    expect(resolve("/api/guest/health")).toEqual({
-      mode: "exempt",
-      reason: "health-probe",
-    });
+    // BR-HLT-07: health công khai không còn miễn, rơi vào read:public.
+    for (const path of ["/api/guest/health", "/api/guest/health/deep"]) {
+      expect(resolve(path)).toEqual({
+        mode: "middleware",
+        className: "read:public",
+      });
+    }
   });
 
   it("rule 7 — reauth maps to the login class", () => {

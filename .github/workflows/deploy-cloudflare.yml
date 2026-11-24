@@ -137,8 +137,11 @@ jobs:
           npx wrangler deploy --config apps/admin/wrangler.jsonc
 
       - name: Gate 6 - Smoke Health Check & Auto-Rollback on Failure (BR-DEP-08)
+        env:
+          HEALTHCHECK_TOKEN: ${{ secrets.HEALTHCHECK_TOKEN }}
         run: |
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://${{ vars.MINDKID_DOMAIN }}/api/guest/health" || echo "000")
+          # Kiểm sâu (D1 + DO auth + queue) qua x-health-token; probe công khai chỉ là liveness nông (BR-HLT-07).
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "x-health-token: ${HEALTHCHECK_TOKEN}" "https://${{ vars.MINDKID_DOMAIN }}/api/guest/health/deep" || echo "000")
           if [ "$STATUS" != "200" ]; then
             echo "❌ Smoke check failed with HTTP $STATUS. Rolling back Workers immediately..."
             npx wrangler rollback --config apps/web/wrangler.jsonc --yes

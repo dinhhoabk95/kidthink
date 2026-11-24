@@ -45,14 +45,14 @@ Spec này cũng là nơi phát ngôn một ràng buộc ngược lên cách vi�
 | `npx wrangler rollback --config apps/web/wrangler.jsonc`    | Người vận hành | Về version liền trước của web                                           |
 | `npx wrangler rollback --config apps/worker/wrangler.jsonc` | Người vận hành | Về version liền trước của worker; chạy cùng web để hai bên khớp lược đồ |
 | `npx wrangler deployments list --config apps/<app>/wrangler.jsonc` | Người vận hành | Xem version còn giữ và version đang chạy                         |
-| Bước "Gate 6" của `.github/workflows/deploy-cloudflare.yml` | GitHub Actions | Tự quay lui web và worker khi `/api/guest/health` không trả 200         |
+| Bước "Gate 6" của `.github/workflows/deploy-cloudflare.yml` | GitHub Actions | Tự quay lui web và worker khi `/api/guest/health/deep` không trả 200         |
 
 ## 4. Main flow
 
 ```
 1. Chọn đích  — version liền trước, hoặc version nêu tên trong lịch sử của Worker
 2. Quay lui  — `wrangler rollback` đổi version đang phục vụ, không build lại
-3. Cổng khói  — `/api/guest/health` phải 200
+3. Cổng khói  — `/api/guest/health/deep` (kèm `x-health-token`) phải 200
 4. Ghi lại và báo  — ai quay lui, từ version nào về version nào
 ```
 

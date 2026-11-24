@@ -8,7 +8,6 @@ import type { RouteClassName } from "./rate-limiting.js";
 export type RateLimitExemptReason =
   | "not-api"
   | "provider-webhook"
-  | "health-probe"
   | "unclassified-user-route";
 
 export type RateLimitRouteResolution =
@@ -161,9 +160,6 @@ function resolveExempt(path: string): RateLimitRouteResolution | null {
   }
   if (path.startsWith("/api/guest/webhooks/")) {
     return { mode: "exempt", reason: "provider-webhook" };
-  }
-  if (path === "/api/guest/health") {
-    return { mode: "exempt", reason: "health-probe" };
   }
   return null;
 }

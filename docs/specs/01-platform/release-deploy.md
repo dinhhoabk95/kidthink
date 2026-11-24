@@ -61,7 +61,7 @@ commit, thư mục phụ thuộc của máy trạm, tệp cấu hình dev và c�
 7. Migration  — áp DDL cộng thêm lên D1, trước khi đổi bản
 8. Build  — web (Nitro `cloudflare_module`) và admin static SPA, rồi `verify-cf-budget`
 9. Đổi bản  — `wrangler deploy` worker, web, admin
-10. Cổng khói  — gọi `/api/guest/health`; không phải 200 thì `wrangler rollback` web + worker, thoát khác 0
+10. Cổng khói  — gọi `/api/guest/health/deep` kèm `x-health-token`; không phải 200 thì `wrangler rollback` web + worker, thoát khác 0
 ```
 
 Mỗi bước là một step của workflow; bước nào lỗi thì job dừng, không bước nào được bỏ qua để đi tiếp.

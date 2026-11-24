@@ -378,6 +378,14 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     note: "Địa chỉ ping báo hiệu tiến trình định kỳ còn sống, và là kênh cảnh báo dự phòng khi Telegram hỏng. Bắt buộc ở production vì đường thư điện tử trong repo này vẫn là LocalFileEmailAdapter — nó ghi ra tệp, không gửi cho ai",
   },
   {
+    name: "HEALTHCHECK_TOKEN",
+    apps: ["web"],
+    required: "optional",
+    kind: "secret",
+    secret: true,
+    note: "Token header x-health-token mở kiểm sâu /api/guest/health/deep (BR-HLT-07); thiếu thì route sâu luôn 404. Workflow smoke dùng nó",
+  },
+  {
     name: "HEALTHCHECKS_CHECK_UUID",
     apps: ["web", "worker"],
     required: "optional",
