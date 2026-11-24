@@ -1,8 +1,7 @@
-import type { AuthCoordinatorRpcPort } from "@mindkid/auth";
 import type {
   RateLimitCheckResult,
   RateLimitCoordinatorPort,
-} from "@mindkid/cache";
+} from "./token-bucket.js";
 
 export type DoSqlCell = string | number | null;
 
@@ -25,14 +24,13 @@ export interface CoordinatorAlarmStorage {
 export const PRUNE_MIN_INTERVAL_MS = 5 * 60 * 1000;
 
 /**
- * Lõi lưu trữ nhất quán mạnh cho `AuthCoordinatorDO` trên Cloudflare Workers Free:
+ * Lõi lưu trữ nhất quán mạnh cho `AuthCoordinatorDO` trên Cloudflare Workers Free, và cho
+ * port dev/test chạy trong tiến trình trên SQLite (`@mindkid/local-runtime`, D15) — cùng một engine:
  * - Giữ toàn bộ khóa `ba:v1:user:*` và `ba:v1:manager:*` của Better Auth trong SQLite nội bộ của DO
  *   (thay thế Valkey `secondaryStorage` mà không đụng hạn mức 1.000 KV writes/ngày).
  * - Quản lý bộ đếm Token Bucket Rate Limit hai trục (IP + Account) trong RAM + SQLite.
  */
-export class AuthCoordinatorEngine
-  implements AuthCoordinatorRpcPort, RateLimitCoordinatorPort
-{
+export class AuthCoordinatorEngine implements RateLimitCoordinatorPort {
   private readonly sql: MinimalCoordinatorSql;
   private readonly alarms: CoordinatorAlarmStorage | null;
   private initialized = false;
@@ -298,6 +296,19 @@ export class AuthCoordinatorEngine
       remaining: Math.max(0, input.limit - updatedCount),
       resetSeconds: Math.max(1, Math.ceil((currentResetAtMs - nowMs) / 1000)),
     };
+  }
+
+  /** Xoá mọi bộ đếm rate limit (reset giữa các test, `clearRateLimitBuckets`). */
+  clearRateLimits(): void {
+    this.ensureSchema();
+    this.sql.exec("DELETE FROM rate_limits");
+  }
+
+  /** Xoá toàn bộ keyspace và bộ đếm (reset runtime dev/test). */
+  clearAll(): void {
+    this.ensureSchema();
+    this.sql.exec("DELETE FROM auth_kv");
+    this.sql.exec("DELETE FROM rate_limits");
   }
 
   pruneExpired(): number {

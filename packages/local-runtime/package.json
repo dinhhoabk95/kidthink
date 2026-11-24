@@ -1,0 +1,28 @@
+{
+  "name": "@mindkid/local-runtime",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./vitest-setup": "./src/vitest-setup.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@mindkid/auth": "workspace:*",
+    "@mindkid/cache": "workspace:*",
+    "@mindkid/config": "workspace:*",
+    "@mindkid/db": "workspace:*",
+    "@mindkid/queue": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "vitest": "^5.1.0"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts"
+  }
+}

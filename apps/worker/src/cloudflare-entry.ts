@@ -1,4 +1,5 @@
 import { DurableObject } from "cloudflare:workers";
+import { AuthCoordinatorEngine } from "@mindkid/cache";
 import type { QueuedJobEnvelope } from "@mindkid/queue";
 import {
   CloudflareJobQueueController,
@@ -8,7 +9,6 @@ import {
   QUEUE_DO_NAME,
   runUnifiedCronTick,
 } from "#src/cloudflare-runtime";
-import { AuthCoordinatorEngine } from "#src/durable-objects/auth-coordinator";
 
 /**
  * Entry Cloudflare của `mindkid-worker` (`BR-JOB-04`: không mở HTTP công khai —

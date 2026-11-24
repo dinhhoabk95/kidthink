@@ -8,6 +8,7 @@ export * from "./constants/learning-enums.ts";
 export * from "./d1/types.ts";
 export * from "./db-errors.ts";
 export * from "./drivers/d1-driver.ts";
+export * from "./drivers/local-do-sql.ts";
 export * from "./drivers/sqlite-local-driver.ts";
 export * from "./drivers/sqlite-migration-runner.ts";
 export * from "./drivers/types.ts";

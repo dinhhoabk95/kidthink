@@ -5,6 +5,8 @@ import { RateLimiterMemory, RateLimiterRedis } from "rate-limiter-flexible";
 import { getClient, onClientDisconnect } from "./client.js";
 
 export interface RateLimitCoordinatorPort {
+  /** Có ở engine local (dev/test) để reset bộ đếm; DO trên Cloudflare không khai báo. */
+  readonly clearRateLimits?: () => void;
   consumeRateLimit(input: {
     readonly key: string;
     readonly limit: number;

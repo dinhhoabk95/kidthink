@@ -1,4 +1,5 @@
 export * from "./client.js";
+export * from "./coordinator-engine.js";
 export * from "./token-bucket.js";
 
 import { isCloudflareRuntime } from "@mindkid/config";
