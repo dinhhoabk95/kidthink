@@ -1,14 +1,13 @@
 {
-  // Lưới phủ typecheck của cả repo. Trước file này `pnpm check` chạy
-  // `tsc` trên đúng 1/15 project — scripts/, *.config.ts và packages/*/tests/
-  // đều nằm ngoài gate, nên `pnpm check` exit 0 với lỗi type thật.
+  // Lưới phủ typecheck gốc: `pnpm typecheck` chạy `tsc --noEmit` trên file này
+  // rồi script `typecheck` của từng app.
   //
   // `include` cố ý dùng glob `packages/*`: package mới sinh ra là được phủ ngay,
   // ❌ không phải nhớ thêm tsconfig + script cho từng cái (thứ chắc chắn sẽ quên).
   //
-  // apps/* KHÔNG nằm đây — Nuxt sinh tsconfig riêng ở .nuxt/. Cổng phủ chúng là
-  // `pnpm typecheck` (`scripts/typecheck/typecheck-gate.ts`), chạy vue-tsc
-  // trên từng project .nuxt/tsconfig.*.json. ❌ NEVER dùng `nuxt typecheck`:
+  // apps/web và apps/admin KHÔNG nằm đây — Nuxt sinh tsconfig riêng ở .nuxt/;
+  // script `typecheck` của từng app chạy vue-tsc trên các project
+  // .nuxt/tsconfig.*.json. ❌ NEVER dùng `nuxt typecheck`:
   // nó nạp nuxt.config.ts nên chết vì thiếu env, và từng exit 0 im lặng.
   //
   // Mọi flag compiler sống ở packages/config/tsconfig.base.json — ❌ NEVER

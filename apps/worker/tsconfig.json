@@ -1,7 +1,7 @@
 {
   // Worker là app duy nhất không phải Nuxt, nên nó không có `vue-tsc` đỡ như
-  // apps/web và apps/admin. File này tồn tại để `pnpm typecheck:worker` có gì
-  // mà chạy — trước Task này apps/worker chưa từng đi qua một cổng kiểu nào.
+  // apps/web và apps/admin. File này là đầu vào của script `typecheck`
+  // (`tsc --noEmit`) trong apps/worker/package.json.
   //
   // ❌ NEVER khai `rootDir` ở đây: worker import @mindkid/* qua path alias trỏ
   // ra ngoài src/, nên rootDir sinh 338 lỗi TS6059 che mất lỗi thật.
@@ -10,7 +10,7 @@
   //
   // Cấm — NEVER khai lại `module` / `moduleResolution` ở đây: chúng đã ở
   // `@mindkid/config/tsconfig.base.json` mà lưới gốc extend. Hai bản sao thì
-  // một bản sẽ lệch — cổng `lint-workspace-gate` chặn đúng chuyện đó.
+  // một bản sẽ lệch.
   "extends": "../../tsconfig.json",
   "include": ["src/**/*", "tests/**/*"]
 }
