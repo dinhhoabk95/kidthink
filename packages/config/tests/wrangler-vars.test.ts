@@ -40,7 +40,26 @@ describe("BR-ENV-18 — biến không bí mật vào wrangler vars", () => {
       expect(names).toContain(name);
     }
     expect(names).not.toContain("NODE_ENV");
+    expect(names).not.toContain("INITIAL_ADMIN_EMAIL");
+    expect(names).not.toContain("AWS_ACCESS_KEY_ID");
     expect(names).not.toContain("NUXT_SESSION_PASSWORD");
+  });
+
+  it("biến khai runtime:false không bao giờ vào vars dù có giá trị", () => {
+    const vars = collectWranglerVars("web", {
+      SITE_URL: "https://mindkid.vn",
+      INITIAL_ADMIN_EMAIL: "admin@mindkid.vn",
+      AWS_ACCESS_KEY_ID: "AKIA",
+    });
+    expect(vars).toEqual({ SITE_URL: "https://mindkid.vn" });
+    const offRuntime = ENV_REGISTRY.filter((d) => d.runtime === false).map(
+      (d) => d.name
+    );
+    for (const app of ["web", "worker"] as const) {
+      for (const name of offRuntime) {
+        expect(runtimeVarNames(app)).not.toContain(name);
+      }
+    }
   });
 
   it("chỉ lấy biến có giá trị, bỏ chuỗi rỗng và biến lạ", () => {

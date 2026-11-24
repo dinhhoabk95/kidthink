@@ -9,21 +9,11 @@
 
 import { type AppType, ENV_REGISTRY } from "./env-contract.js";
 
-/** Chỉ có nghĩa lúc build/dev hoặc do hạ tầng Cloudflare tự cấp; không đẩy vào `vars`. */
-const NOT_RUNTIME_VARS: ReadonlySet<string> = new Set([
-  "NODE_ENV",
-  "PORT",
-  "GIT_SHA",
-  "PR_URL",
-  "NUXT_PUBLIC_API_BASE_URL",
-]);
-
 const VARS_BLOCK = /"vars"\s*:\s*\{[^}]*\}/;
 
 export function runtimeVarNames(app: Exclude<AppType, "admin">): string[] {
   return ENV_REGISTRY.filter(
-    (def) =>
-      !def.secret && def.apps.includes(app) && !NOT_RUNTIME_VARS.has(def.name)
+    (def) => !def.secret && def.apps.includes(app) && def.runtime !== false
   ).map((def) => def.name);
 }
 

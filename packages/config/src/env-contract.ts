@@ -22,6 +22,11 @@ export interface EnvVarDef {
   required: EnvRequired;
   kind: EnvKind;
   secret: boolean;
+  /**
+   * BR-ENV-18 — `false` nghĩa là Worker không đọc biến này lúc runtime (chỉ build/dev/seed
+   * hoặc hạ tầng tự cấp), nên `collectWranglerVars` không ghi nó vào `vars`. Mặc định `true`.
+   */
+  runtime?: boolean;
   enabledBy?: string;
   enumValues?: readonly string[];
   /**
@@ -42,6 +47,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   // ---- Runtime ------------------------------------------------------------
   {
     name: "NODE_ENV",
+    runtime: false,
     apps: ALL_APPS,
     required: "always",
     kind: "enum",
@@ -51,6 +57,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
   {
     name: "PORT",
+    runtime: false,
     apps: ["web", "worker"],
     required: "always",
     kind: "port",
@@ -76,6 +83,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
   {
     name: "NUXT_PUBLIC_API_BASE_URL",
+    runtime: false,
     apps: ["admin"],
     required: "always",
     kind: "url",
@@ -257,6 +265,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
   {
     name: "AWS_S3_PRIVATE_BUCKET",
+    runtime: false,
     apps: ["web", "worker"],
     required: "optional",
     kind: "text",
@@ -265,6 +274,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
   {
     name: "AWS_ACCESS_KEY_ID",
+    runtime: false,
     apps: ["web", "worker"],
     required: "optional",
     kind: "text",
@@ -491,6 +501,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   // ---- Vận hành một lần ---------------------------------------------------
   {
     name: "INITIAL_ADMIN_EMAIL",
+    runtime: false,
     apps: ["web"],
     required: "optional",
     kind: "email",
@@ -507,6 +518,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
   {
     name: "GIT_SHA",
+    runtime: false,
     apps: ALL_APPS,
     required: "optional",
     kind: "text",
@@ -515,6 +527,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
   {
     name: "PR_URL",
+    runtime: false,
     apps: ALL_APPS,
     required: "optional",
     kind: "url",

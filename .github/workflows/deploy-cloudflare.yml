@@ -76,7 +76,6 @@ jobs:
           AI_PROVIDER_BASE_URL: ${{ vars.AI_PROVIDER_BASE_URL }}
           GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
           FACEBOOK_CLIENT_ID: ${{ vars.FACEBOOK_CLIENT_ID }}
-          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
         run: npx tsx scripts/deploy/sync-wrangler-ids.ts
 
       - name: Gate 3 - Apply Additive D1 Schema DDL (core, logs, blobs)
