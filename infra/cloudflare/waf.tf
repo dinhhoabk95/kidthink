@@ -72,3 +72,32 @@ resource "cloudflare_ruleset" "static_edge_cache" {
     }
   ]
 }
+
+# Rate limit theo IP ở biên (thay `limit_req` của Nginx đã gỡ theo D14; BR-RTL, rate-limiting.md §11 mục 4).
+# Giới hạn gói Free (docs Cloudflare "Rate limiting rules" > Availability): 1 rule, hành động `block`,
+# `period` = 10 giây, `mitigation_timeout` = 10 giây, characteristics chỉ `cf.colo.id` + `ip.src`.
+# Vì chỉ có 1 rule, ưu tiên `/api/auth/*` (đăng nhập, đăng ký, đặt lại mật khẩu).
+# Ngưỡng 50 request / 10 giây / IP = 5 r/s, ngang `limit_req` auth cũ; limiter trong app (§7.1, §7.2)
+# vẫn là lớp tinh theo tài khoản. Nâng gói Pro mới thêm được rule cho `/api/*` và `/api/guest/*`.
+resource "cloudflare_ruleset" "edge_rate_limit" {
+  zone_id     = var.cloudflare_zone_id
+  name        = "MindKid Edge Rate Limit"
+  description = "1 Free-plan rate limiting rule: per-IP limit on /api/auth/*"
+  kind        = "zone"
+  phase       = "http_ratelimit"
+
+  rules = [
+    {
+      action      = "block"
+      description = "Rate limit: 50 req/10s per IP on auth endpoints (Free plan allows 1 rule)"
+      enabled     = true
+      expression  = "(http.request.uri.path wildcard \"/api/auth/*\")"
+      ratelimit = {
+        characteristics     = ["cf.colo.id", "ip.src"]
+        period              = 10
+        requests_per_period = 50
+        mitigation_timeout  = 10
+      }
+    }
+  ]
+}
