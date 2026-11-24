@@ -49,7 +49,6 @@ import {
 import { useOwnerRepositories } from "#server/utils/repositories";
 
 const SITE_TRAILING_SLASH_PATTERN = /\/$/;
-const BEARER_AUTH_PATTERN = /^bearer\s+/i;
 
 let userAuthInstance: MindKidUserAuth | undefined;
 let managerAuthInstance: MindKidManagerAuth | undefined;
@@ -259,11 +258,7 @@ export async function resolveBetterAuthUserSession(
     return event.context.user;
   }
   const headers = extractRequestHeaders(event);
-  const authHeader = headers?.get("authorization");
-  if (
-    !headers?.get("cookie") ||
-    (authHeader && BEARER_AUTH_PATTERN.test(authHeader))
-  ) {
+  if (!headers?.get("cookie")) {
     return null;
   }
 
@@ -342,11 +337,7 @@ export async function resolveBetterAuthManagerSession(
     return event.context.manager;
   }
   const headers = extractRequestHeaders(event);
-  const authHeader = headers?.get("authorization");
-  if (
-    !headers?.get("cookie") ||
-    (authHeader && BEARER_AUTH_PATTERN.test(authHeader))
-  ) {
+  if (!headers?.get("cookie")) {
     return null;
   }
 

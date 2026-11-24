@@ -11,11 +11,7 @@ const CORS_METHODS = [
   "DELETE",
 ] as const;
 
-const CORS_ALLOW_HEADERS = [
-  "Content-Type",
-  "Authorization",
-  "x-csrf-token",
-] as const;
+const CORS_ALLOW_HEADERS = ["Content-Type", "x-csrf-token"] as const;
 
 // Chạy đầu chuỗi middleware để xử lý OPTIONS preflight trước auth/rate-limit
 // và không return boolean của handleCors (tránh h3 ghi tiếp body "true" sau

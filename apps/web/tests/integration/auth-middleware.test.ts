@@ -247,6 +247,27 @@ describe("web auth middleware — Dual Better Auth Instances", () => {
     expect(event.context.manager).toBeUndefined();
   });
 
+  it("refuses an Authorization Bearer header on every cookie-session surface (BR-AUT-25)", async () => {
+    const { cookie: userCookie } = await signUpTestUser("bearer-all");
+    const { cookie: managerCookie } = await signInTestManager("bearer-all");
+    const cases: readonly (readonly [string, string])[] = [
+      ["/api/guest/levels", userCookie],
+      ["/api/managers/dashboard", managerCookie],
+      ["/api/auth/users/get-session", userCookie],
+      ["/api/auth/managers/get-session", managerCookie],
+    ];
+
+    for (const [path, cookie] of cases) {
+      const event = createRequest(path, {
+        authorization: "Bearer some-token",
+        cookie,
+      });
+      await authMiddleware(event);
+      expect(event.context.user, path).toBeUndefined();
+      expect(event.context.manager, path).toBeUndefined();
+    }
+  });
+
   it("applies 1h session TTL when rememberMe=false and 365d TTL when rememberMe=true", async () => {
     const shortLived = await signUpTestUser("short-ttl", false);
     const longLived = await signUpTestUser("long-ttl", true);
