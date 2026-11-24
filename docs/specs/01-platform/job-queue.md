@@ -127,6 +127,10 @@ giới hạn thì khớp khi **một trong hai** khớp (đúng cron chuẩn). M
 số của 5; pattern lệch 5 phút được dispatch ở tick 5 phút phủ nó. Cảm biến `ops:graduation-check`
 chạy ở tick 02:00 ICT.
 
+Port (D1, auth, cache, queue, storage) nối bằng `register*Port` toàn cục một lần cho mỗi `env`,
+không dùng `AsyncLocalStorage.enterWith`: workerd báo `enterWith() is not implemented` (đã đo
+bằng `wrangler dev`).
+
 ## 8. API contract
 
 ```ts

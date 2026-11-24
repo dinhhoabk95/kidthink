@@ -29,15 +29,18 @@ interface NodeSqliteModule {
 const TX_CONTROL_REGEX =
   /^\s*(?:BEGIN|COMMIT|ROLLBACK|SAVEPOINT|RELEASE\s+SAVEPOINT|ROLLBACK\s+TO\s+SAVEPOINT)\b/i;
 
-const DEFAULT_REPO_SQLITE_DIR = path.resolve(
-  import.meta.dirname,
-  "..",
-  "..",
-  "..",
-  "..",
-  ".data",
-  "sqlite"
-);
+/** Tính lười: `import.meta.dirname` không có ở cấp module trong Nitro/workerd. */
+function defaultRepoSqliteDir(): string {
+  return path.resolve(
+    import.meta.dirname,
+    "..",
+    "..",
+    "..",
+    "..",
+    ".data",
+    "sqlite"
+  );
+}
 
 let cachedSqliteModule: NodeSqliteModule | undefined;
 
@@ -63,7 +66,7 @@ export function resolveSqliteDatabasePath(
   const resolvedDir =
     rawDir && rawDir.trim().length > 0
       ? path.resolve(rawDir)
-      : DEFAULT_REPO_SQLITE_DIR;
+      : defaultRepoSqliteDir();
   return {
     isMemory: false,
     dataDir: resolvedDir,

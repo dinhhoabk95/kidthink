@@ -30,6 +30,16 @@ export default defineNuxtConfig({
               import.meta.url
             )
           ),
+          // BR-JOB-11: hàng đợi chạy qua Durable Object, không kéo BullMQ/ioredis vào bundle.
+          bullmq: fileURLToPath(
+            new URL("./server/utils/cloudflare-bullmq-stub.ts", import.meta.url)
+          ),
+          ioredis: fileURLToPath(
+            new URL(
+              "./server/utils/cloudflare-ioredis-stub.ts",
+              import.meta.url
+            )
+          ),
         }
       : {
           "#server": fileURLToPath(new URL("./server", import.meta.url)),
