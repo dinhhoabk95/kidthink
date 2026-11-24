@@ -214,11 +214,7 @@ describe("Health Check API (BR-HLT-01..06)", () => {
     );
 
     expect(workflow).toContain('if [ "$STATUS" != "200" ]; then');
-    expect(workflow).toContain(
-      "wrangler rollback --config apps/web/wrangler.jsonc"
-    );
-    expect(workflow).toContain(
-      "wrangler rollback --config apps/worker/wrangler.jsonc"
-    );
+    expect(workflow).toContain("rollback --config apps/web/wrangler.jsonc");
+    expect(workflow).toContain("rollback --config apps/worker/wrangler.jsonc");
   });
 });

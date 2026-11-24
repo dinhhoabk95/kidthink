@@ -16,10 +16,10 @@ jobs:
       BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version-file: .nvmrc
 
@@ -27,8 +27,8 @@ jobs:
         run: |
           mkdir -p .backup-out
           DATE_STAMP=$(date -u +"%Y%m%dT%H%M%SZ")
-          npx wrangler@latest d1 export mindkid-core --remote --output=".backup-out/core-${DATE_STAMP}.sql"
-          npx wrangler@latest d1 export mindkid-logs --remote --output=".backup-out/logs-${DATE_STAMP}.sql"
+          npx --yes wrangler@4.168.0 d1 export mindkid-core --remote --output=".backup-out/core-${DATE_STAMP}.sql"
+          npx --yes wrangler@4.168.0 d1 export mindkid-logs --remote --output=".backup-out/logs-${DATE_STAMP}.sql"
           tar -czf ".backup-out/mindkid-d1-${DATE_STAMP}.tar.gz" -C .backup-out "core-${DATE_STAMP}.sql" "logs-${DATE_STAMP}.sql"
           node -e '
             const crypto = require("node:crypto");
@@ -51,7 +51,7 @@ jobs:
           '
 
       - name: Retain Encrypted Backup in Private GitHub Actions Artifact (30 days - BR-BAK-05)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: mindkid-d1-encrypted-backup-${{ github.run_number }}
           path: .backup-out/*.enc*
