@@ -320,6 +320,15 @@ export function createMindKidUserAuth(deps: CreateMindKidUserAuthDeps) {
         mfaGuard,
         pendingAuthAccountByCtx: pendingAuth2faUserByCtx,
         pendingMfaActivationByCtx,
+        enforceAccountRateLimit: (accountId) =>
+          runBetterAuthCallback(async () => {
+            await deps.callbacks?.enforceRateLimit?.({
+              routeClass: "auth:mfa",
+              ipAddress,
+              identifier: `user:${accountId}`,
+              skipIpCheck: true,
+            });
+          }),
       });
       return undefined;
     }

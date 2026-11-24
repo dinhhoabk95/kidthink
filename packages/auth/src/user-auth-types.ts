@@ -84,6 +84,8 @@ export interface UserAuthCallbacks {
     readonly routeClass: string;
     readonly ipAddress: string;
     readonly identifier?: string;
+    /** IP đã được middleware đếm trong cùng request — chỉ đếm trục account. */
+    readonly skipIpCheck?: boolean;
   }) => Promise<void>;
   readonly revokeOtherSessions?: (
     userId: number,

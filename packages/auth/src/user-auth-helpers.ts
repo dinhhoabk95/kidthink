@@ -786,9 +786,9 @@ export async function enforcePendingTwoFactorGuard(input: {
   ) => Promise<{ value: string } | null>;
   readonly redis: MinimalRedisClient;
   readonly mfaGuard: MfaAttemptGuard;
-}): Promise<void> {
+}): Promise<number | undefined> {
   if (typeof input.signedTf !== "string" || input.signedTf.length === 0) {
-    return;
+    return undefined;
   }
   const signedId = input.signedTf;
   const ver = await input.findVerificationValue(signedId);
@@ -804,9 +804,10 @@ export async function enforcePendingTwoFactorGuard(input: {
         await runBetterAuthCallback(() =>
           input.mfaGuard.assertNotLocked(input.namespace, cachedAccountId)
         );
+        return cachedAccountId;
       }
     }
-    return;
+    return undefined;
   }
   if (input.rawCookieVal) {
     await setPending2faAccountByCookie(
@@ -819,6 +820,7 @@ export async function enforcePendingTwoFactorGuard(input: {
   await runBetterAuthCallback(() =>
     input.mfaGuard.assertNotLocked(input.namespace, targetAccountId)
   );
+  return targetAccountId;
 }
 
 export async function handleTwoFactorVerifyBeforeHook(input: {
@@ -829,6 +831,11 @@ export async function handleTwoFactorVerifyBeforeHook(input: {
   readonly mfaGuard: MfaAttemptGuard;
   readonly pendingAuthAccountByCtx: WeakMap<object, number>;
   readonly pendingMfaActivationByCtx: WeakMap<object, number>;
+  /**
+   * Trục account của `auth:mfa` (BR-RTL-01): trục IP đã do middleware đếm, nhưng
+   * một IP đổi liên tục vẫn dò được mã TOTP của một tài khoản.
+   */
+  readonly enforceAccountRateLimit?: (accountId: number) => Promise<void>;
 }): Promise<void> {
   const {
     ctx,
@@ -838,11 +845,12 @@ export async function handleTwoFactorVerifyBeforeHook(input: {
     mfaGuard,
     pendingAuthAccountByCtx,
     pendingMfaActivationByCtx,
+    enforceAccountRateLimit,
   } = input;
   const tfCookie = ctx.context.createAuthCookie("two_factor");
   const signedTf = await ctx.getSignedCookie(tfCookie.name, ctx.context.secret);
   if (typeof signedTf === "string" && signedTf.length > 0) {
-    await enforcePendingTwoFactorGuard({
+    const pendingAccountId = await enforcePendingTwoFactorGuard({
       namespace,
       rawCookieVal: readCookieFromHeader(ctx.headers, tfCookie.name),
       signedTf,
@@ -851,6 +859,9 @@ export async function handleTwoFactorVerifyBeforeHook(input: {
       redis,
       mfaGuard,
     });
+    if (pendingAccountId !== undefined) {
+      await enforceAccountRateLimit?.(pendingAccountId);
+    }
     return;
   }
 
@@ -865,6 +876,7 @@ export async function handleTwoFactorVerifyBeforeHook(input: {
   await runBetterAuthCallback(() =>
     mfaGuard.assertNotLocked(namespace, accountId)
   );
+  await enforceAccountRateLimit?.(accountId);
   const userFlags = activeSession.user as {
     twoFactorEnabled?: boolean;
     mfaEnabled?: boolean;

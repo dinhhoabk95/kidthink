@@ -95,6 +95,8 @@ export interface ManagerAuthCallbacks {
     readonly routeClass: string;
     readonly ipAddress: string;
     readonly identifier?: string;
+    /** IP đã được middleware đếm trong cùng request — chỉ đếm trục account. */
+    readonly skipIpCheck?: boolean;
   }) => Promise<void>;
   readonly verifySessionReauth?: (input: {
     readonly managerId: number;
@@ -686,6 +688,15 @@ export function createMindKidManagerAuth(deps: CreateMindKidManagerAuthDeps) {
             mfaGuard,
             pendingAuthAccountByCtx: pendingAuth2faManagerByCtx,
             pendingMfaActivationByCtx,
+            enforceAccountRateLimit: (accountId) =>
+              runBetterAuthCallback(async () => {
+                await deps.callbacks?.enforceRateLimit?.({
+                  routeClass: "auth:mfa",
+                  ipAddress,
+                  identifier: `manager:${accountId}`,
+                  skipIpCheck: true,
+                });
+              }),
           });
           return;
         }

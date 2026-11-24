@@ -22,9 +22,12 @@ import { useOwnerRepositories } from "#server/utils/repositories";
 
 function resolveRateLimitRouteClass(
   routeClass: string
-): "auth:register" | "auth:forgot-password" | "auth:login" {
+): "auth:register" | "auth:forgot-password" | "auth:login" | "auth:mfa" {
   if (routeClass === "auth:register") {
     return "auth:register";
+  }
+  if (routeClass === "auth:mfa") {
+    return "auth:mfa";
   }
   if (
     routeClass === "auth:forgot-password" ||
@@ -255,11 +258,17 @@ export function buildUserAuthCallbacks(
       verifyReauthWindow(reauthAt, methods);
     },
     assertNoOAuthTokens: assertNoOAuthProviderTokens,
-    enforceRateLimit: async ({ routeClass, ipAddress, identifier }) => {
+    enforceRateLimit: async ({
+      routeClass,
+      ipAddress,
+      identifier,
+      skipIpCheck,
+    }) => {
       const res = await sharedEnforceTwoAxisRateLimit({
         routeClass: resolveRateLimitRouteClass(routeClass),
         remoteIp: ipAddress,
         accountIdentifier: identifier,
+        skipIpCheck,
       });
       assertRateLimitAllowed(res.statusCode);
     },
@@ -328,11 +337,17 @@ export function buildManagerAuthCallbacks(
         });
       });
     },
-    enforceRateLimit: async ({ ipAddress, identifier }) => {
+    enforceRateLimit: async ({
+      routeClass,
+      ipAddress,
+      identifier,
+      skipIpCheck,
+    }) => {
       const res = await sharedEnforceTwoAxisRateLimit({
-        routeClass: "auth:login",
+        routeClass: resolveRateLimitRouteClass(routeClass),
         remoteIp: ipAddress,
         accountIdentifier: identifier,
+        skipIpCheck,
       });
       assertRateLimitAllowed(res.statusCode);
     },
