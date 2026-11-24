@@ -63,6 +63,7 @@ User đã đăng nhập và **đã xác thực email**.
 | `BR-POC-06` | Đơn hết hạn sau **48 giờ** không nộp chứng từ | Giải phóng đơn chờ và tránh tồn đọng đơn ảo quá thời gian xử lý |
 | `BR-POC-07` | Màn hình nói rõ **duyệt tay** và thời gian dự kiến | Kỳ vọng sai tạo ca hỗ trợ |
 | `BR-POC-08` | Cấm — **NEVER hiện luồng này trên bề mặt trẻ** | `BR-PEN-04` |
+| `BR-POC-09` | Thiếu cấu hình tài khoản nhận (`VIETQR_*`) → **503** `SERVICE_UNAVAILABLE` ở mọi nơi dựng VietQR (tạo đơn, xem chi tiết, checkout). **Cấm** trả tài khoản mặc định/giả | Hiện số tài khoản giả khiến người dùng chuyển tiền sai chỗ |
 
 ## 7. Data
 
@@ -121,6 +122,12 @@ Scenario: BR-POC-05 — nói rõ cộng dồn
   Given user có premium còn 100 ngày
   When chọn mua premium 365 ngày
   Then tóm tắt nêu rõ thời hạn mới là 465 ngày
+
+Scenario: BR-POC-09 — thiếu cấu hình VietQR
+  Given VIETQR_ACCOUNT_NO chưa đặt
+  When xem chi tiết đơn pending
+  Then trả 503
+  And body không chứa số tài khoản nào
 
 Scenario: add-on chưa bán bị chặn
   When tạo đơn cho PKG-addon_ai

@@ -230,6 +230,19 @@ function isConstraintViolationError(
   return false;
 }
 
+function buildVietQrOrThrow(
+  amountVnd: number,
+  transferNote: string
+): VietQrPayloadResult {
+  try {
+    return generateVietQrPayload({ amountVnd, transferNote });
+  } catch {
+    throw new ServiceUnavailableError(
+      "Hệ thống thanh toán tạm thời chưa cấu hình tài khoản nhận chuyển khoản."
+    );
+  }
+}
+
 export async function createUserOrder(
   input: CreateUserOrderInput
 ): Promise<CreatedUserOrderResult> {
@@ -268,17 +281,7 @@ export async function createUserOrder(
   const transferNote = formatTransferNote(orderUuid);
   const expiresAt = computeOrderPendingExpiresAt();
 
-  let vietQr: VietQrPayloadResult;
-  try {
-    vietQr = generateVietQrPayload({
-      amountVnd: effectivePriceVnd,
-      transferNote,
-    });
-  } catch {
-    throw new ServiceUnavailableError(
-      "Hệ thống thanh toán tạm thời chưa cấu hình tài khoản nhận chuyển khoản."
-    );
-  }
+  const vietQr = buildVietQrOrThrow(effectivePriceVnd, transferNote);
 
   let insertedOrder: PaymentOrderEntity;
   try {
@@ -386,27 +389,7 @@ export async function getUserOrderDetail(userId: number, orderUuid: string) {
     order.status === PAYMENT_ORDER_STATUS.PENDING_PROOF
   ) {
     const safeTransferNote = order.transferNote || "";
-    try {
-      vietQr = generateVietQrPayload({
-        amountVnd: order.amountVnd,
-        transferNote: safeTransferNote,
-      });
-    } catch {
-      vietQr = {
-        qrPayload: `vietqr://970407/1234567890?amount=${order.amountVnd}&info=${encodeURIComponent(
-          safeTransferNote
-        )}`,
-        qrImageUrl: `https://img.vietqr.io/image/970407-1234567890-compact2.png?amount=${order.amountVnd}&addInfo=${encodeURIComponent(
-          safeTransferNote
-        )}`,
-        bankInfo: {
-          bankId: "970407",
-          bankName: "Techcombank",
-          accountNo: "1234567890",
-          accountName: "MINDKID CORP",
-        },
-      };
-    }
+    vietQr = buildVietQrOrThrow(order.amountVnd, safeTransferNote);
   }
 
   let userRejectionReason: string | undefined;
@@ -518,10 +501,7 @@ export async function createUserOrderCheckoutSession(
   const catalogAmountVnd =
     offer.price_vnd > 0 ? offer.price_vnd : order.amountVnd;
   const transferNote = order.transferNote || formatTransferNote(order.uuid);
-  const vietQr = generateVietQrPayload({
-    amountVnd: catalogAmountVnd,
-    transferNote,
-  });
+  const vietQr = buildVietQrOrThrow(catalogAmountVnd, transferNote);
 
   const checkoutUrl = `https://checkout.${input.provider}.vn/pay/${order.uuid}?amount=${catalogAmountVnd}`;
 
