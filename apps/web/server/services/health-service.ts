@@ -3,7 +3,6 @@ import {
   generateTokenHex,
   getAuthRedisClient,
 } from "@mindkid/auth";
-import { ping } from "@mindkid/cache";
 import { getDbConnectionName } from "@mindkid/config";
 import { getOwnerDb } from "@mindkid/db";
 import { createRepositories } from "@mindkid/db/repositories";
@@ -69,41 +68,26 @@ function collectHealthProbes(
   const conn = getDbConnectionName();
   const dbProbe = withTimeout(pingDb(), SERVICE_TIMEOUT_MS, "Database");
 
-  if (conn === "sqlite") {
+  // Dev/test (`sqlite`): auth keyspace và queue là engine chạy trong tiến trình
+  // (D15) — không có phụ thuộc ngoài để kiểm, chỉ kiểm DB.
+  if (conn !== "d1") {
     return [dbProbe];
   }
 
-  if (conn === "d1") {
-    const probes: Promise<void>[] = [dbProbe];
-    if (cfEnv?.AUTH_COORDINATOR) {
-      probes.push(withTimeout(probeAuthKeyspace(), SERVICE_TIMEOUT_MS, "Auth"));
-    }
-    if (cfEnv?.JOB_QUEUE_DO) {
-      probes.push(
-        withTimeout(
-          getWaitingCount().then(() => undefined),
-          SERVICE_TIMEOUT_MS,
-          "Queue"
-        )
-      );
-    }
-    return probes;
+  const probes: Promise<void>[] = [dbProbe];
+  if (cfEnv?.AUTH_COORDINATOR) {
+    probes.push(withTimeout(probeAuthKeyspace(), SERVICE_TIMEOUT_MS, "Auth"));
   }
-
-  return [
-    dbProbe,
-    withTimeout(
-      ping().then(() => undefined),
-      SERVICE_TIMEOUT_MS,
-      "Cache"
-    ),
-    withTimeout(probeAuthKeyspace(), SERVICE_TIMEOUT_MS, "Auth"),
-    withTimeout(
-      getWaitingCount().then(() => undefined),
-      SERVICE_TIMEOUT_MS,
-      "Queue"
-    ),
-  ];
+  if (cfEnv?.JOB_QUEUE_DO) {
+    probes.push(
+      withTimeout(
+        getWaitingCount().then(() => undefined),
+        SERVICE_TIMEOUT_MS,
+        "Queue"
+      )
+    );
+  }
+  return probes;
 }
 
 export async function runSystemHealthCheck(

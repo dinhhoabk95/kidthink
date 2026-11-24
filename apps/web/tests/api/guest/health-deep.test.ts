@@ -30,30 +30,23 @@ vi.mock("@mindkid/config", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@mindkid/config")>();
   return {
     ...actual,
-    getDbConnectionName: () => "postgres" as const,
+    getDbConnectionName: () => "d1" as const,
   };
 });
-
-vi.mock("@mindkid/cache", () => ({
-  ping: vi.fn(),
-}));
 
 vi.mock("@mindkid/queue", () => ({
   getWaitingCount: vi.fn(),
   alert: vi.fn(),
 }));
 
-import { ping } from "@mindkid/cache";
 import { alert, getWaitingCount } from "@mindkid/queue";
 import { setHeader, setResponseStatus } from "h3";
 import handler from "#server/api/guest/health/deep.get";
 import { runSystemHealthCheck } from "#server/services/health-service";
 
-const mockedPing = vi.mocked(ping);
 const mockedGetWaitingCount = vi.mocked(getWaitingCount);
 
 function setupHealthyDependencies(): void {
-  mockedPing.mockResolvedValue(true);
   mockedGetWaitingCount.mockResolvedValue(0);
   mockRedisSet.mockResolvedValue("OK");
   mockRedisGet.mockResolvedValue("deadbeefcafebabe");
@@ -67,8 +60,12 @@ describe("Health Check API (BR-HLT-01..06)", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Runtime `d1`: Auth DO và queue chỉ được kiểm khi binding có mặt trong `event.context`.
     mockEvent = {
       headers: { "x-health-token": HEALTH_TOKEN },
+      context: {
+        cloudflare: { env: { AUTH_COORDINATOR: {}, JOB_QUEUE_DO: {} } },
+      },
     } as never as H3Event;
     process.env.HEALTHCHECK_TOKEN = HEALTH_TOKEN;
     setupHealthyDependencies();
@@ -100,7 +97,7 @@ describe("Health Check API (BR-HLT-01..06)", () => {
     ).rejects.toMatchObject({ statusCode: 404 });
   });
 
-  it("BR-HLT-02 & BR-HLT-04: kiểm dịch vụ thật (DB, Cache, Queue, Auth sentinel write/read/delete) và không lộ version/hostname/chuỗi kết nối", async () => {
+  it("BR-HLT-02 & BR-HLT-04: kiểm dịch vụ thật (DB, Queue, Auth sentinel write/read/delete) và không lộ version/hostname/chuỗi kết nối", async () => {
     const response = await handler(mockEvent);
 
     expect(response).toEqual({ status: "ok" });
@@ -142,7 +139,7 @@ describe("Health Check API (BR-HLT-01..06)", () => {
     );
   });
 
-  it("Ca âm BR-HLT-02 & BR-HLT-03: Redis auth ghi được nhưng đọc lại sentinel sai giá trị → 503 + alert và vẫn xoá sentinel", async () => {
+  it("Ca âm BR-HLT-02 & BR-HLT-03: auth keyspace ghi được nhưng đọc lại sentinel sai giá trị → 503 + alert và vẫn xoá sentinel", async () => {
     mockRedisGet.mockResolvedValue("corrupted-value");
 
     const response = await handler(mockEvent);

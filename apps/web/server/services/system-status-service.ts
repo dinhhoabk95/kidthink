@@ -1,13 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
-import { ping } from "@mindkid/cache";
-import { isCloudflareRuntime } from "@mindkid/config";
+import { getCachePort } from "@mindkid/cache";
 import { BACKUP_DIR } from "@mindkid/config/backup";
-import {
-  getCloudflareQueuePort,
-  type JobQueueCoordinatorPort,
-} from "@mindkid/queue";
-import { getQueue } from "@mindkid/queue/connection";
+import { getQueuePort, type JobQueueCoordinatorPort } from "@mindkid/queue";
 import {
   countErrorLogsSinceBySource,
   countOpenErrorGroups,
@@ -101,17 +96,6 @@ export interface QueueCountsSnapshot {
   completed: number;
   failed: number;
   delayed: number;
-}
-
-export interface WaitingJobSample {
-  timestamp?: number;
-}
-
-export interface QueueInspector {
-  getJobCounts(
-    ...types: Array<"waiting" | "active" | "completed" | "failed" | "delayed">
-  ): Promise<Record<string, number>>;
-  getWaiting?(start?: number, end?: number): Promise<WaitingJobSample[]>;
 }
 
 export interface QueueProbeResult {
@@ -221,8 +205,14 @@ export async function probePostgres(
   }
 }
 
+/**
+ * Probe kho cache/auth keyspace. Tên `probeValkey` và khoá `services.valkey` là hợp đồng
+ * response của `/api/managers/system/status` (admin SPA đọc) nên giữ nguyên dù Valkey đã
+ * gỡ (D15): "sống" nghĩa là port cache đã nối vào engine (DO hoặc engine local).
+ */
 export async function probeValkey(
-  pingFn: () => Promise<boolean> = () => ping(),
+  pingFn: () => Promise<boolean> = () =>
+    Promise.resolve(getCachePort() !== undefined),
   degradedLatencyMs: number = SERVICE_DEGRADED_LATENCY_MS
 ): Promise<ServiceProbeResult> {
   const runbookUrl = "/docs/runbooks/valkey-cache.md";
@@ -262,13 +252,13 @@ interface QueueCountsReading {
   readonly oldestJobAgeSeconds: number;
 }
 
-/** BR-SYS-07: JobQueueDO chỉ có waiting/failed. */
-async function readCloudflareQueueCounts(
+/** BR-SYS-07: engine queue (DO hoặc local) chỉ có waiting/failed. */
+async function readQueueCounts(
   getPort: () => JobQueueCoordinatorPort | undefined
 ): Promise<QueueCountsReading> {
   const port = getPort();
   if (!port) {
-    throw new Error("Cloudflare queue port is not registered");
+    throw new Error("Queue port is not registered");
   }
   const stats = await withProbeTimeout(port.getStats());
   return {
@@ -283,48 +273,14 @@ async function readCloudflareQueueCounts(
   };
 }
 
-async function readBullmqQueueCounts(
-  getQueueFn: () => QueueInspector,
-  nowMs: number
-): Promise<QueueCountsReading> {
-  const queue = getQueueFn();
-  const rawCounts = await withProbeTimeout(
-    queue.getJobCounts("waiting", "active", "completed", "failed", "delayed")
-  );
-  const counts: QueueCountsSnapshot = {
-    waiting: rawCounts.waiting ?? 0,
-    active: rawCounts.active ?? 0,
-    completed: rawCounts.completed ?? 0,
-    failed: rawCounts.failed ?? 0,
-    delayed: rawCounts.delayed ?? 0,
-  };
-  let oldestJobAgeSeconds = 0;
-  if (counts.waiting > 0 && typeof queue.getWaiting === "function") {
-    const waitingJobs = await withProbeTimeout(queue.getWaiting(0, 0));
-    const oldestTimestamp = waitingJobs[0]?.timestamp;
-    if (typeof oldestTimestamp === "number" && oldestTimestamp > 0) {
-      oldestJobAgeSeconds = Math.max(
-        0,
-        Math.round((nowMs - oldestTimestamp) / 1000)
-      );
-    }
-  }
-  return { counts, oldestJobAgeSeconds };
-}
-
 export async function probeQueue(
-  getQueueFn: () => QueueInspector = () => getQueue(),
-  nowMs: number = Date.now(),
-  degradedLatencyMs: number = QUEUE_DEGRADED_LATENCY_MS,
-  getCloudflarePort: () => JobQueueCoordinatorPort | undefined = () =>
-    getCloudflareQueuePort()
+  getPort: () => JobQueueCoordinatorPort | undefined = () => getQueuePort(),
+  degradedLatencyMs: number = QUEUE_DEGRADED_LATENCY_MS
 ): Promise<QueueProbeResult> {
   const runbookUrl = "/docs/runbooks/bullmq-worker.md";
   const start = performance.now();
   try {
-    const { counts, oldestJobAgeSeconds } = isCloudflareRuntime()
-      ? await readCloudflareQueueCounts(getCloudflarePort)
-      : await readBullmqQueueCounts(getQueueFn, nowMs);
+    const { counts, oldestJobAgeSeconds } = await readQueueCounts(getPort);
     const latencyMs = Math.max(0, Math.round(performance.now() - start));
 
     const isServiceDegraded = latencyMs >= degradedLatencyMs;
@@ -365,7 +321,7 @@ export async function probeQueue(
         state: "down",
         latency_ms: -1,
         runbook_url: runbookUrl,
-        error: "BullMQ queue inspection failed",
+        error: "Queue inspection failed",
       },
       jobs: {
         status: "unknown",

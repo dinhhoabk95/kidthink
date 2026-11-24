@@ -142,7 +142,7 @@ async function decryptBackupToSqliteFile(
 
 /**
  * Flushes auth session namespaces and user entitlement caches after DB restore.
- * Never uses FLUSHALL so BullMQ job queues stay intact.
+ * Never flushes the whole auth/queue keyspace so job queues stay intact.
  */
 export async function flushPostRestoreAuthAndCache(): Promise<number> {
   return await flushKvCachePrefixes(POST_RESTORE_CACHE_PREFIXES);

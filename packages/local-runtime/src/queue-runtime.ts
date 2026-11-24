@@ -4,7 +4,7 @@ import {
   JobQueueSqlEngine,
   type QueueDeadLetterReporter,
   type QueueJobHandler,
-  registerCloudflareQueuePort,
+  registerQueuePort,
 } from "@mindkid/queue";
 import { createTimerAlarmStorage } from "./timer-alarm.js";
 
@@ -12,11 +12,20 @@ import { createTimerAlarmStorage } from "./timer-alarm.js";
 const LOCAL_BATCH_WINDOW_MS = 0;
 const DEFAULT_POLL_INTERVAL_MS = 1000;
 
+export type QueuedJobJson =
+  | string
+  | number
+  | boolean
+  | null
+  | QueuedJobJson[]
+  | { [key: string]: QueuedJobJson };
+
+/** Hình dạng đủ cho test/chẩn đoán: `data` là payload đã parse (luôn là object — `def.parse`). */
 export interface PeekedQueuedJob {
   readonly attempts: number;
-  readonly jobId: string;
+  readonly data: { [key: string]: QueuedJobJson };
+  readonly id: string;
   readonly name: JobName;
-  readonly payloadJson: string;
 }
 
 export interface LocalQueueRuntime {
@@ -56,9 +65,11 @@ function buildRuntime(
         return undefined;
       }
       return {
-        jobId: String(row.job_id),
+        id: String(row.job_id),
         name: String(row.name) as JobName,
-        payloadJson: String(row.payload_json),
+        data: JSON.parse(String(row.payload_json)) as {
+          [key: string]: QueuedJobJson;
+        },
         attempts: Number(row.attempts),
       };
     },
@@ -70,7 +81,7 @@ function buildRuntime(
     },
     close() {
       stop();
-      registerCloudflareQueuePort(undefined);
+      registerQueuePort(undefined);
       if (currentRuntime === runtime) {
         currentRuntime = undefined;
       }
@@ -99,7 +110,7 @@ export function startLocalQueueProducer(filePath: string): LocalQueueRuntime {
         new Error("Producer local không chạy job: hãy chạy apps/worker")
       ),
   });
-  registerCloudflareQueuePort(engine);
+  registerQueuePort(engine);
   currentRuntime = buildRuntime(engine, sql, () => undefined);
   return currentRuntime;
 }
@@ -150,7 +161,7 @@ export function startLocalQueueConsumer(
   }, options.pollIntervalMs ?? DEFAULT_POLL_INTERVAL_MS);
   poll.unref();
 
-  registerCloudflareQueuePort(engine);
+  registerQueuePort(engine);
   currentRuntime = buildRuntime(engine, sql, () => {
     clearInterval(poll);
     alarms.cancel();

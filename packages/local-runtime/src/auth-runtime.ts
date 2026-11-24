@@ -1,8 +1,8 @@
 import { registerAuthCoordinatorPort } from "@mindkid/auth";
 import {
   AuthCoordinatorEngine,
-  registerCloudflareCachePort,
-  registerCloudflareRateLimitPort,
+  registerCachePort,
+  registerRateLimitPort,
 } from "@mindkid/cache";
 import { createLocalDoSqlStorage } from "@mindkid/db";
 import { createTimerAlarmStorage } from "./timer-alarm.js";
@@ -34,7 +34,7 @@ export function startLocalAuthRuntime(filePath: string): LocalAuthRuntime {
     kvExpire: (key, seconds) => engine.kvExpire(key, seconds),
     kvDeleteByPrefix: (prefix) => engine.kvDeleteByPrefix(prefix),
   });
-  registerCloudflareCachePort({
+  registerCachePort({
     get: (key) => engine.kvGet(key),
     set: async (key, value, ttlSeconds) => {
       await engine.kvSet(key, value, ttlSeconds);
@@ -42,7 +42,7 @@ export function startLocalAuthRuntime(filePath: string): LocalAuthRuntime {
     del: (...keys) => engine.kvDel(keys),
     deleteByPrefix: (prefix) => engine.kvDeleteByPrefix(prefix),
   });
-  registerCloudflareRateLimitPort({
+  registerRateLimitPort({
     consumeRateLimit: (input) => engine.consumeRateLimit(input),
     clearRateLimits: () => engine.clearRateLimits(),
   });
@@ -53,8 +53,8 @@ export function startLocalAuthRuntime(filePath: string): LocalAuthRuntime {
     close() {
       alarms.cancel();
       registerAuthCoordinatorPort(undefined);
-      registerCloudflareCachePort(undefined);
-      registerCloudflareRateLimitPort(undefined);
+      registerCachePort(undefined);
+      registerRateLimitPort(undefined);
       sql.close();
     },
   };

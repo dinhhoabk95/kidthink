@@ -290,18 +290,18 @@ describe("@t3-oss/env-nuxt schema synchronization (BR-ENV-01, BR-ENV-08, BR-ENV-
     }
   });
 
-  it("BR-ENV-13 — rejects invalid URL protocol on VALKEY_URL", () => {
-    const original = process.env.VALKEY_URL;
-    process.env.VALKEY_URL = "https://example.com/not-valkey";
+  it("BR-ENV-13 — rejects invalid URL protocol on SITE_URL", () => {
+    const original = process.env.SITE_URL;
+    process.env.SITE_URL = "ftp://example.com/not-http";
     try {
       expect(() =>
         createWebEnv({ isProduction: false, isServer: true })
-      ).toThrow("VALKEY_URL");
+      ).toThrow("SITE_URL");
     } finally {
       if (original === undefined) {
-        delete process.env.VALKEY_URL;
+        delete process.env.SITE_URL;
       } else {
-        process.env.VALKEY_URL = original;
+        process.env.SITE_URL = original;
       }
     }
   });

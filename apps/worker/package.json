@@ -17,14 +17,13 @@
     "@mindkid/config": "workspace:*",
     "@mindkid/db": "workspace:*",
     "@mindkid/export": "workspace:*",
+    "@mindkid/local-runtime": "workspace:*",
     "@mindkid/notification": "workspace:*",
     "@mindkid/play": "workspace:*",
     "@mindkid/queue": "workspace:*",
     "@mindkid/shared": "workspace:*",
     "@mindkid/storage": "workspace:*",
-    "bullmq": "^6.7.6",
-    "drizzle-orm": "1.0.0-rc.5",
-    "ioredis": "6.1.0-beta.1"
+    "drizzle-orm": "1.0.0-rc.5"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

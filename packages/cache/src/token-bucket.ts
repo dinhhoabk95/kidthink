@@ -1,8 +1,6 @@
 import { createHmac } from "node:crypto";
-import { isCloudflareRuntime, requireEnv } from "@mindkid/config";
+import { requireEnv } from "@mindkid/config";
 import { ServiceUnavailableError } from "@mindkid/errors/common";
-import { RateLimiterMemory, RateLimiterRedis } from "rate-limiter-flexible";
-import { getClient, onClientDisconnect } from "./client.js";
 
 export interface RateLimitCoordinatorPort {
   /** Có ở engine local (dev/test) để reset bộ đếm; DO trên Cloudflare không khai báo. */
@@ -14,12 +12,12 @@ export interface RateLimitCoordinatorPort {
   }): Promise<RateLimitCheckResult>;
 }
 
-let cloudflareRateLimitPort: RateLimitCoordinatorPort | undefined;
+let rateLimitPort: RateLimitCoordinatorPort | undefined;
 
-export function registerCloudflareRateLimitPort(
+export function registerRateLimitPort(
   port: RateLimitCoordinatorPort | undefined
 ): void {
-  cloudflareRateLimitPort = port;
+  rateLimitPort = port;
 }
 
 export interface RateLimitCheckResult {
@@ -35,56 +33,23 @@ export interface RateLimitOptions {
   failOpen?: boolean;
 }
 
-/** Tiền tố khoá của rate-limiter-flexible trong Valkey. */
-export const RATE_LIMIT_KEY_PREFIX = "rl";
-
-const memoryLimiters = new Map<string, RateLimiterMemory>();
-const redisLimiters = new Map<string, RateLimiterRedis>();
-
-onClientDisconnect(() => {
-  redisLimiters.clear();
-});
-
-export function clearInMemoryBuckets(): void {
-  memoryLimiters.clear();
-  redisLimiters.clear();
+/**
+ * Xoá bộ đếm rate limit của port đang nối. Chỉ engine local (dev/test) khai
+ * `clearRateLimits`; `AuthCoordinatorDO` trên Cloudflare thì không, nên là no-op.
+ */
+export function clearRateLimitBuckets(): Promise<void> {
+  rateLimitPort?.clearRateLimits?.();
+  return Promise.resolve();
 }
 
-/**
- * Xoá bộ đếm rate limit đang nằm trong Valkey.
- *
- * `clearInMemoryBuckets` chỉ dọn hai `Map` trong tiến trình. Điều đó đủ khi
- * Valkey không kết nối được — và nó **đã** không kết nối được suốt thời gian
- * `VALKEY_URL` mang scheme `valkey://` mà ioredis không hiểu, nên bộ đếm thật
- * chưa bao giờ tồn tại để mà tồn đọng. Khi kết nối chạy thật, bộ đếm sống qua
- * từng lần chạy test và lần chạy thứ hai đỏ.
- */
-export async function clearRateLimitBuckets(): Promise<void> {
-  clearInMemoryBuckets();
-  if (isCloudflareRuntime()) {
-    return;
-  }
-
-  const client = getClient();
-  let cursor = "0";
-  do {
-    const [nextCursor, keys] = await client.scan(
-      cursor,
-      "MATCH",
-      `${RATE_LIMIT_KEY_PREFIX}:*`,
-      "COUNT",
-      100
-    );
-    cursor = nextCursor;
-    if (keys.length > 0) {
-      await client.del(...keys);
-    }
-  } while (cursor !== "0");
+/** Giữ tên cũ cho `beforeEach` của test: đồng bộ, xoá bộ đếm của engine local. */
+export function clearInMemoryBuckets(): void {
+  rateLimitPort?.clearRateLimits?.();
 }
 
 /**
  * Normalizes identifier (email/username) and hashes via HMAC-SHA256
- * so raw email/PII never enters Valkey/Redis keys or logs.
+ * so raw email/PII never enters engine keys or logs.
  */
 export function hashRateLimitIdentifier(
   identifier: string,
@@ -104,63 +69,8 @@ export function hashRateLimitIdentifier(
     .slice(0, 32);
 }
 
-function getMemoryLimiter(points: number, duration: number): RateLimiterMemory {
-  const mapKey = `${points}:${duration}`;
-  let limiter = memoryLimiters.get(mapKey);
-  if (!limiter) {
-    limiter = new RateLimiterMemory({
-      points,
-      duration,
-    });
-    memoryLimiters.set(mapKey, limiter);
-  }
-  return limiter;
-}
-
-function getRedisLimiter(points: number, duration: number): RateLimiterRedis {
-  const mapKey = `${points}:${duration}`;
-  let limiter = redisLimiters.get(mapKey);
-  if (!limiter) {
-    const redisClient = getClient();
-    limiter = new RateLimiterRedis({
-      storeClient: redisClient,
-      points,
-      duration,
-      keyPrefix: RATE_LIMIT_KEY_PREFIX,
-    });
-    redisLimiters.set(mapKey, limiter);
-  }
-  return limiter;
-}
-
-async function consumeMemoryRateLimit(
-  key: string,
-  limit: number,
-  windowSeconds: number
-): Promise<RateLimitCheckResult> {
-  const memoryLimiter = getMemoryLimiter(limit, windowSeconds);
-  try {
-    const res = await memoryLimiter.consume(key, 1);
-    return {
-      allowed: true,
-      remaining: res.remainingPoints,
-      resetSeconds: Math.ceil(res.msBeforeNext / 1000),
-    };
-  } catch (rej) {
-    if (rej && typeof rej === "object" && "remainingPoints" in rej) {
-      const msBeforeNext = (rej as { msBeforeNext?: number }).msBeforeNext;
-      return {
-        allowed: false,
-        remaining: 0,
-        resetSeconds: Math.ceil((msBeforeNext || windowSeconds * 1000) / 1000),
-      };
-    }
-    throw rej;
-  }
-}
-
 /**
- * Domain Rate Limiter powered by rate-limiter-flexible (Task 83 / T5-T6).
+ * Domain Rate Limiter (Task 83 / T5-T6): một engine duy nhất qua port — `AuthCoordinatorDO` trên Cloudflare, `AuthCoordinatorEngine` trong tiến trình ở dev/test (D15).
  */
 export async function checkRateLimit(
   key: string,
@@ -168,54 +78,20 @@ export async function checkRateLimit(
   windowSeconds: number,
   failOpen = true
 ): Promise<RateLimitCheckResult> {
-  if (isCloudflareRuntime()) {
-    const port = cloudflareRateLimitPort;
-    if (!port) {
-      // BR-RTL-12: thiếu port là lỗi cấu hình — fail closed bất kể `failOpen`.
-      throw new ServiceUnavailableError(
-        "Cloudflare rate limit coordinator port is not registered"
-      );
-    }
-    try {
-      return await port.consumeRateLimit({
-        key,
-        limit,
-        windowSeconds,
-      });
-    } catch (err) {
-      if (failOpen) {
-        return {
-          allowed: true,
-          remaining: 1,
-          resetSeconds: windowSeconds,
-        };
-      }
-      throw err;
-    }
+  const port = rateLimitPort;
+  if (!port) {
+    // BR-RTL-12: thiếu port là lỗi cấu hình — fail closed bất kể `failOpen`.
+    throw new ServiceUnavailableError(
+      "Rate limit coordinator port is not registered"
+    );
   }
-
-  if (process.env.NODE_ENV === "test") {
-    return consumeMemoryRateLimit(key, limit, windowSeconds);
-  }
-
   try {
-    const redisLimiter = getRedisLimiter(limit, windowSeconds);
-    const res = await redisLimiter.consume(key, 1);
-    return {
-      allowed: true,
-      remaining: res.remainingPoints,
-      resetSeconds: Math.ceil(res.msBeforeNext / 1000),
-    };
+    return await port.consumeRateLimit({
+      key,
+      limit,
+      windowSeconds,
+    });
   } catch (err) {
-    if (err && typeof err === "object" && "remainingPoints" in err) {
-      const msBeforeNext = (err as { msBeforeNext?: number }).msBeforeNext;
-      return {
-        allowed: false,
-        remaining: 0,
-        resetSeconds: Math.ceil((msBeforeNext || windowSeconds * 1000) / 1000),
-      };
-    }
-
     if (failOpen) {
       return {
         allowed: true,
@@ -223,7 +99,6 @@ export async function checkRateLimit(
         resetSeconds: windowSeconds,
       };
     }
-
     throw err;
   }
 }

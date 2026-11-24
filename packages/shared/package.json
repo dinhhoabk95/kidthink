@@ -27,11 +27,12 @@
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
+    "@mindkid/db": "workspace:*",
     "@mindkid/game-engine": "workspace:*",
+    "@mindkid/local-runtime": "workspace:*",
     "fast-check": "^4.10.2",
     "typescript": "~6.0.3",
-    "vitest": "^5.1.0",
-    "@mindkid/db": "workspace:*"
+    "vitest": "^5.1.0"
   },
   "imports": {
     "#src/*": "./src/*.ts",

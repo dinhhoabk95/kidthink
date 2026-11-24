@@ -24,7 +24,7 @@ const SAMPLE_BY_KIND: Record<string, string> = {
 
 /**
  * BR-ENV-13: mỗi biến `kind: url` khai giao thức riêng, nên một mẫu `https://`
- * dùng chung sẽ làm hỏng chính những biến Postgres/Valkey mà rule này bảo vệ.
+ * dùng chung sẽ làm hỏng những biến khai giao thức khác `https:` mà rule này bảo vệ.
  */
 function sampleValue(def: (typeof ENV_REGISTRY)[number]): string {
   if (def.kind === "url") {
@@ -242,43 +242,39 @@ describe("BR-ENV-13 — url phải khai và khớp giao thức", () => {
     expect(missing).toEqual([]);
   });
 
-  it("từ chối một địa chỉ https đặt vào biến chuỗi kết nối Valkey", () => {
+  it("từ chối một địa chỉ ftp đặt vào biến URL chỉ nhận http/https", () => {
     const parsed = envFor("web");
-    parsed.set("VALKEY_URL", "https://example.com/endpoint");
+    parsed.set("SITE_URL", "ftp://example.com/endpoint");
 
     const result = validateEnvFile("web", parsed);
 
     expect(result.valid).toBe(false);
-    expect(result.errors.some((error) => error.varName === "VALKEY_URL")).toBe(
+    expect(result.errors.some((error) => error.varName === "SITE_URL")).toBe(
       true
     );
   });
 
-  it("nhận valkey:, redis: và rediss: cho cùng biến đó", () => {
-    for (const value of [
-      "valkey://127.0.0.1:6380",
-      "redis://127.0.0.1:6380",
-      "rediss://127.0.0.1:6380",
-    ]) {
+  it("nhận http: và https: cho cùng biến đó", () => {
+    for (const value of ["http://127.0.0.1:3000", "https://example.test"]) {
       const parsed = envFor("web");
-      parsed.set("VALKEY_URL", value);
+      parsed.set("SITE_URL", value);
 
       const result = validateEnvFile("web", parsed);
 
       expect(
-        result.errors.filter((error) => error.varName === "VALKEY_URL")
+        result.errors.filter((error) => error.varName === "SITE_URL")
       ).toEqual([]);
     }
   });
 
   it("BR-ENV-08 — báo lỗi giao thức không in giá trị", () => {
-    const secretValue = "https://user:hunter2@example.com/endpoint";
+    const secretValue = "ftp://user:hunter2@example.com/endpoint";
     const parsed = envFor("web");
-    parsed.set("VALKEY_URL", secretValue);
+    parsed.set("SITE_URL", secretValue);
 
     const result = validateEnvFile("web", parsed);
     const issue = result.errors.find(
-      (error) => error.varName === "VALKEY_URL"
+      (error) => error.varName === "SITE_URL"
     )?.issue;
 
     expect(issue).toBeDefined();
@@ -299,12 +295,12 @@ describe("BR-ENV-01 & BR-ENV-02 — cổng kiểm danh mục biến và tên đ�
 
   it("BR-ENV-02: validateEnvFile từ chối tên đồng nghĩa trong file .env", () => {
     const parsed = envFor("web");
-    parsed.set("REDIS_URL", "redis://localhost:6380");
+    parsed.set("SESSION_SECRET", LONG_SECRET);
 
     const result = validateEnvFile("web", parsed);
     expect(result.valid).toBe(false);
-    const err = result.errors.find((e) => e.varName === "REDIS_URL");
-    expect(err?.issue).toContain("VALKEY_URL");
+    const err = result.errors.find((e) => e.varName === "SESSION_SECRET");
+    expect(err?.issue).toContain("NUXT_SESSION_PASSWORD");
     expect(err?.issue).toContain("BR-ENV-02");
   });
 
@@ -319,7 +315,7 @@ describe("BR-ENV-01 & BR-ENV-02 — cổng kiểm danh mục biến và tên đ�
 
   it("BR-ENV-01: chấp nhận file nguồn đọc biến chính thức trong ENV_REGISTRY", () => {
     const errors = scanSourceEnvUsage(
-      'const u = requireEnv("VALKEY_URL"); const s = process.env.SITE_URL;'
+      'const u = requireEnv("NUXT_SESSION_PASSWORD"); const s = process.env.SITE_URL;'
     );
     expect(errors).toEqual([]);
   });

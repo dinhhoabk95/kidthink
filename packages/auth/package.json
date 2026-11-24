@@ -14,7 +14,6 @@
     "@mindkid/shared": "workspace:*",
     "better-auth": "1.7.27",
     "drizzle-orm": "1.0.0-rc.5",
-    "ioredis": "6.1.0-beta.1",
     "vue": "3.6.0-rc.15",
     "zod": "^4.6.7"
   },

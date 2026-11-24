@@ -7,7 +7,7 @@ import {
   RECIPIENT_TYPE,
   users,
 } from "@mindkid/db";
-import { disconnectQueue, getQueue } from "@mindkid/queue/connection";
+import { getLocalQueueRuntime } from "@mindkid/local-runtime";
 import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
@@ -37,7 +37,6 @@ async function makeUser(): Promise<number> {
 describe("dispatchTransactionalEmail (BR-JOB-01, BR-JOB-02, BR-NOT-09, BR-NOT-12, BR-NOT-13)", () => {
   beforeAll(async () => {
     userId = await makeUser();
-    await getQueue().obliterate({ force: true });
   });
 
   afterAll(async () => {
@@ -46,7 +45,6 @@ describe("dispatchTransactionalEmail (BR-JOB-01, BR-JOB-02, BR-NOT-09, BR-NOT-12
       await db.delete(notifications).where(eq(notifications.id, id));
     }
     await db.delete(users).where(eq(users.id, userId));
-    await disconnectQueue();
   });
 
   it("ghi bản ghi notification, delivery `queued`, và đẩy job (BR-NOT-09, BR-NOT-12, BR-NOT-13)", async () => {
@@ -67,7 +65,9 @@ describe("dispatchTransactionalEmail (BR-JOB-01, BR-JOB-02, BR-NOT-09, BR-NOT-12
     expect(delivery?.channel).toBe(NOTIFICATION_CHANNEL.EMAIL);
     expect(delivery?.status).toBe(NOTIFICATION_STATUS.QUEUED);
 
-    const job = await getQueue().getJob(`email:send:${notificationId}`);
+    const job = await getLocalQueueRuntime()?.peek(
+      `email:send:${notificationId}`
+    );
     expect(job, "jobId phải suy từ notificationId (BR-JOB-02)").toBeDefined();
     expect(job?.data.code).toBe(CODE);
   });
@@ -102,7 +102,9 @@ describe("dispatchTransactionalEmail (BR-JOB-01, BR-JOB-02, BR-NOT-09, BR-NOT-12
     expect(persistedPayload?.token).toBeUndefined();
     expect(persistedPayload?.url).toBeUndefined();
 
-    const job = await getQueue().getJob(`email:send:${notificationId}`);
+    const job = await getLocalQueueRuntime()?.peek(
+      `email:send:${notificationId}`
+    );
     expect(job).toBeDefined();
     const jobPayload = job?.data.payload as Record<string, string> | undefined;
     expect(jobPayload?.new_email).toBe("new-address@example.com");
@@ -129,8 +131,8 @@ describe("dispatchTransactionalEmail (BR-JOB-01, BR-JOB-02, BR-NOT-09, BR-NOT-12
 
     expect(first.notificationId).not.toBe(second.notificationId);
     const jobs = await Promise.all([
-      getQueue().getJob(`email:send:${first.notificationId}`),
-      getQueue().getJob(`email:send:${second.notificationId}`),
+      getLocalQueueRuntime()?.peek(`email:send:${first.notificationId}`),
+      getLocalQueueRuntime()?.peek(`email:send:${second.notificationId}`),
     ]);
     expect(jobs.every(Boolean)).toBe(true);
   });

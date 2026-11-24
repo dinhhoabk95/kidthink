@@ -1,110 +1,58 @@
-import { requireValkeyUrl } from "@mindkid/config";
-import { alert, requireJob } from "@mindkid/queue";
-import { disconnectQueue, QUEUE_NAME } from "@mindkid/queue/connection";
-import { type Job, Worker } from "bullmq";
-import { CONSUMERS } from "./consumers/index.js";
+import {
+  type LocalAuthRuntime,
+  type LocalQueueRuntime,
+  resolveLocalEnginePath,
+  startLocalAuthRuntime,
+  startLocalQueueConsumer,
+} from "@mindkid/local-runtime";
 import { readErrorMessage } from "./errors.js";
-import { runWithTimeout } from "./run-with-timeout.js";
-
-/**
- * Worker chạy một tiến trình, nên song song là việc của hàng đợi, không phải
- * của process manager. Bản cũ không đặt gì cả nên BullMQ mặc định 1, và một
- * `backup:postgres` 30 phút chặn mọi `email:send` xếp sau nó.
- */
-const WORKER_CONCURRENCY = 5;
+import { reportJobDeadLetter, runJobConsumer } from "./job-runner.js";
+import { startLocalCron } from "./local-cron.js";
 
 /** Thời gian chờ tối đa cho worker tắt sạch. */
 const SHUTDOWN_TIMEOUT_MS = 10_000;
 
-let worker: Worker | undefined;
-
-// `async` để lỗi tra job và lỗi parse payload thành promise bị từ chối, không
-// phải ném đồng bộ — BullMQ chờ một promise ở đây.
-export async function processJob(job: Job): Promise<unknown> {
-  const definition = requireJob(job.name);
-  const name = definition.name;
-
-  const jobId = job.id ?? `${name}:unknown`;
-  const attempt = job.attemptsMade + 1;
-
-  return await runWithTimeout(name, definition.timeoutSeconds, (signal) =>
-    CONSUMERS[name](job.data, { jobId, attempt, signal })
-  );
+interface WorkerHandles {
+  readonly auth: LocalAuthRuntime;
+  readonly queue: LocalQueueRuntime;
+  readonly stopCron: () => void;
 }
+
+let handles: WorkerHandles | undefined;
 
 /**
- * `BR-JOB-05` — job fail hết retry Cấm bị bỏ im lặng.
- *
- * Bản cũ phát alert trong `catch` của `processJob`, tức mỗi lần retry một cái:
- * `email:send` fail đủ 5 lần là 5 alert cho cùng một sự việc, đánh nhau với
- * cửa sổ gộp 15 phút của `DeduplicatingAlertAdapter` và với `BR-MON-03`.
+ * Worker dev (D15, `BR-JOB-16`): chạy **cùng** `JobQueueSqlEngine` với `JobQueueDO`
+ * trong tiến trình này, trên file SQLite dùng chung với web (web chỉ đẩy job).
+ * Alarm của DO được giả lập bằng timer + vòng poll `drainBatch()`; cron là tick
+ * 5 phút thay cho `triggers.crons`. Auth keyspace cũng là file chung với web để
+ * consumer (vd `account:purge`) thấy đúng session đang có.
  */
-export async function onJobFailed(
-  job: Job | undefined,
-  error: Error
-): Promise<void> {
-  if (!job) {
-    await alert("error", "Job failed without a job reference", {
-      error: readErrorMessage(error),
-    });
-    return;
+export function startWorker(): LocalQueueRuntime {
+  if (handles) {
+    return handles.queue;
   }
-
-  const definition = requireJob(job.name);
-  const maxAttempts = definition.retry.maxAttempts;
-  const exhausted = job.attemptsMade >= maxAttempts;
-
-  if (!(exhausted || definition.retry.alertOnFailImmediately)) {
-    return;
-  }
-
-  await alert(
-    definition.retry.alertOnFailImmediately ? "critical" : "error",
-    `Job ${job.name} failed`,
-    {
-      jobId: job.id,
-      jobName: job.name,
-      attempt: job.attemptsMade,
-      maxAttempts,
-      error: readErrorMessage(error),
-    }
-  );
-}
-
-export function startWorker(): Worker {
-  if (worker) {
-    return worker;
-  }
-
-  worker = new Worker(QUEUE_NAME, processJob, {
-    connection: { url: requireValkeyUrl() },
-    concurrency: WORKER_CONCURRENCY,
+  const auth = startLocalAuthRuntime(resolveLocalEnginePath("auth"));
+  const queue = startLocalQueueConsumer({
+    filePath: resolveLocalEnginePath("queue"),
+    // Job lạ hoặc payload sai hình dạng ném lỗi ngay, đi theo đường retry/dead letter.
+    handler: runJobConsumer,
+    onDeadLetter: reportJobDeadLetter,
   });
-
-  worker.on("failed", (job, error) => {
-    onJobFailed(job, error).catch((alertError) => {
-      // Nuốt lỗi ở đây là quay lại đúng chế độ hỏng mà BR-JOB-05 cấm.
-      console.error(
-        `[worker] Không phát được alert cho job thất bại: ${readErrorMessage(alertError)}`
-      );
-    });
-  });
-
-  return worker;
+  const stopCron = startLocalCron((jobs) => queue.engine.enqueueBatch(jobs));
+  handles = { auth, queue, stopCron };
+  return queue;
 }
 
-export async function closeWorker(): Promise<void> {
-  if (worker) {
-    await worker.close();
-    worker = undefined;
+export function closeWorker(): void {
+  if (handles) {
+    handles.stopCron();
+    handles.queue.close();
+    handles.auth.close();
+    handles = undefined;
   }
 }
 
-/**
- * Bản cũ chỉ đóng Worker rồi `process.exit(0)`: Queue và kết nối Redis phía
- * producer (do `syncJobSchedulers` mở) không bao giờ được đóng.
- */
-export async function shutdown(signal: string): Promise<void> {
+export function shutdown(signal: string): Promise<void> {
   console.info(`[worker] Nhận ${signal}, đang tắt.`);
 
   const forceExit = setTimeout(() => {
@@ -115,7 +63,12 @@ export async function shutdown(signal: string): Promise<void> {
   }, SHUTDOWN_TIMEOUT_MS);
   forceExit.unref();
 
-  await closeWorker();
-  await disconnectQueue();
-  clearTimeout(forceExit);
+  try {
+    closeWorker();
+  } catch (error) {
+    console.error(`[worker] Tắt không sạch: ${readErrorMessage(error)}`);
+  } finally {
+    clearTimeout(forceExit);
+  }
+  return Promise.resolve();
 }

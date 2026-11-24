@@ -1,13 +1,11 @@
 import { assertAlertingReachable } from "@mindkid/queue";
-import { syncJobSchedulers } from "@mindkid/queue/scheduler";
 import { readErrorMessage } from "./errors.js";
 import { startBacklogMonitor } from "./monitor.js";
 import { shutdown, startWorker } from "./worker.js";
 
 /**
- * Bản cũ gọi `setupCronJobs()` mà không `await`, nên mọi lỗi lên lịch bị nuốt,
- * và không có handler nào cho `unhandledRejection` / `uncaughtException` —
- * worker chết là chết im lặng, đúng bài học v1 ở `job-queue.md` §1.
+ * Worker dev (Node). Không có handler cho `unhandledRejection` / `uncaughtException`
+ * thì worker chết là chết im lặng, đúng bài học v1 ở `job-queue.md` §1.
  */
 function registerShutdownHandlers(): void {
   for (const signal of ["SIGTERM", "SIGINT"] as const) {
@@ -22,10 +20,8 @@ function registerShutdownHandlers(): void {
   }
 }
 
-async function main(): Promise<void> {
-  // Đăng ký trước mọi `await`: nếu đăng ký sau, một SIGTERM tới trong lúc
-  // `syncJobSchedulers()` còn chạy sẽ rơi vào hành vi mặc định và giết tiến
-  // trình giữa chừng thay vì tắt sạch.
+function main(): void {
+  // Đăng ký trước mọi bước khác: SIGTERM tới giữa chừng phải tắt sạch.
   registerShutdownHandlers();
 
   // BR-MON-01 — before consuming a single job. This process is the one that
@@ -35,17 +31,11 @@ async function main(): Promise<void> {
   assertAlertingReachable();
 
   startWorker();
-
-  const { upserted, removed } = await syncJobSchedulers();
-  console.info(
-    `[worker] Lịch chạy: ${upserted.length} job đã đăng ký${
-      removed.length > 0 ? `, gỡ ${removed.length} lịch cũ` : ""
-    }.`
-  );
-
   startBacklogMonitor();
 
-  console.info("[worker] Đã khởi động.");
+  console.info(
+    "[worker] Đã khởi động (engine JobQueueSqlEngine trên SQLite, D15)."
+  );
 }
 
 process.on("unhandledRejection", (reason) => {
@@ -58,7 +48,9 @@ process.on("uncaughtException", (error) => {
   process.exit(1);
 });
 
-main().catch((error) => {
+try {
+  main();
+} catch (error) {
   console.error(`[worker] Khởi động thất bại: ${readErrorMessage(error)}`);
   process.exit(1);
-});
+}

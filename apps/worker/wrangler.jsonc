@@ -8,16 +8,10 @@
     "import.meta.dirname": "\"/\"",
     "import.meta.filename": "\"/index.js\""
   },
-  "alias": {
-    "bullmq": "./src/cloudflare-stubs/bullmq.ts",
-    "ioredis": "./src/cloudflare-stubs/ioredis.ts"
-  },
   "workers_dev": false,
   "vars": {
     "MINDKID_RUNTIME": "cloudflare",
-    "STORAGE_DRIVER": "d1-blobs",
-    "QUEUE_DRIVER": "cloudflare-do",
-    "AUTH_STORE_DRIVER": "do"
+    "STORAGE_DRIVER": "d1-blobs"
   },
   "triggers": {
     "crons": ["*/5 * * * *"]

@@ -1,8 +1,3 @@
-import {
-  getAuthStoreDriverKind,
-  isCloudflareRuntime,
-  requireValkeyUrl,
-} from "@mindkid/config";
 import type { MinimalRedisClient } from "./redis-secondary-storage.js";
 
 export interface AuthCoordinatorRpcPort {
@@ -21,13 +16,6 @@ export interface AuthCoordinatorRpcPort {
 
 let overrideRedisClient: MinimalRedisClient | undefined;
 let registeredDoPort: AuthCoordinatorRpcPort | undefined;
-let lazyIoRedisClient: MinimalRedisClient | undefined;
-
-const REDIS_GLOB_CHARS_PATTERN = /[*?[\]\\]/g;
-
-function escapeRedisGlob(prefix: string): string {
-  return prefix.replace(REDIS_GLOB_CHARS_PATTERN, (ch) => `\\${ch}`);
-}
 
 export function createDurableObjectRedisClient(
   port: AuthCoordinatorRpcPort
@@ -57,67 +45,6 @@ export function registerAuthCoordinatorPort(
   registeredDoPort = port;
 }
 
-function createLazyIoRedisClient(): MinimalRedisClient {
-  type IoRedisInstance = import("ioredis").Redis;
-  let innerPromise: Promise<IoRedisInstance> | undefined;
-
-  function ensureRedis(): Promise<IoRedisInstance> {
-    if (!innerPromise) {
-      innerPromise = import("ioredis").then(({ Redis }) => {
-        const instance = new Redis(requireValkeyUrl(), {
-          connectTimeout: 2000,
-          commandTimeout: 2000,
-          maxRetriesPerRequest: 1,
-          retryStrategy: () => null,
-        });
-        instance.on("error", () => {
-          /* fail-closed handled per operation */
-        });
-        instance.on("end", () => {
-          innerPromise = undefined;
-          lazyIoRedisClient = undefined;
-        });
-        return instance;
-      });
-    }
-    return innerPromise;
-  }
-
-  return {
-    get: async (key) => (await ensureRedis()).get(key),
-    getdel: async (key) => (await ensureRedis()).getdel(key),
-    set: async (key, value, expiryMode, time) => {
-      const c = await ensureRedis();
-      return expiryMode === "EX" && typeof time === "number"
-        ? c.set(key, value, "EX", time)
-        : c.set(key, value);
-    },
-    del: async (...keys) => (await ensureRedis()).del(...keys),
-    incr: async (key) => (await ensureRedis()).incr(key),
-    expire: async (key, seconds) => (await ensureRedis()).expire(key, seconds),
-    deleteByPrefix: async (prefix) => {
-      const c = await ensureRedis();
-      const pattern = `${escapeRedisGlob(prefix)}*`;
-      let cursor = "0";
-      let deleted = 0;
-      do {
-        const [nextCursor, keys] = await c.scan(
-          cursor,
-          "MATCH",
-          pattern,
-          "COUNT",
-          100
-        );
-        cursor = nextCursor;
-        if (keys.length > 0) {
-          deleted += await c.del(...keys);
-        }
-      } while (cursor !== "0");
-      return deleted;
-    },
-  };
-}
-
 function resolveActiveClient(): MinimalRedisClient {
   if (overrideRedisClient) {
     return overrideRedisClient;
@@ -126,15 +53,9 @@ function resolveActiveClient(): MinimalRedisClient {
   if (activeDoPort) {
     return createDurableObjectRedisClient(activeDoPort);
   }
-  if (isCloudflareRuntime() || getAuthStoreDriverKind() === "do") {
-    throw new Error(
-      "Auth Coordinator Durable Object port is not available in Cloudflare runtime."
-    );
-  }
-  if (!lazyIoRedisClient) {
-    lazyIoRedisClient = createLazyIoRedisClient();
-  }
-  return lazyIoRedisClient;
+  // BR-AUT-31: không fallback sang file/memory/DB. Cloudflare nối `AuthCoordinatorDO`;
+  // dev/test nối `AuthCoordinatorEngine` chạy trên SQLite (`@mindkid/local-runtime`, D15).
+  throw new Error("Auth coordinator port is not registered (BR-AUT-31).");
 }
 
 const dynamicAuthRedisClient: MinimalRedisClient = {

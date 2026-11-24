@@ -6,8 +6,8 @@ import {
   type CacheKvPort,
   type RateLimitCheckResult,
   type RateLimitCoordinatorPort,
-  registerCloudflareCachePort,
-  registerCloudflareRateLimitPort,
+  registerCachePort,
+  registerRateLimitPort,
 } from "@mindkid/cache";
 import { DB, type MinimalD1Database } from "@mindkid/db";
 import {
@@ -17,7 +17,7 @@ import {
   JobQueueSqlEngine,
   type MinimalDoSqlStorage,
   type QueuedJobEnvelope,
-  registerCloudflareQueuePort,
+  registerQueuePort,
   requireJob,
   runWithCloudflareQueuePort,
   scheduledEnvelopesAt,
@@ -128,12 +128,12 @@ export function wireCloudflareIsolatePorts(env: CloudflareWorkerEnv): void {
         : Promise.resolve(0);
     },
   };
-  registerCloudflareCachePort(cachePort);
+  registerCachePort(cachePort);
 
   const rateLimitPort: RateLimitCoordinatorPort = {
     consumeRateLimit: (input) => authStub().consumeRateLimit(input),
   };
-  registerCloudflareRateLimitPort(rateLimitPort);
+  registerRateLimitPort(rateLimitPort);
   wiredEnvs.add(env);
 }
 
@@ -223,7 +223,7 @@ export async function runUnifiedCronTick(
 ): Promise<{ readonly dispatchedJobs: JobName[] }> {
   wireCloudflareIsolatePorts(env);
   // Ngoài DO, hàng đợi luôn đi qua STUB của `JobQueueDO` (idFromName("queue-v1")).
-  registerCloudflareQueuePort(queueStub);
+  registerQueuePort(queueStub);
 
   const envelopes = scheduledEnvelopesAt(scheduledTimeMs);
   if (envelopes.length > 0) {

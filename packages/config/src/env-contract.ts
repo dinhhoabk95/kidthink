@@ -33,8 +33,7 @@ export interface EnvVarDef {
    * BR-ENV-13 — bắt buộc khi `kind` là `url`.
    *
    * `new URL()` chấp mọi scheme, nên nếu chỉ kiểm "phân tích được" thì
-   * `VALKEY_URL=https://example.com/endpoint` qua cổng env màu xanh rồi
-   * mới chết ở runtime. Cổng giữ ràng buộc này là
+   * `SITE_URL=ftp://example.com` qua cổng env màu xanh rồi mới chết ở runtime. Cổng giữ ràng buộc này là
    * `packages/config/tests/env-contract.test.ts`.
    */
   urlProtocols?: readonly string[];
@@ -93,15 +92,6 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
 
   // ---- Dữ liệu ------------------------------------------------------------
-  {
-    name: "VALKEY_URL",
-    apps: ALL_APPS,
-    required: "optional",
-    kind: "url",
-    urlProtocols: ["valkey:", "redis:", "rediss:"],
-    secret: true,
-    note: "Chuỗi kết nối Valkey cho cache, hàng đợi và giới hạn tần suất",
-  },
 
   // ---- Bí mật phiên và token ----------------------------------------------
   {
@@ -652,9 +642,6 @@ function checkKindValidation(
 
 export const BANNED_ENV_SYNONYMS: Readonly<Record<string, string>> = {
   SESSION_SECRET: "NUXT_SESSION_PASSWORD",
-  REDIS_URL: "VALKEY_URL",
-  VALKEY_HOST: "VALKEY_URL",
-  AUTH_REDIS_URL: "VALKEY_URL",
   NUXT_SITE_URL: "SITE_URL",
   NUXT_PUBLIC_SITE_URL: "SITE_URL",
   NUXT_PARENT_GATE_SECRET: "PARENT_GATE_SECRET",

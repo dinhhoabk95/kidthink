@@ -1,10 +1,9 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   probePostgres,
   probeQueue,
   probeValkey,
 } from "#server/api/managers/system/status.get.js";
-import { probeQueue as probeQueueWithPort } from "#server/services/system-status-service";
 
 describe("System Activity Health Probes (BR-SYS-01..06, D-KT)", () => {
   describe("probePostgres", () => {
@@ -45,7 +44,7 @@ describe("System Activity Health Probes (BR-SYS-01..06, D-KT)", () => {
   });
 
   describe("probeValkey", () => {
-    it("reports status ok and state up with measured latency when PING returns true", async () => {
+    it("reports status ok and state up with measured latency when the cache port is alive", async () => {
       const result = await probeValkey(() => Promise.resolve(true), 200);
 
       expect(result.status).toBe("ok");
@@ -79,137 +78,52 @@ describe("System Activity Health Probes (BR-SYS-01..06, D-KT)", () => {
     });
   });
 
-  describe("probeQueue trên Cloudflare (BR-SYS-07)", () => {
-    afterEach(() => {
-      vi.unstubAllEnvs();
-    });
-
-    it("dùng getStats của queue port (waiting/failed), không đụng BullMQ", async () => {
-      vi.stubEnv("MINDKID_RUNTIME", "cloudflare");
-      const getQueueFn = vi.fn(() => {
-        throw new Error("getQueue không được gọi trên Cloudflare");
-      });
-      const result = await probeQueueWithPort(
-        getQueueFn,
-        Date.now(),
-        1000,
-        () => ({
-          enqueueBatch: () => Promise.resolve({ accepted: 0 }),
-          getStats: () => Promise.resolve({ waiting: 9, failed: 1 }),
-        })
-      );
-      expect(getQueueFn).not.toHaveBeenCalled();
+  describe("probeQueue (BR-SYS-07)", () => {
+    it("dùng getStats của queue port (waiting/failed) trên mọi runtime", async () => {
+      const result = await probeQueue(() => ({
+        enqueueBatch: () => Promise.resolve({ accepted: 0 }),
+        getStats: () => Promise.resolve({ waiting: 9, failed: 1 }),
+      }));
       expect(result.service.status).toBe("ok");
       expect(result.service.state).toBe("up");
       expect(result.jobs.waiting_count).toBe(9);
       expect(result.jobs.failed_count).toBe(1);
       expect(result.jobs.status).toBe("ok");
-    });
-
-    it("backlog vượt ngưỡng → jobs.status bad", async () => {
-      vi.stubEnv("MINDKID_RUNTIME", "cloudflare");
-      const result = await probeQueueWithPort(
-        () => {
-          throw new Error("không gọi");
-        },
-        Date.now(),
-        1000,
-        () => ({
-          enqueueBatch: () => Promise.resolve({ accepted: 0 }),
-          getStats: () => Promise.resolve({ waiting: 501, failed: 0 }),
-        })
-      );
-      expect(result.jobs.status).toBe("bad");
-    });
-
-    it("chưa có port → service down/unknown", async () => {
-      vi.stubEnv("MINDKID_RUNTIME", "cloudflare");
-      const result = await probeQueueWithPort(
-        () => {
-          throw new Error("không gọi");
-        },
-        Date.now(),
-        1000,
-        () => undefined
-      );
-      expect(result.service.state).toBe("down");
-      expect(result.service.status).toBe("unknown");
-    });
-  });
-
-  describe("probeQueue", () => {
-    it("reads real BullMQ job counts (waiting, active, completed, failed, delayed) and oldest waiting age", async () => {
-      const fixedNow = 1_700_000_100_000;
-      const result = await probeQueue(
-        () => ({
-          getJobCounts: () =>
-            Promise.resolve({
-              waiting: 7,
-              active: 2,
-              completed: 42,
-              failed: 3,
-              delayed: 5,
-            }),
-          getWaiting: () => Promise.resolve([{ timestamp: 1_700_000_040_000 }]),
-        }),
-        fixedNow
-      );
-
-      expect(result.service.status).toBe("ok");
-      expect(result.service.state).toBe("up");
-      expect(result.jobs.status).toBe("ok");
-      expect(result.jobs.waiting_count).toBe(7);
-      expect(result.jobs.active_count).toBe(2);
-      expect(result.jobs.completed_count).toBe(42);
-      expect(result.jobs.failed_count).toBe(3);
-      expect(result.jobs.delayed_count).toBe(5);
-      expect(result.jobs.failed_24h_count).toBe(3);
-      expect(result.jobs.oldest_job_age_seconds).toBe(60);
       expect(result.jobs.counts).toEqual({
-        waiting: 7,
-        active: 2,
-        completed: 42,
-        failed: 3,
-        delayed: 5,
+        waiting: 9,
+        active: 0,
+        completed: 0,
+        failed: 1,
+        delayed: 0,
       });
     });
 
-    it("marks jobs status as bad when waiting backlog > 500 or failed > 10", async () => {
+    it("backlog > 500 hoặc failed > 10 → jobs.status bad", async () => {
       const highBacklog = await probeQueue(() => ({
-        getJobCounts: () =>
-          Promise.resolve({
-            waiting: 501,
-            active: 1,
-            completed: 10,
-            failed: 0,
-            delayed: 0,
-          }),
+        enqueueBatch: () => Promise.resolve({ accepted: 0 }),
+        getStats: () => Promise.resolve({ waiting: 501, failed: 0 }),
       }));
       expect(highBacklog.jobs.status).toBe("bad");
 
       const highFailed = await probeQueue(() => ({
-        getJobCounts: () =>
-          Promise.resolve({
-            waiting: 0,
-            active: 0,
-            completed: 10,
-            failed: 11,
-            delayed: 0,
-          }),
+        enqueueBatch: () => Promise.resolve({ accepted: 0 }),
+        getStats: () => Promise.resolve({ waiting: 0, failed: 11 }),
       }));
       expect(highFailed.jobs.status).toBe("bad");
     });
 
-    it("Scenario: BR-SYS-01 — reports unknown status and down state when queue inspection fails (never ok)", async () => {
-      const failedProbe = await probeQueue(() => ({
-        getJobCounts: () =>
-          Promise.reject(new Error("Valkey connection closed")),
-      }));
+    it("Scenario: BR-SYS-01 — chưa có port hoặc getStats lỗi → unknown/down, không bao giờ ok", async () => {
+      const noPort = await probeQueue(() => undefined);
+      expect(noPort.service.state).toBe("down");
+      expect(noPort.service.status).toBe("unknown");
 
+      const failedProbe = await probeQueue(() => ({
+        enqueueBatch: () => Promise.resolve({ accepted: 0 }),
+        getStats: () => Promise.reject(new Error("engine closed")),
+      }));
       expect(failedProbe.service.status).toBe("unknown");
       expect(failedProbe.service.state).toBe("down");
       expect(failedProbe.jobs.status).toBe("unknown");
-      expect(failedProbe.jobs.status).not.toBe("ok");
       expect(failedProbe.jobs.counts).toEqual({
         waiting: 0,
         active: 0,

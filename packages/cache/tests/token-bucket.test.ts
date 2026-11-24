@@ -1,13 +1,11 @@
 import { ServiceUnavailableError } from "@mindkid/errors/common";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   checkRateLimit,
   clearInMemoryBuckets,
   hashRateLimitIdentifier,
-  registerCloudflareRateLimitPort,
+  registerRateLimitPort,
 } from "#src/token-bucket";
-
-process.env.VALKEY_URL = "redis://localhost:6380";
 
 describe("Token Bucket Rate Limiter (Task 7 / BR-RTL-01)", () => {
   beforeEach(() => {
@@ -57,14 +55,12 @@ describe("Token Bucket Rate Limiter (Task 7 / BR-RTL-01)", () => {
   });
 });
 
-describe("Cloudflare không có port coordinator (BR-RTL-12)", () => {
+describe("Không có port coordinator (BR-RTL-12)", () => {
   beforeEach(() => {
-    vi.stubEnv("MINDKID_RUNTIME", "cloudflare");
-    registerCloudflareRateLimitPort(undefined);
+    registerRateLimitPort(undefined);
   });
   afterEach(() => {
-    vi.unstubAllEnvs();
-    registerCloudflareRateLimitPort(undefined);
+    registerRateLimitPort(undefined);
   });
 
   it("fail closed dù failOpen = true (mặc định)", async () => {
@@ -80,7 +76,7 @@ describe("Cloudflare không có port coordinator (BR-RTL-12)", () => {
   });
 
   it("có port thì dùng port", async () => {
-    registerCloudflareRateLimitPort({
+    registerRateLimitPort({
       consumeRateLimit: () =>
         Promise.resolve({ allowed: true, remaining: 3, resetSeconds: 9 }),
     });

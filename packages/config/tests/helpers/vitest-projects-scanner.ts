@@ -30,6 +30,7 @@ export const PROJECT_ROOTS: readonly ProjectRoot[] = [
   { name: "@mindkid/errors", prefix: "packages/errors" },
   { name: "@mindkid/export", prefix: "packages/export" },
   { name: "@mindkid/game-engine", prefix: "packages/game-engine" },
+  { name: "@mindkid/local-runtime", prefix: "packages/local-runtime" },
   { name: "@mindkid/moderation", prefix: "packages/moderation" },
   { name: "@mindkid/notification", prefix: "packages/notification" },
   { name: "@mindkid/play", prefix: "packages/play" },

@@ -5,42 +5,37 @@ import {
   enqueueBatch,
   getFailedCount,
   getWaitingCount,
-  registerCloudflareQueuePort,
+  registerQueuePort,
 } from "#src/index";
 
-describe("enqueue đóng-khi-lỗi trên driver cloudflare-do (BR-JOB-12)", () => {
+describe("enqueue đóng-khi-lỗi khi chưa nối port (BR-JOB-12, BR-JOB-16)", () => {
   afterEach(() => {
-    registerCloudflareQueuePort(undefined);
-    delete process.env.QUEUE_DRIVER;
+    registerQueuePort(undefined);
   });
 
-  it("enqueue ném ServiceUnavailableError khi chưa nối port, không dùng BullMQ", async () => {
-    process.env.QUEUE_DRIVER = "cloudflare-do";
-    registerCloudflareQueuePort(undefined);
+  it("enqueue ném ServiceUnavailableError khi chưa nối port", async () => {
+    registerQueuePort(undefined);
     await expect(
       enqueue("rollup:session", { sessionUuid: "s1" })
     ).rejects.toBeInstanceOf(ServiceUnavailableError);
   });
 
   it("enqueueBatch ném ServiceUnavailableError khi chưa nối port", async () => {
-    process.env.QUEUE_DRIVER = "cloudflare-do";
-    registerCloudflareQueuePort(undefined);
+    registerQueuePort(undefined);
     await expect(
       enqueueBatch([{ name: "rollup:session", payload: { sessionUuid: "s1" } }])
     ).rejects.toBeInstanceOf(ServiceUnavailableError);
   });
 
-  it("getWaitingCount ném ServiceUnavailableError khi chưa nối port, không rơi về BullMQ", async () => {
-    process.env.QUEUE_DRIVER = "cloudflare-do";
-    registerCloudflareQueuePort(undefined);
+  it("getWaitingCount ném ServiceUnavailableError khi chưa nối port", async () => {
+    registerQueuePort(undefined);
     await expect(getWaitingCount()).rejects.toBeInstanceOf(
       ServiceUnavailableError
     );
   });
 
-  it("getFailedCount ném ServiceUnavailableError khi chưa nối port, không rơi về BullMQ", async () => {
-    process.env.QUEUE_DRIVER = "cloudflare-do";
-    registerCloudflareQueuePort(undefined);
+  it("getFailedCount ném ServiceUnavailableError khi chưa nối port", async () => {
+    registerQueuePort(undefined);
     await expect(getFailedCount()).rejects.toBeInstanceOf(
       ServiceUnavailableError
     );

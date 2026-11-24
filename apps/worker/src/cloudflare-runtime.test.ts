@@ -1,5 +1,5 @@
 import { registerAuthCoordinatorPort } from "@mindkid/auth";
-import { registerCloudflareCachePort } from "@mindkid/cache";
+import { registerCachePort } from "@mindkid/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createFakeD1, createFakeDoSql } from "./__tests__/cloudflare-fakes.js";
 import {
@@ -20,7 +20,7 @@ vi.mock("@mindkid/cache", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@mindkid/cache")>();
   return {
     ...actual,
-    registerCloudflareCachePort: vi.fn(),
+    registerCachePort: vi.fn(),
   };
 });
 
@@ -35,7 +35,7 @@ describe("CloudflareJobQueueController (#31-CF DO bindings)", () => {
     vi.clearAllMocks();
   });
 
-  it("binds AUTH_COORDINATOR to registerAuthCoordinatorPort and registerCloudflareCachePort before running consumer", async () => {
+  it("binds AUTH_COORDINATOR to registerAuthCoordinatorPort and registerCachePort before running consumer", async () => {
     const stub: WorkerAuthCoordinatorStub = {
       kvGet: vi.fn(() => Promise.resolve("val")),
       kvGetDel: vi.fn(() => Promise.resolve(null)),
@@ -105,9 +105,9 @@ describe("CloudflareJobQueueController (#31-CF DO bindings)", () => {
     expect(idFromName).toHaveBeenCalledWith("global-auth-v1");
     expect(getStub).toHaveBeenCalledWith(idObj);
     expect(stub.kvGet).toHaveBeenCalledWith("auth-k");
-    expect(registerCloudflareCachePort).toHaveBeenCalledTimes(1);
+    expect(registerCachePort).toHaveBeenCalledTimes(1);
 
-    const cachePort = vi.mocked(registerCloudflareCachePort).mock.calls[0]?.[0];
+    const cachePort = vi.mocked(registerCachePort).mock.calls[0]?.[0];
     expect(cachePort).toBeDefined();
     if (cachePort) {
       expect(await cachePort.get("k1")).toBe("val");

@@ -1,9 +1,9 @@
 import { alert, JOB_DEFINITIONS } from "@mindkid/queue";
-import type { Job } from "bullmq";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { CONSUMERS } from "./consumers/index.js";
+import { reportJobDeadLetter, runJobConsumer } from "./job-runner.js";
 import { runWithTimeout } from "./run-with-timeout.js";
-import { closeWorker, onJobFailed, processJob, startWorker } from "./worker.js";
+import { closeWorker, startWorker } from "./worker.js";
 
 const UNREGISTERED_JOB = /chưa được khai/;
 const TIMEOUT_MESSAGE = /vượt timeout/;
@@ -17,14 +17,15 @@ vi.mock("@mindkid/queue", async (importOriginal) => {
   return { ...actual, alert: vi.fn() };
 });
 
-function fakeJob(overrides: Partial<Job>): Job {
+function job(name: string, payload: object = {}, attempt = 1) {
   return {
-    id: "fake-id",
-    name: "rollup:session",
-    data: {},
-    attemptsMade: 0,
-    ...overrides,
-  } as Job;
+    jobId: "fake-id",
+    // Tên lạ được truyền xuyên kiểu để kiểm đường từ chối của `requireJob`.
+    name: name as Parameters<typeof runJobConsumer>[0]["name"],
+    payload,
+    attempt,
+    timeoutSeconds: 5,
+  };
 }
 
 describe("apps/worker dispatcher", () => {
@@ -32,21 +33,18 @@ describe("apps/worker dispatcher", () => {
     vi.mocked(alert).mockClear();
   });
 
-  afterAll(async () => {
-    await closeWorker();
+  afterAll(() => {
     vi.restoreAllMocks();
   });
 
   it("từ chối tên job không đăng ký", async () => {
-    await expect(processJob(fakeJob({ name: "unknown:job" }))).rejects.toThrow(
+    await expect(runJobConsumer(job("unknown:job"))).rejects.toThrow(
       UNREGISTERED_JOB
     );
   });
 
   it("từ chối payload sai hình dạng trước khi chạm consumer (BR-JOB-02)", async () => {
-    await expect(
-      processJob(fakeJob({ name: "rollup:session", data: {} }))
-    ).rejects.toThrow();
+    await expect(runJobConsumer(job("rollup:session", {}))).rejects.toThrow();
   });
 
   it("bảng consumer phủ đủ mọi job đã đăng ký", () => {
@@ -60,31 +58,35 @@ describe("apps/worker cảnh báo thất bại (BR-JOB-05)", () => {
     vi.mocked(alert).mockClear();
   });
 
-  it("không alert khi còn lượt retry", async () => {
-    await onJobFailed(
-      fakeJob({ name: "email:send", attemptsMade: 1 }),
-      new Error("tạm thời")
-    );
-    expect(alert).not.toHaveBeenCalled();
-  });
-
-  it("alert khi đã cạn retry", async () => {
-    await onJobFailed(
-      fakeJob({ name: "email:send", attemptsMade: 5 }),
-      new Error("hết lượt")
-    );
+  it("job hết lượt retry phát alert mức error", async () => {
+    await reportJobDeadLetter({
+      jobId: "fake-id",
+      name: "email:send",
+      attempts: 5,
+      maxAttempts: 5,
+      errorMessage: "hết lượt",
+      critical: false,
+    });
     expect(alert).toHaveBeenCalledWith(
       "error",
       "Job email:send failed",
-      expect.objectContaining({ jobId: "fake-id", attempt: 5, maxAttempts: 5 })
+      expect.objectContaining({
+        jobId: "fake-id",
+        attempts: 5,
+        maxAttempts: 5,
+      })
     );
   });
 
   it("alert ngay lần fail đầu với job phá huỷ dữ liệu (BR-ADL-08)", async () => {
-    await onJobFailed(
-      fakeJob({ name: "account:purge", attemptsMade: 0 }),
-      new Error("xoá hỏng")
-    );
+    await reportJobDeadLetter({
+      jobId: "fake-id",
+      name: "account:purge",
+      attempts: 1,
+      maxAttempts: 3,
+      errorMessage: "xoá hỏng",
+      critical: true,
+    });
     expect(alert).toHaveBeenCalledWith(
       "critical",
       "Job account:purge failed",
@@ -121,9 +123,15 @@ describe("apps/worker timeout theo loại job (job-queue.md §5)", () => {
 });
 
 describe("apps/worker vòng đời", () => {
-  it("worker can be started and closed cleanly", async () => {
-    const worker = startWorker();
-    expect(worker).toBeDefined();
-    await closeWorker();
+  it("worker dev khởi động và đóng sạch trên SQLite trong bộ nhớ", () => {
+    vi.stubEnv("SQLITE_DATA_DIR", ":memory:");
+    try {
+      const queue = startWorker();
+      expect(queue.engine).toBeDefined();
+      expect(startWorker()).toBe(queue);
+    } finally {
+      closeWorker();
+      vi.unstubAllEnvs();
+    }
   });
 });

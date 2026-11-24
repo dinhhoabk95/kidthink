@@ -1,8 +1,6 @@
-import { getQueueDriverKind } from "@mindkid/config";
 import { ServiceUnavailableError } from "@mindkid/errors/common";
-import type { Job } from "bullmq";
 import {
-  getCloudflareQueuePort,
+  getQueuePort,
   type JobQueueCoordinatorPort,
   type QueuedJobEnvelope,
 } from "./do-queue-driver.js";
@@ -24,9 +22,9 @@ export interface EnqueueOptions {
 /**
  * `BR-JOB-02` — jobId xác định từ khoá nghiệp vụ, producer không tự bịa.
  *
- * Trả `undefined` cho job theo lịch không khai khoá: BullMQ Job Scheduler sinh
- * id riêng cho mỗi lần chạy. Dùng một id cố định ở đó là cách khử luôn mọi lần
- * chạy sau lần đầu — đúng lỗi mà `cron.ts` cũ mắc phải.
+ * Trả `undefined` cho job theo lịch không khai khoá: `buildEnvelope` sinh id riêng
+ * cho mỗi lần chạy. Dùng một id cố định ở đó là cách khử luôn mọi lần chạy sau
+ * lần đầu — đúng lỗi mà `cron.ts` cũ mắc phải.
  */
 function resolveJobId(
   name: JobName,
@@ -39,16 +37,6 @@ function resolveJobId(
 
   const key = requireJob(name).keyOf(payload);
   return key === undefined ? undefined : buildDeterministicJobId(name, key);
-}
-
-function resolveRetryOptions(name: JobName) {
-  const { retry } = requireJob(name);
-  const backoff =
-    retry.backoffType === "none"
-      ? undefined
-      : { type: retry.backoffType, delay: retry.backoffDelayMs };
-
-  return { attempts: retry.maxAttempts, backoff };
 }
 
 /**
@@ -81,14 +69,12 @@ function buildEnvelope<T extends JobName>(
 }
 
 /**
- * Đóng-khi-lỗi (BR-JOB-12): driver `cloudflare-do` mà chưa nối port thì KHÔNG rơi về BullMQ
- * (Workers không có Valkey, job sẽ mất im lặng) — trả 503 để caller biết.
+ * Đóng-khi-lỗi (BR-JOB-12, BR-JOB-16): chưa nối port thì KHÔNG có đường dự phòng
+ * nào (job sẽ mất im lặng) — trả 503 để caller biết. Cloudflare nối stub `JobQueueDO`;
+ * dev/test nối `JobQueueSqlEngine` trên SQLite (`@mindkid/local-runtime`).
  */
-function resolveCloudflareQueuePort(): JobQueueCoordinatorPort | undefined {
-  if (getQueueDriverKind() !== "cloudflare-do") {
-    return undefined;
-  }
-  const port = getCloudflareQueuePort();
+function requireQueuePort(): JobQueueCoordinatorPort {
+  const port = getQueuePort();
   if (!port) {
     throw new ServiceUnavailableError();
   }
@@ -99,21 +85,11 @@ export async function enqueue<T extends JobName>(
   name: T,
   payload: JobPayloads[T],
   options?: EnqueueOptions
-): Promise<Job | { id: string; name: T }> {
-  const cfPort = resolveCloudflareQueuePort();
-  if (cfPort) {
-    const envelope = buildEnvelope(name, payload, options);
-    await cfPort.enqueueBatch([envelope]);
-    return { id: envelope.jobId, name };
-  }
-
-  const parsed = requireJob(name).parse(payload);
-  const { getQueue } = await import("./connection.js");
-  return await getQueue().add(name, parsed, {
-    jobId: resolveJobId(name, parsed, options),
-    delay: options?.delay,
-    ...resolveRetryOptions(name),
-  });
+): Promise<{ id: string; name: T }> {
+  const port = requireQueuePort();
+  const envelope = buildEnvelope(name, payload, options);
+  await port.enqueueBatch([envelope]);
+  return { id: envelope.jobId, name };
 }
 
 export async function enqueueBatch(
@@ -126,37 +102,18 @@ export async function enqueueBatch(
   if (items.length === 0) {
     return { accepted: 0 };
   }
-  const cfPort = resolveCloudflareQueuePort();
-  if (cfPort) {
-    const envelopes = items.map((item) =>
-      buildEnvelope(item.name, item.payload, item.options)
-    );
-    await cfPort.enqueueBatch(envelopes);
-    return { accepted: envelopes.length };
-  }
-
-  for (const item of items) {
-    await enqueue(item.name, item.payload, item.options);
-  }
-  return { accepted: items.length };
+  const port = requireQueuePort();
+  const envelopes = items.map((item) =>
+    buildEnvelope(item.name, item.payload, item.options)
+  );
+  await port.enqueueBatch(envelopes);
+  return { accepted: envelopes.length };
 }
 
 export async function getWaitingCount(): Promise<number> {
-  const cfPort = resolveCloudflareQueuePort();
-  if (cfPort) {
-    const stats = await cfPort.getStats();
-    return stats.waiting;
-  }
-  const { getQueue } = await import("./connection.js");
-  return await getQueue().getWaitingCount();
+  return (await requireQueuePort().getStats()).waiting;
 }
 
 export async function getFailedCount(): Promise<number> {
-  const cfPort = resolveCloudflareQueuePort();
-  if (cfPort) {
-    const stats = await cfPort.getStats();
-    return stats.failed;
-  }
-  const { getQueue } = await import("./connection.js");
-  return await getQueue().getFailedCount();
+  return (await requireQueuePort().getStats()).failed;
 }

@@ -3,12 +3,10 @@ import { repoPath } from "@mindkid/config/paths";
 import { createEvent, type H3Event } from "h3";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@mindkid/cache", () => ({ ping: vi.fn() }));
 vi.mock("@mindkid/queue", () => ({ getWaitingCount: vi.fn(), alert: vi.fn() }));
 vi.mock("@mindkid/auth", () => ({ getAuthRedisClient: vi.fn() }));
 
 import { getAuthRedisClient } from "@mindkid/auth";
-import { ping } from "@mindkid/cache";
 import { getWaitingCount } from "@mindkid/queue";
 import getHandler from "#server/api/guest/health.get";
 import headHandler from "#server/api/guest/health.head";
@@ -50,7 +48,6 @@ describe("BR-HLT-07 — health công khai chỉ là liveness nông", () => {
     const body = await getHandler(makeEvent("GET"));
     expect(body).toEqual({ status: "ok" });
     expectNoDbImport();
-    expect(ping).not.toHaveBeenCalled();
     expect(getAuthRedisClient).not.toHaveBeenCalled();
     expect(getWaitingCount).not.toHaveBeenCalled();
   });

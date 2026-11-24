@@ -1,4 +1,4 @@
-import { getCloudflareCachePort } from "@mindkid/cache";
+import { getCachePort } from "@mindkid/cache";
 import { describe, expect, it, vi } from "vitest";
 import {
   type CloudflareWorkerEnv,
@@ -52,7 +52,7 @@ describe("wireCloudflareIsolatePorts fail-closed (BR-JOB-12)", () => {
     };
     wireCloudflareIsolatePorts(env);
     expect(get).not.toHaveBeenCalled();
-    const cache = getCloudflareCachePort();
+    const cache = getCachePort();
     await cache?.get("a");
     await cache?.get("b");
     expect(get).toHaveBeenCalledTimes(2);

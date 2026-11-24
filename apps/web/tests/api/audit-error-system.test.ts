@@ -474,7 +474,7 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
       expect(jsonStr).not.toContain("PASSWORD");
     });
 
-    it("Scenario: BR-SYS-01 — never reports ok when Valkey or BullMQ fails, and reflects real queue job counts", async () => {
+    it("Scenario: BR-SYS-01 — never reports ok when the cache port or queue engine fails, and reflects real queue counts", async () => {
       const valkeyDownFalse = await probeValkey(() => Promise.resolve(false));
       expect(valkeyDownFalse.status).toBe("bad");
       expect(valkeyDownFalse.state).toBe("down");
@@ -493,40 +493,26 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
       expect(pgDegraded.status).toBe("bad");
       expect(pgDegraded.state).toBe("degraded");
 
-      const nowMs = 1_700_000_060_000;
-      const queueHealthy = await probeQueue(
-        () => ({
-          getJobCounts: () =>
-            Promise.resolve({
-              waiting: 4,
-              active: 2,
-              completed: 19,
-              failed: 1,
-              delayed: 3,
-            }),
-          getWaiting: () => Promise.resolve([{ timestamp: 1_700_000_015_000 }]),
-        }),
-        nowMs
-      );
+      const queueHealthy = await probeQueue(() => ({
+        enqueueBatch: () => Promise.resolve({ accepted: 0 }),
+        getStats: () => Promise.resolve({ waiting: 4, failed: 1 }),
+      }));
       expect(queueHealthy.service.status).toBe("ok");
       expect(queueHealthy.service.state).toBe("up");
       expect(queueHealthy.jobs.status).toBe("ok");
       expect(queueHealthy.jobs.waiting_count).toBe(4);
-      expect(queueHealthy.jobs.active_count).toBe(2);
-      expect(queueHealthy.jobs.completed_count).toBe(19);
       expect(queueHealthy.jobs.failed_count).toBe(1);
-      expect(queueHealthy.jobs.delayed_count).toBe(3);
-      expect(queueHealthy.jobs.oldest_job_age_seconds).toBe(45);
       expect(queueHealthy.jobs.counts).toEqual({
         waiting: 4,
-        active: 2,
-        completed: 19,
+        active: 0,
+        completed: 0,
         failed: 1,
-        delayed: 3,
+        delayed: 0,
       });
 
       const queueDown = await probeQueue(() => ({
-        getJobCounts: () => Promise.reject(new Error("Valkey unreachable")),
+        enqueueBatch: () => Promise.resolve({ accepted: 0 }),
+        getStats: () => Promise.reject(new Error("engine closed")),
       }));
       expect(queueDown.service.status).toBe("unknown");
       expect(queueDown.service.state).toBe("down");

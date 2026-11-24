@@ -6,8 +6,8 @@ import {
   type CacheKvPort,
   type RateLimitCheckResult,
   type RateLimitCoordinatorPort,
-  registerCloudflareCachePort,
-  registerCloudflareRateLimitPort,
+  registerCachePort,
+  registerRateLimitPort,
 } from "@mindkid/cache";
 import { isCloudflareRuntime } from "@mindkid/config";
 import {
@@ -16,7 +16,7 @@ import {
 } from "@mindkid/db";
 import {
   type JobQueueCoordinatorPort,
-  registerCloudflareQueuePort,
+  registerQueuePort,
 } from "@mindkid/queue";
 import {
   createD1BlobSqlPort,
@@ -78,7 +78,7 @@ function wireAuthCoordinator(
   const rlPort: RateLimitCoordinatorPort = {
     consumeRateLimit: (input) => stub().consumeRateLimit(input),
   };
-  registerCloudflareRateLimitPort(rlPort);
+  registerRateLimitPort(rlPort);
 
   const kvPort: CacheKvPort = {
     get: (key) => stub().kvGet(key),
@@ -88,7 +88,7 @@ function wireAuthCoordinator(
     del: (...keys) => stub().kvDel(keys),
     deleteByPrefix: (prefix) => stub().kvDeleteByPrefix(prefix),
   };
-  registerCloudflareCachePort(kvPort);
+  registerCachePort(kvPort);
 }
 
 function wireJobQueueCoordinator(
@@ -98,7 +98,7 @@ function wireJobQueueCoordinator(
   // `waitUntil`: enqueue là một RPC ngắn nên được await trực tiếp. Stub lấy mới mỗi lần gọi (G9).
   const stub = (): JobQueueCoordinatorPort =>
     namespace.get(namespace.idFromName(QUEUE_DO_NAME));
-  registerCloudflareQueuePort({
+  registerQueuePort({
     enqueueBatch: (jobs) => stub().enqueueBatch(jobs),
     getStats: () => stub().getStats(),
   });

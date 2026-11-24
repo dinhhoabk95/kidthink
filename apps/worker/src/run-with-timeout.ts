@@ -1,5 +1,5 @@
 /**
- * Tách khỏi `worker.ts` để entry Cloudflare không import `bullmq` (`BR-JOB-11`).
+ * Tách khỏi `worker.ts` để entry Cloudflare không import runtime dev (`BR-JOB-11`, `BR-JOB-16`).
  */
 class JobTimeoutError extends Error {
   constructor(name: string, timeoutSeconds: number) {

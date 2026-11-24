@@ -1,3 +1,6 @@
+// Engine DO thật trên SQLite `:memory:` (BR-TST-11). Import ở đây, sau `vi.mock` được hoist, để engine
+// nối vào đúng instance `@mindkid/cache` mà phần còn lại của file test dùng.
+import "@mindkid/local-runtime/vitest-setup";
 import { clearRateLimitBuckets } from "@mindkid/cache";
 import { beforeEach, describe, expect, it } from "vitest";
 import { enforceTwoAxisRateLimit } from "#src/rate-limit-middleware";

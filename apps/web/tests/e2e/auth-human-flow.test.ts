@@ -8,26 +8,14 @@ import {
   userSessions,
   users,
 } from "@mindkid/db";
-import { disconnectQueue, getQueue } from "@mindkid/queue/connection";
+import { getLocalQueueRuntime } from "@mindkid/local-runtime";
 import { and, desc, eq, inArray } from "drizzle-orm";
-import {
-  afterAll,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   getUserAuth,
   resetBetterAuthInstancesForTests,
 } from "#server/utils/better-auth";
-
-vi.hoisted(() => {
-  process.env.VALKEY_QUEUE_PREFIX ??= `test-${process.pid}-${process.env.VITEST_POOL_ID ?? "0"}`;
-});
 
 interface EmailJobPayload {
   token?: string;
@@ -75,19 +63,6 @@ async function readConsentMarkers(): Promise<{
 }
 
 describe("Task 7 — Real Human End-to-End Better Auth Lifecycle", () => {
-  beforeAll(async () => {
-    if (getQueue().name !== "mindkid-jobs") {
-      await getQueue().obliterate({ force: true });
-    }
-  });
-
-  afterAll(async () => {
-    if (getQueue().name !== "mindkid-jobs") {
-      await getQueue().obliterate({ force: true });
-    }
-    await disconnectQueue();
-  });
-
   beforeEach(() => {
     setAuthRedisClient(new InMemoryRedisClient());
     resetBetterAuthInstancesForTests();
@@ -148,7 +123,7 @@ describe("Task 7 — Real Human End-to-End Better Auth Lifecycle", () => {
       .limit(1);
     expect(verifyNotif).toBeDefined();
 
-    const verifyJob = await getQueue().getJob(
+    const verifyJob = await getLocalQueueRuntime()?.peek(
       `email:send:${verifyNotif?.id ?? 0}`
     );
     const verifyNotifPayload = verifyNotif?.payload as
@@ -242,7 +217,7 @@ describe("Task 7 — Real Human End-to-End Better Auth Lifecycle", () => {
       .limit(1);
     expect(resetNotif).toBeDefined();
 
-    const resetJob = await getQueue().getJob(
+    const resetJob = await getLocalQueueRuntime()?.peek(
       `email:send:${resetNotif?.id ?? 0}`
     );
     const resetNotifPayload = resetNotif?.payload as

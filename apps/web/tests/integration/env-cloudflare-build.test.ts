@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createWebEnv } from "#server/utils/env";
 
 /**
- * Build Cloudflare (`nuxt.config` import env) không có Postgres, Valkey hay S3 — chỉ
+ * Build Cloudflare (`nuxt.config` import env) không có Postgres hay S3 — chỉ
  * D1 + biến cốt lõi. `createWebEnv({ isProduction: true })` phải qua với tập tối thiểu đó.
  */
 const MINIMAL_CLOUDFLARE_ENV: Record<string, string> = {
@@ -27,13 +27,12 @@ const MINIMAL_CLOUDFLARE_ENV: Record<string, string> = {
 const REMOVED_KEYS = [
   "DATABASE_URL",
   "DATABASE_URL_APP",
-  "VALKEY_URL",
   "AWS_S3_PRIVATE_BUCKET",
   "INITIAL_ADMIN_PASSWORD",
 ] as const;
 
 describe("BR-ENV — env production tối thiểu của Cloudflare", () => {
-  it("createWebEnv({ isProduction: true }) không đòi Postgres, Valkey hay S3", () => {
+  it("createWebEnv({ isProduction: true }) không đòi Postgres hay S3", () => {
     const saved = new Map<string, string | undefined>();
     for (const key of [
       ...Object.keys(MINIMAL_CLOUDFLARE_ENV),

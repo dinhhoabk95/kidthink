@@ -1,119 +1,20 @@
-import { isCloudflareRuntime, requireValkeyUrl } from "@mindkid/config";
-import { Redis } from "ioredis";
-
 export interface CacheKvPort {
-  get(key: string): Promise<string | null>;
-  set(key: string, value: string, ttlSeconds?: number): Promise<void>;
   del(...keys: string[]): Promise<number>;
   deleteByPrefix?(prefix: string): Promise<number>;
+  get(key: string): Promise<string | null>;
+  set(key: string, value: string, ttlSeconds?: number): Promise<void>;
 }
 
-let cloudflareCachePort: CacheKvPort | undefined;
+let cachePort: CacheKvPort | undefined;
 
-export function registerCloudflareCachePort(
-  port: CacheKvPort | undefined
-): void {
-  cloudflareCachePort = port;
+/**
+ * Điểm nối duy nhất của cache KV (D15): `AuthCoordinatorDO` trên Cloudflare,
+ * `AuthCoordinatorEngine` chạy trong tiến trình ở dev/test (`@mindkid/local-runtime`).
+ */
+export function registerCachePort(port: CacheKvPort | undefined): void {
+  cachePort = port;
 }
 
-export function getCloudflareCachePort(): CacheKvPort | undefined {
-  return cloudflareCachePort;
-}
-
-let client: Redis | undefined;
-const disconnectListeners = new Set<() => void>();
-
-export function onClientDisconnect(listener: () => void): void {
-  disconnectListeners.add(listener);
-}
-
-function notifyDisconnectListeners(): void {
-  for (const listener of disconnectListeners) {
-    listener();
-  }
-}
-
-const isTestEnv =
-  process.env.NODE_ENV === "test" || Boolean(process.env.VITEST);
-
-function resolveRetryStrategy(times: number): number | null {
-  if (isTestEnv) {
-    return null;
-  }
-  return times > 10 ? null : Math.min(times * 100, 2000);
-}
-
-export function getClient(): Redis {
-  if (!client) {
-    const instance = new Redis(requireValkeyUrl(), {
-      connectTimeout: 2000,
-      commandTimeout: 2000,
-      maxRetriesPerRequest: 1,
-      retryStrategy: resolveRetryStrategy,
-    });
-    instance.on("error", () => {
-      /* noop */
-    });
-    instance.on("end", () => {
-      if (client === instance) {
-        client = undefined;
-      }
-      notifyDisconnectListeners();
-    });
-    client = instance;
-  }
-  return client;
-}
-
-export async function ping(urlOverride?: string): Promise<boolean> {
-  if (!urlOverride && isCloudflareRuntime()) {
-    return getCloudflareCachePort() !== undefined;
-  }
-
-  const c = urlOverride
-    ? new Redis(urlOverride, {
-        connectTimeout: 2000,
-        commandTimeout: 2000,
-        maxRetriesPerRequest: 0,
-        retryStrategy: () => null,
-      })
-    : getClient();
-
-  if (urlOverride) {
-    c.on("error", () => {
-      /* noop */
-    });
-  }
-
-  let timer: NodeJS.Timeout | undefined;
-  try {
-    const res = await Promise.race([
-      c.ping(),
-      new Promise<string>((_, reject) => {
-        timer = setTimeout(() => reject(new Error("Timeout")), 2000);
-      }),
-    ]);
-
-    if (urlOverride) {
-      c.disconnect();
-    }
-    return res === "PONG";
-  } catch (_error) {
-    if (urlOverride) {
-      c.disconnect();
-    }
-    return false;
-  } finally {
-    if (timer !== undefined) {
-      clearTimeout(timer);
-    }
-  }
-}
-
-export function disconnect(): void {
-  if (client) {
-    client.disconnect();
-    client = undefined;
-    notifyDisconnectListeners();
-  }
+export function getCachePort(): CacheKvPort | undefined {
+  return cachePort;
 }

@@ -1,7 +1,7 @@
 import type { JobName, JobPayloads } from "@mindkid/queue";
 
 export interface JobContext {
-  /** Id BullMQ gán cho lần chạy này — khác nhau giữa các lần chạy theo lịch. */
+  /** Id job của engine queue cho lần chạy này — khác nhau giữa các lần chạy theo lịch. */
   jobId: string;
   /** Lần thử thứ mấy, tính từ 1. */
   attempt: number;

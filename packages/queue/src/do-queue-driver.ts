@@ -408,12 +408,12 @@ export function runWithCloudflareQueuePort<T>(
   return cfQueueAls.run(port, fn);
 }
 
-export function registerCloudflareQueuePort(
+export function registerQueuePort(
   port: JobQueueCoordinatorPort | undefined
 ): void {
   cloudflareQueuePort = port;
 }
 
-export function getCloudflareQueuePort(): JobQueueCoordinatorPort | undefined {
+export function getQueuePort(): JobQueueCoordinatorPort | undefined {
   return cfQueueAls.getStore() ?? cloudflareQueuePort;
 }

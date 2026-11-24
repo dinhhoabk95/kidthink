@@ -12,7 +12,7 @@ import {
   userSessions,
   users,
 } from "@mindkid/db";
-import { getQueue } from "@mindkid/queue/connection";
+import { getLocalQueueRuntime } from "@mindkid/local-runtime";
 import { and, eq, inArray } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
@@ -171,7 +171,7 @@ describe("Task 1 — Better Auth POST /api/auth/users/sign-up/email (BR-REG-01..
       expect(deliveryRows).toHaveLength(1);
       expect(deliveryRows[0]?.channel).toBe(NOTIFICATION_CHANNEL.EMAIL);
 
-      const job = await getQueue().getJob(`email:send:${notif.id}`);
+      const job = await getLocalQueueRuntime()?.peek(`email:send:${notif.id}`);
       expect(job).toBeDefined();
     }
   });

@@ -1,4 +1,4 @@
-import { getCloudflareCachePort } from "@mindkid/cache";
+import { getCachePort } from "@mindkid/cache";
 import { clearCloudflareD1Bindings, DB } from "@mindkid/db";
 import { getActiveObjectStorageDriver } from "@mindkid/storage";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -97,7 +97,7 @@ describe("00-cloudflare-bindings fail-closed (BR-JOB-12)", () => {
     // Lúc nối chưa được lấy stub nào (stub gắn với I/O context của request tạo ra nó).
     expect(auth.get).not.toHaveBeenCalled();
 
-    const cache = getCloudflareCachePort();
+    const cache = getCachePort();
     await cache?.get("k1");
     await cache?.get("k2");
     expect(auth.get).toHaveBeenCalledTimes(2);

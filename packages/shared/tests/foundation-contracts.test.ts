@@ -72,7 +72,8 @@ describe("P0 foundation contracts", () => {
 
     expect(notifDeps.nodemailer).toBeUndefined();
     expect(notifDeps.mjml).toBe("^5.4.1");
-    expect(cacheDeps["rate-limiter-flexible"]).toBe("^11.5.0");
+    expect(cacheDeps["rate-limiter-flexible"]).toBeUndefined();
+    expect(cacheDeps.ioredis).toBeUndefined();
     expect(webDeps["nuxt-security"]).toBe("^2.7.0");
     expect(webDeps["@t3-oss/env-nuxt"]).toBe("^0.13.11");
     expect(webDeps["nuxt-auth-utils"]).toBeUndefined();

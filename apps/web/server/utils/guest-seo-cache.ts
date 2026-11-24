@@ -2,7 +2,7 @@ import { deleteCached, getCached, setCached } from "@mindkid/cache";
 
 export const GUEST_SEO_EPOCH_KEY = "guest:seo:epoch:v1";
 const LEGACY_HOME_CACHE_KEY = "guest:home:data:v1";
-const EPOCH_VALKEY_TTL_SECONDS = 30 * 86_400;
+const EPOCH_CACHE_TTL_SECONDS = 30 * 86_400;
 const EPOCH_MEMORY_TTL_MS = 2000;
 const MAX_CURSOR_CACHE_LENGTH = 120;
 
@@ -154,7 +154,7 @@ export async function invalidateGuestSeoCache(): Promise<number> {
       setCached<number>(
         GUEST_SEO_EPOCH_KEY,
         nextEpoch,
-        EPOCH_VALKEY_TTL_SECONDS
+        EPOCH_CACHE_TTL_SECONDS
       ),
       deleteCached(LEGACY_HOME_CACHE_KEY),
     ]);

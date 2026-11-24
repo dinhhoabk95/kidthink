@@ -77,9 +77,13 @@ export default defineNuxtConfig({
               import.meta.url
             )
           ),
-          // BR-JOB-11: hàng đợi chạy qua Durable Object, không kéo BullMQ/ioredis vào bundle.
-          bullmq: fileURLToPath(
-            new URL("./server/utils/cloudflare-bullmq-stub.ts", import.meta.url)
+          // BR-JOB-11, BR-JOB-16: Cloudflare dùng binding Durable Object, không kéo adapter
+          // `node:sqlite` của runtime dev (`@mindkid/local-runtime`) vào bundle.
+          "@mindkid/local-runtime": fileURLToPath(
+            new URL(
+              "./server/utils/cloudflare-local-runtime-stub.ts",
+              import.meta.url
+            )
           ),
           // htmlnano (qua mjml-core, chỉ dùng khi `minify`) nạp module động mà wrangler không giải được.
           htmlnano: fileURLToPath(
@@ -93,12 +97,6 @@ export default defineNuxtConfig({
           // "auto"` trả thẳng hàm, nên `.default` là undefined và web crash lúc nạp module
           // ("B38 is not a function"). Ép về bản CJS (có `module.exports.default = module.exports`).
           ...babelRuntimeCjsHelperAliases(),
-          ioredis: fileURLToPath(
-            new URL(
-              "./server/utils/cloudflare-ioredis-stub.ts",
-              import.meta.url
-            )
-          ),
         }
       : {
           "#server": fileURLToPath(new URL("./server", import.meta.url)),

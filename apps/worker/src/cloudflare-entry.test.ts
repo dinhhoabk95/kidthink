@@ -1,7 +1,7 @@
 import {
-  getCloudflareQueuePort,
+  getQueuePort,
   type QueuedJobEnvelope,
-  registerCloudflareQueuePort,
+  registerQueuePort,
 } from "@mindkid/queue";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -10,9 +10,10 @@ import {
   createFakeDoSql,
 } from "./__tests__/cloudflare-fakes.js";
 
-// `BR-JOB-11`: nạp bullmq ở bất kỳ đâu trong đồ thị import của entry là lỗi.
-vi.mock("bullmq", () => {
-  throw new Error("bullmq must not be loaded by the Cloudflare entry");
+// `BR-JOB-11`, `BR-JOB-16`: adapter `node:sqlite` của runtime dev không được lọt vào đồ thị import
+// của entry Cloudflare (workerd không có `node:sqlite`).
+vi.mock("@mindkid/local-runtime", () => {
+  throw new Error("local-runtime must not be loaded by the Cloudflare entry");
 });
 
 vi.mock("cloudflare:workers", () => ({
@@ -48,10 +49,9 @@ describe("cloudflare-entry (mindkid-worker)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubEnv("MINDKID_RUNTIME", "cloudflare");
-    vi.stubEnv("QUEUE_DRIVER", "cloudflare-do");
   });
 
-  it("imports without loading bullmq and exports DO classes + default scheduled()", async () => {
+  it("imports without loading local-runtime and exports DO classes + default scheduled()", async () => {
     const entry = await import("./cloudflare-entry.js");
     expect(typeof entry.JobQueueDO).toBe("function");
     expect(typeof entry.AuthCoordinatorDO).toBe("function");
@@ -95,15 +95,15 @@ describe("cloudflare-entry (mindkid-worker)", () => {
     expect(renew?.jobId).toBe("billing:renew:2026-11-24T00:30");
 
     // G4: cổng queue toàn cục ở đường cron là STUB của JobQueueDO, không phải engine.
-    expect(await getCloudflareQueuePort()?.getStats()).toEqual({
+    expect(await getQueuePort()?.getStats()).toEqual({
       waiting: 42,
       failed: 7,
     });
   });
 
-  it("enqueue() inside a JobQueueDO handler stays local and never touches BullMQ", async () => {
+  it("enqueue() inside a JobQueueDO handler stays on the DO engine and never touches the local runtime", async () => {
     const { enqueue } = await import("@mindkid/queue");
-    registerCloudflareQueuePort(undefined);
+    registerQueuePort(undefined);
     const { JobQueueDO } = await import("./cloudflare-entry.js");
     enqueueFromConsumer.fn.mockImplementation(() =>
       enqueue("email:send", {
@@ -157,6 +157,6 @@ describe("cloudflare-entry (mindkid-worker)", () => {
     // G4: enqueue trong consumer đi vào engine của chính DO (waiting có email:send)...
     expect((await dO.getStats()).waiting).toBe(1);
     // ...nhưng engine KHÔNG được đăng ký toàn cục ra ngoài DO.
-    expect(getCloudflareQueuePort()).toBeUndefined();
+    expect(getQueuePort()).toBeUndefined();
   });
 });

@@ -9,27 +9,15 @@ import {
   USER_STATUS,
   users,
 } from "@mindkid/db";
+import { getLocalQueueRuntime } from "@mindkid/local-runtime";
 import { renderEmailTemplate } from "@mindkid/notification";
-import { disconnectQueue, getQueue } from "@mindkid/queue/connection";
 import { desc, eq, inArray } from "drizzle-orm";
-import {
-  afterAll,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   getUserAuth,
   resetBetterAuthInstancesForTests,
 } from "#server/utils/better-auth";
-
-vi.hoisted(() => {
-  process.env.VALKEY_QUEUE_PREFIX ??= `test-${process.pid}-${process.env.VITEST_POOL_ID ?? "0"}`;
-});
 
 interface VerifyEmailResponsePayload {
   status?: boolean;
@@ -117,7 +105,7 @@ async function registerPendingUser(tag: string) {
     throw new Error("Expected verification notification");
   }
 
-  const job = await getQueue().getJob(`email:send:${notif.id}`);
+  const job = await getLocalQueueRuntime()?.peek(`email:send:${notif.id}`);
   const notifPayload = notif.payload as EmailJobPayload | undefined;
   expect(notifPayload?.token).toBeUndefined();
   expect(notifPayload?.verify_url).toBeUndefined();
@@ -144,19 +132,6 @@ function callVerifyEmail(token: string): Promise<Response> {
 }
 
 describe("Task 2 — Better Auth Email Verification (BR-EVF-01..08)", () => {
-  beforeAll(async () => {
-    if (getQueue().name !== "mindkid-jobs") {
-      await getQueue().obliterate({ force: true });
-    }
-  });
-
-  afterAll(async () => {
-    if (getQueue().name !== "mindkid-jobs") {
-      await getQueue().obliterate({ force: true });
-    }
-    await disconnectQueue();
-  });
-
   beforeEach(() => {
     setAuthRedisClient(new InMemoryRedisClient());
     resetBetterAuthInstancesForTests();
@@ -239,7 +214,9 @@ describe("Task 2 — Better Auth Email Verification (BR-EVF-01..08)", () => {
     expect(deliveries).toHaveLength(1);
     expect(deliveries[0]?.status).toBe(NOTIFICATION_STATUS.QUEUED);
 
-    const job = await getQueue().getJob(`email:send:${latestNotif?.id ?? 0}`);
+    const job = await getLocalQueueRuntime()?.peek(
+      `email:send:${latestNotif?.id ?? 0}`
+    );
     expect(job).toBeDefined();
     const notifPayload = latestNotif?.payload as EmailJobPayload | undefined;
     expect(notifPayload?.token).toBeUndefined();

@@ -48,7 +48,6 @@ setTestEnv("VIETQR_BANK_ID", "970407");
 setTestEnv("VIETQR_BANK_NAME", "Techcombank");
 setTestEnv("VIETQR_ACCOUNT_NO", "1234567890");
 setTestEnv("VIETQR_ACCOUNT_NAME", "MINDKID CORP");
-setTestEnv("VALKEY_URL", "redis://localhost:6380");
 setTestEnv(
   "PAYMENT_PAYOS_WEBHOOK_SECRET",
   "test-payos-webhook-secret-0123456789"
@@ -57,9 +56,8 @@ setTestEnv("PAYMENT_WEBHOOK_SECRET", "test-payos-webhook-secret-0123456789");
 setTestEnv("PAYMENT_MODE", "sandbox");
 setTestEnv("PAYMENT_MERCHANT_ID", "test_merchant");
 
-import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
-import { clearInMemoryBuckets } from "@mindkid/cache";
-import { beforeEach } from "vitest";
+// Engine DO thật trên SQLite `:memory:` nối vào port auth/cache/rate limit/queue (BR-TST-11, D15).
+import "@mindkid/local-runtime/vitest-setup";
 import {
   clearUserSession,
   getUserSession,
@@ -77,6 +75,3 @@ Object.assign(globalThis, {
   requireManagerSession,
   requireSuperAdminSession,
 });
-
-setAuthRedisClient(new InMemoryRedisClient());
-beforeEach(() => clearInMemoryBuckets());

@@ -145,11 +145,6 @@ export function createWebEnv(options: CreateWebEnvOptions = {}) {
       SITE_URL: urlWithProtocols(["http:", "https:"]),
       NUXT_ALLOWED_ORIGINS: nonEmptyString,
 
-      // ---- Dữ liệu ----------------------------------------------------------
-      // Cloudflare dùng D1 (binding) — không có chuỗi kết nối Postgres. Valkey chỉ cần ở
-      // runtime VPS/dev nên không chặn build.
-      VALKEY_URL: urlWithProtocols(["valkey:", "redis:", "rediss:"]).optional(),
-
       // ---- Bí mật phiên và token --------------------------------------------
       NUXT_SESSION_PASSWORD: secretSchema,
       PARENT_GATE_SECRET: secretSchema,

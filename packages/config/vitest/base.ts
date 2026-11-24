@@ -103,7 +103,7 @@ export function nuxtAppAliases(appRoot: string): PrefixAlias[] {
 
 /**
  * Chạy tuần tự là mặc định có chủ đích, không phải tối ưu bỏ sót: test tích hợp
- * dùng PostgreSQL + Valkey thật (BR-TST-02) nên hai file chạy song song sẽ tranh
+ * dùng SQLite thật + engine DO trong tiến trình (BR-TST-02, BR-TST-11) nên hai file chạy song song sẽ tranh
  * cùng một hàng dữ liệu. Package nào thuần pure function được phép ghi đè.
  */
 export const SEQUENTIAL_DEFAULTS = {
@@ -137,6 +137,19 @@ const DATABASE_GLOBAL_SETUP = path.join(
   "db",
   "tests",
   "global-setup.ts"
+);
+
+/**
+ * `setupFiles` nối engine DO chạy trong tiến trình trên SQLite `:memory:` vào các
+ * port auth/cache/rate limit/queue (`BR-TST-11`, D15). Workspace nào có test chạm
+ * các port đó thì thêm vào `test.setupFiles`.
+ */
+export const LOCAL_RUNTIME_SETUP_FILE = path.join(
+  REPO_ROOT,
+  "packages",
+  "local-runtime",
+  "src",
+  "vitest-setup.ts"
 );
 
 export const WORKSPACE_TEST_INCLUDE: readonly string[] = [

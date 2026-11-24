@@ -20,6 +20,7 @@
     "@mindkid/errors": "workspace:*",
     "@mindkid/export": "workspace:*",
     "@mindkid/game-engine": "workspace:*",
+    "@mindkid/local-runtime": "workspace:*",
     "@mindkid/moderation": "workspace:*",
     "@mindkid/notification": "workspace:*",
     "@mindkid/play": "workspace:*",

@@ -12,9 +12,7 @@
   },
   "vars": {
     "MINDKID_RUNTIME": "cloudflare",
-    "STORAGE_DRIVER": "d1-blobs",
-    "QUEUE_DRIVER": "cloudflare-do",
-    "AUTH_STORE_DRIVER": "do"
+    "STORAGE_DRIVER": "d1-blobs"
   },
   "d1_databases": [
     {

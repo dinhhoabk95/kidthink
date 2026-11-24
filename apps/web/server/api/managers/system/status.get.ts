@@ -1,7 +1,6 @@
 import { defineEventHandler, setResponseHeader } from "h3";
 import {
   getManagerSystemStatus,
-  type QueueInspector,
   type QueueProbeResult,
   type ServiceProbeResult,
   probePostgres as serviceProbePostgres,
@@ -12,13 +11,11 @@ import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export type {
   QueueCountsSnapshot,
-  QueueInspector,
   QueueProbeResult,
   ServiceProbeResult,
   ServiceRuntimeState,
   SystemHealthStatus,
   SystemStatusResponse,
-  WaitingJobSample,
 } from "#server/services/system-status-service";
 
 export function probePostgres(
@@ -36,11 +33,10 @@ export function probeValkey(
 }
 
 export function probeQueue(
-  getQueueFn?: () => QueueInspector,
-  nowMs?: number,
+  getPort?: Parameters<typeof serviceProbeQueue>[0],
   degradedLatencyMs?: number
 ): Promise<QueueProbeResult> {
-  return serviceProbeQueue(getQueueFn, nowMs, degradedLatencyMs);
+  return serviceProbeQueue(getPort, degradedLatencyMs);
 }
 
 export default defineEventHandler(async (event) => {

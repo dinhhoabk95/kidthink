@@ -8,26 +8,14 @@ import {
   userAccounts,
   users,
 } from "@mindkid/db";
-import { disconnectQueue, getQueue } from "@mindkid/queue/connection";
+import { getLocalQueueRuntime } from "@mindkid/local-runtime";
 import { and, desc, eq } from "drizzle-orm";
-import {
-  afterAll,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   getUserAuth,
   resetBetterAuthInstancesForTests,
 } from "#server/utils/better-auth";
-
-vi.hoisted(() => {
-  process.env.VALKEY_QUEUE_PREFIX ??= `test-${process.pid}-${process.env.VITEST_POOL_ID ?? "0"}`;
-});
 
 interface ResetRequestResponse {
   status?: boolean;
@@ -76,19 +64,6 @@ async function seedActiveUserWithPassword(
 }
 
 describe("Task 4 — Better Auth Password Recovery (BR-PWR-01..09)", () => {
-  beforeAll(async () => {
-    if (getQueue().name !== "mindkid-jobs") {
-      await getQueue().obliterate({ force: true });
-    }
-  });
-
-  afterAll(async () => {
-    if (getQueue().name !== "mindkid-jobs") {
-      await getQueue().obliterate({ force: true });
-    }
-    await disconnectQueue();
-  });
-
   beforeEach(() => {
     setAuthRedisClient(new InMemoryRedisClient());
     resetBetterAuthInstancesForTests();
@@ -133,7 +108,9 @@ describe("Task 4 — Better Auth Password Recovery (BR-PWR-01..09)", () => {
     expect(deliveries).toHaveLength(1);
     expect(deliveries[0]?.status).toBe(NOTIFICATION_STATUS.QUEUED);
 
-    const job = await getQueue().getJob(`email:send:${notif?.id ?? 0}`);
+    const job = await getLocalQueueRuntime()?.peek(
+      `email:send:${notif?.id ?? 0}`
+    );
     expect(job).toBeDefined();
     const notifPayload = notif?.payload as ResetEmailJobPayload | undefined;
     expect(notifPayload?.token).toBeUndefined();
@@ -195,7 +172,9 @@ describe("Task 4 — Better Auth Password Recovery (BR-PWR-01..09)", () => {
       .where(eq(notifications.recipientId, user.id))
       .orderBy(desc(notifications.id))
       .limit(1);
-    const job = await getQueue().getJob(`email:send:${notif?.id ?? 0}`);
+    const job = await getLocalQueueRuntime()?.peek(
+      `email:send:${notif?.id ?? 0}`
+    );
     const notifPayload = notif?.payload as ResetEmailJobPayload | undefined;
     expect(notifPayload?.token).toBeUndefined();
     expect(notifPayload?.reset_url).toBeUndefined();

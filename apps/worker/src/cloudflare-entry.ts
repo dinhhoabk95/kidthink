@@ -12,7 +12,7 @@ import {
 
 /**
  * Entry Cloudflare của `mindkid-worker` (`BR-JOB-04`: không mở HTTP công khai —
- * chỉ DO RPC và cron). Cố ý KHÔNG import `bullmq`/`#src/worker` (`BR-JOB-11`).
+ * chỉ DO RPC và cron). Cố ý KHÔNG import `@mindkid/local-runtime`/`#src/worker` (`BR-JOB-11`, `BR-JOB-16`).
  *
 
  * Chỉ export lớp DO và handler mặc định: workerd từ chối mọi export khác.
