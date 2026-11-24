@@ -51,7 +51,6 @@ import {
   GUEST_SEO_TTL,
   withGuestSeoCache,
 } from "#server/utils/guest-seo-cache";
-import { issuePreviewToken } from "#server/utils/preview-token";
 import { useOwnerRepositories } from "#server/utils/repositories";
 import { RUNTIME_SCORING_MODE } from "#server/utils/round-set-runtime";
 
@@ -686,19 +685,5 @@ export async function getManagerLevelPreviewConfig(params: {
     isManagerPreview: true,
   });
 
-  const { gameLevels } = useOwnerRepositories();
-  const level = await gameLevels.findByCode(params.code);
-  const previewToken = level
-    ? issuePreviewToken({
-        entityType: "game_level",
-        id: level.id,
-        version: 1,
-        managerId: params.managerId,
-      })
-    : undefined;
-
-  return {
-    ...config,
-    preview_token: previewToken,
-  };
+  return config;
 }
