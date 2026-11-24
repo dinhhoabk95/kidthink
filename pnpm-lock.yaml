@@ -898,6 +898,9 @@ importers:
       '@mindkid/config':
         specifier: workspace:*
         version: link:../config
+      '@mindkid/errors':
+        specifier: workspace:*
+        version: link:../errors
       sharp:
         specifier: ^0.35.5
         version: 0.35.5(@types/node@26.6.6)

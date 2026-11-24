@@ -62,10 +62,11 @@ cách chúng được đọc lại. Tệp **private** (chứng từ, PDF) chỉ 
 | `BR-IMG-11` | Driver đang hoạt động: **D1 blobs** (`stored_blobs` trên `mindkid-blobs`) trên Cloudflare; **in-memory** (giới hạn 200 mục) ở dev/test khi chưa đặt driver. Mọi upload/đọc/xoá private đi qua driver, không có đường song song | Bản in-memory riêng làm chứng từ biến mất khi isolate khởi động lại |
 | `BR-IMG-12` | Response `/private/*` luôn có `Cache-Control: private, no-store` và `X-Content-Type-Options: nosniff`; không phải ảnh thì `Content-Disposition: attachment` | Chống cache chung và đoán kiểu |
 | `BR-IMG-13` | Trên Cloudflare `STORAGE_BASE_URL` = `SITE_URL` (cùng origin với route đọc) | URL ký phải trỏ tới Worker phục vụ nó |
+| `BR-IMG-14` | Driver D1 lưu **byte thô** trong cột `body` kiểu `BLOB` (không base64) và từ chối ghi tệp > `D1_MAX_BLOB_BYTES` (1 900 000 byte) bằng `PayloadTooLargeError` (413). Ảnh chứng từ bị chặn sớm hơn ở 1,5 MB (`PROOF_MAX_IMAGE_SIZE_BYTES` = 1 572 864) | D1 giới hạn khoảng 2 MB mỗi dòng/giá trị; vượt là lỗi 500 khó chẩn đoán |
 
 ## 7. Data
 
-**Ghi/đọc:** bảng `stored_blobs(bucket, key, content_type, byte_size, body_base64, expires_at, created_at)`,
+**Ghi/đọc:** bảng `stored_blobs(bucket, key, content_type, byte_size, body BLOB, expires_at, created_at)`,
 khoá chính `(bucket, key)`, DDL là hằng `STORED_BLOBS_DDL` ở `packages/storage`, được
 `scripts/deploy/sync-wrangler-ids.ts` ghi ra `.d1-ddl/blobs.sql`.
 
@@ -94,6 +95,10 @@ Scenario: BR-IMG-10 — chữ ký sai hoặc hết hạn
 Scenario: BR-IMG-11 — xoá đi qua driver
   When deletePrivateAsset rồi readPrivateAsset
   Then không còn byte
+
+Scenario: BR-IMG-14 — tệp quá lớn bị từ chối có kiểm soát
+  When putObject với tệp > 1 900 000 byte trên driver D1
+  Then ném PayloadTooLargeError, không ghi dòng nào
 
 Scenario: BR-IMG-12 — header an toàn
   When đọc tệp private

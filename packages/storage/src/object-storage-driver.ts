@@ -1,4 +1,12 @@
 import { createHash, createHmac } from "node:crypto";
+import { PayloadTooLargeError } from "@mindkid/errors";
+
+/**
+ * D1 giới hạn khoảng 2 MB cho mỗi dòng/giá trị (BR-IMG-14). Trần 1 900 000 byte chừa
+ * chỗ cho các cột còn lại của dòng; vượt trần thì ném `PayloadTooLargeError` có kiểm soát
+ * thay vì để D1 báo lỗi khó chẩn đoán.
+ */
+export const D1_MAX_BLOB_BYTES = 1_900_000;
 
 export interface ObjectPutInput {
   readonly bucket: "public" | "private";
@@ -28,7 +36,7 @@ export interface MinimalBlobSqlPort {
     readonly bucket: string;
     readonly contentType: string;
     readonly byteSize: number;
-    readonly bodyBase64: string;
+    readonly body: Uint8Array;
     readonly expiresAtIso: string | null;
   }): Promise<void>;
   readBlob(
@@ -37,7 +45,7 @@ export interface MinimalBlobSqlPort {
   ): Promise<
     | {
         readonly contentType: string;
-        readonly bodyBase64: string;
+        readonly body: Uint8Array;
         readonly expiresAtIso: string | null;
       }
     | undefined
@@ -47,7 +55,7 @@ export interface MinimalBlobSqlPort {
 
 /**
  * Driver Giai đoạn 1 (`STORAGE_DRIVER=d1-blobs` - $0, không cần thẻ tín dụng):
- * Lưu biên lai thanh toán WebP (<= 150 KB) và PDF tạm vào bảng `stored_blobs` trên `mindkid-blobs`.
+ * Lưu biên lai thanh toán WebP (<= 1,5 MB) và PDF tạm vào bảng `stored_blobs` trên `mindkid-blobs`.
  */
 export class D1BlobObjectStorageDriver implements ObjectStorageDriver {
   private readonly port: MinimalBlobSqlPort;
@@ -57,13 +65,17 @@ export class D1BlobObjectStorageDriver implements ObjectStorageDriver {
   }
 
   async putObject(input: ObjectPutInput): Promise<{ readonly key: string }> {
-    const bodyBase64 = Buffer.from(input.body).toString("base64");
+    if (input.body.byteLength > D1_MAX_BLOB_BYTES) {
+      throw new PayloadTooLargeError(
+        `Tệp lưu trữ vượt quá ${D1_MAX_BLOB_BYTES} byte (giới hạn D1).`
+      );
+    }
     await this.port.upsertBlob({
       key: input.key,
       bucket: input.bucket,
       contentType: input.contentType,
       byteSize: input.body.byteLength,
-      bodyBase64,
+      body: input.body,
       expiresAtIso: input.expiresAt ? input.expiresAt.toISOString() : null,
     });
     return { key: input.key };
@@ -82,7 +94,7 @@ export class D1BlobObjectStorageDriver implements ObjectStorageDriver {
       return undefined;
     }
     return {
-      body: new Uint8Array(Buffer.from(row.bodyBase64, "base64")),
+      body: row.body,
       contentType: row.contentType,
     };
   }
@@ -322,7 +334,7 @@ export async function transferBlobRecordsToDriver(options: {
     readonly key: string;
     readonly bucket: string;
     readonly contentType: string;
-    readonly bodyBase64: string;
+    readonly body: Uint8Array;
     readonly expiresAtIso: string | null;
   }[];
   readonly targetDriver: ObjectStorageDriver;
@@ -340,7 +352,7 @@ export async function transferBlobRecordsToDriver(options: {
     }
     const bucket: "public" | "private" =
       row.bucket === "public" ? "public" : "private";
-    const bodyBytes = new Uint8Array(Buffer.from(row.bodyBase64, "base64"));
+    const bodyBytes = row.body;
 
     await options.targetDriver.putObject({
       bucket,

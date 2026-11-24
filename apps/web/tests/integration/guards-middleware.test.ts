@@ -129,12 +129,12 @@ describe("middleware/guards", () => {
     expect(() => guardsMiddleware(event)).not.toThrow();
   });
 
-  it("cho phép upload chứng từ 2 MiB lên /api/users/orders/:uuid/proof không bị 413 (C1)", () => {
+  it("cho phép upload chứng từ 1 MiB lên /api/users/orders/:uuid/proof không bị 413 (C1)", () => {
     const event = makeEvent({
       path: "/api/users/orders/f47ac10b-58cc-4372-a567-0e02b2c3d479/proof",
       method: "POST",
       headers: {
-        "content-length": String(2 * 1024 * 1024), // 2 MiB
+        "content-length": String(1024 * 1024), // 1 MiB
         "sec-fetch-site": "same-origin",
         origin: "https://mindkid.test",
       },
@@ -143,12 +143,12 @@ describe("middleware/guards", () => {
     expect(() => guardsMiddleware(event)).not.toThrow();
   });
 
-  it("chặn upload chứng từ vượt trần 5 MiB + 64 KiB ném 413 PayloadTooLargeError (C1)", () => {
+  it("chặn upload chứng từ vượt trần 1,5 MiB + 64 KiB ném 413 PayloadTooLargeError (C1)", () => {
     const event = makeEvent({
       path: "/api/users/orders/f47ac10b-58cc-4372-a567-0e02b2c3d479/proof",
       method: "POST",
       headers: {
-        "content-length": String(5.5 * 1024 * 1024), // 5.5 MiB > 5 MiB + 64 KiB
+        "content-length": String(5.5 * 1024 * 1024), // 5.5 MiB > 1,5 MiB + 64 KiB
         "sec-fetch-site": "same-origin",
         origin: "https://mindkid.test",
       },

@@ -14,6 +14,7 @@ import {
   EntitlementRequiredError,
   QuotaExceededError,
 } from "@mindkid/errors/billing";
+import { PayloadTooLargeError } from "@mindkid/errors/common";
 import { PersonalCurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import { enqueue } from "@mindkid/queue";
 import { storage } from "@mindkid/storage";
@@ -309,10 +310,15 @@ export async function processPdfRenderJob(
       pageCount,
     };
   } catch (error) {
-    const errorMessage =
-      error instanceof Error
-        ? error.message
-        : "Đã xảy ra lỗi trong quá trình xuất PDF.";
+    // BR-IMG-14: PDF vượt giới hạn lưu trữ là lỗi xác định — thử lại không đổi kết quả.
+    const isTooLarge = error instanceof PayloadTooLargeError;
+    let errorMessage = "Đã xảy ra lỗi trong quá trình xuất PDF.";
+    if (isTooLarge) {
+      errorMessage =
+        "Tệp PDF vượt quá giới hạn lưu trữ cho phép (khoảng 1,9 MB). Hãy rút gọn giáo án rồi xuất lại.";
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
 
     await db.transaction(async (tx) => {
       const txRepos = createRepositories(tx);
@@ -345,6 +351,9 @@ export async function processPdfRenderJob(
       });
     });
 
+    if (isTooLarge) {
+      return { success: false };
+    }
     throw error;
   }
 }

@@ -226,7 +226,7 @@
     middleware: ["user-auth"],
   });
 
-  const MAX_PROOF_SIZE_BYTES = 5 * 1024 * 1024;
+  const MAX_PROOF_SIZE_BYTES = 1_572_864;
 
   interface BankInfoSummary {
     bankId: string;
@@ -343,7 +343,7 @@
 
     if (file && file.size > MAX_PROOF_SIZE_BYTES) {
       errorMessage.value =
-        "Ảnh chứng từ vượt quá 5 MB. Vui lòng chọn ảnh nhỏ hơn.";
+        "Ảnh chứng từ vượt quá 1,5 MB. Vui lòng chọn ảnh nhỏ hơn.";
       selectedFile.value = null;
       return;
     }

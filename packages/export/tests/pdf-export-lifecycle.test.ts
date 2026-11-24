@@ -8,8 +8,10 @@ import {
   personalCurriculumItems,
   users,
 } from "@mindkid/db";
+import { PayloadTooLargeError } from "@mindkid/errors/common";
+import { storage } from "@mindkid/storage";
 import { eq } from "drizzle-orm";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getExportJobByUuid,
   getUserMonthlyExportCount,
@@ -23,6 +25,10 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
   const db = getOwnerDb();
   let testUserId: number;
   let testPlanUuid: string;
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   beforeEach(async () => {
     const [user] = await db
@@ -172,6 +178,34 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
     // Check retention is 7 days in future (BR-PDF-08)
     const sevenDaysFromNow = Date.now() + 6.9 * 24 * 60 * 60 * 1000;
     expect(jobStatus.expires_at?.getTime()).toBeGreaterThan(sevenDaysFromNow);
+  });
+
+  it("[BR-IMG-14] PDF vượt giới hạn lưu trữ: job failed với lỗi rõ ràng, không ném lại (không lặp retry)", async () => {
+    const initRes = await requestExportJob(
+      testUserId,
+      "curriculum_plan",
+      testPlanUuid,
+      { userEntitlements: ["export_pdf"] }
+    );
+    const upload = vi
+      .spyOn(storage, "uploadPrivateAsset")
+      .mockRejectedValue(new PayloadTooLargeError("quá lớn"));
+
+    const res = await processPdfRenderJob(initRes.job_uuid);
+    expect(res.success).toBe(false);
+    expect(upload).toHaveBeenCalledTimes(1);
+
+    const [job] = await db
+      .select()
+      .from(exportJobs)
+      .where(eq(exportJobs.uuid, initRes.job_uuid));
+    expect(job?.status).toBe(EXPORT_JOB_STATUS.FAILED);
+    expect(job?.error).toContain("vượt quá giới hạn lưu trữ");
+
+    // Chạy lại: job đã failed -> không render/upload lần nữa.
+    const again = await processPdfRenderJob(initRes.job_uuid);
+    expect(again.success).toBe(false);
+    expect(upload).toHaveBeenCalledTimes(1);
   });
 
   it("[BR-PDF-09] Khi render thất bại, cập nhật status failed và tự động hoàn quota", async () => {

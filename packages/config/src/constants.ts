@@ -5,7 +5,7 @@
 export const SOFT_UNLOCK_DAYS = 3;
 export const ORDER_PENDING_TTL_HOURS = 48;
 export const PROOF_SIGNED_URL_TTL_MINUTES = 15;
-export const PROOF_MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+export const PROOF_MAX_IMAGE_SIZE_BYTES = 1_572_864; // 1,5 MB — D1 giới hạn ~2 MB/dòng (BR-IMG-14)
 export const PROOF_ALLOWED_MIME_TYPES = [
   "image/jpeg",
   "image/png",

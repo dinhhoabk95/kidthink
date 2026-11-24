@@ -42,6 +42,7 @@ dạy.
 | `BR-PDF-07` | Font nhúng, dấu tiếng Việt hiển thị đúng | Dấu vỡ là lỗi hay gặp nhất khi render PDF tiếng Việt |
 | `BR-PDF-08` | File tự xoá sau **7 ngày** | Dung lượng |
 | `BR-PDF-09` | Render fail → thông báo + **hoàn quota** | Đảm bảo quyền lợi cho người dùng không bị mất lượt xuất khi hệ thống gặp sự cố |
+| `BR-PDF-10` | PDF render ra lớn hơn giới hạn lưu trữ (`D1_MAX_BLOB_BYTES`, `BR-IMG-14`) → job `failed` với thông báo rõ ràng + hoàn quota, **không** ném lại lỗi (lỗi xác định, thử lại không đổi kết quả) | Tránh vòng retry vô ích của hàng đợi |
 
 ## 7. Data
 

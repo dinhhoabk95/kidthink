@@ -49,7 +49,7 @@ User sở hữu đơn.
 
 | Nhánh | Hành vi |
 |---|---|
-| Ảnh > 5 MB | Chặn ở client, nén hoặc yêu cầu chọn lại |
+| Ảnh > 1,5 MB | Chặn ở client, nén hoặc yêu cầu chọn lại |
 | Không có ảnh | Cho gửi **chỉ mã giao dịch**, cảnh báo duyệt sẽ chậm hơn |
 | Nộp lại chứng từ | Cho phép khi còn `submitted`; thay ảnh, không tạo đơn mới |
 | `soft_unlock` hết 3 ngày chưa duyệt | Quyền hết; đơn vẫn duyệt được và cấp lại đủ hạn |
@@ -76,7 +76,7 @@ User sở hữu đơn.
 | Trường | Ràng buộc |
 |---|---|
 | `bank_txn_ref` | Bắt buộc, 4–64 ký tự |
-| `proof` | Tuỳ chọn, jpeg/png/webp, ≤5 MB |
+| `proof` | Tuỳ chọn, jpeg/png/webp, ≤ 1,5 MB (D1 giới hạn ~2 MB/dòng, xem `BR-IMG-14`); vượt → `413 PAYLOAD_TOO_LARGE` |
 
 ### 7.2 Sau khi nộp
 

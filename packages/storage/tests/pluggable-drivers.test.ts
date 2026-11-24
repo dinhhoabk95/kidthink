@@ -12,7 +12,7 @@ describe("Pluggable ObjectStorageDriver (D1 Blobs Stage 1 <-> S3 SigV4 Stage 2)"
       {
         bucket: string;
         contentType: string;
-        bodyBase64: string;
+        body: Uint8Array;
         expiresAtIso: string | null;
       }
     >();
@@ -22,7 +22,7 @@ describe("Pluggable ObjectStorageDriver (D1 Blobs Stage 1 <-> S3 SigV4 Stage 2)"
         table.set(`${row.bucket}:${row.key}`, {
           bucket: row.bucket,
           contentType: row.contentType,
-          bodyBase64: row.bodyBase64,
+          body: row.body,
           expiresAtIso: row.expiresAtIso,
         });
         return Promise.resolve();
@@ -132,7 +132,7 @@ describe("Pluggable ObjectStorageDriver (D1 Blobs Stage 1 <-> S3 SigV4 Stage 2)"
           key: "proofs/mk-1000.webp",
           bucket: "private",
           contentType: "image/webp",
-          bodyBase64: Buffer.from([9, 8, 7]).toString("base64"),
+          body: new Uint8Array([9, 8, 7]),
           expiresAtIso: null,
         },
       ],

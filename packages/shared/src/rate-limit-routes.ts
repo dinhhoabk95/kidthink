@@ -351,7 +351,7 @@ export function resolveRateLimitRouteClass(
 export const DEFAULT_REQUEST_BODY_SIZE_BYTES = 128 * 1024; // 128 KiB (Task #264)
 export const MULTIPART_TRANSPORT_OVERHEAD_BYTES = 64 * 1024; // 64 KiB buffer cho multipart headers
 export const ORDER_PROOF_BODY_LIMIT_BYTES =
-  5 * 1024 * 1024 + MULTIPART_TRANSPORT_OVERHEAD_BYTES; // 5 MiB + 64 KiB (PROOF_MAX_IMAGE_SIZE_BYTES, C1)
+  1_572_864 + MULTIPART_TRANSPORT_OVERHEAD_BYTES; // 1,5 MiB + 64 KiB (PROOF_MAX_IMAGE_SIZE_BYTES, C1)
 
 export const ROUTE_BODY_SIZE_LIMITS: Readonly<Record<string, number>> = {
   "/api/guest/auth/users/register": 32 * 1024,

@@ -510,7 +510,7 @@ export async function createUserOrderCheckoutSession(
   };
 }
 
-async function uploadProofFileIfProvided(
+export async function uploadProofFileIfProvided(
   proofFile: ProofFileUploadInput | undefined,
   orderUuid: string
 ): Promise<string | undefined> {
@@ -519,7 +519,7 @@ async function uploadProofFileIfProvided(
   }
 
   if (proofFile.data.length > PROOF_MAX_IMAGE_SIZE_BYTES) {
-    throw new PayloadTooLargeError("Ảnh chứng từ không được vượt quá 5 MB.");
+    throw new PayloadTooLargeError("Ảnh chứng từ không được vượt quá 1,5 MB.");
   }
 
   if (isSvgContent(proofFile.data)) {

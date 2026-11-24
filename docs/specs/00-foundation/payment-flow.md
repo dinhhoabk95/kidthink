@@ -178,7 +178,7 @@ Vì `source` là tham số tường minh, máy trạng thái không tự biết 
 
 | | |
 |---|---|
-| Body | multipart — `bank_txn_ref` (string) + `proof` (image ≤ 5MB, jpeg/png/webp) |
+| Body | multipart — `bank_txn_ref` (string) + `proof` (image ≤ 1,5 MB, jpeg/png/webp) |
 | 200 | `{ status: "submitted", soft_unlock_until }` |
 | 409 | `INVALID_STATUS_TRANSITION` |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` |

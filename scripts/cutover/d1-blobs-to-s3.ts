@@ -24,7 +24,7 @@ export async function migrateD1BlobsToS3(options: {
 
   const rawRows = sqlite
     .prepare(
-      'SELECT "key", "bucket", "content_type", "body_base64", "expires_at" FROM "stored_blobs"'
+      'SELECT "key", "bucket", "content_type", "body", "expires_at" FROM "stored_blobs"'
     )
     .all();
 
@@ -32,7 +32,7 @@ export async function migrateD1BlobsToS3(options: {
     key: String(r.key ?? ""),
     bucket: String(r.bucket ?? "private"),
     contentType: String(r.content_type ?? "application/octet-stream"),
-    bodyBase64: String(r.body_base64 ?? ""),
+    body: r.body instanceof Uint8Array ? r.body : new Uint8Array(),
     expiresAtIso: typeof r.expires_at === "string" ? r.expires_at : null,
   }));
 
