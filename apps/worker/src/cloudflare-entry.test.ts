@@ -1,195 +1,137 @@
-import { enterAuthCoordinatorPort } from "@mindkid/auth";
-import { enterCloudflareCachePort } from "@mindkid/cache";
-import type {
-  D1CellValue,
-  MinimalD1Database,
-  MinimalD1PreparedStatement,
-} from "@mindkid/db";
-import type { MinimalDoSqlStorage, QueueRowCell } from "@mindkid/queue";
+import { getCloudflareQueuePort, type QueuedJobEnvelope } from "@mindkid/queue";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  CloudflareJobQueueController,
-  type CloudflareWorkerEnv,
-  type WorkerAuthCoordinatorStub,
-} from "./cloudflare-entry.js";
+import { createFakeD1, createFakeDoSql } from "./__tests__/cloudflare-fakes.js";
 
-vi.mock("@mindkid/auth", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@mindkid/auth")>();
-  return {
-    ...actual,
-    enterAuthCoordinatorPort: vi.fn(),
-  };
+// `BR-JOB-11`: nạp bullmq ở bất kỳ đâu trong đồ thị import của entry là lỗi.
+vi.mock("bullmq", () => {
+  throw new Error("bullmq must not be loaded by the Cloudflare entry");
 });
 
-vi.mock("@mindkid/cache", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@mindkid/cache")>();
-  return {
-    ...actual,
-    enterCloudflareCachePort: vi.fn(),
-  };
-});
-
-vi.mock("#src/consumers/index", () => ({
-  CONSUMERS: {
-    "sweep:abandoned": vi.fn(() => Promise.resolve()),
+vi.mock("cloudflare:workers", () => ({
+  DurableObject: class {
+    protected readonly ctx: unknown;
+    protected readonly env: unknown;
+    constructor(ctx: unknown, env: unknown) {
+      this.ctx = ctx;
+      this.env = env;
+    }
   },
 }));
 
-function createFakeDoSql(): MinimalDoSqlStorage {
-  const rows: Record<string, QueueRowCell>[] = [];
-  let nextId = 1;
-  return {
-    exec(query: string, ...bindings: QueueRowCell[]) {
-      if (query.includes("INSERT INTO queued_jobs")) {
-        rows.push({
-          id: nextId++,
-          job_id: bindings[0] ?? null,
-          name: bindings[1] ?? null,
-          payload_json: bindings[2] ?? null,
-          attempts: 0,
-          max_attempts: bindings[3] ?? 1,
-          backoff_type: bindings[4] ?? "fixed",
-          backoff_delay_ms: bindings[5] ?? 1000,
-          timeout_seconds: bindings[6] ?? 30,
-          alert_immediate: bindings[7] ?? 0,
-          run_at_ms: bindings[8] ?? 0,
-          created_at_ms: bindings[9] ?? 0,
-        });
-        return { toArray: () => [] };
-      }
-      if (
-        query.includes("FROM queued_jobs") &&
-        query.includes("run_at_ms <=")
-      ) {
-        const nowMs = Number(bindings[0] ?? 0);
-        return {
-          toArray: () => rows.filter((r) => Number(r.run_at_ms ?? 0) <= nowMs),
-        };
-      }
-      if (query.startsWith("DELETE FROM queued_jobs")) {
-        const deletedIds = new Set(bindings.map(Number));
-        for (let i = rows.length - 1; i >= 0; i--) {
-          if (deletedIds.has(Number(rows[i]?.id ?? 0))) {
-            rows.splice(i, 1);
-          }
-        }
-        return { toArray: () => [] };
-      }
-      return { toArray: () => [] };
-    },
-  };
-}
+const enqueueFromConsumer = vi.hoisted(() => ({
+  fn: vi.fn<() => Promise<unknown>>(),
+}));
 
-function createFakeD1(): MinimalD1Database {
-  function raw(options: {
-    columnNames: true;
-  }): Promise<[string[], ...D1CellValue[][]]>;
-  function raw(options?: { columnNames?: false }): Promise<D1CellValue[][]>;
-  function raw(options?: {
-    columnNames?: boolean;
-  }): Promise<[string[], ...D1CellValue[][]] | D1CellValue[][]> {
-    if (options?.columnNames) {
-      return Promise.resolve([[]]);
-    }
-    return Promise.resolve([]);
-  }
+vi.mock("#src/consumers/index", () => ({
+  CONSUMERS: {
+    "sweep:abandoned": () => enqueueFromConsumer.fn(),
+    "billing:renew": vi.fn(() => Promise.resolve()),
+  },
+}));
 
-  const stmt: MinimalD1PreparedStatement = {
-    bind: () => stmt,
-    raw,
-    run: () =>
-      Promise.resolve({
-        success: true,
-        meta: { changes: 0, last_row_id: 0 },
-      }),
-  };
+vi.mock("#src/graduation-sensor", () => ({
+  checkGraduationReadiness: vi.fn(() => Promise.resolve()),
+}));
 
-  return {
-    prepare: () => stmt,
-    batch: () => Promise.resolve([]),
-    exec: () => Promise.resolve({ count: 0, duration: 0 }),
-  };
-}
+const ictMs = (h: number, mi: number): number =>
+  Date.UTC(2026, 10, 24, h - 7, mi);
 
-describe("CloudflareJobQueueController (#31-CF DO bindings)", () => {
+describe("cloudflare-entry (mindkid-worker)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv("MINDKID_RUNTIME", "cloudflare");
+    vi.stubEnv("QUEUE_DRIVER", "cloudflare-do");
   });
 
-  it("binds AUTH_COORDINATOR to enterAuthCoordinatorPort and enterCloudflareCachePort before running consumer", async () => {
-    const stub: WorkerAuthCoordinatorStub = {
-      kvGet: vi.fn(() => Promise.resolve("val")),
-      kvGetDel: vi.fn(() => Promise.resolve(null)),
-      kvSet: vi.fn(() => Promise.resolve("OK")),
-      kvDel: vi.fn(() => Promise.resolve(2)),
-      kvIncr: vi.fn(() => Promise.resolve(1)),
-      kvExpire: vi.fn(() => Promise.resolve(1)),
-      kvDeleteByPrefix: vi.fn(() => Promise.resolve(5)),
-    };
+  it("imports without loading bullmq and exports DO classes + default scheduled()", async () => {
+    const entry = await import("./cloudflare-entry.js");
+    expect(typeof entry.JobQueueDO).toBe("function");
+    expect(typeof entry.AuthCoordinatorDO).toBe("function");
+    expect(typeof entry.default.scheduled).toBe("function");
+  });
 
-    const idObj = { name: "global-auth-v1" };
-    const idFromName = vi.fn(() => idObj);
-    const getStub = vi.fn(() => stub);
+  it("scheduled() at 00:30 ICT enqueues billing:renew into the single queue-v1 DO", async () => {
+    const { default: worker } = await import("./cloudflare-entry.js");
+    const received: QueuedJobEnvelope[][] = [];
+    const idFromName = vi.fn((name: string) => ({ name }));
     const fakeD1 = createFakeD1();
+    const waits: Promise<unknown>[] = [];
 
-    const env: CloudflareWorkerEnv = {
-      DB_CORE: fakeD1,
-      DB_LOGS: fakeD1,
-      DB_BLOBS: fakeD1,
-      MINDKID_RUNTIME: "cloudflare",
-      AUTH_COORDINATOR: {
-        idFromName,
-        get: getStub,
+    worker.scheduled(
+      { scheduledTime: ictMs(0, 30) },
+      {
+        DB_CORE: fakeD1,
+        DB_LOGS: fakeD1,
+        DB_BLOBS: fakeD1,
+        JOB_QUEUE_DO: {
+          idFromName,
+          get: () => ({
+            enqueueBatch: (jobs) => {
+              received.push([...jobs]);
+              return Promise.resolve({ accepted: jobs.length });
+            },
+          }),
+        },
       },
-    };
+      { waitUntil: (p) => waits.push(p) }
+    );
+    await Promise.all(waits);
 
-    let alarmTime: number | null = null;
-    const controller = new CloudflareJobQueueController(
+    expect(idFromName).toHaveBeenCalledWith("queue-v1");
+    const names = received.flat().map((j) => j.name);
+    expect(names).toContain("billing:renew");
+    expect(names).not.toContain("backup:postgres");
+    const renew = received.flat().find((j) => j.name === "billing:renew");
+    expect(renew?.jobId).toBe("billing:renew:2026-11-24T00:30");
+  });
+
+  it("enqueue() inside a JobQueueDO handler stays local and never touches BullMQ", async () => {
+    const { enqueue } = await import("@mindkid/queue");
+    const { JobQueueDO } = await import("./cloudflare-entry.js");
+    enqueueFromConsumer.fn.mockImplementation(() =>
+      enqueue("email:send", {
+        notificationId: 7,
+        to: "parent@example.vn",
+        code: "verify_email",
+        payload: {},
+      })
+    );
+
+    const sql = createFakeDoSql();
+    let alarmAt: number | null = null;
+    const fakeD1 = createFakeD1();
+    const dO = new JobQueueDO(
       {
         storage: {
-          sql: createFakeDoSql(),
-          getAlarm: () => Promise.resolve(alarmTime),
+          sql,
+          getAlarm: () => Promise.resolve(alarmAt),
           setAlarm: (ms: number) => {
-            alarmTime = ms;
+            alarmAt = ms;
             return Promise.resolve();
           },
         },
       },
-      env
+      { DB_CORE: fakeD1, DB_LOGS: fakeD1, DB_BLOBS: fakeD1 }
     );
-
-    await controller.enqueueBatch([
+    await dO.enqueueBatch([
       {
-        jobId: "sweep:test:1",
+        jobId: "sweep:abandoned:t1",
         name: "sweep:abandoned",
-        payloadJson: JSON.stringify({ windowStart: "2026-11-22T00:00:00Z" }),
-        delayMs: 0,
+        payloadJson: "{}",
         maxAttempts: 1,
         backoffType: "fixed",
         backoffDelayMs: 1000,
         timeoutSeconds: 30,
-        alertOnFailImmediately: false,
       },
     ]);
+    const drained = await dO.alarm();
 
-    const drained = await controller.alarm();
-    expect(drained.processed).toBe(1);
     expect(drained.failed).toBe(0);
-    expect(idFromName).toHaveBeenCalledWith("global-auth-v1");
-    expect(getStub).toHaveBeenCalledWith(idObj);
-    expect(enterAuthCoordinatorPort).toHaveBeenCalledWith(stub);
-    expect(enterCloudflareCachePort).toHaveBeenCalledTimes(1);
-
-    const cachePort = vi.mocked(enterCloudflareCachePort).mock.calls[0]?.[0];
-    expect(cachePort).toBeDefined();
-    if (cachePort) {
-      expect(await cachePort.get("k1")).toBe("val");
-      await cachePort.set("k1", "v1", 60);
-      expect(stub.kvSet).toHaveBeenCalledWith("k1", "v1", 60);
-      expect(await cachePort.del("k1", "k2")).toBe(2);
-      expect(stub.kvDel).toHaveBeenCalledWith(["k1", "k2"]);
-      expect(await cachePort.deleteByPrefix?.("ba:v1:user:")).toBe(5);
-      expect(stub.kvDeleteByPrefix).toHaveBeenCalledWith("ba:v1:user:");
-    }
+    expect(enqueueFromConsumer.fn).toHaveBeenCalledTimes(1);
+    expect(await enqueueFromConsumer.fn.mock.results[0]?.value).toEqual({
+      id: "email:send:7",
+      name: "email:send",
+    });
+    expect(getCloudflareQueuePort()).toBeDefined();
   });
 });

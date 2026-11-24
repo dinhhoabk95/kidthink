@@ -12,7 +12,7 @@ import {
   userSessions,
   users,
 } from "@mindkid/db";
-import { getQueue } from "@mindkid/queue";
+import { getQueue } from "@mindkid/queue/connection";
 import { and, eq, inArray } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import {

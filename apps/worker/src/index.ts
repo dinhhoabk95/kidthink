@@ -1,4 +1,5 @@
-import { assertAlertingReachable, syncJobSchedulers } from "@mindkid/queue";
+import { assertAlertingReachable } from "@mindkid/queue";
+import { syncJobSchedulers } from "@mindkid/queue/scheduler";
 import { readErrorMessage } from "./errors.js";
 import { startBacklogMonitor } from "./monitor.js";
 import { shutdown, startWorker } from "./worker.js";

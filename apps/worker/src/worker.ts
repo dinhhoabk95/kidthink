@@ -1,8 +1,10 @@
 import { requireValkeyUrl } from "@mindkid/config";
-import { alert, disconnectQueue, QUEUE_NAME, requireJob } from "@mindkid/queue";
+import { alert, requireJob } from "@mindkid/queue";
+import { disconnectQueue, QUEUE_NAME } from "@mindkid/queue/connection";
 import { type Job, Worker } from "bullmq";
 import { CONSUMERS } from "./consumers/index.js";
 import { readErrorMessage } from "./errors.js";
+import { runWithTimeout } from "./run-with-timeout.js";
 
 /**
  * `BR-SUP-03` — worker chạy fork một bản (`ecosystem.config.cjs` đặt
@@ -16,42 +18,6 @@ const WORKER_CONCURRENCY = 5;
 const SHUTDOWN_TIMEOUT_MS = 10_000;
 
 let worker: Worker | undefined;
-
-class JobTimeoutError extends Error {
-  constructor(name: string, timeoutSeconds: number) {
-    super(`Job '${name}' vượt timeout ${timeoutSeconds}s và bị huỷ.`);
-    this.name = "JobTimeoutError";
-  }
-}
-
-/**
- * `job-queue.md` §5 — "Job treo | Timeout theo loại, chuyển `failed`, alert".
- *
- * `timeoutSeconds` có mặt ở cả 15 định nghĩa job từ đầu nhưng chưa nơi nào đọc,
- * nên một job treo giữ lock vô hạn. Consumer nào tôn trọng `ctx.signal` thì
- * dừng thật; consumer chưa tôn trọng vẫn bị đánh `failed` đúng hạn.
- */
-export async function runWithTimeout<T>(
-  name: string,
-  timeoutSeconds: number,
-  run: (signal: AbortSignal) => Promise<T>
-): Promise<T> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutSeconds * 1000);
-
-  try {
-    return await Promise.race([
-      run(controller.signal),
-      new Promise<never>((_resolve, reject) => {
-        controller.signal.addEventListener("abort", () => {
-          reject(new JobTimeoutError(name, timeoutSeconds));
-        });
-      }),
-    ]);
-  } finally {
-    clearTimeout(timer);
-  }
-}
 
 // `async` để lỗi tra job và lỗi parse payload thành promise bị từ chối, không
 // phải ném đồng bộ — BullMQ chờ một promise ở đây.

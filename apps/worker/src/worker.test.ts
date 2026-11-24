@@ -2,13 +2,8 @@ import { alert, JOB_DEFINITIONS } from "@mindkid/queue";
 import type { Job } from "bullmq";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { CONSUMERS } from "./consumers/index.js";
-import {
-  closeWorker,
-  onJobFailed,
-  processJob,
-  runWithTimeout,
-  startWorker,
-} from "./worker.js";
+import { runWithTimeout } from "./run-with-timeout.js";
+import { closeWorker, onJobFailed, processJob, startWorker } from "./worker.js";
 
 const UNREGISTERED_JOB = /chưa được khai/;
 const TIMEOUT_MESSAGE = /vượt timeout/;

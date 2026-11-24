@@ -1,6 +1,5 @@
 import { getQueueDriverKind } from "@mindkid/config";
 import type { Job } from "bullmq";
-import { getQueue } from "./connection.js";
 import {
   dispatchWaitUntilIfPresent,
   getCloudflareQueuePort,
@@ -10,13 +9,11 @@ import { type JobName, type JobPayloads, requireJob } from "./jobs/index.js";
 import { buildDeterministicJobId } from "./registry.js";
 
 export * from "./alert.js";
-export * from "./connection.js";
 export * from "./cron-match.js";
 export * from "./do-queue-driver.js";
 export * from "./jobs/define.js";
 export * from "./jobs/index.js";
 export * from "./registry.js";
-export * from "./scheduler.js";
 
 export interface EnqueueOptions {
   jobId?: string;
@@ -97,6 +94,7 @@ export async function enqueue<T extends JobName>(
   }
 
   const parsed = requireJob(name).parse(payload);
+  const { getQueue } = await import("./connection.js");
   return await getQueue().add(name, parsed, {
     jobId: resolveJobId(name, parsed, options),
     delay: options?.delay,
@@ -137,6 +135,7 @@ export async function getWaitingCount(): Promise<number> {
     const stats = await cfPort.getStats();
     return stats.waiting;
   }
+  const { getQueue } = await import("./connection.js");
   return await getQueue().getWaitingCount();
 }
 
@@ -146,5 +145,6 @@ export async function getFailedCount(): Promise<number> {
     const stats = await cfPort.getStats();
     return stats.failed;
   }
+  const { getQueue } = await import("./connection.js");
   return await getQueue().getFailedCount();
 }

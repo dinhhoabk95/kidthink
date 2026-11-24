@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { ping } from "@mindkid/cache";
 import { BACKUP_DIR } from "@mindkid/config/backup";
-import { getQueue } from "@mindkid/queue";
+import { getQueue } from "@mindkid/queue/connection";
 import {
   countErrorLogsSinceBySource,
   countOpenErrorGroups,

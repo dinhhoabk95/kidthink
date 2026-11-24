@@ -219,7 +219,7 @@ module.exports = {
       to: {
         couldNotResolve: true,
         pathNot:
-          "^(#imports$|#server/|#app/|#build/|~|vue$|vue-router$|nitropack$)",
+          "^(#imports$|#server/|#app/|#build/|~|vue$|vue-router$|nitropack$|cloudflare:workers$)",
       },
     },
   ],

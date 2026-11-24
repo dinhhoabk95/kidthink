@@ -4,6 +4,14 @@
   "main": "src/cloudflare-entry.ts",
   "compatibility_date": "2026-04-01",
   "compatibility_flags": ["nodejs_compat"],
+  "define": {
+    "import.meta.dirname": "\"/\"",
+    "import.meta.filename": "\"/index.js\""
+  },
+  "alias": {
+    "bullmq": "./src/cloudflare-stubs/bullmq.ts",
+    "ioredis": "./src/cloudflare-stubs/ioredis.ts"
+  },
   "workers_dev": false,
   "vars": {
     "MINDKID_RUNTIME": "cloudflare",
@@ -12,7 +20,7 @@
     "AUTH_STORE_DRIVER": "do"
   },
   "triggers": {
-    "crons": ["*/15 * * * *"]
+    "crons": ["*/5 * * * *"]
   },
   "d1_databases": [
     {
@@ -39,15 +47,14 @@
       },
       {
         "name": "AUTH_COORDINATOR",
-        "class_name": "AuthCoordinatorDO",
-        "script_name": "mindkid-web"
+        "class_name": "AuthCoordinatorDO"
       }
     ]
   },
   "migrations": [
     {
-      "tag": "v1-sqlite-queue",
-      "new_sqlite_classes": ["JobQueueDO"]
+      "tag": "v1-sqlite-do",
+      "new_sqlite_classes": ["JobQueueDO", "AuthCoordinatorDO"]
     }
   ]
 }

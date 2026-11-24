@@ -10,7 +10,7 @@ import {
   users,
 } from "@mindkid/db";
 import { renderEmailTemplate } from "@mindkid/notification";
-import { disconnectQueue, getQueue } from "@mindkid/queue";
+import { disconnectQueue, getQueue } from "@mindkid/queue/connection";
 import { desc, eq, inArray } from "drizzle-orm";
 import {
   afterAll,

@@ -8,7 +8,7 @@ import {
   userSessions,
   users,
 } from "@mindkid/db";
-import { disconnectQueue, getQueue } from "@mindkid/queue";
+import { disconnectQueue, getQueue } from "@mindkid/queue/connection";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import {
   afterAll,

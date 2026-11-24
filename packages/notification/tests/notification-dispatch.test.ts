@@ -7,7 +7,7 @@ import {
   RECIPIENT_TYPE,
   users,
 } from "@mindkid/db";
-import { disconnectQueue, getQueue } from "@mindkid/queue";
+import { disconnectQueue, getQueue } from "@mindkid/queue/connection";
 import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
