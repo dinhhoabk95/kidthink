@@ -40,7 +40,6 @@ import {
   searchGameLevels,
 } from "#server/services/content-search";
 import { getOptionalActiveChildUuid } from "#server/utils/auth-runtime";
-import { resolveBetterAuthUserSession } from "#server/utils/better-auth";
 import {
   checkLevelIntroRequired,
   findCompletedLevelCodes,
@@ -266,7 +265,9 @@ async function resolvePublicLevelCallerContext(
   event: H3Event
 ): Promise<CallerContext> {
   try {
-    const userSession = await resolveBetterAuthUserSession(event);
+    // Middleware auth đã resolve phiên cho `/api/guest/**` và `/api/users/**`;
+    // không resolve lại ở service. Manager không phải viewer của catalog User.
+    const userSession = event.context.manager ? null : event.context.user;
     if (userSession) {
       const candidateChildUuid = getOptionalActiveChildUuid(event);
       let activeChildId: string | null = null;
