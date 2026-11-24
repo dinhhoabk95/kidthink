@@ -16,6 +16,11 @@ import {
   type JobQueueCoordinatorPort,
   type QueuedJobEnvelope,
 } from "@mindkid/queue";
+import {
+  createD1BlobSqlPort,
+  D1BlobObjectStorageDriver,
+  setActiveObjectStorageDriver,
+} from "@mindkid/storage";
 import { defineNitroPlugin } from "nitropack/runtime";
 
 interface DurableObjectNamespaceBinding<TStub> {
@@ -34,6 +39,7 @@ type AuthDoStub = AuthCoordinatorRpcPort & {
 
 interface CloudflareEnvBindings {
   readonly DB_CORE?: MinimalD1Database;
+  readonly DB_BLOBS?: MinimalD1Database;
   readonly AUTH_COORDINATOR?: DurableObjectNamespaceBinding<AuthDoStub>;
   readonly JOB_QUEUE_DO?: DurableObjectNamespaceBinding<JobQueueCoordinatorPort>;
 }
@@ -93,6 +99,19 @@ function wireJobQueueCoordinator(
   enterCloudflareQueuePort(shardedPort, waitUntilFn);
 }
 
+let blobDriverInstalled = false;
+
+/** Binding ổn định theo isolate: cài driver D1 blobs đúng một lần (BR-IMG-11). */
+function installBlobStorageDriver(db: MinimalD1Database): void {
+  if (blobDriverInstalled) {
+    return;
+  }
+  setActiveObjectStorageDriver(
+    new D1BlobObjectStorageDriver(createD1BlobSqlPort(db))
+  );
+  blobDriverInstalled = true;
+}
+
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook("request", (event) => {
     if (!isCloudflareRuntime()) {
@@ -106,6 +125,10 @@ export default defineNitroPlugin((nitroApp) => {
     }
 
     enterCloudflareD1Binding(env.DB_CORE);
+
+    if (env.DB_BLOBS) {
+      installBlobStorageDriver(env.DB_BLOBS);
+    }
 
     if (env.AUTH_COORDINATOR) {
       wireAuthCoordinator(env.AUTH_COORDINATOR);

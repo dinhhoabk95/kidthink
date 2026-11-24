@@ -1,6 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { loadSquashedMigrationStatements } from "@mindkid/db";
+import { STORED_BLOBS_DDL } from "@mindkid/storage";
+
+/**
+ * `mindkid-logs` chưa có bảng riêng ở MVP (audit log nằm trong core); file giữ chỗ để
+ * Gate 3 của workflow chạy được (`wrangler d1 execute` từ chối file rỗng).
+ */
+export const LOGS_DDL = "SELECT 1;\n";
 
 interface TfOutputEntry {
   readonly value: string;
@@ -38,6 +45,8 @@ function writeD1DdlArtifacts(repoRoot: string): void {
   fs.mkdirSync(outDir, { recursive: true });
   const sqlText = `${loadSquashedMigrationStatements().join("\n\n")}\n`;
   fs.writeFileSync(path.join(outDir, "core.sql"), sqlText, "utf8");
+  fs.writeFileSync(path.join(outDir, "logs.sql"), LOGS_DDL, "utf8");
+  fs.writeFileSync(path.join(outDir, "blobs.sql"), STORED_BLOBS_DDL, "utf8");
 }
 
 export function syncWranglerAndDdl(
