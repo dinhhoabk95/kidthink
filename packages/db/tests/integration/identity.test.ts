@@ -138,33 +138,49 @@ describe("Identity Schema Integration Tests", () => {
 
   it("BR-SIB-12: consent_requirements stores 3 consent types (terms, privacy, child_data) with forward-only reconsent_required_at marker", async () => {
     const db = getOwnerDb();
-    const marker1 = new Date("2026-06-01T00:00:00.000Z");
-    const marker2 = new Date("2026-09-01T00:00:00.000Z");
-
-    await db
-      .insert(consentRequirements)
-      .values({
-        consentType: CONSENT_TYPE.TERMS,
-        reconsentRequiredAt: marker1,
-        notice: "Cập nhật điều khoản sử dụng",
-      })
-      .onConflictDoUpdate({
-        target: consentRequirements.consentType,
-        set: {
-          reconsentRequiredAt: marker2,
-          notice: "Cập nhật điều khoản sử dụng lần 2",
-        },
-      });
-
-    const [row] = await db
+    // Database test dùng chung giữa các project khi chạy vitest gộp ở gốc: dòng
+    // `consent_requirements` còn sót làm mọi sign-up của web nhận
+    // CONSENT_REQUIREMENT_CHANGED. Trả bảng về đúng trạng thái trước test.
+    const [previous] = await db
       .select()
       .from(consentRequirements)
       .where(eq(consentRequirements.consentType, CONSENT_TYPE.TERMS));
-    expect(row).toBeDefined();
-    expect(row?.consentType).toBe(CONSENT_TYPE.TERMS);
-    expect(
-      (row?.reconsentRequiredAt?.getTime() ?? 0) >= marker1.getTime()
-    ).toBe(true);
+    try {
+      const marker1 = new Date("2026-06-01T00:00:00.000Z");
+      const marker2 = new Date("2026-09-01T00:00:00.000Z");
+
+      await db
+        .insert(consentRequirements)
+        .values({
+          consentType: CONSENT_TYPE.TERMS,
+          reconsentRequiredAt: marker1,
+          notice: "Cập nhật điều khoản sử dụng",
+        })
+        .onConflictDoUpdate({
+          target: consentRequirements.consentType,
+          set: {
+            reconsentRequiredAt: marker2,
+            notice: "Cập nhật điều khoản sử dụng lần 2",
+          },
+        });
+
+      const [row] = await db
+        .select()
+        .from(consentRequirements)
+        .where(eq(consentRequirements.consentType, CONSENT_TYPE.TERMS));
+      expect(row).toBeDefined();
+      expect(row?.consentType).toBe(CONSENT_TYPE.TERMS);
+      expect(
+        (row?.reconsentRequiredAt?.getTime() ?? 0) >= marker1.getTime()
+      ).toBe(true);
+    } finally {
+      await db
+        .delete(consentRequirements)
+        .where(eq(consentRequirements.consentType, CONSENT_TYPE.TERMS));
+      if (previous) {
+        await db.insert(consentRequirements).values(previous);
+      }
+    }
   });
 
   it("BR-SIB-07: enforces case-insensitive email UNIQUE on users", async () => {
