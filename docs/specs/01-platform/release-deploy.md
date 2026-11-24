@@ -104,6 +104,20 @@ số thứ tự giữ nguyên để không vỡ tham chiếu lịch sử.
 **Ghi:** D1 (`core`, `logs`, `blobs`) qua DDL cộng thêm; version Worker trên Cloudflare; không ghi
 gì lên kho.
 
+### 7.0 Secret runtime (đặt một lần bằng `wrangler secret put`)
+
+Secret sống qua các lần `wrangler deploy` và **không** nằm trong `vars` (`BR-ENV-18`). Đặt cho
+từng Worker trước lần phát hành đầu: `npx wrangler secret put <TÊN> --config apps/<app>/wrangler.jsonc`.
+
+| Worker | Secret bắt buộc | Secret tuỳ chọn |
+| --- | --- | --- |
+| `web` | `NUXT_SESSION_PASSWORD`, `PARENT_GATE_SECRET`, `MFA_ENCRYPTION_KEY`, `STORAGE_SIGNING_SECRET`, `NUXT_NOTIFICATION_TOKEN_ENCRYPTION_KEY`, `PAYMENT_WEBHOOK_SECRET`, `TELEGRAM_BOT_TOKEN`, `HEALTHCHECKS_PING_URL`, `HEALTHCHECK_TOKEN` (cổng deep health, `BR-HLT-*`) | `PAYMENT_{PAYOS,VNPAY,MOMO}_WEBHOOK_SECRET`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_SECRET`, `FCM_ENCRYPTION_SECRET`, `AI_PROVIDER_API_KEY`, `SENTRY_DSN`, `AWS_SECRET_ACCESS_KEY`, `INITIAL_ADMIN_PASSWORD` (chỉ seed) |
+| `worker` | `STORAGE_SIGNING_SECRET`, `TELEGRAM_BOT_TOKEN`, `HEALTHCHECKS_PING_URL`, `BACKUP_ENCRYPTION_KEY` | `AI_PROVIDER_API_KEY`, `SENTRY_DSN`, `AWS_SECRET_ACCESS_KEY` |
+
+Biến không bí mật (`SITE_URL`, `NUXT_ALLOWED_ORIGINS`, `STORAGE_BASE_URL`, `PAYMENT_MODE`,
+`PAYMENT_MERCHANT_ID`, `VIETQR_*`, `TELEGRAM_CHAT_ID`, `OPERATIONS_ALERT_EMAIL`, …) do workflow
+ghi vào `vars` từ GitHub `vars` (`BR-ENV-18`); đừng đặt tay trên dashboard vì lần deploy sau ghi đè.
+
 ### 7.1 Thứ tự deploy
 
 | Thứ tự | Ứng dụng | Vì sao                                                                                      |

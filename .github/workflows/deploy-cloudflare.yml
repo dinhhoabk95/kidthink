@@ -65,7 +65,31 @@ jobs:
           terraform apply -auto-approve
           terraform output -json > ../../.tf-outputs.json
 
-      - name: Sync D1 Database IDs into wrangler.jsonc & Export D1 DDL
+      # BR-ENV-18: wrangler deploy ghi đè vars dashboard -> biến KHÔNG bí mật phải nằm trong wrangler.jsonc.
+      # Biến bí mật không vào đây; đặt một lần bằng `wrangler secret put` (xem release-deploy.md).
+      - name: Sync D1 Database IDs & runtime vars into wrangler.jsonc & Export D1 DDL
+        env:
+          SITE_URL: "https://${{ vars.MINDKID_DOMAIN }}"
+          NUXT_ALLOWED_ORIGINS: "https://${{ vars.MINDKID_DOMAIN }},https://admin.${{ vars.MINDKID_DOMAIN }}"
+          STORAGE_BASE_URL: "https://${{ vars.MINDKID_DOMAIN }}"
+          PAYMENT_MODE: ${{ vars.PAYMENT_MODE }}
+          PAYMENT_MERCHANT_ID: ${{ vars.PAYMENT_MERCHANT_ID }}
+          PAYMENT_PAYOS_MERCHANT_ID: ${{ vars.PAYMENT_PAYOS_MERCHANT_ID }}
+          PAYMENT_VNPAY_MERCHANT_ID: ${{ vars.PAYMENT_VNPAY_MERCHANT_ID }}
+          PAYMENT_MOMO_MERCHANT_ID: ${{ vars.PAYMENT_MOMO_MERCHANT_ID }}
+          VIETQR_BANK_ID: ${{ vars.VIETQR_BANK_ID }}
+          VIETQR_BANK_NAME: ${{ vars.VIETQR_BANK_NAME }}
+          VIETQR_ACCOUNT_NO: ${{ vars.VIETQR_ACCOUNT_NO }}
+          VIETQR_ACCOUNT_NAME: ${{ vars.VIETQR_ACCOUNT_NAME }}
+          TELEGRAM_CHAT_ID: ${{ vars.TELEGRAM_CHAT_ID }}
+          OPERATIONS_ALERT_EMAIL: ${{ vars.OPERATIONS_ALERT_EMAIL }}
+          HEALTHCHECKS_CHECK_UUID: ${{ vars.HEALTHCHECKS_CHECK_UUID }}
+          NUXT_PUBLIC_SENTRY_DSN: ${{ vars.NUXT_PUBLIC_SENTRY_DSN }}
+          CLIENT_ERROR_SAMPLING_RATE: ${{ vars.CLIENT_ERROR_SAMPLING_RATE }}
+          AI_PROVIDER_BASE_URL: ${{ vars.AI_PROVIDER_BASE_URL }}
+          GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
+          FACEBOOK_CLIENT_ID: ${{ vars.FACEBOOK_CLIENT_ID }}
+          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
         run: npx tsx scripts/deploy/sync-wrangler-ids.ts .tf-outputs.json
 
       - name: Gate 3 - Apply Additive D1 Schema DDL (core, logs, blobs)

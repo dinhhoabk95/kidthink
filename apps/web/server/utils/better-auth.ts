@@ -44,8 +44,7 @@ import {
   withFailClosedRedis,
 } from "#server/utils/better-auth-callbacks";
 import { useOwnerRepositories } from "#server/utils/repositories";
-
-const SITE_TRAILING_SLASH_PATTERN = /\/$/;
+import { resolveSiteUrl } from "#server/utils/site-url";
 
 let userAuthInstance: MindKidUserAuth | undefined;
 let managerAuthInstance: MindKidManagerAuth | undefined;
@@ -55,10 +54,7 @@ function getRootAuthSecret(): string {
 }
 
 function getSiteUrl(): string {
-  return (process.env.SITE_URL?.trim() || "http://localhost:3000").replace(
-    SITE_TRAILING_SLASH_PATTERN,
-    ""
-  );
+  return resolveSiteUrl();
 }
 
 function getTrustedOriginsList(): string[] {

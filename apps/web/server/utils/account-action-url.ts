@@ -1,11 +1,9 @@
-import { optionalEnv } from "@mindkid/config";
+import { resolveSiteUrl } from "./site-url.js";
 
 export type AccountActionKind =
   | "email_verify"
   | "password_reset"
   | "email_change";
-
-const TRAILING_SLASHES_REGEX = /\/+$/;
 
 const ACTION_PATHS: Readonly<Record<AccountActionKind, string>> = {
   email_verify: "/xac-thuc",
@@ -18,9 +16,7 @@ export function buildAccountActionUrl(
   rawToken: string,
   extraParams?: Readonly<Record<string, string>>
 ): string {
-  const baseOrigin = (
-    optionalEnv("SITE_URL") ?? "http://localhost:3000"
-  ).replace(TRAILING_SLASHES_REGEX, "");
+  const baseOrigin = resolveSiteUrl();
   const url = new URL(ACTION_PATHS[kind], `${baseOrigin}/`);
   url.searchParams.set("token", rawToken);
   if (extraParams) {

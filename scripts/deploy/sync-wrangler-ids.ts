@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { applyWranglerVars, collectWranglerVars } from "@mindkid/config";
 import { loadSquashedMigrationStatements } from "@mindkid/db";
 import { STORED_BLOBS_DDL } from "@mindkid/storage";
 
@@ -49,6 +50,28 @@ function writeD1DdlArtifacts(repoRoot: string): void {
   fs.writeFileSync(path.join(outDir, "blobs.sql"), STORED_BLOBS_DDL, "utf8");
 }
 
+/** BR-ENV-18: ghi biến không bí mật (từ GitHub `vars`) vào `vars` của wrangler.jsonc. */
+export function syncWranglerVars(
+  repoRoot = process.cwd(),
+  env: Readonly<Record<string, string | undefined>> = process.env
+): void {
+  const targets = [
+    ["web", "apps/web/wrangler.jsonc"],
+    ["worker", "apps/worker/wrangler.jsonc"],
+  ] as const;
+  for (const [app, rel] of targets) {
+    const file = path.join(repoRoot, rel);
+    const vars = collectWranglerVars(app, env);
+    fs.writeFileSync(
+      file,
+      applyWranglerVars(fs.readFileSync(file, "utf8"), vars)
+    );
+    console.log(
+      `[sync-wrangler-ids] ${rel}: vars = ${Object.keys(vars).join(", ")}`
+    );
+  }
+}
+
 export function syncWranglerAndDdl(
   tfJsonPath?: string,
   repoRoot = process.cwd()
@@ -82,4 +105,5 @@ export function syncWranglerAndDdl(
 
 if (process.argv[1]?.endsWith("sync-wrangler-ids.ts")) {
   syncWranglerAndDdl(process.argv[2]);
+  syncWranglerVars();
 }
