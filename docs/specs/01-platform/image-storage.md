@@ -29,7 +29,7 @@ cách chúng được đọc lại. Tệp **private** (chứng từ, PDF) chỉ 
 |---|---|
 | User | Tải chứng từ (qua [`payment-proof-upload`](../03-account/payment-proof-upload.md)), mở URL ký của chính mình |
 | Manager | Mở URL ký của chứng từ khi duyệt đơn |
-| Hệ thống | Ghi/xoá tệp private (PDF export, dọn hạn) |
+| Hệ thống | Ghi/xoá tệp private (PDF export, CSV export, dọn hạn) |
 
 ## 3. Entry points
 
@@ -63,6 +63,7 @@ cách chúng được đọc lại. Tệp **private** (chứng từ, PDF) chỉ 
 | `BR-IMG-12` | Response `/private/*` luôn có `Cache-Control: private, no-store` và `X-Content-Type-Options: nosniff`; không phải ảnh thì `Content-Disposition: attachment` | Chống cache chung và đoán kiểu |
 | `BR-IMG-13` | Trên Cloudflare `STORAGE_BASE_URL` = `SITE_URL` (cùng origin với route đọc) | URL ký phải trỏ tới Worker phục vụ nó |
 | `BR-IMG-14` | Driver D1 lưu **byte thô** trong cột `body` kiểu `BLOB` (không base64) và từ chối ghi tệp > `D1_MAX_BLOB_BYTES` (1 900 000 byte) bằng `PayloadTooLargeError` (413). Ảnh chứng từ bị chặn sớm hơn ở 1,5 MB (`PROOF_MAX_IMAGE_SIZE_BYTES` = 1 572 864) | D1 giới hạn khoảng 2 MB mỗi dòng/giá trị; vượt là lỗi 500 khó chẩn đoán |
+| `BR-IMG-15` | `uploadPrivateAsset` nhận `expiresAt?`. Producer đặt hạn: CSV export admin = **1 ngày**, PDF export = **7 ngày** (`BR-PDF-08`), chứng từ thanh toán = không hạn. `getObject` không trả tệp quá hạn; driver có `deleteExpired(now)` (D1 xoá mọi dòng có `expires_at` khác rỗng và `<= now`) được gọi bởi `sweep:pdf-cleanup` hằng ngày | Không có hạn thì CSV chứa dữ liệu quản trị nằm lại D1 mãi và làm đầy quota |
 
 ## 7. Data
 
@@ -99,6 +100,11 @@ Scenario: BR-IMG-11 — xoá đi qua driver
 Scenario: BR-IMG-14 — tệp quá lớn bị từ chối có kiểm soát
   When putObject với tệp > 1 900 000 byte trên driver D1
   Then ném PayloadTooLargeError, không ghi dòng nào
+
+Scenario: BR-IMG-15 — sweep xoá tệp quá hạn
+  Given tệp private có expiresAt trong quá khứ và một tệp không hạn
+  When chạy deleteExpired(now)
+  Then chỉ tệp quá hạn bị xoá, trả về số dòng đã xoá
 
 Scenario: BR-IMG-12 — header an toàn
   When đọc tệp private

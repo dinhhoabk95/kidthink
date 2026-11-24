@@ -180,6 +180,29 @@ describe("Task P4.2 — PDF Export Lifecycle Integration Tests (BR-PDF-01..09)",
     expect(jobStatus.expires_at?.getTime()).toBeGreaterThan(sevenDaysFromNow);
   });
 
+  it("[BR-IMG-15] Sweep pdf-cleanup xoá blob private quá hạn (CSV export) và PDF upload mang hạn 7 ngày", async () => {
+    const upload = vi.spyOn(storage, "uploadPrivateAsset");
+    const initRes = await requestExportJob(
+      testUserId,
+      "curriculum_plan",
+      testPlanUuid,
+      { userEntitlements: ["export_pdf"] }
+    );
+    await processPdfRenderJob(initRes.job_uuid);
+    const pdfExpiry = upload.mock.calls[0]?.[0].expiresAt?.getTime() ?? 0;
+    expect(pdfExpiry).toBeGreaterThan(Date.now() + 6.9 * 24 * 60 * 60 * 1000);
+
+    await storage.uploadPrivateAsset({
+      key: `exports/sweep-${Date.now()}.csv`,
+      body: new Uint8Array([1]),
+      contentType: "text/csv",
+      expiresAt: new Date(Date.now() + 30),
+    });
+    await new Promise((resolve) => setTimeout(resolve, 60));
+    const result = await runPdfCleanupJob();
+    expect(result.expiredBlobCount).toBeGreaterThanOrEqual(1);
+  });
+
   it("[BR-IMG-14] PDF vượt giới hạn lưu trữ: job failed với lỗi rõ ràng, không ném lại (không lặp retry)", async () => {
     const initRes = await requestExportJob(
       testUserId,

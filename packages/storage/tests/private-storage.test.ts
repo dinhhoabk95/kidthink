@@ -5,6 +5,7 @@ import {
   createD1BlobSqlPort,
   D1_MAX_BLOB_BYTES,
   D1BlobObjectStorageDriver,
+  deleteExpiredPrivateAssets,
   deletePrivateAsset,
   readPrivateAsset,
   resetDefaultObjectStorageDriver,
@@ -51,6 +52,19 @@ function createFakeD1(): { db: BlobD1Database; rows: Map<string, FakeRow> } {
               expires_at: typeof expires === "string" ? expires : null,
             });
             return Promise.resolve({ meta: { changes: 1 } });
+          }
+          if (query.includes("expires_at IS NOT NULL")) {
+            let count = 0;
+            for (const [k, row] of rows) {
+              if (
+                row.expires_at !== null &&
+                row.expires_at <= String(args[0])
+              ) {
+                rows.delete(k);
+                count += 1;
+              }
+            }
+            return Promise.resolve({ meta: { changes: count } });
           }
           const removed = rows.delete(`${args[0]}:${args[1]}`);
           return Promise.resolve({ meta: { changes: removed ? 1 : 0 } });
@@ -112,6 +126,9 @@ describe("private asset storage via active driver (BR-IMG-11)", () => {
           calls.push("del");
           return Promise.resolve(table.delete(key));
         },
+        removeExpiredBlobs() {
+          return Promise.resolve(0);
+        },
       })
     );
     await uploadPrivateAsset({
@@ -124,6 +141,73 @@ describe("private asset storage via active driver (BR-IMG-11)", () => {
     );
     expect(await deletePrivateAsset("x/y.pdf")).toBe(true);
     expect(calls).toEqual(["put", "get", "del"]);
+  });
+});
+
+describe("hạn lưu private asset (BR-IMG-15)", () => {
+  beforeEach(() => {
+    setActiveObjectStorageDriver(undefined);
+    resetDefaultObjectStorageDriver();
+  });
+
+  it("uploadPrivateAsset chuyển expiresAt xuống driver; đọc quá hạn trả undefined", async () => {
+    await uploadPrivateAsset({
+      key: "exports/old.csv",
+      body: new Uint8Array([1]),
+      contentType: "text/csv",
+      expiresAt: new Date(Date.now() - 1000),
+    });
+    expect(await readPrivateAsset("exports/old.csv")).toBeUndefined();
+  });
+
+  it("deleteExpiredPrivateAssets (in-memory) chỉ xoá mục quá hạn", async () => {
+    await uploadPrivateAsset({
+      key: "exports/a.csv",
+      body: new Uint8Array([1]),
+      contentType: "text/csv",
+      expiresAt: new Date(Date.now() + 1000),
+    });
+    await uploadPrivateAsset({
+      key: "proofs/keep.webp",
+      body: new Uint8Array([2]),
+      contentType: "image/webp",
+    });
+    const later = new Date(Date.now() + 60_000);
+    expect(await deleteExpiredPrivateAssets(later)).toBe(1);
+    expect(await readPrivateAsset("proofs/keep.webp")).toBeDefined();
+  });
+
+  it("D1: deleteExpired xoá các dòng expires_at <= now, giữ dòng không hạn", async () => {
+    const { db, rows } = createFakeD1();
+    const driver = new D1BlobObjectStorageDriver(createD1BlobSqlPort(db));
+    await driver.putObject({
+      bucket: "private",
+      key: "exports/x.csv",
+      body: new Uint8Array([1]),
+      contentType: "text/csv",
+      expiresAt: new Date("2026-01-01T00:00:00.000Z"),
+    });
+    await driver.putObject({
+      bucket: "private",
+      key: "exports/y.csv",
+      body: new Uint8Array([1]),
+      contentType: "text/csv",
+      expiresAt: new Date("2026-03-01T00:00:00.000Z"),
+    });
+    await driver.putObject({
+      bucket: "private",
+      key: "proofs/z.webp",
+      body: new Uint8Array([1]),
+      contentType: "image/webp",
+    });
+    const removed = await driver.deleteExpired(
+      new Date("2026-02-01T00:00:00.000Z")
+    );
+    expect(removed).toBe(1);
+    expect([...rows.keys()].sort()).toEqual([
+      "private:exports/y.csv",
+      "private:proofs/z.webp",
+    ]);
   });
 });
 

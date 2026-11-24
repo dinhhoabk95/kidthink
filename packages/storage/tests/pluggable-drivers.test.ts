@@ -33,6 +33,9 @@ describe("Pluggable ObjectStorageDriver (D1 Blobs Stage 1 <-> S3 SigV4 Stage 2)"
       removeBlob(bucket, key) {
         return Promise.resolve(table.delete(`${bucket}:${key}`));
       },
+      removeExpiredBlobs() {
+        return Promise.resolve(0);
+      },
     });
 
     const payload = new Uint8Array([0x52, 0x49, 0x46, 0x46]);

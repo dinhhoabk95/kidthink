@@ -28,6 +28,8 @@ export interface ObjectStorageDriver {
     key: string
   ): Promise<ObjectGetResult | undefined>;
   deleteObject(bucket: "public" | "private", key: string): Promise<boolean>;
+  /** Xoá mọi tệp có hạn lưu `<= now` (BR-IMG-15); trả số tệp đã xoá. */
+  deleteExpired(now: Date): Promise<number>;
 }
 
 export interface MinimalBlobSqlPort {
@@ -51,6 +53,7 @@ export interface MinimalBlobSqlPort {
     | undefined
   >;
   removeBlob(bucket: string, key: string): Promise<boolean>;
+  removeExpiredBlobs(nowIso: string): Promise<number>;
 }
 
 /**
@@ -104,6 +107,10 @@ export class D1BlobObjectStorageDriver implements ObjectStorageDriver {
     key: string
   ): Promise<boolean> {
     return await this.port.removeBlob(bucket, key);
+  }
+
+  async deleteExpired(now: Date): Promise<number> {
+    return await this.port.removeExpiredBlobs(now.toISOString());
   }
 }
 
@@ -306,6 +313,11 @@ export class S3SigV4StorageDriver implements ObjectStorageDriver {
     });
 
     return response.ok || response.status === 204;
+  }
+
+  /** S3/R2 dọn hạn bằng lifecycle rule của bucket, không quét từ app. */
+  deleteExpired(_now: Date): Promise<number> {
+    return Promise.resolve(0);
   }
 }
 

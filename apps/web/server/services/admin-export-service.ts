@@ -28,6 +28,8 @@ export const MAX_EXPORT_ROWS = 100_000;
 const MAX_EXPORT_RANGE_DAYS = 366;
 const EXPORT_RATE_LIMIT = 5;
 const EXPORT_RATE_WINDOW_SECONDS = 86_400;
+/** CSV export admin tự hết hạn sau 1 ngày (BR-IMG-15). */
+const ADMIN_EXPORT_RETENTION_MS = 24 * 60 * 60 * 1000;
 const ISO_DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 export interface ExportFilterOptions {
@@ -414,6 +416,7 @@ export async function generateAdminExport(
     key: exportKey,
     body: Buffer.from(csvContent, "utf-8"),
     contentType: "text/csv; charset=utf-8",
+    expiresAt: new Date(Date.now() + ADMIN_EXPORT_RETENTION_MS),
   });
 
   const signedUrlRes = await getPrivateSignedUrl({

@@ -60,6 +60,17 @@ export class InMemoryObjectStorageDriver implements ObjectStorageDriver {
     });
   }
 
+  deleteExpired(now: Date): Promise<number> {
+    let removed = 0;
+    for (const [slot, entry] of this.entries) {
+      if (entry.expiresAt && entry.expiresAt.getTime() <= now.getTime()) {
+        this.entries.delete(slot);
+        removed += 1;
+      }
+    }
+    return Promise.resolve(removed);
+  }
+
   deleteObject(bucket: "public" | "private", key: string): Promise<boolean> {
     return Promise.resolve(
       this.entries.delete(InMemoryObjectStorageDriver.slot(bucket, key))

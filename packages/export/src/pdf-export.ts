@@ -257,16 +257,17 @@ export async function processPdfRenderJob(
       throw new Error(`Loại xuất ${job.kind} chưa được hỗ trợ renderer.`);
     }
 
+    // 7 days retention (BR-PDF-08, BR-IMG-15)
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
     // Upload to private storage
     const storageKey = `exports/${job.userId}/${job.uuid}.pdf`;
     const uploadResult = await storage.uploadPrivateAsset({
       key: storageKey,
       body: pdfBuffer,
       contentType: "application/pdf",
+      expiresAt,
     });
-
-    // 7 days retention (BR-PDF-08)
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
     await db.transaction(async (tx) => {
       const txRepos = createRepositories(tx);
@@ -363,6 +364,7 @@ export async function processPdfRenderJob(
  */
 export async function runPdfCleanupJob(): Promise<{
   cleanedCount: number;
+  expiredBlobCount: number;
 }> {
   const repos = createRepositories(getDb());
   const now = new Date();
@@ -382,5 +384,8 @@ export async function runPdfCleanupJob(): Promise<{
     await repos.exports.clearFilePaths(cleanedIds, now);
   }
 
-  return { cleanedCount: cleanedIds.length };
+  // BR-IMG-15: dọn mọi blob private quá hạn (CSV export admin, PDF sót).
+  const expiredBlobCount = await storage.deleteExpiredPrivateAssets(now);
+
+  return { cleanedCount: cleanedIds.length, expiredBlobCount };
 }

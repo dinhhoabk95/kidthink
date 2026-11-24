@@ -37,6 +37,8 @@ export interface UploadPrivateAssetOptions {
   key: string;
   body: Buffer | Uint8Array;
   contentType: string;
+  /** Hạn lưu (BR-IMG-15); bỏ trống = không hết hạn. */
+  expiresAt?: Date;
 }
 
 export interface PrivateUploadResult {
@@ -413,6 +415,7 @@ export async function uploadPrivateAsset(
         ? options.body
         : new Uint8Array(options.body),
     contentType: options.contentType,
+    expiresAt: options.expiresAt,
   });
   return { path: normalizedPath };
 }
@@ -433,6 +436,13 @@ export async function readPrivateAsset(
 export async function deletePrivateAsset(path: string): Promise<boolean> {
   const normalizedPath = sanitizeRelativeStoragePath(path);
   return await resolvePrivateDriver().deleteObject("private", normalizedPath);
+}
+
+/** Xoá mọi tệp private đã quá hạn lưu (BR-IMG-15); trả số tệp đã xoá. */
+export async function deleteExpiredPrivateAssets(
+  now: Date = new Date()
+): Promise<number> {
+  return await resolvePrivateDriver().deleteExpired(now);
 }
 
 /** Chỉ dùng cho test: bỏ driver in-memory mặc định đã tạo. */
@@ -570,6 +580,7 @@ export const storage = {
   deletePublicImage,
   deletePublicAudio,
   deletePrivateAsset,
+  deleteExpiredPrivateAssets,
   getPrivateSignedUrl,
   verifySignedUrlToken,
   detectImageMimeType,

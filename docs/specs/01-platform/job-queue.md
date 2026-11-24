@@ -119,6 +119,12 @@ hơn việc chạy muộn một ngày.
 | Không job nào hoàn thành | 15 phút |
 | Tuổi job cũ nhất | > 30 phút |
 
+### 7.3b Dọn blob hết hạn
+
+`sweep:pdf-cleanup` (04:00 ICT) làm hai việc: xoá tệp PDF của job export quá hạn (`BR-PDF-08`) **và**
+gọi `deleteExpired(now)` của driver storage để xoá mọi blob private có `expires_at` đã qua (CSV
+export admin hạn 1 ngày — `BR-IMG-15`).
+
 ### 7.4 Scheduler trên Cloudflare
 
 `scheduled()` (mỗi 5 phút) → `scheduledEnvelopesAt(ms)` → `JobQueueDO.enqueueBatch`. Pattern hỗ trợ:

@@ -101,5 +101,14 @@ export function createD1BlobSqlPort(db: BlobD1Database): MinimalBlobSqlPort {
         .run();
       return (result.meta?.changes ?? 0) > 0;
     },
+    async removeExpiredBlobs(nowIso) {
+      const result = await db
+        .prepare(
+          "DELETE FROM stored_blobs WHERE expires_at IS NOT NULL AND expires_at <= ?"
+        )
+        .bind(nowIso)
+        .run();
+      return result.meta?.changes ?? 0;
+    },
   };
 }
