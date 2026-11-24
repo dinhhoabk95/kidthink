@@ -59,6 +59,7 @@ Dev · cổng tự động.
 | `BR-TST-08` | Bài ở §7.3 Cấm — **NEVER rút gọn** | Đó là danh sách bài đã chốt vì hậu quả khi thiếu; rút gọn là tự mở cửa cho bug ở vùng nhạy cảm |
 | `BR-TST-09` | Mock **chỉ biên ngoài**: LLM, S3, email, OAuth. Cấm — NEVER mock module nội bộ | Mock nội bộ test cái mock, không test hệ thống |
 | `BR-TST-10` | Test sinh từ Gherkin là `test.todo`, không test rỗng pass | `BR-AIG-05` |
+| `BR-TST-11` | Test đi qua engine DO thật chạy trong tiến trình trên SQLite (`:memory:`), nối bằng `register*Port` ở `setupFiles` (`@mindkid/local-runtime/vitest-setup`); Cấm — **NEVER** mock engine auth/queue hay khởi chạy Redis/Valkey/BullMQ trong test. Reset giữa các test bằng xoá bảng của engine, không dùng `flushall` | `D15`: cùng engine với production nên test đo đúng TTL, nguyên tử và khử trùng; mock chỉ kiểm cái mock |
 
 ## 7. Data
 

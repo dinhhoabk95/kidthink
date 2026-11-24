@@ -21,7 +21,7 @@ depends_on:
 Việc chậm, việc theo lịch, và việc được phép thất bại không nằm trong đường request.
 Producer ở `packages/queue`, consumer ở `apps/worker` qua giao diện Pluggable `QueueDriver`:
 - **Giai đoạn 1 (`QUEUE_DRIVER=cloudflare-do`, `< 1.000 DAU`):** Producer `await` RPC `enqueueBatch` vào `JobQueueDO` ngay trong request/cron (không dùng `waitUntil`: nó thuộc về từng request nên không đặt toàn cục được, và enqueue là một RPC ngắn) (Durable Objects SQLite + cơ chế `Single-Pending-Alarm` gom lô cửa sổ `3–5s`, đáp ứng `50.000–200.000+ jobs/ngày` trên gói Free) kết hợp 1 Cron Dispatcher `*/5 * * * *` và cảm biến `ops:graduation-check` (cảnh báo ở `850 DAU` hoặc `65%` quota ngày).
-- **Giai đoạn 2 (`QUEUE_DRIVER=bullmq`, `≥ 1.000 DAU`):** BullMQ trên Valkey 9 chạy trong tiến trình `apps/worker` trên VPS. **Trạng thái hiện tại (2026-11-25):** đường VPS đã ngưng theo `D14`; production chỉ chạy `JobQueueDO`, BullMQ/Valkey chỉ còn là driver dev local (sẽ gỡ đợt sau).
+- **Giai đoạn 2 (`≥ 1.000 DAU`, đã ngưng):** BullMQ trên Valkey 9 trong `apps/worker` trên VPS. **Trạng thái hiện tại (2026-11-25, D15):** đường VPS đã ngưng theo `D14` và BullMQ/Valkey/ioredis đã bị gỡ khỏi repo; mọi runtime dùng `JobQueueSqlEngine` — `JobQueueDO` trên Cloudflare, SQLite trong tiến trình ở dev/test.
 
 Hỏng đắt nhất của job nền: **worker bị tắt mà không ai biết**. Producer vẫn đẩy job, không
 consumer nào lấy ra, email và export im lặng không chạy. Spec này ép alert cho tình huống
@@ -33,7 +33,7 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 |---|---|
 | `packages/queue` | Định nghĩa job + producer. Cấm chứa consumer |
 | `apps/worker` | Consumer. Cấm có HTTP endpoint |
-| Scheduler | Cron trigger của Cloudflare gọi dispatcher vào `JobQueueDO` (dev local: repeatable job của BullMQ) |
+| Scheduler | Cron trigger của Cloudflare gọi dispatcher vào `JobQueueDO` (dev: vòng tick 5 phút trong `apps/worker` gọi cùng `scheduledEnvelopesAt`) |
 | Monitoring | Theo dõi backlog và tỉ lệ fail |
 
 ## 3. Entry points
@@ -47,7 +47,7 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 ## 4. Main flow
 
 1. Producer đẩy job kèm `jobId` **xác định** (khoá nghiệp vụ).
-2. BullMQ khử trùng theo `jobId`.
+2. `JobQueueSqlEngine` khử trùng theo `jobId` (`BR-JOB-02`, `BR-JOB-14`).
 3. Consumer xử lý, **idempotent**.
 4. Thành công → xoá khỏi queue, ghi metric. Thất bại → retry backoff.
 5. Hết retry → `failed` queue + **alert**.
@@ -58,7 +58,7 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 |---|---|
 | Worker chết | Job dồn. Backlog vượt ngưỡng → **alert** |
 | Job chạy hai lần | Consumer idempotent → không tác dụng phụ |
-| Hàng đợi mất (`JobQueueDO` không tới được; dev local: Valkey) | Producer fail nhanh, không chặn request. Health check báo 503 |
+| Hàng đợi mất (`JobQueueDO` không tới được; dev/test: port local chưa nối) | Producer fail nhanh, không chặn request. Health check báo 503 |
 | Job treo | Timeout theo loại, chuyển `failed`, alert |
 
 ## 6. Business rules
@@ -80,6 +80,7 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 | `BR-JOB-13` | Engine của `JobQueueDO` không bao giờ được đăng ký toàn cục; `scheduled()` và web enqueue qua stub DO | Engine gắn với I/O context của DO — dùng từ ngoài DO là lỗi "different request" hoặc ghi sai chỗ |
 | `BR-JOB-14` | `JobQueueDO` giữ bảng `completed_job_ids(job_id PRIMARY KEY, done_at)` **48 giờ**: `enqueueBatch` bỏ qua `jobId` đã hoàn tất trong cửa sổ đó; mỗi job xoá khỏi `queued_jobs` và ghi vào `completed_job_ids` **ngay sau khi chạy xong** (không gom cuối lô); `drainBatch` dọn dòng `done_at` quá 48 giờ; lỗi ném từ `onDeadLetter` bị nuốt và log, không làm lô chạy lại | Alarm bị ngắt/ném giữa lô thì job đã chạy xong không được chạy lại; cron `*/5` đẩy lại id cũ trong 48 giờ không được chạy trùng |
 | `BR-JOB-15` | Port nối với Durable Object (auth/cache/rate-limit/queue) giữ namespace và lấy stub mới ở mỗi lần gọi; Cấm — **NEVER** giữ stub DO ở biến module/toàn cục | Stub gắn với I/O context của request tạo ra nó |
+| `BR-JOB-16` | Dev/test chạy **cùng** `JobQueueSqlEngine` với `JobQueueDO`, trong tiến trình trên SQLite (`packages/local-runtime`, `D15`): web chỉ là producer (alarm không gắn), `apps/worker` dev poll `drainBatch()` trên file SQLite dùng chung. Không có thư viện hay dịch vụ queue thứ hai (BullMQ/Valkey/ioredis đã gỡ); port chưa nối thì `enqueue` ném `ServiceUnavailableError` ở mọi runtime | Hành vi dev phải là hành vi production; hai engine là hai bộ bug |
 
 ## 7. Data
 
@@ -100,7 +101,7 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 
 **10 job.** Job của add-on (export PDF, AI batch) không tạo ở MVP — ví dụ cụ thể:
 `embed:content` (re-embed vector khi publish, xem `07-addon/semantic-search.md` §7.2), dùng
-chung hạ tầng queue này (`JobQueueDO`; dev local BullMQ/Valkey) nhưng không tính vào 10 job MVP trên.
+chung hạ tầng queue này (`JobQueueDO`; dev/test: `JobQueueSqlEngine` trên SQLite) nhưng không tính vào 10 job MVP trên.
 
 ### 7.2 Retry
 
@@ -205,12 +206,12 @@ Scenario: BR-JOB-10 — không job theo lịch nào bị bỏ sót
   When mô phỏng một tuần tick 5 phút
   Then mọi job `kind: cron` được dispatch ít nhất một lần, trừ `backup:postgres` và `backup:verify`
 
-Scenario: BR-JOB-11 — enqueue trong DO không chạm BullMQ (driver dev local)
+Scenario: BR-JOB-11 — enqueue trong DO đi qua engine của chính DO
   Given consumer chạy trong JobQueueDO gọi `enqueue`
-  Then job vào queue của chính DO đó, BullMQ không được nạp
+  Then job vào queue của chính DO đó, không có thư viện queue ngoài nào được nạp
 
 Scenario: hàng đợi mất không chặn request
-  Given hàng đợi (JobQueueDO; dev local Valkey) không truy cập được
+  Given hàng đợi (JobQueueDO; dev/test: port local) không truy cập được
   When user thực hiện một hành động có enqueue job
   Then request vẫn trả thành công cho phần đồng bộ
   And health check trả 503

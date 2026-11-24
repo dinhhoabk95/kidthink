@@ -46,7 +46,7 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 | `apps/*`, `packages/*` | App và package dùng chung (cây đầy đủ ở §8 của [`SPEC.md`](../../SPEC.md)) |
 | `lefthook.yml` + `.git/hooks/pre-commit` | Gate local. Không có cổng remote |
 | `package.json` gốc, script `check` | `pnpm check` = `lint` + `lint:deps` + `typecheck` (không chạy test). `scripts/check.sh`, `check:fast`, `pnpm services` đã gỡ |
-| `docker-compose.yml` | Hạ tầng dev cũ (Postgres + Valkey); dev/test nay dùng SQLite (`node:sqlite`) + Valkey `:6380`, file này sẽ gỡ đợt sau |
+| `docker-compose.yml` | Đã gỡ (D15): không còn dịch vụ ngoài nào cho dev/test (DB, auth keyspace, rate limit, cache, queue đều chạy trong tiến trình trên SQLite) |
 
 ## 4. Main flow — dựng và giữ workspace
 
@@ -56,7 +56,7 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
    chuỗi `catalog:`, không khai hai phiên bản lệch nhau cho cùng một gói — `BR-RBS-06`).
 3. Cài dependency theo §7.1 vào package/app cần nó — **không** cài bản thấp hơn bảng.
 4. `pnpm install` chạy `prepare: lefthook install`, ghi `.git/hooks/*` tự động (`BR-RBS-03a`).
-5. Dev/test chạy SQLite qua `node:sqlite` (không cần dịch vụ ngoài); Valkey `127.0.0.1:6380` cho cache/queue dev.
+5. Dev/test chạy SQLite qua `node:sqlite` và engine DO trong tiến trình (`packages/local-runtime`, `D15`); không cần dịch vụ ngoài, không cần Docker.
    Production là Cloudflare D1 (`BR-RBS-07` đã ngưng, xem §6).
 6. Gate local theo `lefthook.yml`: `pre-commit` chỉ có job `biome-staged` — `biome check --write
    --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}`, `stage_fixed: true`. Không có
@@ -93,9 +93,7 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 
 ### 7.1 Dependency/tech baseline — chốt 2026-08-05, nâng cấp major 2026-11-16
 
-`iovalkey` không nằm trong baseline: BullMQ tự dựng client `ioredis` nội bộ khi nhận config
-dạng object thường, và driver `redis` của `unstorage` hardcode `ioredis`. Cả hai điểm chạm Valkey
-đều đi qua `ioredis` — dùng thẳng, không thêm phụ thuộc thứ hai.
+Valkey/Redis/BullMQ/`ioredis` đã gỡ khỏi baseline (`D15`): queue, rate limit, cache và auth keyspace dùng engine DO chạy trên SQLite.
 
 | Lớp | Chọn | Version tối thiểu | Ghi chú |
 |---|---|---|---|
@@ -104,15 +102,8 @@ dạng object thường, và driver `redis` của `unstorage` hardcode `ioredis`
 | Web framework | Nuxt | `^4.6.4` + `vue` `3.6.0-rc.15` | Nitropack `^2.13.6` + `h3@^1.15.11` (`h3` giữ v1 khớp Nitro 2); `overrides` hợp nhất `vue` về `3.6.0-rc.15` |
 | DB | SQLite (`node:sqlite`) dev/test · Cloudflare D1 production | Node 26 built-in / D1 | Không có server DB cục bộ |
 | ORM | Drizzle | `1.0.0-rc.5` (`drizzle-kit` `1.0.0-rc.5`, lockstep) | Driver SQLite/D1; singleton `drizzle()` một lần mỗi tiến trình/isolate |
-| Valkey server | Valkey | 9 (9.1) | Linux Foundation, tương thích Redis protocol ~90% (không còn 1:1) |
-| Valkey client (Node) | **`ioredis`** `6.1.0-beta.1` | — | Tương thích peer `bullmq@^6.7.6` (`ioredis >=5.0.0`) |
 | Ngôn ngữ | TypeScript | `~6.0.3` | Major cao nhất còn giữ JS Compiler API (`lib/typescript.js`) cho `vue-tsc@3.3.14` (`@volar/typescript` đòi `<7`) và `dependency-cruiser@18.8.0-beta-2` |
-| Cache abstraction | `unstorage` | `^1.17` | Driver `redis` built-in, trỏ thẳng `host`/`port` Valkey — không cần workaround, không cần driver tự viết |
-| Rate limit | `rate-limiter-flexible` | `^11.5.0` | Chỉ dùng trong `packages/cache`, trên singleton `ioredis`; `unstorage` chỉ làm cache. Giữ hai trục, `Retry-After`, trusted-proxy và fail-open/closed của [`rate-limiting.md`](../01-platform/rate-limiting.md), không bật limiter của `nuxt-security` |
-| Queue | BullMQ | `^6.7.6` | `connection: {host, port, password}` — object thường, BullMQ tự dựng `ioredis` nội bộ (tự set `maxRetriesPerRequest: null` cho Worker). Không dùng `createValkeyGlideClient` (đó là path cho HA/cluster kiểu AWS, không cần ở self-host Docker) |
-| Queue — Nuxt wrapper | Không dùng `nuxt-simple-bullmq` | — | Solo-maintainer, README tự nhận chỉ test Node 21, tác giả khuyên dùng lựa chọn khác cho production. Nối BullMQ trực tiếp qua Nitro plugin trong `apps/worker` |
 | Auth — trạng thái Nuxt của web | `nuxt-auth-utils` | `^0.6.2` | **Chỉ dùng trong `apps/web`**. Module seal opaque locator và cung cấp projection/`useUserSession`; identity/role/reauth/remember nằm trong Redis. Admin SPA chỉ gọi API tuyệt đối với `credentials: "include"`. Cookie session host-only, tuyệt đối 1 giờ; remember tuỳ chọn, tuyệt đối tối đa 365 ngày |
-| Auth — Redis session authority | `ioredis` trong `packages/auth` | `6.1.0-beta.1` | Client process-long riêng, fail-closed; Lua/transaction nguyên tử cho rotate/revoke; production AOF + `noeviction`. Không đi qua cache API fail-open, không file/memory/DB fallback |
 | Auth — OAuth/OIDC backend bridge | `openid-client` | `^6.9.0` | `packages/auth/src/oauth/` dùng cho discovery, PKCE, authorization URL, code exchange và token validation. Không dùng `defineOAuth*EventHandler` của `nuxt-auth-utils`, không đổi sang AuthJS và không tự viết protocol primitive |
 | Auth — TOTP (Manager bắt buộc, User P2 tuỳ chọn) | `otpauth` | `^9.6.0` | Dùng cho sinh secret, URI và validate RFC 4226/6238; cấm dùng password helper của `nuxt-auth-utils`, tự viết HMAC/Base32/TOTP hoặc dùng `speakeasy` |
 | HTTP hardening | `nuxt-security` + proxy headers | `^2.7.0` | `nuxt-security` chỉ khai ở `apps/web`; `apps/admin/public/_headers` đặt header cho admin static. Web giữ CSP/nonce, SRI, security headers (HSTS 1 năm + preload, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy, COOP/CORP), CORS và request-size. **Tắt** rate limiter, CSRF và xssValidator của module; các contract đó thuộc `packages/cache`, `packages/auth`, Zod (`BR-SEC-04`) và `packages/moderation` |
@@ -135,7 +126,7 @@ dạng object thường, và driver `redis` của `unstorage` hardcode `ioredis`
 | Lint/format | `ultracite@~8.2.1` (**preset `ultracite/biome/core` + `ultracite/biome/vue`**) + `@biomejs/biome@~2.6.8` (**CLI chạy thật**) | Script `lint` gọi thẳng `biome check .`; `biome.jsonc` giữ nguyên tập rule baseline đã chốt (không bật các rule ngoài contract `BR-*` mà `ultracite` 8 mới thêm) |
 | Test | Vitest `^5.1.0` · Playwright `1.65.1` · `fast-check` `^4.10.2` · `@axe-core/playwright` `^4.14.0` | | `@vitest/coverage-v8` ghim cứng cùng bản `5.1.0` với `vitest` |
 | Storage | S3 SDK | giữ nguyên | |
-| Deploy | Cloudflare Workers + D1 + Durable Objects (`D14`); Docker (PG + Valkey) chỉ cho dev | đổi theo `D14` | |
+| Deploy | Cloudflare Workers + D1 + Durable Objects (`D14`); không có Docker/dịch vụ ngoài cho dev (`D15`) | đổi theo `D14` | |
 
 Version cụ thể ở bảng trên là **version tối thiểu được rà lại tại 2026-08-13**. Khi cài, lấy bản
 vá/minor mới nhất cùng major đã chốt — không hạ version, không tự ý nhảy major (`BR-RBS-08`).

@@ -74,7 +74,7 @@ tin vào nó, nên nó không được nói dối.
 | Auth session (`AuthCoordinatorDO`) | write/read/delete sentinel ở auth keyspace; chỉ kiểm khi binding `AUTH_COORDINATOR` có mặt; failure làm readiness 503 | Có |
 | Queue (`JobQueueDO`) | Đếm `waiting`; chỉ kiểm khi binding `JOB_QUEUE_DO` có mặt | Có |
 
-Trạng thái hiện tại (2026-11-25): runtime `sqlite` (dev/test) chỉ kiểm DB; runtime `d1` kiểm DB cộng hai Durable Object nếu binding có. Valkey/BullMQ không còn là phụ thuộc runtime của health check (chỉ còn adapter dev local, sẽ gỡ đợt sau).
+Trạng thái hiện tại (2026-11-25): runtime `sqlite` (dev/test) chỉ kiểm DB; runtime `d1` kiểm DB cộng hai Durable Object nếu binding có. Valkey/BullMQ đã gỡ khỏi repo (`D15`), không còn nhánh nào của health check chạm chúng; engine auth/queue chạy trong tiến trình ở dev/test nên không có phụ thuộc ngoài để kiểm.
 
 ### 7.2 Response
 

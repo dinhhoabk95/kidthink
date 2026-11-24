@@ -34,14 +34,14 @@ chặn quét diện rộng. Chỉ một trục thì trục còn lại là lỗ h
 
 ## 3. Entry points
 
-Middleware trước mọi route. `packages/cache` cung cấp giao diện giới hạn tần suất hai chế độ: trên Cloudflare (`MINDKID_RUNTIME=cloudflare`, production) kết hợp luật chặn sớm tại biên Cloudflare WAF (5 Custom Rules + 1 rate rule `/api/auth/*`, `infra/cloudflare/waf.tf`) và bộ đếm nhất quán trên `AuthCoordinatorDO`; ở dev local (`MINDKID_RUNTIME=vps`, sẽ gỡ đợt sau) bọc `rate-limiter-flexible` trên singleton `ioredis` (Valkey); app không import package nền trực tiếp.
+Middleware trước mọi route. `packages/cache` cung cấp giao diện giới hạn tần suất trên **một engine** (`AuthCoordinatorEngine`, `D15`): trên Cloudflare (`MINDKID_RUNTIME=cloudflare`, production) kết hợp luật chặn sớm tại biên Cloudflare WAF (5 Custom Rules + 1 rate rule `/api/auth/*`, `infra/cloudflare/waf.tf`) và bộ đếm nhất quán trong `AuthCoordinatorDO`; ở dev/test cùng engine đó chạy trong tiến trình trên SQLite (`packages/local-runtime`); app không import package nền trực tiếp.
 
 ## 4. Main flow
 
 1. Middleware suy `route_class` từ path.
 2. Kiểm bucket theo **IP** và theo **account** (nếu đã đăng nhập).
 3. Với route chưa xác thực, account key là HMAC của định danh đã normalize; không đưa email
-   hay identifier thô vào key Valkey/log.
+   hay identifier thô vào key của engine/log.
 4. Vượt bất kỳ trục nào → **429** kèm `Retry-After`.
 5. Ghi log; vượt lặp lại nhiều lần → alert.
 
@@ -49,7 +49,7 @@ Middleware trước mọi route. `packages/cache` cung cấp giao diện giới 
 
 | Nhánh | Hành vi |
 |---|---|
-| Kho đếm mất (DO; dev local Valkey) | **Fail open** cho route thường, **fail closed** cho auth và thanh toán |
+| Kho đếm mất (DO; dev/test: port local chưa nối) | **Fail open** cho route thường, **fail closed** cho auth và thanh toán |
 | Sau Cloudflare | Lấy IP từ `CF-Connecting-IP` (Cloudflare đè header này ở biên), không tin `X-Forwarded-For` thô |
 | Đăng nhập sai liên tiếp | Khoá account tạm, tăng dần |
 
@@ -58,19 +58,20 @@ Middleware trước mọi route. `packages/cache` cung cấp giao diện giới 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-RTL-01` | Route nhạy cảm giới hạn theo **cả hai trục** | Một trục là một lỗ hổng |
-| `BR-RTL-02` | Kho đếm mất (DO; dev local Valkey) → **fail closed** cho auth và thanh toán | Mất giới hạn ở đúng chỗ nguy hiểm nhất là không chấp nhận được |
+| `BR-RTL-02` | Kho đếm mất (DO; dev/test: port local) → **fail closed** cho auth và thanh toán | Mất giới hạn ở đúng chỗ nguy hiểm nhất là không chấp nhận được |
 | `BR-RTL-03` | 429 kèm `Retry-After` | Client cần biết chờ bao lâu |
 | `BR-RTL-04` | Cấm — **NEVER lấy IP từ `X-Forwarded-For` thô** | Header giả được |
 | `BR-RTL-05` | Đăng nhập sai → khoá tài khoản **tăng dần**, không khoá vĩnh viễn | Khoá vĩnh viễn là DoS lên người dùng thật |
 | `BR-RTL-06` | Ingest event có hạn mức riêng, rộng hơn | Trẻ chơi liên tục là hành vi bình thường |
 | `BR-RTL-07` | Thông báo 429 không tiết lộ tài khoản tồn tại | Tiết lộ là cho kẻ tấn công biết email nào đã đăng ký, rút ngắn bước quét tiếp theo |
-| `BR-RTL-08` | Mọi consume/penalty/block đi qua `packages/cache` (Cloudflare: `AuthCoordinatorDO`; dev local: `rate-limiter-flexible` trên singleton `ioredis`); Cấm — **NEVER** tự ghép `INCR` + `EXPIRE` hay tạo Redis client theo request | Hai lệnh rời có thể mất TTL khi tiến trình chết; nhiều client theo request làm cạn connection trên t3.small |
-| `BR-RTL-09` | Key account chưa xác thực là HMAC của identifier đã normalize; Cấm — **NEVER** để email/identifier thô trong Valkey key, metric hay log | Redis key và log vận hành không được trở thành kho PII phụ |
+| `BR-RTL-08` | Mọi consume/penalty/block đi qua `packages/cache` (Cloudflare: `AuthCoordinatorDO`; dev/test: cùng `AuthCoordinatorEngine` trên SQLite); Cấm — **NEVER** tự ghép `INCR` + `EXPIRE` hay tạo client kho ngoài theo request | Hai lệnh rời có thể mất TTL khi tiến trình chết; một engine duy nhất cho mọi runtime |
+| `BR-RTL-09` | Key account chưa xác thực là HMAC của identifier đã normalize; Cấm — **NEVER** để email/identifier thô trong key của engine, metric hay log | Key kho đếm và log vận hành không được trở thành kho PII phụ |
 | `BR-RTL-10` | Mọi path `/api/*` giải ra đúng một lớp ở §7.2, hoặc một lý do miễn **đã liệt kê**; Cấm — **NEVER** để nhánh mặc định không giới hạn | Một lớp khai trong registry mà không route nào gọi là hạn mức trên giấy |
 | `BR-RTL-11` | IP client: trên Cloudflare lấy từ `CF-Connecting-IP`; ngoài Cloudflare (dev, test) lấy địa chỉ socket và **không** đọc header IP nào | Production chỉ chạy sau Cloudflare, nơi `CF-Connecting-IP` do biên đặt và client không giả được. Ngoài Cloudflare không có proxy tin cậy nào, nên mọi header IP (`X-Real-IP`, `X-Forwarded-For`) là input của kẻ tấn công. Danh sách `TRUSTED_PROXY_IPS` thuộc đường Nginx đã gỡ theo `D14` |
 | `BR-RTL-12` | Trên Cloudflare, `checkRateLimit` chưa có port coordinator → **fail closed**: ném `ServiceUnavailableError`, bất kể `failOpen`. Chỉ lỗi tạm thời của port mới theo `failOpen` | Thiếu port là lỗi cấu hình; fail open ở đó là tắt toàn bộ giới hạn mà không ai biết |
 | `BR-RTL-13` | `two-factor/verify-totp` và `verify-backup-code` giới hạn **cả hai trục** của `auth:mfa`: trục IP do middleware đếm; trục account do hook `before` của Better Auth đếm, với định danh `user:{id}` / `manager:{id}` suy từ challenge 2FA đang chờ (`two_factor` cookie → bản ghi verification) hoặc từ session đang kích hoạt MFA, và chỉ đếm trục account (`skipIpCheck`) để IP không bị đếm hai lần | Chỉ có trục IP thì kẻ có mật khẩu đổi IP liên tục vẫn dò được mã TOTP 6 số của một tài khoản; khoá `MfaAttemptGuard` chỉ tính lần sai, không chặn tốc độ thử |
 | `BR-RTL-14` | `/api/users/**` chưa có lớp riêng rơi vào `user:default` (đọc) hoặc `user:write` (mutation), hai trục IP + account; Cấm — **NEVER** miễn route người dùng vì "chưa phân lớp" | Route đã đăng nhập miễn rate limit là bề mặt brute force / lạm dụng tài nguyên không giới hạn |
+| `BR-RTL-15` | Ngoài Cloudflare, `checkRateLimit` dùng cùng `AuthCoordinatorEngine` chạy trong tiến trình trên SQLite (`D15`); không còn bộ đếm RAM riêng hay Valkey, và thiếu port thì fail closed như `BR-RTL-12` | Test và dev phải đo đúng thuật toán đếm của production |
 
 ## 7. Data
 
@@ -172,8 +173,8 @@ Scenario: BR-RTL-01 — hai trục cùng áp
   Given 10 lần đăng nhập sai cho một email từ 10 IP khác nhau
   Then account đó bị khoá tạm
 
-Scenario: BR-RTL-02 — fail closed cho auth khi Valkey mất
-  Given Valkey không truy cập được
+Scenario: BR-RTL-02 — fail closed cho auth khi kho đếm mất
+  Given port coordinator không truy cập được
   When gọi POST login
   Then trả 503
   And không xử lý đăng nhập
@@ -197,8 +198,8 @@ Scenario: BR-RTL-05 — khoá tăng dần rồi tự mở
 
 Scenario: BR-RTL-08 — limiter dùng primitive nguyên tử và một client
   When chạy song song nhiều request chạm cùng bucket
-  Then số lần consume và TTL nhất quán theo rate-limiter-flexible
-  And số kết nối ioredis không tăng theo số request
+  Then số lần consume và TTL nhất quán theo `AuthCoordinatorEngine`
+  And không có client kho ngoài nào được tạo theo request
 
 Scenario: BR-RTL-10 — không path nào rơi vào nhánh không giới hạn
   Given danh sách mọi file route trong apps/web/server/api
@@ -219,7 +220,7 @@ Scenario: BR-RTL-11 — IP lấy từ nguồn đúng theo runtime
 
 Scenario: BR-RTL-09 — key không chứa định danh thô
   Given login bằng email Parent@Example.com
-  When đọc key Valkey và log rate-limit trong test
+  When đọc key của engine và log rate-limit trong test
   Then không chuỗi nào chứa parent@example.com
 ```
 
@@ -229,7 +230,7 @@ Scenario: BR-RTL-09 — key không chứa định danh thô
 - Hai trục cho route nhạy cảm.
 - `Retry-After` trong response.
 - Lấy IP từ `CF-Connecting-IP` trên Cloudflare, từ socket ngoài Cloudflare.
-- Bọc `rate-limiter-flexible` trong `packages/cache`; tái dùng singleton `ioredis`.
+- Một engine (`AuthCoordinatorEngine`) trong `packages/cache`, nối qua port; dev/test chạy engine đó trên SQLite trong tiến trình.
 - HMAC identifier trước khi tạo account key.
 - Suy lớp từ path bằng `resolveRateLimitRouteClass()`, không rải hằng số lớp khắp route.
 
@@ -242,7 +243,7 @@ Scenario: BR-RTL-09 — key không chứa định danh thô
 - Tin `X-Forwarded-For` thô.
 - Khoá tài khoản vĩnh viễn.
 - Thông báo tiết lộ tài khoản tồn tại.
-- `INCR` + `EXPIRE` tự ghép hoặc Redis client theo request.
+- `INCR` + `EXPIRE` tự ghép hoặc client kho ngoài theo request.
 - Email/identifier thô trong key hay log.
 - Nhánh mặc định không giới hạn cho một path `/api/*`.
 - Đọc `X-Real-IP` hay `CF-Connecting-IP` ngoài runtime Cloudflare.

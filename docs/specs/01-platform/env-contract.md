@@ -24,7 +24,7 @@ và điều gì xảy ra khi thiếu một biến. Hiện tại không ai biết
 `packages/` đọc **56 biến khác nhau**, còn `.env.example` khai đúng **2**.
 
 Nặng hơn con số đó là **sáu nhóm biến trùng khái niệm** (§7.2). Cùng một thứ — chuỗi kết nối
-Valkey — được đọc dưới bốn tên. Đặt đúng ba tên, thiếu tên thứ tư, thì một phần hệ thống chạy và
+Valkey (nay đã gỡ khỏi repo, `D15`) — được đọc dưới bốn tên. Đặt đúng ba tên, thiếu tên thứ tư, thì một phần hệ thống chạy và
 một phần chết theo cách khó truy. Đây là loại lỗi cấu hình đắt nhất: nó không nổ lúc khởi động,
 nó nổ lúc có người dùng thật.
 
@@ -94,8 +94,8 @@ tạo nó khi một tên phải khác nhau giữa các app.
 | `BR-ENV-10` | Đổi tên biến đang chạy production phải qua **hai** lần phát hành                                                  | Một lần phát hành không thể vừa đổi tên biến vừa giữ tiến trình cũ sống. Lần một đọc cả hai tên, lần hai bỏ tên cũ                                                             |
 | `BR-ENV-11` | Biến kiểu `secret` phải dài tối thiểu 32 byte và sinh bằng máy                                                    | Khoá do người nghĩ ra là khoá đoán được, và độ dài là thứ duy nhất kiểm được bằng máy                                                                                          |
 | `BR-ENV-12` | Cấm ghi hay sinh file env tự động trong quy trình phát hành                                                       | Quy trình phát hành chỉ **đọc để kiểm**. Nếu nó ghi được thì một lần chạy sai có thể xoá bí mật production, và không có bản sao nào ở nơi khác                                 |
-| `BR-ENV-13` | Biến `kind: url` phải khai `urlProtocols`; validator khẳng định giao thức của giá trị nằm trong danh sách đó | `new URL()` chấp mọi scheme, nên `VALKEY_URL=https://example.com/endpoint` đi qua cổng env màu xanh rồi mới chết ở runtime — client Valkey treo tới hết timeout. Kiểu chỉ nói *dạng*; giao thức mới nói **nó nối tới cái gì** |
-| `BR-ENV-14` | Runtime Cloudflare (D1) **không có** `DATABASE_URL`/`DATABASE_URL_APP` (đã gỡ khỏi registry); `VALKEY_URL` và `AWS_*` là `optional` (`AWS_S3_PUBLIC_BUCKET` đã gỡ khỏi registry 2026-11-25: không còn code dùng), để build production trên Cloudflare chỉ cần tập biến cốt lõi | Build nhập `env.ts` qua `nuxt.config`; đòi biến của hạ tầng không dùng làm hỏng build Cloudflare |
+| `BR-ENV-13` | Biến `kind: url` phải khai `urlProtocols`; validator khẳng định giao thức của giá trị nằm trong danh sách đó | `new URL()` chấp mọi scheme, nên một biến URL như `SITE_URL=ftp://example.com` đi qua cổng env màu xanh rồi mới chết ở runtime. Kiểu chỉ nói *dạng*; giao thức mới nói **nó nối tới cái gì** |
+| `BR-ENV-14` | Runtime Cloudflare (D1) **không có** `DATABASE_URL`/`DATABASE_URL_APP` (đã gỡ khỏi registry); `AWS_*` là `optional` (`VALKEY_URL` đã gỡ khỏi registry 2026-11-25, `D15`) (`AWS_S3_PUBLIC_BUCKET` đã gỡ khỏi registry 2026-11-25: không còn code dùng), để build production trên Cloudflare chỉ cần tập biến cốt lõi | Build nhập `env.ts` qua `nuxt.config`; đòi biến của hạ tầng không dùng làm hỏng build Cloudflare |
 | `BR-ENV-15` | Bước build của `.github/workflows/deploy-cloudflare.yml` phải cấp **đủ** tập biến mà `createWebEnv()` bắt buộc khi `NODE_ENV=production`: `SITE_URL`, `STORAGE_BASE_URL` (= `https://<MINDKID_DOMAIN>`, `BR-IMG-13`), `PORT`, `NUXT_ALLOWED_ORIGINS`, `NUXT_SESSION_PASSWORD`, `PARENT_GATE_SECRET`, `MFA_ENCRYPTION_KEY`, `STORAGE_SIGNING_SECRET`, `NUXT_NOTIFICATION_TOKEN_ENCRYPTION_KEY`, `PAYMENT_WEBHOOK_SECRET`, `PAYMENT_MODE`, `PAYMENT_MERCHANT_ID`, `VIETQR_BANK_ID`, `VIETQR_BANK_NAME`, `VIETQR_ACCOUNT_NO`, `VIETQR_ACCOUNT_NAME`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `HEALTHCHECKS_PING_URL`, `OPERATIONS_ALERT_EMAIL`. Giá trị lấy từ GitHub `secrets`/`vars`, không ghi vào repo | Thiếu một biến thì `nuxt build` chết ở bước nhập `env.ts` sau khi đã tốn thời gian apply D1 |
 | `BR-ENV-16` | `INITIAL_ADMIN_EMAIL`/`INITIAL_ADMIN_PASSWORD` **không** cần lúc build: chỉ lệnh gieo dữ liệu đọc chúng (`packages/db/src/seed.ts`); validator web chỉ kiểm khi biến được đặt (production: ≥ 32 byte) và workflow build không truyền chúng | Mật khẩu quản trị không được nằm trong môi trường build/bundle |
 | `BR-ENV-17` | `SITE_URL` thiếu ở runtime production/Cloudflare thì **ném lỗi rõ ràng** (`resolveSiteUrl()`); chỉ dev/test mới fallback `http://localhost:3000`. Cấm — **NEVER** phát link/trusted origin localhost từ production | Fallback im lặng làm email xác thực và OAuth callback trỏ về localhost mà không báo lỗi |
@@ -114,7 +114,7 @@ tạo nó khi một tên phải khác nhau giữa các app.
 | `apps`      | tập hợp | Tập con của `web` · `admin` · `worker`; admin chỉ nhận public build config |
 | `required`  | enum    | `always` \| `production` \| `when-enabled` \| `optional`     |
 | `kind`      | enum    | `url` \| `secret` \| `email` \| `port` \| `enum` \| `text`  |
-| `urlProtocols` | tập hợp | Bắt buộc khi `kind` là `url`; liệt kê giao thức hợp lệ, ví dụ `valkey:` |
+| `urlProtocols` | tập hợp | Bắt buộc khi `kind` là `url`; liệt kê giao thức hợp lệ, ví dụ `https:` |
 | `secret`    | boolean | `true` thì giá trị không bao giờ được in ra                 |
 | `enabledBy` | text    | Tên cờ tính năng, chỉ dùng khi `required` là `when-enabled` |
 | `note`      | text    | Một câu: ai đọc và để làm gì                                |
@@ -138,7 +138,6 @@ tố của framework, vì các biến này chỉ được đọc ở phía máy 
 | ------------------------------ | ------------------------------------------------------------- | ---------------------------------------------------------- |
 | Mật khẩu niêm phong session    | `SESSION_SECRET` · `NUXT_SESSION_PASSWORD`                    | `NUXT_SESSION_PASSWORD` — thư viện session cố định tên này |
 | Origin API của static admin    | `NUXT_PUBLIC_API_BASE_URL` · origin tương đối                 | `NUXT_PUBLIC_API_BASE_URL` — chỉ là public build config   |
-| Chuỗi kết nối Valkey           | `REDIS_URL` · `VALKEY_URL` · `VALKEY_HOST` · `AUTH_REDIS_URL` | `VALKEY_URL`                                               |
 | Địa chỉ công khai của site     | `SITE_URL` · `NUXT_SITE_URL` · `NUXT_PUBLIC_SITE_URL`         | `SITE_URL`                                                 |
 | Bí mật Parent Gate             | `PARENT_GATE_SECRET` · `NUXT_PARENT_GATE_SECRET`              | `PARENT_GATE_SECRET`                                       |
 
@@ -189,8 +188,8 @@ Scenario: BR-ENV-06 — validator không dựa vào môi trường của ngườ
   Then validator báo thiếu biến đó
 
 Scenario: BR-ENV-13 — URL sai giao thức bị chặn ở cổng, không ở runtime
-  Given VALKEY_URL khai `urlProtocols` là valkey:, redis: và rediss:
-  And file env đặt VALKEY_URL thành một địa chỉ https
+  Given một biến URL khai `urlProtocols` là http: và https:
+  And file env đặt biến đó thành một địa chỉ ftp
   When chạy validator
   Then validator báo lỗi và nêu tên biến
 

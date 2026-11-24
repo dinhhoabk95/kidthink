@@ -27,11 +27,11 @@ depends_on:
 
 **Trạng thái hiện tại (cập nhật 2026-11-25):** cơ sở dữ liệu là D1 (production Cloudflare) và
 SQLite (dev/test). Keyspace auth (`ba:v1:user:*`, `ba:v1:manager:*`) trên Cloudflare nằm trong
-`AuthCoordinatorDO` (SQLite nội bộ của Durable Object, `apps/worker/src/durable-objects/auth-coordinator.ts`);
-mỗi lời gọi DO là nguyên tử nên đóng vai trò "transaction" ở các mục bên dưới. Valkey chỉ còn là adapter
-dev local (`packages/auth/src/redis-client.ts`, sẽ gỡ ở đợt sau). Mọi chữ "Redis" trong file này nghĩa là
-**auth keyspace fail-closed** (DO trên Cloudflare, Valkey ở dev local); các chi tiết AOF, `noeviction`, Lua
-chỉ áp dụng cho Valkey dev.
+`AuthCoordinatorDO` (SQLite nội bộ của Durable Object); logic nằm ở `AuthCoordinatorEngine`
+(`packages/cache/src/coordinator-engine.ts`), mỗi lời gọi là nguyên tử nên đóng vai trò "transaction" ở các mục bên dưới.
+Ở dev/test cùng engine đó chạy trong tiến trình trên SQLite (`packages/local-runtime`, `D15`), nối vào
+`registerAuthCoordinatorPort`; Valkey/ioredis đã gỡ. Mọi chữ "Redis" trong file này nghĩa là **auth keyspace
+fail-closed** do engine giữ; các chi tiết AOF, `noeviction`, Lua là lịch sử, không còn áp dụng.
 
 **Cập nhật 2026-11-21 (Task #319 — Tích hợp Better Auth 2-instance):** xác thực trình duyệt của cả
 User và Manager chuẩn hoá trên **Better Auth** (`better-auth`, `@better-auth/drizzle-adapter`,
@@ -150,7 +150,7 @@ credential của bước mật khẩu; client không thể thêm tuỳ chọn n�
 | `BR-AUT-33` | Logout phải qua route canonical có CSRF; `clear()`/DELETE nội bộ không phải logout domain | Xoá riêng cookie không thu hồi credential server-side |
 | `BR-AUT-34` | Manager chỉ nhận remember credential sau MFA; remember restore của cả User/Manager không tạo hoặc làm mới cửa sổ reauth 5 phút | Remember không được bypass MFA lần cấp đầu hoặc quyền nhạy cảm |
 | `BR-AUT-35` | `nuxt-auth-utils` chỉ cung cấp projection/composable; cấm OAuth, password, WebAuthn helper và cấm tin data sealed ngoài locator | Module không có Redis store và không được tạo auth contract thứ hai |
-| `BR-AUT-36` | Auth store nằm trong `packages/auth` (Cloudflare: `AuthCoordinatorDO`; dev local: client Valkey riêng, AOF, `noeviction`), có health check và alert; không đi qua `packages/cache` fail-open | Cache miss được phép, session authority thì không |
+| `BR-AUT-36` | Auth store nằm trong `packages/auth` (Cloudflare: `AuthCoordinatorDO`; dev/test: cùng `AuthCoordinatorEngine` trên SQLite trong tiến trình), có health check và alert; không đi qua `packages/cache` fail-open | Cache miss được phép, session authority thì không |
 | `BR-AUT-37` | D1/SQLite `active_sessions` chỉ là metadata/audit, không chứa session/remember token và không phục hồi auth | Tránh hai authority và cửa sổ revoke liên datastore |
 | `BR-AUT-38` | Mọi phiên trình duyệt do MindKid phát đều là opaque cookie session; cấm first-party JWT/Bearer trên route User/Manager | Một cơ chế phiên duy nhất giảm bề mặt tấn công và đảm bảo thu hồi tập trung trên Redis |
 | `BR-AUT-39` | `userAuth` và `managerAuth` là **hai instance Better Auth tách biệt**, khác `basePath`, khác `cookiePrefix`, khác khoá HMAC dẫn xuất, khác Redis prefix và khác bảng D1/SQLite | Bảo toàn tuyệt đối ranh giới Actor (`BR-ACT-01`, `BR-SIB-01`) — cookie bề mặt này vô nghĩa trên bề mặt kia |
@@ -421,4 +421,4 @@ Scenario: BR-AUT-38 — MFA challenge không dùng JWT
 | ~~1~~ | ~~MFA cho Manager bắt buộc từ P0 hay P2?~~ **Đóng 2026-08-07:** bắt buộc từ P0 | — | đã đóng | D-X |
 | ~~2~~ | ~~Social login có vào MVP không?~~ **Đóng 2026-08-05:** Google và Facebook ở P1 | — | đã đóng | D-X |
 | 3 | Reauth bằng OAuth có buộc provider prompt lại hay chấp nhận SSO đang mở? | Reauth SNS | P1 | người quyết |
-| ~~4~~ | ~~Production dùng Valkey auth instance riêng hay chung?~~ **Đóng 2026-11-25**: production Cloudflare không dùng Valkey; auth keyspace nằm trong `AuthCoordinatorDO` một instance `global-auth-v1`. AOF/`noeviction` chỉ còn là yêu cầu của Valkey dev local | — | Đã đóng | — |
+| ~~4~~ | ~~Production dùng Valkey auth instance riêng hay chung?~~ **Đóng 2026-11-25**: production Cloudflare không dùng Valkey; auth keyspace nằm trong `AuthCoordinatorDO` một instance `global-auth-v1`. AOF/`noeviction` không còn áp dụng (Valkey dev đã gỡ, `D15`) | — | Đã đóng | — |
