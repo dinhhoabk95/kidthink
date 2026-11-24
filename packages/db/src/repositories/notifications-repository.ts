@@ -550,6 +550,24 @@ export class NotificationsRepository extends BaseRepository {
     });
   }
 
+  /**
+   * `BR-BPS-12` — FCM báo token chết thì endpoint chuyển `invalid`, không bao giờ được
+   * chọn lại ở `listActiveEndpointsForDispatch`.
+   */
+  async markEndpointInvalid(
+    endpointId: number,
+    now: Date = new Date()
+  ): Promise<void> {
+    await this.db
+      .update(notificationEndpoints)
+      .set({
+        status: NOTIFICATION_ENDPOINT_STATUS.INVALID,
+        invalidatedAt: now,
+        updatedAt: now,
+      })
+      .where(eq(notificationEndpoints.id, endpointId));
+  }
+
   async upsertEndpoint(
     input: UpsertNotificationEndpointInput
   ): Promise<NotificationEndpointEntity> {

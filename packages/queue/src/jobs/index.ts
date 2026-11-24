@@ -10,6 +10,7 @@ import { entitlementExpire } from "./entitlement-expire.js";
 import { entitlementSoftUnlockExpire } from "./entitlement-soft-unlock-expire.js";
 import { orderExpire } from "./order-expire.js";
 import { pdfRender } from "./pdf-render.js";
+import { pushSend } from "./push-send.js";
 import { reportManualGrantsMonthly } from "./report-manual-grants-monthly.js";
 import { rollupDaily } from "./rollup-daily.js";
 import { rollupSession } from "./rollup-session.js";
@@ -41,6 +42,7 @@ export const JOB_DEFINITIONS = [
   billingRenewalReminder,
   billingRenew,
   billingDunningSweep,
+  pushSend,
 ] as const;
 
 export type AnyJobDefinition = (typeof JOB_DEFINITIONS)[number];
@@ -105,6 +107,7 @@ interface JobSchemaMap {
   readonly "billing:dunning-sweep": z.ZodType<
     JobPayloads["billing:dunning-sweep"]
   >;
+  readonly "push:send": z.ZodType<JobPayloads["push:send"]>;
 }
 
 const JOB_SCHEMAS: JobSchemaMap = {
@@ -124,6 +127,7 @@ const JOB_SCHEMAS: JobSchemaMap = {
   "billing:renewal-reminder": billingRenewalReminder.payload,
   "billing:renew": billingRenew.payload,
   "billing:dunning-sweep": billingDunningSweep.payload,
+  "push:send": pushSend.payload,
 };
 
 /**

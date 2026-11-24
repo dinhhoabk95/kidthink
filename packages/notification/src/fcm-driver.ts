@@ -1,3 +1,5 @@
+import { type FcmAdminMessaging, FcmSendError } from "#src/fcm-types";
+
 export interface FcmPayload {
   notificationId: number;
   title: string;
@@ -13,31 +15,41 @@ export interface FcmDispatchResult {
   terminal?: boolean;
 }
 
-export interface FcmAdminMessaging {
-  send(message: {
-    token: string;
-    notification?: { title?: string; body?: string };
-    data?: Record<string, string>;
-  }): Promise<string>;
+/**
+ * Phân loại lỗi theo `browser-push.md` §4.2 / `BR-BPS-12`. Chỉ nhìn `httpStatus` và
+ * `fcmErrorCode` của `FcmSendError` — không đọc nội dung nào có thể chứa token (`BR-BPS-13`).
+ */
+export function classifyFcmError(error: Error | string | object | null): {
+  status: "invalid" | "failed";
+  terminal: boolean;
+  label: string;
+} {
+  if (error instanceof FcmSendError) {
+    const { httpStatus, fcmErrorCode } = error;
+    const label = `HTTP ${httpStatus} ${fcmErrorCode}`;
+    if (
+      (httpStatus === 404 && fcmErrorCode === "UNREGISTERED") ||
+      (httpStatus === 400 && fcmErrorCode === "INVALID_ARGUMENT")
+    ) {
+      return { status: "invalid", terminal: true, label };
+    }
+    const retryable =
+      httpStatus === 429 || httpStatus === 401 || httpStatus >= 500;
+    return { status: "failed", terminal: !retryable, label };
+  }
+  // Lỗi mạng / không xác định: coi là tạm thời, không in message (có thể chứa URL).
+  return { status: "failed", terminal: false, label: "NETWORK_OR_UNKNOWN" };
 }
 
-const TERMINAL_FCM_ERROR_CODES = new Set([
-  "messaging/registration-token-not-registered",
-  "messaging/invalid-registration-token",
-  "messaging/mismatched-credential",
-  "messaging/invalid-argument",
-]);
-
 /**
- * Dispatches an FCM push notification using FCM Admin Messaging interface.
- * Enforces BR-BPS-05: Payload strictly excludes child PII.
+ * Dispatches an FCM push notification using the FCM messaging interface.
+ * Enforces BR-BPS-05: payload strictly excludes child PII.
  */
 export async function sendFcmWebPush(
   messaging: FcmAdminMessaging,
   token: string,
   payload: FcmPayload
 ): Promise<FcmDispatchResult> {
-  // BR-BPS-05: Payload validation against child PII leakage
   const safeTitle = payload.title || "MindKid";
   const safeBody = payload.body || "";
   const safeActionUrl = payload.actionUrl || "/me";
@@ -60,18 +72,13 @@ export async function sendFcmWebPush(
       status: "dispatched",
       providerMessageId: messageId,
     };
-  } catch (err: unknown) {
-    const errorObj = err as { code?: string; message?: string };
-    const errorCode = errorObj?.code || "";
-    const errorMessage = errorObj?.message || String(err);
-
-    const isTerminal = TERMINAL_FCM_ERROR_CODES.has(errorCode);
-
+  } catch (err) {
+    const classified = classifyFcmError(err instanceof Error ? err : null);
     return {
       success: false,
-      status: isTerminal ? "invalid" : "failed",
-      error: errorMessage,
-      terminal: isTerminal,
+      status: classified.status,
+      error: classified.label,
+      terminal: classified.terminal,
     };
   }
 }

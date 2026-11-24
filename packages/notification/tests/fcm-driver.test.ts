@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { type FcmAdminMessaging, sendFcmWebPush } from "#src/fcm-driver";
+import { sendFcmWebPush } from "#src/fcm-driver";
+import type { FcmAdminMessaging } from "#src/fcm-types";
+import { FcmSendError } from "#src/fcm-types";
 
 describe("FCM Server Driver Unit Tests", () => {
   it("BR-BPS-05 & BR-BPS-06: Sends minimal payload without child PII and returns dispatched status", async () => {
@@ -34,10 +36,7 @@ describe("FCM Server Driver Unit Tests", () => {
 
   it("BR-BPS-08: Marks status invalid and terminal on token not registered error", async () => {
     const mockMessaging: FcmAdminMessaging = {
-      send: vi.fn().mockRejectedValue({
-        code: "messaging/registration-token-not-registered",
-        message: "Requested entity was not found.",
-      }),
+      send: vi.fn().mockRejectedValue(new FcmSendError(404, "UNREGISTERED")),
     };
 
     const result = await sendFcmWebPush(mockMessaging, "fcm_token_expired", {
@@ -54,10 +53,7 @@ describe("FCM Server Driver Unit Tests", () => {
 
   it("BR-BPS-08: Marks status failed and non-terminal on transient network error", async () => {
     const mockMessaging: FcmAdminMessaging = {
-      send: vi.fn().mockRejectedValue({
-        code: "messaging/internal-error",
-        message: "Internal server error",
-      }),
+      send: vi.fn().mockRejectedValue(new FcmSendError(503, "UNAVAILABLE")),
     };
 
     const result = await sendFcmWebPush(mockMessaging, "fcm_token_valid", {

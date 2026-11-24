@@ -309,7 +309,7 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   // ---- Thông báo ----------------------------------------------------------
   {
     name: "NUXT_NOTIFICATION_TOKEN_ENCRYPTION_KEY",
-    apps: ["web"],
+    apps: ["web", "worker"],
     required: "always",
     kind: "secret",
     secret: true,
@@ -317,11 +317,36 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
   },
   {
     name: "FCM_ENCRYPTION_SECRET",
-    apps: ["web"],
+    apps: ["web", "worker"],
     required: "optional",
     kind: "secret",
     secret: true,
     note: "Khoá mã hoá dữ liệu FCM; thiếu thì tầng thông báo đẩy tắt",
+  },
+
+  {
+    name: "FCM_PROJECT_ID",
+    apps: ["worker"],
+    required: "optional",
+    kind: "secret",
+    secret: true,
+    note: "ID project Firebase trong URL FCM HTTP v1; thiếu bất kỳ biến FCM_* nào thì kênh push tắt (BR-BPS-11)",
+  },
+  {
+    name: "FCM_CLIENT_EMAIL",
+    apps: ["worker"],
+    required: "optional",
+    kind: "secret",
+    secret: true,
+    note: "client_email của service account ký JWT RS256 lấy access token FCM",
+  },
+  {
+    name: "FCM_PRIVATE_KEY",
+    apps: ["worker"],
+    required: "optional",
+    kind: "secret",
+    secret: true,
+    note: "private_key PEM PKCS8 của service account FCM; Cấm log (BR-BPS-13)",
   },
 
   // ---- Trợ lý AI và tìm kiếm ngữ nghĩa (Add-on P4) ------------------------

@@ -26,6 +26,7 @@ const ADDON_JOB_NAMES = [
   "billing:renewal-reminder",
   "billing:renew",
   "billing:dunning-sweep",
+  "push:send",
 ];
 
 describe("Task 1 — Job Registry & Boundaries (BR-JOB-04, BR-JOB-07)", () => {
