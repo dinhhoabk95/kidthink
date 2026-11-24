@@ -221,7 +221,6 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    appSecret: env.NUXT_SESSION_PASSWORD,
     // Ranh giới public/private rõ ràng (BR-CFO-12)
     public: {
       apiBaseUrl: env.NUXT_PUBLIC_API_BASE_URL ?? "",
