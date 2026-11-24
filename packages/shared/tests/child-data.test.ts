@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildExternalProviderPayload,
   CHILD_PROFILE_CLOSED_COLUMNS,
   ChildFieldNotAllowedError,
   getValidBirthYearRange,
@@ -7,6 +8,8 @@ import {
   isValidBirthYear,
   parseChildProfileInput,
 } from "#src/index";
+
+const CDC_06_VIOLATION = /BR-CDC-06 VIOLATION/;
 
 describe("Child Data Compliance Tests — Tasks 5, 6, 7", () => {
   it("BR-CDC-01 & BR-SPT-01: CHILD_PROFILE_CLOSED_COLUMNS contains exact 13 columns", () => {
@@ -92,5 +95,26 @@ describe("Child Data Compliance Tests — Tasks 5, 6, 7", () => {
     expect(isValidBirthYear(2027, currentYear)).toBe(false);
     // 2. Child aged 10 (born 2016 -> 2026 - 2016 = 10 years old)
     expect(isValidBirthYear(2016, currentYear)).toBe(false);
+  });
+
+  it("BR-CDC-06: buildExternalProviderPayload accepts aggregated metrics and rejects individual child PII fields", () => {
+    const safePayload = {
+      total_users_count: 50,
+      aggregate_completion_rate: 0.85,
+      level_code: "GL-C1-NUM-01",
+    };
+
+    expect(buildExternalProviderPayload(safePayload).total_users_count).toBe(
+      50
+    );
+    expect(() =>
+      buildExternalProviderPayload({
+        ...safePayload,
+        child_uuid: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+      })
+    ).toThrowError(CDC_06_VIOLATION);
+    expect(() =>
+      buildExternalProviderPayload({ ...safePayload, display_name: "Bé An" })
+    ).toThrowError(CDC_06_VIOLATION);
   });
 });
