@@ -1,8 +1,4 @@
-import type { DbExecutor } from "@mindkid/db";
-import {
-  createRepositories,
-  type MindKidRepositories,
-} from "@mindkid/db/repositories";
+import type { MindKidRepositories } from "@mindkid/db/repositories";
 import { ValidationError } from "@mindkid/errors/common";
 import {
   type AccessTier,
@@ -37,21 +33,6 @@ export interface GetDailyAdventureInput {
 export interface GetStickerDioramaInput {
   readonly childId: number;
   readonly themeCode?: string;
-}
-
-function isRepositories(
-  target: DbExecutor | MindKidRepositories
-): target is MindKidRepositories {
-  return "kidWorld" in target;
-}
-
-function toRepositories(
-  target?: DbExecutor | MindKidRepositories
-): MindKidRepositories {
-  if (!target) {
-    return useOwnerRepositories();
-  }
-  return isRepositories(target) ? target : createRepositories(target);
 }
 
 async function prependRequiredIntroStep(
@@ -102,20 +83,8 @@ async function prependRequiredIntroStep(
  */
 export async function getDailyAdventure(
   input: GetDailyAdventureInput
-): Promise<DailyAdventureResponse>;
-export async function getDailyAdventure(
-  dbOrRepos: DbExecutor | MindKidRepositories,
-  input: GetDailyAdventureInput
-): Promise<DailyAdventureResponse>;
-export async function getDailyAdventure(
-  first: DbExecutor | MindKidRepositories | GetDailyAdventureInput,
-  maybeInput?: GetDailyAdventureInput
 ): Promise<DailyAdventureResponse> {
-  const isLegacyCall = maybeInput !== undefined;
-  const repos = isLegacyCall
-    ? toRepositories(first as DbExecutor | MindKidRepositories)
-    : useOwnerRepositories();
-  const input = isLegacyCall ? maybeInput : (first as GetDailyAdventureInput);
+  const repos = useOwnerRepositories();
 
   const recPayload = await getRecommendationsForChild(repos, {
     childId: input.childId,
@@ -185,18 +154,8 @@ export async function getDailyAdventure(
  */
 export async function getChildMascotGear(
   childId: number
-): Promise<MascotGearResponse>;
-export async function getChildMascotGear(
-  dbOrRepos: DbExecutor | MindKidRepositories,
-  childId: number
-): Promise<MascotGearResponse>;
-export async function getChildMascotGear(
-  first: DbExecutor | MindKidRepositories | number,
-  maybeChildId?: number
 ): Promise<MascotGearResponse> {
-  const isLegacyCall = typeof first !== "number";
-  const repos = isLegacyCall ? toRepositories(first) : useOwnerRepositories();
-  const childId = isLegacyCall ? (maybeChildId as number) : first;
+  const repos = useOwnerRepositories();
 
   const [badgeCodes, gearRow] = await Promise.all([
     repos.badges.listBadgeCodesForChild(childId),
@@ -230,23 +189,8 @@ export async function getChildMascotGear(
 export async function updateChildMascotGear(
   childId: number,
   input: MascotGearPutInput
-): Promise<MascotGearPutResponse>;
-export async function updateChildMascotGear(
-  dbOrRepos: DbExecutor | MindKidRepositories,
-  childId: number,
-  input: MascotGearPutInput
-): Promise<MascotGearPutResponse>;
-export async function updateChildMascotGear(
-  first: DbExecutor | MindKidRepositories | number,
-  second: number | MascotGearPutInput,
-  third?: MascotGearPutInput
 ): Promise<MascotGearPutResponse> {
-  const isLegacyCall = typeof first !== "number";
-  const repos = isLegacyCall ? toRepositories(first) : useOwnerRepositories();
-  const childId = isLegacyCall ? (second as number) : first;
-  const input = isLegacyCall
-    ? (third as MascotGearPutInput)
-    : (second as MascotGearPutInput);
+  const repos = useOwnerRepositories();
 
   if (input.equipped_gear_code !== null) {
     const badgeCodes = await repos.badges.listBadgeCodesForChild(childId);
@@ -276,20 +220,8 @@ export async function updateChildMascotGear(
  */
 export async function getStickerDiorama(
   input: GetStickerDioramaInput
-): Promise<StickerDioramaResponse>;
-export async function getStickerDiorama(
-  dbOrRepos: DbExecutor | MindKidRepositories,
-  input: GetStickerDioramaInput
-): Promise<StickerDioramaResponse>;
-export async function getStickerDiorama(
-  first: DbExecutor | MindKidRepositories | GetStickerDioramaInput,
-  maybeInput?: GetStickerDioramaInput
 ): Promise<StickerDioramaResponse> {
-  const isLegacyCall = maybeInput !== undefined;
-  const repos = isLegacyCall
-    ? toRepositories(first as DbExecutor | MindKidRepositories)
-    : useOwnerRepositories();
-  const input = isLegacyCall ? maybeInput : (first as GetStickerDioramaInput);
+  const repos = useOwnerRepositories();
 
   const [placementRows, stickerRows] = await Promise.all([
     repos.kidWorld.listPlacements(input.childId, input.themeCode),
@@ -332,23 +264,8 @@ export async function getStickerDiorama(
 export async function saveStickerDiorama(
   childId: number,
   payload: StickerDioramaPutInput
-): Promise<StickerDioramaPutResponse>;
-export async function saveStickerDiorama(
-  dbOrRepos: DbExecutor | MindKidRepositories,
-  childId: number,
-  payload: StickerDioramaPutInput
-): Promise<StickerDioramaPutResponse>;
-export async function saveStickerDiorama(
-  first: DbExecutor | MindKidRepositories | number,
-  second: number | StickerDioramaPutInput,
-  third?: StickerDioramaPutInput
 ): Promise<StickerDioramaPutResponse> {
-  const isLegacyCall = typeof first !== "number";
-  const repos = isLegacyCall ? toRepositories(first) : useOwnerRepositories();
-  const childId = isLegacyCall ? (second as number) : first;
-  const payload = isLegacyCall
-    ? (third as StickerDioramaPutInput)
-    : (second as StickerDioramaPutInput);
+  const repos = useOwnerRepositories();
 
   const ownedRows = await repos.childStickers.listByChild(
     childId,
