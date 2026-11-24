@@ -209,6 +209,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | Mã | HTTP | Khi nào |
 |---|:--:|---|
 | `VALIDATION_FAILED` | 422 | Zod fail, `details.fields[]` |
+| `INVALID_JSON_BODY` | 400 | Body request không parse được thành JSON (cú pháp hỏng). Body rỗng thật vẫn hợp lệ; không nuốt thành `{}` |
 | `RATE_LIMITED` | 429 | `details.retry_after_s` |
 | `UNSUPPORTED_MEDIA_TYPE` | 415 | MIME không cho phép |
 | `PAYLOAD_TOO_LARGE` | 413 | |

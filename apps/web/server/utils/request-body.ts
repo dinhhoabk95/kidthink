@@ -1,3 +1,4 @@
+import { InvalidJsonBodyError } from "@mindkid/errors/common";
 import { getQuery, type H3Event, readBody } from "h3";
 import {
   assertPayloadSize,
@@ -13,6 +14,26 @@ export interface JsonRecord {
   [key: string]: JsonValue | undefined;
 }
 export type JsonArray = JsonValue[];
+
+const BAD_REQUEST_STATUS = 400;
+
+/**
+ * `readBody` của h3 ném 400 "Invalid JSON body" khi cú pháp hỏng. Lỗi đó phải
+ * tới client (`INVALID_JSON_BODY`) — nuốt thành `{}` làm route toàn-optional trả
+ * 200 no-op. Mọi lỗi khác (không có stream body ở test đơn vị…) coi như không có body.
+ */
+async function readBodyOrUndefined(
+  event: H3Event
+): Promise<JsonRecord | undefined> {
+  return await readBody<JsonRecord>(event).catch(
+    (error: Error & { statusCode?: number }) => {
+      if (error.statusCode === BAD_REQUEST_STATUS) {
+        throw new InvalidJsonBodyError();
+      }
+      return undefined;
+    }
+  );
+}
 
 /**
  * Đọc body request có kiểm tra trần kích thước tối đa.
@@ -41,7 +62,7 @@ export async function readJsonBodyWithLimit<T = JsonRecord>(
 ): Promise<T> {
   assertRequestBodySize(event, maxBytes);
   const parsed =
-    (await readBody<JsonRecord>(event).catch(() => undefined)) ??
+    (await readBodyOrUndefined(event)) ??
     (Reflect.get(event, "_body") as JsonRecord | undefined) ??
     (Reflect.get(event.context, "body") as JsonRecord | undefined);
 
@@ -55,9 +76,7 @@ export async function readJsonBodyWithLimit<T = JsonRecord>(
  * Khuyến nghị: dùng `defineApiRoute` cho route mới.
  */
 export async function readRequestBody(event: H3Event): Promise<JsonRecord> {
-  const parsed = (await readBody<JsonRecord>(event).catch(() => undefined)) as
-    | JsonRecord
-    | undefined;
+  const parsed = await readBodyOrUndefined(event);
   if (isNonEmptyRecord(parsed)) {
     return parsed;
   }

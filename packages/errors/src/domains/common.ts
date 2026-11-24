@@ -29,6 +29,16 @@ export const ValidationFailedError = defineError({
   status: 422,
 });
 
+/**
+ * Body request không phải JSON hợp lệ (cú pháp hỏng) — khác `VALIDATION_FAILED`
+ * ở chỗ chưa tới bước Zod. Body rỗng thật vẫn hợp lệ và đọc thành `{}`.
+ */
+export const InvalidJsonBodyError = defineError({
+  code: "INVALID_JSON_BODY",
+  message: "Nội dung yêu cầu không phải JSON hợp lệ.",
+  status: 400,
+});
+
 export const RateLimitedError = defineError<{ readonly retry_after_s: number }>(
   {
     code: "RATE_LIMITED",

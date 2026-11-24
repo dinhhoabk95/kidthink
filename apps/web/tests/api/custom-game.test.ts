@@ -249,6 +249,25 @@ describe("P4.5 Custom Game API Endpoints (BR-CGB-01..10)", () => {
     });
   });
 
+  it("Scenario: PATCH với JSON hỏng trả 400 INVALID_JSON_BODY, không thành no-op 200", async () => {
+    const createEvent = makeUserEvent(userA.id, {}, validGT001Input, "POST");
+    const created = (await createCustomGameHandler(createEvent)) as any;
+
+    const patchEvent = makeUserEvent(
+      userA.id,
+      { uuid: created.uuid },
+      undefined,
+      "PATCH"
+    );
+    patchEvent.node.req.headers["content-type"] = "application/json";
+    patchEvent._requestBody = Buffer.from('{"title":');
+
+    await expect(patchCustomGameHandler(patchEvent)).rejects.toMatchObject({
+      code: "INVALID_JSON_BODY",
+      status: 400,
+    });
+  });
+
   it("Scenario: PATCH updates game with versioning", async () => {
     const createEvent = makeUserEvent(userA.id, {}, validGT001Input, "POST");
     const created = (await createCustomGameHandler(createEvent)) as any;
