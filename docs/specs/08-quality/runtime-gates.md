@@ -102,10 +102,9 @@ mà file này theo dõi; danh sách đủ là nội dung các thư mục `apps/*
 | `packages/content-build/tests/gates/theme-registry.test.ts` | `BR-CTR-*` | có |
 | `packages/emoji/tests/gates/catalog-integrity.test.ts` | `BR-EMJ-09/10/11` (tự nhất quán danh mục) | 4 |
 | `packages/content-build/tests/gates/corpus-truth.test.ts` | `BR-LCD-01`, `BR-LCD-10`, `BR-GLR-06` | 2 |
-| `packages/content-build/tests/gates/cli-gates.test.ts` | ba cổng CLI (`engine-depth`, `go-live`, `lesson-supply`) chạy được và trả lời | 1 |
+| `packages/content-build/tests/gates/go-live-readiness.test.ts` | hai cổng CLI (`engine-depth`, `go-live`) chạy được và trả lời (gộp từ `cli-gates`, 2026-11-24) | 1 |
 | `packages/ui/tests/tokens.test.ts` | `BR-DSC-03/06/14` | có |
 | `packages/game-engine/tests/gates/render.test.ts` | `BR-ERC-01..05` | có |
-| `packages/game-engine/tests/gates/engine-specs.test.ts` | `BR-ESS-01..15` | có |
 | `packages/game-engine/tests/gates/templates.test.ts` | `BR-TAK-01..14` | có |
 | `packages/game-engine/tests/gates/render-viewport.test.ts` | `BR-ERC-04` | có |
 | `packages/game-engine/tests/gates/logic-space.test.ts` | `BR-ENG-14` | có |
@@ -158,6 +157,32 @@ bỏ sót ít nhất tám khoản; bảng dưới là bản đủ.
 | `lint-kid-surface.ts` | `BR-BPS-03` `BR-FBK-01/08` `BR-HPL-05` `BR-NIB-05` `BR-PEN-03/04` `BR-PGT-05` `BR-SCO-02` | MẤT |
 | `lint-user-vocabulary.ts` | `BR-GLOS-03/04` | MẤT |
 | `lint-rule-ids.ts` | `BR-REG2-01..04` | MẤT |
+
+### 3b. Cổng gỡ ở Phase 7 dọn test cổng (2026-11-24)
+
+Các cổng dưới đây bị xoá hoặc cắt vì trùng việc hay đo thứ không còn đáng đo. Cột cuối ghi luật
+nào **không còn cổng** sau khi gỡ.
+
+| Cổng đã gỡ / cắt | Luật | Trạng thái sau khi gỡ |
+| --- | --- | --- |
+| `apps/web/tests/gates/design-system-contract` | `BR-DSC-27` (`tabular-nums` cho số) | **MẤT** |
+| `packages/content-build/tests/gates/montessori-corpus` | `BR-MGL-01/02` | **MẤT phần quét corpus**; `src/gates/montessori-gate.ts` còn nhưng không còn test cổng riêng |
+| `engine-seed-matrix` (test, `src/gates/`, CLI `check-engine-seed-matrix`) | `BR-CSM-03`, `BR-ESS-15` | **MẤT** |
+| `gate-ladder` (bậc thang cổng 1 và cổng 5 trên corpus) | `BR-ECD-11/13`, `BR-CSA-16` | Còn: `check-seed-gates.test.ts` có ca "Cổng 0..8 sạch" (`otherIssues` rỗng) chạy `runEightGates` trên toàn `ALL_SEED_LEVELS`; ca âm band ở `eight-gates.test.ts` |
+| `backfill-tasks-179-180` | `BR-SKQ-02`, `BR-TAG-01..04` | Còn: `eight-gates` (cổng 1 contract, cổng 5 tag, `skill_codes`, `learning_objective_codes`, band tuổi) trên toàn corpus qua `check-seed-gates`; hạn ngạch ở `skill-quota`. Không còn: đếm riêng 220 level backfill |
+| `packages/game-engine/tests/gates/engine-behavior` (+ helper) | `BR-EBD-01..12`, `BR-ESS-16/17` | **MẤT**; chỉ còn nửa corpus của `BR-EBD-04` ở `engine-behavior-corpus` (đọc `engine-behavior-domain.json`, `engine-behavior-baseline.json`) |
+| `packages/game-engine/tests/gates/engine-turn` | `BR-ETS-01..12`, `BR-ESS-18/19`, `BR-PNR-03/04` | **MẤT**; `one-narration-source` và `play-narration-behavior` còn phủ một phần `BR-PNR-03/04` |
+| `packages/game-engine/tests/gates/engine-specs` (+ `engine-spec-planned/ready.json`) | `BR-ESS-01..15` | **MẤT** |
+| `child-data-compliance.test.ts` | `BR-CDC-06/08/11` | `BR-CDC-06` chuyển sang `packages/shared/tests/child-data.test.ts`; `BR-CDC-11` quét repo thật trong `admin-route-gates.test.ts`; `BR-CDC-08` do `public-scripts` đảm nhiệm (ca âm bằng fixture) — **MẤT** danh sách domain `mixpanel`/`segment`/`amplitude`/`hotjar` |
+| `engine-input-dispatch` (ca liệt kê `GT-001..036`) | không có `BR-*` | Ca đếm `typeof session.*` còn |
+| `taxonomy-refs` quét `docs/**` | — | **MẤT** phần mã kỹ năng chết trong `docs/`; vẫn quét `packages/content*/src` |
+| `theme-registry` ca `BR-CTR-12` (một nguồn danh sách chủ đề) | `BR-CTR-12` | **MẤT** |
+| `packages/shared/tests/quality-rules.test.ts` ca tài liệu AIG | `BR-AIG-03` | **MẤT** (tài liệu không còn bị đối chiếu); `BR-AIG-04` còn |
+| `packages/db/tests/unit/schema-files.test.ts` trần 400 dòng | `BR-DM-11` | **MẤT** |
+
+Lưu ý `BR-TST-02` (cấm mock DB): regex đã sửa để bắt `vi.mock` driver DB (`drizzle-orm`, `postgres`, `pg`,
+`*sqlite*`) kể cả khi có factory. Tám lời gọi `vi.mock("@mindkid/db")` trong 7 file test hiện **không**
+bị bắt vì `@mindkid/db` là package nội bộ, không phải driver.
 
 ## 4. Câu hỏi mở
 
