@@ -54,24 +54,39 @@ interface CloudflareRequestContext {
 const AUTH_DO_NAME = "global-auth-v1";
 const QUEUE_DO_NAME = "queue-v1";
 
+/**
+ * Stub DO gắn với I/O context của request đã tạo ra nó: giữ stub ở module-level rồi dùng ở request
+ * khác gây `Cannot perform I/O on behalf of a different request` (đã đo bằng `wrangler dev`, G9).
+ * Vì vậy chỉ giữ NAMESPACE (binding ổn định theo isolate) và lấy stub mới ở MỖI lần gọi.
+ */
 function wireAuthCoordinator(
   namespace: DurableObjectNamespaceBinding<AuthDoStub>
 ): void {
-  const authStub = namespace.get(namespace.idFromName(AUTH_DO_NAME));
-  registerAuthCoordinatorPort(authStub);
+  const stub = (): AuthDoStub =>
+    namespace.get(namespace.idFromName(AUTH_DO_NAME));
+
+  registerAuthCoordinatorPort({
+    kvGet: (key) => stub().kvGet(key),
+    kvGetDel: (key) => stub().kvGetDel(key),
+    kvSet: (key, value, ttlSeconds) => stub().kvSet(key, value, ttlSeconds),
+    kvDel: (keys) => stub().kvDel(keys),
+    kvIncr: (key) => stub().kvIncr(key),
+    kvExpire: (key, seconds) => stub().kvExpire(key, seconds),
+    kvDeleteByPrefix: (prefix) => stub().kvDeleteByPrefix(prefix),
+  });
 
   const rlPort: RateLimitCoordinatorPort = {
-    consumeRateLimit: (input) => authStub.consumeRateLimit(input),
+    consumeRateLimit: (input) => stub().consumeRateLimit(input),
   };
   registerCloudflareRateLimitPort(rlPort);
 
   const kvPort: CacheKvPort = {
-    get: (key) => authStub.kvGet(key),
+    get: (key) => stub().kvGet(key),
     set: async (key, value, ttlSeconds) => {
-      await authStub.kvSet(key, value, ttlSeconds);
+      await stub().kvSet(key, value, ttlSeconds);
     },
-    del: (...keys) => authStub.kvDel(keys),
-    deleteByPrefix: (prefix) => authStub.kvDeleteByPrefix(prefix),
+    del: (...keys) => stub().kvDel(keys),
+    deleteByPrefix: (prefix) => stub().kvDeleteByPrefix(prefix),
   };
   registerCloudflareCachePort(kvPort);
 }
@@ -80,12 +95,12 @@ function wireJobQueueCoordinator(
   namespace: DurableObjectNamespaceBinding<JobQueueCoordinatorPort>
 ): void {
   // Một DO duy nhất `queue-v1`, không sharding (BR-JOB-11). Không đăng ký
-  // `waitUntil`: nó thuộc về từng request nên không đặt toàn cục được; enqueue
-  // là một RPC ngắn nên được await trực tiếp.
-  const stub = namespace.get(namespace.idFromName(QUEUE_DO_NAME));
+  // `waitUntil`: enqueue là một RPC ngắn nên được await trực tiếp. Stub lấy mới mỗi lần gọi (G9).
+  const stub = (): JobQueueCoordinatorPort =>
+    namespace.get(namespace.idFromName(QUEUE_DO_NAME));
   registerCloudflareQueuePort({
-    enqueueBatch: (jobs) => stub.enqueueBatch(jobs),
-    getStats: () => stub.getStats(),
+    enqueueBatch: (jobs) => stub().enqueueBatch(jobs),
+    getStats: () => stub().getStats(),
   });
 }
 

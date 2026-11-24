@@ -4,6 +4,7 @@ import {
   CloudflareJobQueueController,
   type CloudflareWorkerEnv,
   type DurableObjectStateLike,
+  type JobQueueStub,
   QUEUE_DO_NAME,
   runUnifiedCronTick,
 } from "#src/cloudflare-runtime";
@@ -116,7 +117,14 @@ export default {
     if (!namespace) {
       throw new Error("JOB_QUEUE_DO binding is missing on mindkid-worker");
     }
-    const stub = namespace.get(namespace.idFromName(QUEUE_DO_NAME));
-    ctx.waitUntil(runUnifiedCronTick(controller.scheduledTime, env, stub));
+    // Stub lấy mới ở mỗi lần gọi, không giữ qua lần `scheduled()` khác (G9).
+    const stub = (): JobQueueStub =>
+      namespace.get(namespace.idFromName(QUEUE_DO_NAME));
+    ctx.waitUntil(
+      runUnifiedCronTick(controller.scheduledTime, env, {
+        enqueueBatch: (jobs) => stub().enqueueBatch(jobs),
+        getStats: () => stub().getStats(),
+      })
+    );
   },
 };

@@ -96,24 +96,42 @@ export function wireCloudflareIsolatePorts(env: CloudflareWorkerEnv): void {
     return;
   }
 
-  const authStub = authNamespace.get(authNamespace.idFromName(AUTH_DO_NAME));
-  registerAuthCoordinatorPort(authStub);
+  // Giữ NAMESPACE, lấy stub mới ở mỗi lần gọi: stub gắn với I/O context của lần gọi tạo ra nó
+  // (`Cannot perform I/O on behalf of a different request`, G9).
+  const authStub = (): WorkerAuthCoordinatorStub =>
+    authNamespace.get(authNamespace.idFromName(AUTH_DO_NAME));
+  registerAuthCoordinatorPort({
+    kvGet: (key) => authStub().kvGet(key),
+    kvGetDel: (key) => authStub().kvGetDel(key),
+    kvSet: (key, value, ttlSeconds) => authStub().kvSet(key, value, ttlSeconds),
+    kvDel: (keys) => authStub().kvDel(keys),
+    kvIncr: (key) => authStub().kvIncr(key),
+    kvExpire: (key, seconds) => authStub().kvExpire(key, seconds),
+    kvDeleteByPrefix: (prefix) => {
+      const stub = authStub();
+      return stub.kvDeleteByPrefix
+        ? stub.kvDeleteByPrefix(prefix)
+        : Promise.resolve(0);
+    },
+  });
 
   const cachePort: CacheKvPort = {
-    get: (key) => authStub.kvGet(key),
+    get: (key) => authStub().kvGet(key),
     set: async (key, value, ttlSeconds) => {
-      await authStub.kvSet(key, value, ttlSeconds);
+      await authStub().kvSet(key, value, ttlSeconds);
     },
-    del: (...keys) => authStub.kvDel(keys),
-    deleteByPrefix: (prefix) =>
-      authStub.kvDeleteByPrefix
-        ? authStub.kvDeleteByPrefix(prefix)
-        : Promise.resolve(0),
+    del: (...keys) => authStub().kvDel(keys),
+    deleteByPrefix: (prefix) => {
+      const stub = authStub();
+      return stub.kvDeleteByPrefix
+        ? stub.kvDeleteByPrefix(prefix)
+        : Promise.resolve(0);
+    },
   };
   registerCloudflareCachePort(cachePort);
 
   const rateLimitPort: RateLimitCoordinatorPort = {
-    consumeRateLimit: (input) => authStub.consumeRateLimit(input),
+    consumeRateLimit: (input) => authStub().consumeRateLimit(input),
   };
   registerCloudflareRateLimitPort(rateLimitPort);
   wiredEnvs.add(env);

@@ -1,3 +1,4 @@
+import { getCloudflareCachePort } from "@mindkid/cache";
 import { describe, expect, it, vi } from "vitest";
 import {
   type CloudflareWorkerEnv,
@@ -31,5 +32,29 @@ describe("wireCloudflareIsolatePorts fail-closed (BR-JOB-12)", () => {
       },
     };
     expect(() => wireCloudflareIsolatePorts(env)).toThrow(DB_BLOBS_RE);
+  });
+
+  it("G9: không giữ stub DO qua lần gọi — mỗi thao tác cache lấy stub mới từ namespace", async () => {
+    const stub = {
+      kvGet: vi.fn(() => Promise.resolve(null)),
+      kvGetDel: vi.fn(),
+      kvSet: vi.fn(),
+      kvDel: vi.fn(),
+      kvIncr: vi.fn(),
+      kvExpire: vi.fn(),
+      kvDeleteByPrefix: vi.fn(),
+      consumeRateLimit: vi.fn(),
+    };
+    const get = vi.fn(() => stub);
+    const env: CloudflareWorkerEnv = {
+      ...baseEnv(),
+      AUTH_COORDINATOR: { idFromName: () => ({}), get },
+    };
+    wireCloudflareIsolatePorts(env);
+    expect(get).not.toHaveBeenCalled();
+    const cache = getCloudflareCachePort();
+    await cache?.get("a");
+    await cache?.get("b");
+    expect(get).toHaveBeenCalledTimes(2);
   });
 });

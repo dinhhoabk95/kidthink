@@ -1,3 +1,4 @@
+import { getCloudflareCachePort } from "@mindkid/cache";
 import { getActiveObjectStorageDriver } from "@mindkid/storage";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -68,7 +69,25 @@ describe("00-cloudflare-bindings fail-closed (BR-JOB-12)", () => {
     };
     wireCloudflareEnv(env);
     wireCloudflareEnv(env);
-    expect(auth.get).toHaveBeenCalledTimes(1);
+    expect(dbMock.registerCloudflareD1Bindings).toHaveBeenCalledTimes(1);
     expect(getActiveObjectStorageDriver()).toBeDefined();
+  });
+
+  it("G9: không giữ stub DO qua request — mỗi lần gọi port lấy stub mới từ namespace", async () => {
+    const auth = makeNamespace();
+    const env = {
+      DB_CORE: fakeD1,
+      DB_BLOBS: fakeD1,
+      AUTH_COORDINATOR: auth,
+    };
+    wireCloudflareEnv(env);
+    // Lúc nối chưa được lấy stub nào (stub gắn với I/O context của request tạo ra nó).
+    expect(auth.get).not.toHaveBeenCalled();
+
+    const cache = getCloudflareCachePort();
+    await cache?.get("k1");
+    await cache?.get("k2");
+    expect(auth.get).toHaveBeenCalledTimes(2);
+    expect(auth.idFromName).toHaveBeenCalledWith("global-auth-v1");
   });
 });

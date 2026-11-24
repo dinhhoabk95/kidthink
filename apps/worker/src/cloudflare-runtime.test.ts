@@ -97,9 +97,14 @@ describe("CloudflareJobQueueController (#31-CF DO bindings)", () => {
     const drained = await controller.alarm();
     expect(drained.processed).toBe(1);
     expect(drained.failed).toBe(0);
+    expect(registerAuthCoordinatorPort).toHaveBeenCalledTimes(1);
+    // G9: port giữ namespace, lấy stub mới ở mỗi lần gọi (không giữ stub qua lần gọi).
+    expect(getStub).not.toHaveBeenCalled();
+    const authPort = vi.mocked(registerAuthCoordinatorPort).mock.calls[0]?.[0];
+    expect(await authPort?.kvGet("auth-k")).toBe("val");
     expect(idFromName).toHaveBeenCalledWith("global-auth-v1");
     expect(getStub).toHaveBeenCalledWith(idObj);
-    expect(registerAuthCoordinatorPort).toHaveBeenCalledWith(stub);
+    expect(stub.kvGet).toHaveBeenCalledWith("auth-k");
     expect(registerCloudflareCachePort).toHaveBeenCalledTimes(1);
 
     const cachePort = vi.mocked(registerCloudflareCachePort).mock.calls[0]?.[0];

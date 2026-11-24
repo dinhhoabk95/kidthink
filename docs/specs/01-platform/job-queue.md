@@ -77,8 +77,9 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 | `BR-JOB-10` | Trên Cloudflare `backup:postgres` và `backup:verify` **không** được dispatch (`CLOUDFLARE_SKIPPED_JOBS`); mọi job theo lịch còn lại phải được dispatch ít nhất một lần/chu kỳ của nó | Backup D1 do workflow riêng ([`backup-and-restore.md`](backup-and-restore.md) `BR-BAK-09`); test drift chặn việc thêm job mà quên scheduler |
 | `BR-JOB-11` | Trên Cloudflare chỉ có **một** Durable Object hàng đợi (`JobQueueDO`, tên `queue-v1`), không sharding; `JobQueueDO` và `AuthCoordinatorDO` cùng nằm trong Worker `mindkid-worker`, web gọi qua binding `script_name: "mindkid-worker"` | Sharding theo ký tự đầu `jobId` làm job trùng khử không được (`BR-JOB-02`) và vỡ `getStats`; hai DO chung một script để có một migration, một bundle |
 | `BR-JOB-12` | Trên Cloudflare, nối port **đóng-khi-lỗi**: `env` chỉ được ghi nhận là đã nối **sau khi** mọi port nối xong; thiếu binding `AUTH_COORDINATOR` hoặc `DB_BLOBS` (web) / `DB_CORE`, `DB_BLOBS`, `AUTH_COORDINATOR` (worker) thì ném lỗi rõ ràng, không chạy nửa vời | Nối dở rồi đánh dấu xong làm mọi request sau đó chạy với port thiếu mà không ai biết |
-| `BR-JOB-14` | `JobQueueDO` giữ bảng `completed_job_ids(job_id PRIMARY KEY, done_at)` **48 giờ**: `enqueueBatch` bỏ qua `jobId` đã hoàn tất trong cửa sổ đó; mỗi job xoá khỏi `queued_jobs` và ghi vào `completed_job_ids` **ngay sau khi chạy xong** (không gom cuối lô); `drainBatch` dọn dòng `done_at` quá 48 giờ; lỗi ném từ `onDeadLetter` bị nuốt và log, không làm lô chạy lại | Alarm bị ngắt/ném giữa lô thì job đã chạy xong không được chạy lại; cron `*/5` đẩy lại id cũ trong 48 giờ không được chạy trùng |
 | `BR-JOB-13` | Engine của `JobQueueDO` không bao giờ được đăng ký toàn cục; `scheduled()` và web enqueue qua stub DO | Engine gắn với I/O context của DO — dùng từ ngoài DO là lỗi "different request" hoặc ghi sai chỗ |
+| `BR-JOB-14` | `JobQueueDO` giữ bảng `completed_job_ids(job_id PRIMARY KEY, done_at)` **48 giờ**: `enqueueBatch` bỏ qua `jobId` đã hoàn tất trong cửa sổ đó; mỗi job xoá khỏi `queued_jobs` và ghi vào `completed_job_ids` **ngay sau khi chạy xong** (không gom cuối lô); `drainBatch` dọn dòng `done_at` quá 48 giờ; lỗi ném từ `onDeadLetter` bị nuốt và log, không làm lô chạy lại | Alarm bị ngắt/ném giữa lô thì job đã chạy xong không được chạy lại; cron `*/5` đẩy lại id cũ trong 48 giờ không được chạy trùng |
+| `BR-JOB-15` | Port nối với Durable Object (auth/cache/rate-limit/queue) giữ namespace và lấy stub mới ở mỗi lần gọi; Cấm — **NEVER** giữ stub DO ở biến module/toàn cục | Stub gắn với I/O context của request tạo ra nó |
 
 ## 7. Data
 
@@ -146,6 +147,11 @@ chọn theo điều kiện thời gian, không theo tick; job chạy một lần
 Port (D1, auth, cache, queue, storage) nối bằng `register*Port` toàn cục một lần cho mỗi `env`,
 không dùng `AsyncLocalStorage.enterWith`: workerd báo `enterWith() is not implemented` (đã đo
 bằng `wrangler dev`).
+
+Stub Durable Object gắn với I/O context của request/lần gọi đã tạo ra nó: giữ stub ở biến module rồi dùng
+ở request khác ném `Cannot perform I/O on behalf of a different request` (đã đo bằng `wrangler dev
+--local`: request 1 xong, request 2 trở đi lỗi). Vì vậy `register*Port` chỉ giữ **namespace** và gọi
+`namespace.get(namespace.idFromName(...))` ở **mỗi** lần gọi (`BR-JOB-15`).
 
 Cổng queue **không** đăng ký chung một chỗ: ngoài `JobQueueDO` (web, `scheduled()`) là **stub** của DO
 (`namespace.get(idFromName("queue-v1"))`); engine SQLite chỉ hiệu lực **bên trong** ngữ cảnh async của
