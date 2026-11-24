@@ -25,13 +25,21 @@ depends_on:
 
 ## 1. Objective
 
+**Trạng thái hiện tại (cập nhật 2026-11-25):** cơ sở dữ liệu là D1 (production Cloudflare) và
+SQLite (dev/test). Keyspace auth (`ba:v1:user:*`, `ba:v1:manager:*`) trên Cloudflare nằm trong
+`AuthCoordinatorDO` (SQLite nội bộ của Durable Object, `apps/worker/src/durable-objects/auth-coordinator.ts`);
+mỗi lời gọi DO là nguyên tử nên đóng vai trò "transaction" ở các mục bên dưới. Valkey chỉ còn là adapter
+dev local (`packages/auth/src/redis-client.ts`, sẽ gỡ ở đợt sau). Mọi chữ "Redis" trong file này nghĩa là
+**auth keyspace fail-closed** (DO trên Cloudflare, Valkey ở dev local); các chi tiết AOF, `noeviction`, Lua
+chỉ áp dụng cho Valkey dev.
+
 **Cập nhật 2026-11-21 (Task #319 — Tích hợp Better Auth 2-instance):** xác thực trình duyệt của cả
 User và Manager chuẩn hoá trên **Better Auth** (`better-auth`, `@better-auth/drizzle-adapter`,
 `@better-auth/passkey`) được bọc hoàn toàn trong driver nội bộ `@mindkid/auth` (`SPEC.md` §0 D10).
 Hệ thống chạy **hai instance Better Auth tách biệt tuyệt đối**: `userAuth` tại
-`/api/auth/users/**` và `managerAuth` tại `/api/auth/managers/**`, dùng hai bộ bảng PostgreSQL riêng,
+`/api/auth/users/**` và `managerAuth` tại `/api/auth/managers/**`, dùng hai bộ bảng D1/SQLite riêng,
 hai tiền tố cookie riêng (`mindkid-user` và `mindkid-manager`), hai khoá HMAC dẫn xuất riêng và hai
-tiền tố Valkey `secondaryStorage` riêng (`ba:v1:user:*` và `ba:v1:manager:*`) ở chế độ **fail-closed**.
+tiền tố `secondaryStorage` riêng (`ba:v1:user:*` và `ba:v1:manager:*`) ở chế độ **fail-closed**.
 
 Phiên mặc định (`rememberMe=false`) là session cookie hết hạn tuyệt đối sau **1 giờ** (`3600s`),
 không sliding (`disableSessionRefresh: true`). Khi người dùng chọn `rememberMe=true`, phiên có hạn
@@ -39,7 +47,7 @@ tuyệt đối tối đa **365 ngày** không sliding, đồng thời đồng b�
 `manager_sessions` (`storeSessionInDatabase: true`) để liệt kê và thu hồi từng thiết bị tức thì.
 Cửa sổ phiên tươi `freshAge: 300` (**5 phút**) kết hợp mốc `reauthAt` bảo vệ các thao tác nhạy cảm.
 
-Mật khẩu **luôn** băm bằng **PBKDF2-SHA256** (ưu tiên WebCrypto, đúng `100.000` vòng lặp — trần WebCrypto của Workers, xem D13 ở `docs/SPEC.md` §0; định dạng `pbkdf2$<iter>$<saltHex>$<hashHex>`) ở mọi runtime: Node, Cloudflare Workers và Postgres sau này đều verify cùng một chuỗi, nên chuyển hạ tầng không cần rehash hay reset mật khẩu. `verifyPassword` đọc `pbkdf2$` và `scrypt$` (legacy); hash argon2id không còn được hỗ trợ (đã gỡ phụ thuộc native). Kho `secondaryStorage` (`ba:v1:user:*` và `ba:v1:manager:*`) chạy trên `AuthCoordinatorDO` (Durable Object SQLite nhất quán mạnh) ở Giai đoạn 1 và trên Valkey 9 ở Giai đoạn 2, cả hai đều **fail-closed**. TOTP + Backup Codes dùng
+Mật khẩu **luôn** băm bằng **PBKDF2-SHA256** (ưu tiên WebCrypto, đúng `100.000` vòng lặp — trần WebCrypto của Workers, xem D13 ở `docs/SPEC.md` §0; định dạng `pbkdf2$<iter>$<saltHex>$<hashHex>`) ở mọi runtime: Node, Cloudflare Workers và D1/SQLite đều verify cùng một chuỗi, nên chuyển hạ tầng không cần rehash hay reset mật khẩu. `verifyPassword` đọc `pbkdf2$` và `scrypt$` (legacy); hash argon2id không còn được hỗ trợ (đã gỡ phụ thuộc native). Kho `secondaryStorage` (`ba:v1:user:*` và `ba:v1:manager:*`) chạy trên `AuthCoordinatorDO` (Durable Object SQLite nhất quán mạnh) ở production Cloudflare và trên Valkey ở dev local (sẽ gỡ), cả hai đều **fail-closed**. TOTP + Backup Codes dùng
 plugin `twoFactor`; WebAuthn/Passkey dùng `@better-auth/passkey` cho cả User và Manager; OAuth
 Google/Facebook chỉ bật trên `userAuth` với `disableImplicitLinking: true` và
 `disableImplicitSignUp: true`. Nghỉ hưu hoàn toàn `nuxt-auth-utils`, `openid-client` và `otpauth`;
@@ -92,8 +100,8 @@ cấm thêm bất kỳ framework auth song song nào khác (Supabase Auth, Sideb
 6. Client chỉ tự thử restore lúc bootstrap hoặc sau một request đọc/idempotent nhận 401. Không
    tự retry request đổi trạng thái để tránh thực thi hai lần.
 7. Logout canonical kiểm CSRF, thu hồi Redis trước, xoá remember/session locator và cập nhật
-   metadata PostgreSQL idempotently. Logout-all dùng Redis transaction thu hồi toàn bộ device
-   index của account trước khi cập nhật generation/audit ở PostgreSQL.
+   metadata D1/SQLite idempotently. Logout-all dùng Redis transaction thu hồi toàn bộ device
+   index của account trước khi cập nhật generation/audit ở D1/SQLite.
 
 Manager: bước tạo session chỉ chạy sau MFA thành công. `rememberMe` được bind vào challenge
 credential của bước mật khẩu; client không thể thêm tuỳ chọn này vào callback MFA khác.
@@ -107,7 +115,7 @@ credential của bước mật khẩu; client không thể thêm tuỳ chọn n�
 | Remember token đã dùng lại | Thu hồi mọi credential/session của account, 401 `SESSION_REVOKED`, ghi audit |
 | Remember đã tới mốc 365 ngày | 401; đăng nhập đầy đủ lại, rotation không gia hạn |
 | Session/remember sai namespace | 401, không thử namespace còn lại |
-| Redis không tới được | 503 `SERVICE_UNAVAILABLE`; không fallback file, memory, PostgreSQL hoặc JWT |
+| Redis không tới được | 503 `SERVICE_UNAVAILABLE`; không fallback file, memory, D1/SQLite hoặc JWT |
 | Redis miss/eviction | Coi session hết; chỉ restore được nếu remember record vẫn tồn tại trong Redis |
 | Manager chưa qua MFA | 428 `MFA_REQUIRED`; không tạo session, remember hay metadata thiết bị |
 | MFA challenge thiếu/sai/hết hạn/đã dùng | 401; không tạo session và không fallback sang JWT challenge |
@@ -120,7 +128,7 @@ credential của bước mật khẩu; client không thể thêm tuỳ chọn n�
 |---|---|---|
 | `BR-AUT-02` | Guard là hàm **sync**, đọc `event.context`. Cấm — NEVER `await requireUserAuth()` | Guard trả Promise mời quên `await`, và quên `await` nghĩa là không có guard |
 | `BR-AUT-06` | CSRF token **không** HttpOnly, gửi qua header `x-csrf-token` trên **mọi** route đổi trạng thái | Cookie auth tự động đi kèm request từ site khác; header thì không |
-| `BR-AUT-08` | Mật khẩu hash bằng **PBKDF2-SHA256** (WebCrypto, đúng 100.000 vòng — trần WebCrypto của Workers; `verifyPassword` từ chối hash > 100.000 vòng; định dạng `pbkdf2$<iter>$<salt>$<hash>`); không bcrypt, MD5, SHA trần hay argon2id | Một định dạng di động giữa Node, Workers và Postgres, không cần rehash khi đổi hạ tầng; salt ngẫu nhiên + vòng lặp chống dò offline |
+| `BR-AUT-08` | Mật khẩu hash bằng **PBKDF2-SHA256** (WebCrypto, đúng 100.000 vòng — trần WebCrypto của Workers; `verifyPassword` từ chối hash > 100.000 vòng; định dạng `pbkdf2$<iter>$<salt>$<hash>`); không bcrypt, MD5, SHA trần hay argon2id | Một định dạng di động giữa Node và Workers (D1/SQLite), không cần rehash khi đổi hạ tầng; salt ngẫu nhiên + vòng lặp chống dò offline |
 | `BR-AUT-09` | Rate limit đăng nhập theo **IP và account** | Hai trục chặn cả quét diện rộng lẫn nhắm một tài khoản |
 | `BR-AUT-10` | Lỗi đăng nhập không tiết lộ tài khoản tồn tại; thời gian phản hồi không lệch | Ngăn enumeration email |
 | `BR-AUT-11` | Manager không có endpoint đăng ký công khai | Manager là tài khoản vận hành, chỉ tạo qua luồng kiểm soát |
@@ -137,20 +145,20 @@ credential của bước mật khẩu; client không thể thêm tuỳ chọn n�
 | `BR-AUT-28` | `rememberMe` mặc định false; khi true có hạn tuyệt đối tối đa 365 ngày từ login gốc và rotation không gia hạn | “Ghi nhớ một năm” không được biến thành đăng nhập vĩnh viễn |
 | `BR-AUT-29` | Remember credential xoay nguyên tử mỗi lần dùng; reuse thu hồi toàn bộ account | Một token cũ xuất hiện lại là bằng chứng credential bị sao chép |
 | `BR-AUT-30` | Session, remember và index account/device là một keyspace Redis fail-closed; create/restore/revoke dùng transaction hoặc Lua nguyên tử | Multi-device revoke không được để lại credential mồ côi |
-| `BR-AUT-31` | Redis lỗi trả 503; cấm fallback sang file, memory, PostgreSQL metadata, sealed identity hoặc JWT | Fallback làm revocation và hành vi giữa process không nhất quán |
+| `BR-AUT-31` | Redis lỗi trả 503; cấm fallback sang file, memory, D1/SQLite metadata, sealed identity hoặc JWT | Fallback làm revocation và hành vi giữa process không nhất quán |
 | `BR-AUT-32` | Session token và từng thành phần selector/verifier của remember credential có entropy tối thiểu 256 bit; Redis chỉ giữ digest, log không ghi token/cookie | Giảm khả năng đoán và thiệt hại khi log/store bị lộ |
 | `BR-AUT-33` | Logout phải qua route canonical có CSRF; `clear()`/DELETE nội bộ không phải logout domain | Xoá riêng cookie không thu hồi credential server-side |
 | `BR-AUT-34` | Manager chỉ nhận remember credential sau MFA; remember restore của cả User/Manager không tạo hoặc làm mới cửa sổ reauth 5 phút | Remember không được bypass MFA lần cấp đầu hoặc quyền nhạy cảm |
 | `BR-AUT-35` | `nuxt-auth-utils` chỉ cung cấp projection/composable; cấm OAuth, password, WebAuthn helper và cấm tin data sealed ngoài locator | Module không có Redis store và không được tạo auth contract thứ hai |
-| `BR-AUT-36` | Redis auth store nằm trong `packages/auth`, dùng client riêng, AOF, `noeviction`, health check và alert; không đi qua `packages/cache` fail-open | Cache miss được phép, session authority thì không |
-| `BR-AUT-37` | PostgreSQL `active_sessions` chỉ là metadata/audit, không chứa session/remember token và không phục hồi auth | Tránh hai authority và cửa sổ revoke liên datastore |
+| `BR-AUT-36` | Auth store nằm trong `packages/auth` (Cloudflare: `AuthCoordinatorDO`; dev local: client Valkey riêng, AOF, `noeviction`), có health check và alert; không đi qua `packages/cache` fail-open | Cache miss được phép, session authority thì không |
+| `BR-AUT-37` | D1/SQLite `active_sessions` chỉ là metadata/audit, không chứa session/remember token và không phục hồi auth | Tránh hai authority và cửa sổ revoke liên datastore |
 | `BR-AUT-38` | Mọi phiên trình duyệt do MindKid phát đều là opaque cookie session; cấm first-party JWT/Bearer trên route User/Manager | Một cơ chế phiên duy nhất giảm bề mặt tấn công và đảm bảo thu hồi tập trung trên Redis |
-| `BR-AUT-39` | `userAuth` và `managerAuth` là **hai instance Better Auth tách biệt**, khác `basePath`, khác `cookiePrefix`, khác khoá HMAC dẫn xuất, khác Redis prefix và khác bảng PostgreSQL | Bảo toàn tuyệt đối ranh giới Actor (`BR-ACT-01`, `BR-SIB-01`) — cookie bề mặt này vô nghĩa trên bề mặt kia |
+| `BR-AUT-39` | `userAuth` và `managerAuth` là **hai instance Better Auth tách biệt**, khác `basePath`, khác `cookiePrefix`, khác khoá HMAC dẫn xuất, khác Redis prefix và khác bảng D1/SQLite | Bảo toàn tuyệt đối ranh giới Actor (`BR-ACT-01`, `BR-SIB-01`) — cookie bề mặt này vô nghĩa trên bề mặt kia |
 | `BR-AUT-40` | Mọi truy cập `better-auth` và `@better-auth/*` chỉ đi qua driver `@mindkid/auth` (`/server` cho Nitro, `/client` cho trình duyệt); `apps/admin` cấm import nhánh server | Tuân thủ `BR-MPA-01` và giữ `apps/admin` thuần static SPA |
 | `BR-AUT-41` | Handler API xác thực trực tiếp qua `userAuth.api.getSession` / `managerAuth.api.getSession` (kèm memoize trong phạm vi 1 request) | Loại bỏ phụ thuộc ngầm vào middleware thứ tự file và chuẩn hoá trên Better Auth Server API |
 | `BR-AUT-42` | `disableSessionRefresh: true` trên cả hai instance; `rememberMe` mặc định `false` (`expiresAt = +1h`), chỉ khi `rememberMe = true` mới đặt `expiresAt = +365d` | Giữ đúng cam kết thời hạn tuyệt đối không trượt của `BR-AUT-27` và `BR-AUT-28` |
 | `BR-AUT-43` | `accountLinking.disableImplicitLinking = true` và `socialProviders.*.disableImplicitSignUp = true` trên `userAuth`; `managerAuth` không khai báo `socialProviders` | Chặn tự gộp tài khoản trùng email (`BR-SCL-04`), ép thu 2 consent trước khi tạo `users` (`BR-SCL-01`), và giữ `BR-AUT-15` |
-| `BR-AUT-44` | `databaseHooks.account.{create,update}.before` xoá rỗng `accessToken`, `refreshToken`, `idToken` trước khi ghi PostgreSQL | Ngăn lưu trữ token nhà cung cấp OAuth trong cơ sở dữ liệu (`BR-AUT-18`, `BR-SIB-10`) |
+| `BR-AUT-44` | `databaseHooks.account.{create,update}.before` xoá rỗng `accessToken`, `refreshToken`, `idToken` trước khi ghi D1/SQLite | Ngăn lưu trữ token nhà cung cấp OAuth trong cơ sở dữ liệu (`BR-AUT-18`, `BR-SIB-10`) |
 | `BR-AUT-45` | Cả `userAuth` và `managerAuth` bật `twoFactor` (TOTP + Backup Codes) và `@better-auth/passkey` (WebAuthn) trên bảng tách riêng | Cung cấp xác thực đa yếu tố và không mật khẩu chuẩn FIDO2/WebAuthn cho cả hai tác nhân |
 
 Các ID `BR-AUT-01`–`05`, `BR-AUT-07`, `BR-AUT-19`–`24`, `BR-AUT-29` và `BR-AUT-35` đã ngưng; không tái sử dụng.
@@ -254,7 +262,7 @@ host-only trên `{domain}`; admin static không giữ session cookie trên subdo
 vẫn không được tin nếu Redis không có record. CSRF token xoay ở mỗi lần
 đăng nhập đầy đủ hoặc remember restore thành công và bị xoá khi logout.
 
-### 7.5 PostgreSQL metadata và reauth
+### 7.5 D1/SQLite metadata và reauth
 
 `active_sessions`: `device_id` UUID unique · `account_type` · `account_id` · `device_label` ·
 `ip_address` · `auth_method` · `remembered` · `created_at` · `last_used_at` · `expires_at` ·
@@ -345,10 +353,10 @@ Scenario: BR-AUT-31 — Redis outage fail closed
   Given Redis auth store không tới được
   When gọi protected route hoặc remember restore
   Then trả 503 SERVICE_UNAVAILABLE
-  And không fallback sang PostgreSQL, memory, file hoặc JWT
+  And không fallback sang D1/SQLite, memory, file hoặc JWT
 
 Scenario: BR-AUT-32 — token không lộ
-  When quét log, response, PostgreSQL active_sessions và Redis value
+  When quét log, response, D1/SQLite active_sessions và Redis value
   Then không có raw session hoặc remember token
   And Redis lookup key chỉ dùng digest session token hoặc selector
   And remember record chỉ giữ digest verifier, không giữ verifier thô
@@ -387,7 +395,7 @@ Scenario: BR-AUT-38 — MFA challenge không dùng JWT
 - Session tuyệt đối một giờ; remember tuyệt đối tối đa 365 ngày.
 - Token CSPRNG 256 bit, digest ở store, `Secure` + `HttpOnly` ở production.
 - Redis auth store fail-closed, transaction/Lua cho rotate và revoke.
-- Revoke Redis trước; cập nhật PostgreSQL metadata idempotently sau.
+- Revoke Redis trước; cập nhật D1/SQLite metadata idempotently sau.
 - Test âm cho reuse, cross-namespace, Redis outage, expiry và revoke nhiều thiết bị.
 
 **Ask first**
@@ -401,8 +409,8 @@ Scenario: BR-AUT-38 — MFA challenge không dùng JWT
 - Direct dependency/import `jose`; nếu tương lai cần service auth phải mở spec riêng trước.
 - Bearer auth credential trên bất kỳ route nào.
 - Sliding session hoặc sliding remember expiry.
-- Raw token trong log, response, PostgreSQL hoặc client state.
-- Fallback file, memory, PostgreSQL metadata hoặc JWT khi Redis lỗi.
+- Raw token trong log, response, D1/SQLite hoặc client state.
+- Fallback file, memory, D1/SQLite metadata hoặc JWT khi Redis lỗi.
 - `useUserSession().clear()`/DELETE nội bộ làm logout domain.
 - OAuth/password/WebAuthn helper tích hợp của `nuxt-auth-utils`.
 
@@ -413,4 +421,4 @@ Scenario: BR-AUT-38 — MFA challenge không dùng JWT
 | ~~1~~ | ~~MFA cho Manager bắt buộc từ P0 hay P2?~~ **Đóng 2026-08-07:** bắt buộc từ P0 | — | đã đóng | D-X |
 | ~~2~~ | ~~Social login có vào MVP không?~~ **Đóng 2026-08-05:** Google và Facebook ở P1 | — | đã đóng | D-X |
 | 3 | Reauth bằng OAuth có buộc provider prompt lại hay chấp nhận SSO đang mở? | Reauth SNS | P1 | người quyết |
-| 4 | Production dùng Valkey auth instance riêng hay cùng process nhưng deployment riêng? Dù chọn cách nào vẫn phải AOF + `noeviction` và không dùng logical DB như biên cô lập | Infra sizing/runbook; không chặn contract/code adapter | trước go-live | Infra |
+| ~~4~~ | ~~Production dùng Valkey auth instance riêng hay chung?~~ **Đóng 2026-11-25**: production Cloudflare không dùng Valkey; auth keyspace nằm trong `AuthCoordinatorDO` một instance `global-auth-v1`. AOF/`noeviction` chỉ còn là yêu cầu của Valkey dev local | — | Đã đóng | — |

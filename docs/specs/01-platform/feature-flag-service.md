@@ -106,7 +106,7 @@ Body `{ enabled, scope, scope_value, reason }`. `reason` bắt buộc ≥10 ký 
 
 ```gherkin
 Scenario: BR-FLG-02 — cache mất thì dùng mặc định an toàn
-  Given Valkey và DB không truy cập được
+  Given cache và DB không truy cập được
   When isEnabled("ai_content_pipeline") được gọi
   Then trả false
 

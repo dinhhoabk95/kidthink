@@ -83,7 +83,7 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 - [ ] Không direct dependency/import `jose`; session, remember và MFA challenge đều opaque Redis credential
 - [ ] Opaque token ≥256 bit, Redis chỉ giữ digest, session tuyệt đối 1 giờ
 - [ ] Remember mặc định tắt, absolute ≤365 ngày, rotate atomic; reuse revoke-all
-- [ ] Redis auth lỗi fail-closed 503; không fallback file/memory/PG/JWT
+- [ ] Redis auth lỗi fail-closed 503; không fallback file/memory/DB/JWT
 - [ ] Thao tác thanh toán trong transaction, idempotent
 - [ ] Upload kiểm MIME thật, từ chối SVG
 - [ ] Cấm raw SQL nối chuỗi
@@ -93,7 +93,7 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 - [ ] Rate limit trên route nhạy cảm, hai trục
 - [ ] CSRF token trên route đổi trạng thái
 - [ ] Cookie đúng thuộc tính (`HttpOnly`, `SameSite`, `Secure`, path-scope remember)
-- [ ] Valkey auth AOF + `noeviction`, client/keyspace riêng khỏi cache fail-open
+- [ ] Auth store tách khỏi cache fail-open (Cloudflare: `AuthCoordinatorDO`; dev Valkey: AOF + `noeviction`, client/keyspace riêng)
 - [ ] Trần phân trang ép ở server
 - [ ] Thông báo lỗi không tiết lộ tài khoản tồn tại
 - [ ] Cấm stack trace hay id nội bộ trong response
@@ -133,8 +133,8 @@ dung là checklist an ninh áp cho mọi PR, chia theo mức độ chặn merge.
 - [ ] Alert P0 đã cấu hình và tới được người
 - [ ] Chính sách pháp lý đã rà soát
 - [ ] Secret production khác secret dev
-- [ ] PG và Valkey không bind `0.0.0.0`
-- [ ] Auth Valkey startup check xác nhận AOF + `noeviction`; alert outage/memory/write/Lua failure tới người
+- [ ] Valkey dev local không bind `0.0.0.0` (production Cloudflare không có cổng mạng để bind)
+- [ ] Auth store: alert outage/write failure tới người; (chỉ dev Valkey) startup check xác nhận AOF + `noeviction`
 - [ ] Bề mặt admin không index
 - [ ] Quét toàn bộ: không PII trẻ trong log
 

@@ -64,7 +64,7 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 | `BR-DM-01` | **Taxonomy là bộ xương.** Mọi nội dung khác trỏ về nó bằng FK thật | Sai chính tả bị chặn ở FK |
 | `BR-DM-02` | **`content_pack` tách khỏi `difficulty_params`** | Đổi nội dung không cần code; đổi độ khó không cần biên tập |
 | `BR-DM-03` | **`content_skill_map.weight ∈ [0,1]`** — 1.0 mục tiêu chính, 0.3 có chạm tới | Không có nó, một game đếm vô tình "dạy" mọi skill nó chạm tới |
-| `BR-DM-04` | **FK polymorphic không ép được ở Postgres** → toàn vẹn do tầng service giữ, **bắt buộc** integration test bắt orphan | Ràng buộc không ép được ở DB là ràng buộc sẽ bị vi phạm |
+| `BR-DM-04` | **FK polymorphic không ép được ở D1/SQLite** → toàn vẹn do tầng service giữ, **bắt buộc** integration test bắt orphan | Ràng buộc không ép được ở DB là ràng buộc sẽ bị vi phạm |
 | `BR-DM-05` | Bảng INSERT-only: `audit_logs` `consent_logs` `telemetry_events` `play_sessions` (chỉ sau `completed`) — ép bằng **quyền DB** | Ép bằng quy ước là không ép |
 | `BR-DM-05a` | `BR-DM-05` chỉ có hiệu lực trên đường ghi đi qua `getAppDb()`; đường qua `getOwnerDb()` vượt mọi `REVOKE` | Quyền DB ép theo **role của kết nối**, không theo tên bảng. Đo 2026-08-28: 33 call site dùng `getAppDb()`, 277 dùng `getOwnerDb()`/`getDb()` — `BR-DM-05` phủ ~11% đường ghi. Xem §11 câu 5 |
 | `BR-DM-06` | **NEVER raw SQL** — chỉ Drizzle. Ngoại lệ: `sql\`\`` cho tăng nguyên tử và `coalesce` cross-table | Chuỗi SQL nối tay là đường vào injection, và né được typecheck nên đổi schema không làm nó đỏ. Hai ngoại lệ là chỗ Drizzle không diễn đạt được — giữ hẹp, không mở thành cửa chung |
@@ -75,7 +75,7 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 | `BR-DM-11` | Mỗi file schema ≤ **400 dòng**, chia theo domain, không theo kiểu | Một file 3.000 dòng là nơi mọi merge conflict gặp nhau |
 | `BR-DM-12` | Trần phân trang ép ở **server** | Một query không trần hạ cả instance trên t3.small |
 | `BR-DM-13` | FK/quan hệ đa hình **nội bộ** luôn lưu `id` (bigint) của bảng đích — **không có ngoại lệ**, kể cả taxonomy (`competencies`·`strands`·`skills`·`learning_objectives`·`content_tags`) và các bảng nội dung (`game_levels`, `curricula`, `skill_datasets`). Các bảng đó **vẫn giữ** cột `code` UNIQUE (định danh hiển thị/URL) nhưng bảng khác **không** được FK bằng `code` của chúng. Mỗi `code` trong `game_levels`, `curricula`, `skill_datasets` là duy nhất (1 dòng), dùng `id` trực tiếp (đã bỏ `entity_id` và `content_version`) | `BR-DM-10` nói về lớp đối ngoại; mọi FK nội bộ tham chiếu trực tiếp vào `id` (bigint) của bảng đích |
-| `BR-DM-14` | **Không dùng `CHECK` constraint trong PostgreSQL** — DB chỉ giữ ràng buộc cấu trúc (`NOT NULL`, `PRIMARY KEY`, `UNIQUE`, `FOREIGN KEY` kèm `onDelete` tường minh, `pgEnum`, trigger/REVOKE cho bảng INSERT-only); miền giá trị, khoảng số, regex mã và bất biến chéo cột được ép ở tầng Zod / domain validator + seeder gate | Tách biệt rõ trách nhiệm: DB tối ưu khóa ngoại, chỉ mục B-tree/partial và Drizzle `relations()`, còn luật miền nghiệp vụ tập trung một nơi ở TypeScript/Zod để đổi quy tắc không phải khóa bảng `ALTER TABLE` và trả thông báo lỗi thân thiện có mã chuẩn |
+| `BR-DM-14` | **Không dùng `CHECK` constraint trong D1/SQLite** — DB chỉ giữ ràng buộc cấu trúc (`NOT NULL`, `PRIMARY KEY`, `UNIQUE`, `FOREIGN KEY` kèm `onDelete` tường minh, trigger `RAISE(ABORT)` cho bảng INSERT-only; không còn `pgEnum` hay `REVOKE` của Postgres: giá trị enum lấy từ `packages/db/src/constants/*-enums`); miền giá trị, khoảng số, regex mã và bất biến chéo cột được ép ở tầng Zod / domain validator + seeder gate | Tách biệt rõ trách nhiệm: DB tối ưu khóa ngoại, chỉ mục B-tree/partial và Drizzle `relations()`, còn luật miền nghiệp vụ tập trung một nơi ở TypeScript/Zod để đổi quy tắc không phải khóa bảng `ALTER TABLE` và trả thông báo lỗi thân thiện có mã chuẩn |
 
 ## 7. Data — bản đồ module
 
@@ -183,7 +183,7 @@ Scenario: BR-DM-11 — file schema đủ nhỏ
   Then không file nào vượt 400 dòng
 
 Scenario: migration áp được lên DB rỗng
-  Given một DB PostgreSQL 17 rỗng
+  Given một DB SQLite (dev/test) hoặc D1 rỗng
   When chạy pnpm db:migrate và pnpm db:seed
   Then cả hai kết thúc exit 0
   And chạy lại pnpm db:seed không đổi số hàng

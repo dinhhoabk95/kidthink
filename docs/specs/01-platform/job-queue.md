@@ -21,7 +21,7 @@ depends_on:
 Việc chậm, việc theo lịch, và việc được phép thất bại không nằm trong đường request.
 Producer ở `packages/queue`, consumer ở `apps/worker` qua giao diện Pluggable `QueueDriver`:
 - **Giai đoạn 1 (`QUEUE_DRIVER=cloudflare-do`, `< 1.000 DAU`):** Producer `await` RPC `enqueueBatch` vào `JobQueueDO` ngay trong request/cron (không dùng `waitUntil`: nó thuộc về từng request nên không đặt toàn cục được, và enqueue là một RPC ngắn) (Durable Objects SQLite + cơ chế `Single-Pending-Alarm` gom lô cửa sổ `3–5s`, đáp ứng `50.000–200.000+ jobs/ngày` trên gói Free) kết hợp 1 Cron Dispatcher `*/5 * * * *` và cảm biến `ops:graduation-check` (cảnh báo ở `850 DAU` hoặc `65%` quota ngày).
-- **Giai đoạn 2 (`QUEUE_DRIVER=bullmq`, `≥ 1.000 DAU`):** BullMQ trên Valkey 9 chạy trong tiến trình `apps/worker` trên VPS.
+- **Giai đoạn 2 (`QUEUE_DRIVER=bullmq`, `≥ 1.000 DAU`):** BullMQ trên Valkey 9 chạy trong tiến trình `apps/worker` trên VPS. **Trạng thái hiện tại (2026-11-25):** đường VPS đã ngưng theo `D14`; production chỉ chạy `JobQueueDO`, BullMQ/Valkey chỉ còn là driver dev local (sẽ gỡ đợt sau).
 
 Hỏng đắt nhất của job nền: **worker bị tắt mà không ai biết**. Producer vẫn đẩy job, không
 consumer nào lấy ra, email và export im lặng không chạy. Spec này ép alert cho tình huống
@@ -33,7 +33,7 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 |---|---|
 | `packages/queue` | Định nghĩa job + producer. Cấm chứa consumer |
 | `apps/worker` | Consumer. Cấm có HTTP endpoint |
-| Scheduler | Repeatable job của BullMQ |
+| Scheduler | Cron trigger của Cloudflare gọi dispatcher vào `JobQueueDO` (dev local: repeatable job của BullMQ) |
 | Monitoring | Theo dõi backlog và tỉ lệ fail |
 
 ## 3. Entry points
@@ -58,7 +58,7 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 |---|---|
 | Worker chết | Job dồn. Backlog vượt ngưỡng → **alert** |
 | Job chạy hai lần | Consumer idempotent → không tác dụng phụ |
-| Valkey mất | Producer fail nhanh, không chặn request. Health check báo 503 |
+| Hàng đợi mất (`JobQueueDO` không tới được; dev local: Valkey) | Producer fail nhanh, không chặn request. Health check báo 503 |
 | Job treo | Timeout theo loại, chuyển `failed`, alert |
 
 ## 6. Business rules
@@ -100,7 +100,7 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 
 **10 job.** Job của add-on (export PDF, AI batch) không tạo ở MVP — ví dụ cụ thể:
 `embed:content` (re-embed vector khi publish, xem `07-addon/semantic-search.md` §7.2), dùng
-chung hạ tầng BullMQ/Valkey này nhưng không tính vào 10 job MVP trên.
+chung hạ tầng queue này (`JobQueueDO`; dev local BullMQ/Valkey) nhưng không tính vào 10 job MVP trên.
 
 ### 7.2 Retry
 
@@ -205,12 +205,12 @@ Scenario: BR-JOB-10 — không job theo lịch nào bị bỏ sót
   When mô phỏng một tuần tick 5 phút
   Then mọi job `kind: cron` được dispatch ít nhất một lần, trừ `backup:postgres` và `backup:verify`
 
-Scenario: BR-JOB-11 — enqueue trong DO không chạm BullMQ
+Scenario: BR-JOB-11 — enqueue trong DO không chạm BullMQ (driver dev local)
   Given consumer chạy trong JobQueueDO gọi `enqueue`
   Then job vào queue của chính DO đó, BullMQ không được nạp
 
-Scenario: Valkey mất không chặn request
-  Given Valkey không truy cập được
+Scenario: hàng đợi mất không chặn request
+  Given hàng đợi (JobQueueDO; dev local Valkey) không truy cập được
   When user thực hiện một hành động có enqueue job
   Then request vẫn trả thành công cho phần đồng bộ
   And health check trả 503

@@ -75,7 +75,7 @@ từng spec nằm trong git và ở `docs/tasks/`, không chép lại ở đây.
 | [schema-content-taxonomy](01-platform/schema-content-taxonomy.md) | P0 | Cột taxonomy · game · content · curriculum |  |
 | [schema-play-telemetry](01-platform/schema-play-telemetry.md) | P0 | Cột child · play · adaptive |  |
 | [taxonomy-service](01-platform/taxonomy-service.md) | P0 | Cây 5 tầng, DAG, 443 skill |  |
-| [auth-tokens-sessions](01-platform/auth-tokens-sessions.md) | P0 | Opaque cookie session Redis 1 giờ, remember tối đa 1 năm, revoke thiết bị, **reauth 5 phút** | [#305](../tasks/305-platform-api-gaps-plan.md) |
+| [auth-tokens-sessions](01-platform/auth-tokens-sessions.md) | P0 | Opaque cookie session (auth store DO/Valkey dev) 1 giờ, remember tối đa 1 năm, revoke thiết bị, **reauth 5 phút** | [#305](../tasks/305-platform-api-gaps-plan.md) |
 | [audit-log](01-platform/audit-log.md) | P0 | 29 hành động bắt buộc audit | [#305](../tasks/305-platform-api-gaps-plan.md) |
 | [emoji-registry](01-platform/emoji-registry.md) | P0 | Kho emoji cố định & SVG thực tế, 36 nhóm |  |
 | [rate-limiting](01-platform/rate-limiting.md) | P0 | Hai trục IP + account |  |

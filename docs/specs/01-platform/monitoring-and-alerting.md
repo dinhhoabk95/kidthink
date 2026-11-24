@@ -97,9 +97,9 @@ Alert phải **tới được người**, không chỉ ghi vào log mà không a
 
 | Alert | Ngưỡng | Runbook |
 |---|---|---|
-| Health check 503 | 2 lần liên tiếp | Kiểm DB, Valkey cache/auth, queue |
-| Redis auth unavailable/write/Lua failure | lần đầu | Auth fail-closed; điều tra ngay, không bật fallback |
-| Redis auth memory pressure hoặc eviction policy khác `noeviction` | lần đầu | Chặn deploy hoặc sửa cấu hình trước khi session bị evict |
+| Health check 503 | 2 lần liên tiếp | Kiểm DB (D1/SQLite), auth store (`AuthCoordinatorDO`), queue (`JobQueueDO`) |
+| Auth store (`AuthCoordinatorDO`; dev Valkey) unavailable/write failure | lần đầu | Auth fail-closed; điều tra ngay, không bật fallback |
+| (Chỉ dev Valkey) memory pressure hoặc eviction policy khác `noeviction` | lần đầu | Chặn deploy hoặc sửa cấu hình trước khi session bị evict; không áp dụng cho `AuthCoordinatorDO` |
 | Remember credential reuse | lần đầu | Account đã revoke-all; tạo security audit/alert không chứa token |
 | Lỗi 5xx | > 5% trong 5 phút | Xem `error_log` |
 | DB không kết nối được | ngay | Kiểm container, disk |

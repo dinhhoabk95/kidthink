@@ -103,9 +103,11 @@ không phải một thư viện.
 `game_levels(access_tier, age_min, age_max)` ·
 `content_tag_map(tag_id, entity_type)` ·
 `content_skill_map(skill_id, entity_type)` ·
-GIN trên `to_tsvector('simple', unaccent(title || ' ' || description))`.
-
-Dùng Postgres full-text với `unaccent`. Đã xóa hoàn toàn `content_embeddings` và semantic search khỏi hệ thống.
+Trạng thái hiện tại (2026-11-25): **không có index full-text**. Tìm theo chữ (`q`) chạy trong bộ nhớ ở
+`apps/web/server/services/content-search.ts` (`matchesVietnameseSearch`): lấy ứng viên đã qua bộ lọc có cấu
+trúc từ D1/SQLite, rồi so khớp chuỗi con không phân biệt hoa thường và **không dấu** (NFD bỏ dấu, `đ` → `d`)
+trên `title`, `description`, `code`. Không dùng FTS5 hay `LIKE` cho phần chữ. Đã xóa hoàn toàn `content_embeddings`
+và semantic search khỏi hệ thống.
 
 ## 8. API contract
 
@@ -165,7 +167,7 @@ Scenario: BR-SRC-06 — không cache kết quả trả phí
 **Ask first**
 - Thêm bộ lọc mới.
 - Đổi thuật toán xếp hạng.
-- Thêm search engine ngoài Postgres.
+- Thêm search engine ngoài D1/SQLite.
 
 **Never**
 - Nối chuỗi vào truy vấn.
@@ -176,6 +178,6 @@ Scenario: BR-SRC-06 — không cache kết quả trả phí
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Postgres full-text đủ tới bao nhiêu nội dung? | Ngưỡng nâng cấp search engine — chịu tải tốt tới 50.000 items | Sau MVP | Infra |
-| ~~2~~ | ~~Tìm kiếm ngữ nghĩa (embedding)?~~ **Đã đóng (2026-10-25)**: đã xóa hoàn toàn `content_embeddings` và spec `semantic-search.md`; chỉ dùng Postgres full-text + bộ lọc có cấu trúc | — | Đã đóng | — |
+| 1 | Tìm chữ trong bộ nhớ đủ tới bao nhiêu nội dung? Khi vượt ngưỡng cần chuyển sang FTS5 của D1 hoặc search engine ngoài | Ngưỡng nâng cấp search engine — cần đo, chưa có số liệu | Sau MVP | Infra |
+| ~~2~~ | ~~Tìm kiếm ngữ nghĩa (embedding)?~~ **Đã đóng (2026-10-25)**: đã xóa hoàn toàn `content_embeddings` và spec `semantic-search.md`; chỉ dùng tìm chữ không dấu trong bộ nhớ + bộ lọc có cấu trúc | — | Đã đóng | — |
 

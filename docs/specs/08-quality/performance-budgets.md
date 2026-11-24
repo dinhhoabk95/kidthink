@@ -97,7 +97,7 @@ kích thước chữ.
 
 ### 7.4 Ràng buộc hạ tầng
 
-t3.small: 2 vCPU, 2 GB RAM, dùng chung cho PG, Valkey, web, worker.
+t3.small: 2 vCPU, 2 GB RAM, dùng chung cho web, worker (và Valkey ở dev). Ghi chú lịch sử: mô hình VPS đã ngưng theo `D14`; production là Cloudflare Workers + D1.
 Mọi quyết định thiết kế phải hỏi: **cái này chạy được trên 2 GB không?**
 
 Đây là lý do: không search engine riêng · không read replica ở MVP ·

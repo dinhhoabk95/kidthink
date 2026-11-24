@@ -57,7 +57,7 @@ tin vào nó, nên nó không được nói dối.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-HLT-01` | Cấm — **NEVER trả 200 cứng** | Làm LB tin vào instance đã chết |
-| `BR-HLT-02` | Kiểm dịch vụ **thật** — `SELECT 1` qua Drizzle, `PING` Valkey cache, write/read/delete sentinel ở auth keyspace, đếm queue | Kiểm biến môi trường hoặc chỉ `PING` không chứng minh session store ghi/đọc được |
+| `BR-HLT-02` | Kiểm dịch vụ **thật** — `SELECT 1` qua Drizzle (D1/SQLite), write/read/delete sentinel ở auth keyspace (`AuthCoordinatorDO`), đếm queue (`JobQueueDO`) | Kiểm biến môi trường hoặc chỉ `PING` không chứng minh session store ghi/đọc được |
 | `BR-HLT-03` | 503 **phải được thông báo cho người** | Health check không alerting chỉ là một endpoint |
 | `BR-HLT-04` | Response **không lộ** version, hostname, hay chuỗi kết nối | Bề mặt công khai |
 | `BR-HLT-05` | Timeout mỗi dịch vụ ≤ 2s, tổng ≤ 3s | Health check chậm bị LB coi là fail |
@@ -70,10 +70,11 @@ tin vào nó, nên nó không được nói dối.
 
 | Dịch vụ | Cách kiểm | Critical |
 |---|---|---|
-| PostgreSQL | `SELECT 1` qua Drizzle | Có |
-| Valkey cache/rate limit | `PING` | Có |
-| Valkey auth session | `PING` + write/read/delete sentinel ở auth keyspace; failure làm readiness 503 | Có |
-| BullMQ | Đếm `waiting` | Có |
+| D1 (production) / SQLite (dev, test) | `SELECT 1` qua Drizzle | Có |
+| Auth session (`AuthCoordinatorDO`) | write/read/delete sentinel ở auth keyspace; chỉ kiểm khi binding `AUTH_COORDINATOR` có mặt; failure làm readiness 503 | Có |
+| Queue (`JobQueueDO`) | Đếm `waiting`; chỉ kiểm khi binding `JOB_QUEUE_DO` có mặt | Có |
+
+Trạng thái hiện tại (2026-11-25): runtime `sqlite` (dev/test) chỉ kiểm DB; runtime `d1` kiểm DB cộng hai Durable Object nếu binding có. Valkey/BullMQ không còn là phụ thuộc runtime của health check (chỉ còn adapter dev local, sẽ gỡ đợt sau).
 
 ### 7.2 Response
 
@@ -110,7 +111,7 @@ Cấm `version`, không `hostname`, không thời gian uptime.
 
 ```gherkin
 Scenario: BR-HLT-01 — DB chết thì trả 503
-  Given PostgreSQL không truy cập được
+  Given D1/SQLite không truy cập được
   When gọi GET /api/guest/health/deep kèm token đúng
   Then trả 503
   And checks.db là fail
@@ -122,7 +123,7 @@ Scenario: BR-HLT-07 — probe công khai không chạm DO
 
 Scenario: BR-HLT-02 — kiểm dịch vụ thật
   When quét implementation của health check
-  Then có truy vấn DB thật, PING Valkey cache thật, và đếm queue thật
+  Then có truy vấn DB thật và đếm queue thật
   And auth keyspace thực hiện write/read/delete sentinel thành công
   And sentinel không còn tồn tại sau phép kiểm
 

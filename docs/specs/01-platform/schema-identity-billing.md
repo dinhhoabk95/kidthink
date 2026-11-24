@@ -95,7 +95,7 @@ Thay thế 4 bảng đa hình cũ và `social_identities` bằng cặp bảng FK
 | `user_two_factors` | `manager_two_factors` | `secret`, `backup_codes`, `UNIQUE(user_id\|manager_id)` |
 | `user_passkeys` | `manager_passkeys` | `name`, `public_key`, `credential_id` UNIQUE, `counter`, `device_type`, `backed_up`, `transports`, `aaguid` |
 
-Valkey `secondaryStorage` là session authority ở chế độ fail-closed (`BR-AUT-31`); `user_sessions` / `manager_sessions` phục vụ liệt kê thiết bị và thu hồi đa thiết bị (`storeSessionInDatabase: true`).
+`secondaryStorage` (Cloudflare: `AuthCoordinatorDO`; dev local: Valkey) là session authority ở chế độ fail-closed (`BR-AUT-31`); `user_sessions` / `manager_sessions` phục vụ liệt kê thiết bị và thu hồi đa thiết bị (`storeSessionInDatabase: true`).
 
 ### 7.4 `consent_logs` — INSERT-only
 

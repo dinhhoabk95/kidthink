@@ -163,5 +163,5 @@ Scenario: BR-RBK-02 — migration xoá cột bị chặn
 
 | # | Câu hỏi                                                                                                                                         | Chặn gì                  | Chặn phase | Chủ         |
 | - | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ---------- | ----------- |
-| 1 | Luật migration cộng thêm đã có cổng `migration-expand`; cần xác nhận cổng đọc cả DDL D1 sinh từ squashed migration, không chỉ thư mục migration Postgres | Độ tin của quay lui      | go-live    | người quyết |
+| 1 | Luật migration cộng thêm đã có cổng `migration-expand`; cần xác nhận cổng đọc cả DDL D1 sinh từ squashed migration, không chỉ thư mục migration SQLite/D1 gốc | Độ tin của quay lui      | go-live    | người quyết |
 | 2 | Bước quay lui của workflow chỉ gồm web và worker, chưa gồm admin (static assets). Admin có cần quay lui cùng không?                             | Không chặn               | chờ P1     | Infra       |

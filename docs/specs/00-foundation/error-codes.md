@@ -214,7 +214,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `RATE_LIMITED` | 429 | `details.retry_after_s` |
 | `UNSUPPORTED_MEDIA_TYPE` | 415 | MIME không cho phép |
 | `PAYLOAD_TOO_LARGE` | 413 | |
-| `SERVICE_UNAVAILABLE` | 503 | DB / Valkey / queue không tới được |
+| `SERVICE_UNAVAILABLE` | 503 | DB / auth store / queue không tới được |
 | `INTERNAL_ERROR` | 500 | Không phân loại được. **Luôn kèm log mức ERROR** |
 
 ## 8. API contract

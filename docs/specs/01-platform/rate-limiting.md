@@ -34,7 +34,7 @@ chặn quét diện rộng. Chỉ một trục thì trục còn lại là lỗ h
 
 ## 3. Entry points
 
-Middleware trước mọi route. `packages/cache` cung cấp giao diện giới hạn tần suất hai chế độ: trên VPS (`MINDKID_RUNTIME=vps`) bọc `rate-limiter-flexible` trên một singleton `ioredis` (Valkey 9); trên Cloudflare (`MINDKID_RUNTIME=cloudflare`) kết hợp luật chặn sớm tại biên Cloudflare WAF (5 Custom Rules) và bộ đếm nhất quán trên `AuthCoordinatorDO` / `RateLimiterDO`; app không import package nền trực tiếp.
+Middleware trước mọi route. `packages/cache` cung cấp giao diện giới hạn tần suất hai chế độ: trên Cloudflare (`MINDKID_RUNTIME=cloudflare`, production) kết hợp luật chặn sớm tại biên Cloudflare WAF (5 Custom Rules + 1 rate rule `/api/auth/*`, `infra/cloudflare/waf.tf`) và bộ đếm nhất quán trên `AuthCoordinatorDO`; ở dev local (`MINDKID_RUNTIME=vps`, sẽ gỡ đợt sau) bọc `rate-limiter-flexible` trên singleton `ioredis` (Valkey); app không import package nền trực tiếp.
 
 ## 4. Main flow
 
@@ -49,7 +49,7 @@ Middleware trước mọi route. `packages/cache` cung cấp giao diện giới 
 
 | Nhánh | Hành vi |
 |---|---|
-| Valkey mất | **Fail open** cho route thường, **fail closed** cho auth và thanh toán |
+| Kho đếm mất (DO; dev local Valkey) | **Fail open** cho route thường, **fail closed** cho auth và thanh toán |
 | Sau Cloudflare | Lấy IP từ `CF-Connecting-IP` (Cloudflare đè header này ở biên), không tin `X-Forwarded-For` thô |
 | Đăng nhập sai liên tiếp | Khoá account tạm, tăng dần |
 
@@ -58,13 +58,13 @@ Middleware trước mọi route. `packages/cache` cung cấp giao diện giới 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-RTL-01` | Route nhạy cảm giới hạn theo **cả hai trục** | Một trục là một lỗ hổng |
-| `BR-RTL-02` | Valkey mất → **fail closed** cho auth và thanh toán | Mất giới hạn ở đúng chỗ nguy hiểm nhất là không chấp nhận được |
+| `BR-RTL-02` | Kho đếm mất (DO; dev local Valkey) → **fail closed** cho auth và thanh toán | Mất giới hạn ở đúng chỗ nguy hiểm nhất là không chấp nhận được |
 | `BR-RTL-03` | 429 kèm `Retry-After` | Client cần biết chờ bao lâu |
 | `BR-RTL-04` | Cấm — **NEVER lấy IP từ `X-Forwarded-For` thô** | Header giả được |
 | `BR-RTL-05` | Đăng nhập sai → khoá tài khoản **tăng dần**, không khoá vĩnh viễn | Khoá vĩnh viễn là DoS lên người dùng thật |
 | `BR-RTL-06` | Ingest event có hạn mức riêng, rộng hơn | Trẻ chơi liên tục là hành vi bình thường |
 | `BR-RTL-07` | Thông báo 429 không tiết lộ tài khoản tồn tại | Tiết lộ là cho kẻ tấn công biết email nào đã đăng ký, rút ngắn bước quét tiếp theo |
-| `BR-RTL-08` | Mọi consume/penalty/block đi qua `rate-limiter-flexible` trong `packages/cache` và dùng singleton `ioredis`; Cấm — **NEVER** tự ghép `INCR` + `EXPIRE` hay tạo Redis client theo request | Hai lệnh rời có thể mất TTL khi tiến trình chết; nhiều client theo request làm cạn connection trên t3.small |
+| `BR-RTL-08` | Mọi consume/penalty/block đi qua `packages/cache` (Cloudflare: `AuthCoordinatorDO`; dev local: `rate-limiter-flexible` trên singleton `ioredis`); Cấm — **NEVER** tự ghép `INCR` + `EXPIRE` hay tạo Redis client theo request | Hai lệnh rời có thể mất TTL khi tiến trình chết; nhiều client theo request làm cạn connection trên t3.small |
 | `BR-RTL-09` | Key account chưa xác thực là HMAC của identifier đã normalize; Cấm — **NEVER** để email/identifier thô trong Valkey key, metric hay log | Redis key và log vận hành không được trở thành kho PII phụ |
 | `BR-RTL-10` | Mọi path `/api/*` giải ra đúng một lớp ở §7.2, hoặc một lý do miễn **đã liệt kê**; Cấm — **NEVER** để nhánh mặc định không giới hạn | Một lớp khai trong registry mà không route nào gọi là hạn mức trên giấy |
 | `BR-RTL-11` | IP client: trên Cloudflare lấy từ `CF-Connecting-IP`; ngoài Cloudflare (dev, test) lấy địa chỉ socket và **không** đọc header IP nào | Production chỉ chạy sau Cloudflare, nơi `CF-Connecting-IP` do biên đặt và client không giả được. Ngoài Cloudflare không có proxy tin cậy nào, nên mọi header IP (`X-Real-IP`, `X-Forwarded-For`) là input của kẻ tấn công. Danh sách `TRUSTED_PROXY_IPS` thuộc đường Nginx đã gỡ theo `D14` |

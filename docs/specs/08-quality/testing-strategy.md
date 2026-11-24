@@ -50,7 +50,7 @@ Dev · cổng tự động.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-TST-01` | Critical path ≥ **85%**; toàn bộ ≥ **80%** | Dưới 80% là không biết thay đổi có phá gì không; 85% cho critical vì hậu quả khi bug ở gating/thanh toán lớn hơn |
-| `BR-TST-02` | Cấm — **NEVER mock DB** — dùng PostgreSQL thật qua Docker | Mock DB không kiểm được ràng buộc, mà ràng buộc là thứ đáng kiểm nhất |
+| `BR-TST-02` | Cấm — **NEVER mock DB** — dùng DB thật: SQLite file (`.data/sqlite-test`, `DB_CONNECTION=sqlite`) cho vitest, không mock `@mindkid/db`; D1 chỉ chạy ở workflow deploy | Mock DB không kiểm được ràng buộc, mà ràng buộc là thứ đáng kiểm nhất |
 | `BR-TST-03` | Cấm — **NEVER gọi LLM thật** trong test | Chi phí và không tái lập |
 | `BR-TST-04` | Cấm — **NEVER `setTimeout` để chờ** — dùng `expect.poll()` / `waitFor` | Test chờ theo đồng hồ là test flaky |
 | `BR-TST-05` | Cấm — **NEVER chạm DB / S3 / email production** | Test đụng DB production là sự cố dữ liệu; đụng S3 production là tốn tiền và rủi ro ghi đè |
@@ -67,7 +67,7 @@ Dev · cổng tự động.
 | Tầng | Framework | Vị trí | Ngưỡng |
 |---|---|---|---|
 | Unit | Vitest | `*.test.ts` cạnh source | ≥80% |
-| Integration | Vitest + PG Docker | `packages/<tên>/tests/integration/` cho schema/service của package đó; `apps/web/tests/integration/` chỉ cho route/API của app | critical ≥85% |
+| Integration | Vitest + SQLite thật | `packages/<tên>/tests/integration/` cho schema/service của package đó; `apps/web/tests/integration/` chỉ cho route/API của app | critical ≥85% |
 | Property | `fast-check` | cạnh source | mọi bất biến §7.2 |
 | E2E | Playwright | `apps/web/tests/e2e/` | mỗi template ≥1 journey |
 | A11y | `@axe-core/playwright` | mọi page object | 0 violation |
@@ -193,7 +193,7 @@ Scenario: E2E chạy đúng viewport
 ## 10. Boundaries
 
 **Always**
-- PG thật cho integration test.
+- SQLite thật (`node:sqlite`) cho integration test.
 - Property test cho mọi bất biến §7.2.
 - Giữ đủ bài §7.3.
 

@@ -114,7 +114,7 @@ tạo nó khi một tên phải khác nhau giữa các app.
 | `apps`      | tập hợp | Tập con của `web` · `admin` · `worker`; admin chỉ nhận public build config |
 | `required`  | enum    | `always` \| `production` \| `when-enabled` \| `optional`     |
 | `kind`      | enum    | `url` \| `secret` \| `email` \| `port` \| `enum` \| `text`  |
-| `urlProtocols` | tập hợp | Bắt buộc khi `kind` là `url`; liệt kê giao thức hợp lệ, ví dụ `postgres:` |
+| `urlProtocols` | tập hợp | Bắt buộc khi `kind` là `url`; liệt kê giao thức hợp lệ, ví dụ `valkey:` |
 | `secret`    | boolean | `true` thì giá trị không bao giờ được in ra                 |
 | `enabledBy` | text    | Tên cờ tính năng, chỉ dùng khi `required` là `when-enabled` |
 | `note`      | text    | Một câu: ai đọc và để làm gì                                |

@@ -65,7 +65,7 @@ tối thiểu mà [`backup-and-restore.md`](backup-and-restore.md) (`D-BT`) đã
    `dispatched`/`failed` chỉ do consumer `email:send` ghi; bounce/complaint do webhook của provider
    hiện tại xử lý khi được spec riêng.
 
-SMTP không có giao dịch nguyên tử với PostgreSQL. Nếu SES đã nhận mail nhưng worker chết trước
+SMTP không có giao dịch nguyên tử với D1/SQLite. Nếu SES đã nhận mail nhưng worker chết trước
 khi commit kết quả, retry có thể tạo bản trùng. `jobId`, conditional claim và stable `Message-ID`
 giảm duplicate trong phạm vi ứng dụng nhưng **không được mô tả là exactly-once**.
 

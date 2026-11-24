@@ -43,7 +43,7 @@ Spec này biến backup thành điều kiện go-live, không phải việc đ�
 
 | Nơi | |
 |---|---|
-| `apps/worker` job `backup:postgres` · `backup:verify` | Chế độ `MINDKID_RUNTIME=vps` (`pg_dump` + mã hoá `AES-256-GCM` lên Garage S3 / Offsite S3) |
+| `apps/worker` job `backup:postgres` · `backup:verify` | Chế độ `MINDKID_RUNTIME=vps` — **đường cũ, không còn là production** (2026-11-25: production là D1, sao lưu qua workflow ở dòng dưới; job này chỉ còn cho dev local, sẽ gỡ đợt sau) (`pg_dump` + mã hoá `AES-256-GCM` lên Garage S3 / Offsite S3) |
 | `.github/workflows/backup-d1-nightly.yml` + D1 Time Travel | Chế độ `MINDKID_RUNTIME=cloudflare` (`wrangler d1 export` hàng đêm lúc 02:00 ICT + nén gzip + mã hoá `AES-256-GCM` lưu GitHub Private Backup Release, kết hợp khôi phục tức thì 7 ngày của D1 Time Travel) |
 | `pnpm db:restore` (`apps/worker/src/backup/restore.ts`) | Khôi phục thủ công |
 | `backup_log` | Bản ghi mỗi lần chạy |
@@ -51,7 +51,7 @@ Spec này biến backup thành điều kiện go-live, không phải việc đ�
 ## 4. Main flow
 
 ```
-1. 01:00 ICT — pg_dump toàn bộ, nén, mã hoá
+1. 01:00 ICT — (đường VPS cũ; production D1 dùng `wrangler d1 export`, xem §3) pg_dump toàn bộ, nén, mã hoá
 2. Upload lên bucket tương thích S3, khoá `${BACKUP_S3_PREFIX}/YYYY/MM/DD/<tên tệp>`
 3. Ghi backup_log { started, finished, bytes, sha256, status }
 4. Thứ hai 05:00 ICT — backup:verify:

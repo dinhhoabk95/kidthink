@@ -62,7 +62,7 @@ nơi xác nhận và tra cứu sau khi nhận alert.
 
 | Nhóm | Mục |
 |---|---|
-| **Dịch vụ** | PostgreSQL · Valkey · Queue — trạng thái + độ trễ |
+| **Dịch vụ** | D1/SQLite · Auth store · Queue — trạng thái + độ trễ |
 | **Job** | Backlog `waiting` · `failed` 24h · job cũ nhất · lần chạy cuối mỗi job định kỳ |
 | **Backup** | Dump gần nhất (thời gian, dung lượng) · verify gần nhất (kết quả) · DR drill gần nhất |
 | **Lỗi** | 5xx 24h · lỗi client 24h · alert đang mở |

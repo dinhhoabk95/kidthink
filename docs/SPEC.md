@@ -44,7 +44,7 @@ Mỗi dòng là một quyết định đã chốt, kèm lý do.
 | **D10** | **Ưu tiên adopt thư viện Nuxt ecosystem đã kiểm chứng** (auth, sitemap/SEO, cache, queue) thay vì tự xây từ đầu. Khi cần dùng chung nhiều app, bọc lại thành **package driver nội bộ** — xem [`docs/specs/00-foundation/monorepo-package-architecture.md`](specs/00-foundation/monorepo-package-architecture.md) | Tự xây auth/queue/sitemap không tạo khác biệt cạnh tranh, chỉ tốn thời gian dev và mang rủi ro bảo mật tự phát hiện. Thư viện phổ biến có test, security patch, cộng đồng review. Driver nội bộ giữ interface ổn định cho nhiều app và không khoá cứng vào một thư viện    |
 | **D11** | **Phạm vi hiện hành là web-only và vận hành tại Việt Nam.** PWA vẫn là web delivery; native mobile app, classroom/B2B, licensing/white-label, marketplace và mở thị trường ngoài Việt Nam không có spec triển khai, task hay placeholder schema trong roadmap hiện hành.                                         | Lập kế hoạch cho một mô hình sản phẩm chưa được chọn tạo contract giả và kéo theo actor, pháp lý, thanh toán, store review hoặc multi-tenancy không cần thiết. Nếu sau này mở rộng, người quyết phải mở một chương trình scope mới và viết spec sở hữu trước khi lập task. |
 | **D12** | **Tài liệu pháp lý là singleton code-owned, không quản lý policy version.** Sửa nội dung bằng PR; sau deploy, `super_admin` chủ động force re-consent bằng một mốc thời gian cho từng loại `terms` · `privacy` · `child_data`.                                                                                   | Hệ thống chỉ cần biết User đã đồng ý trước hay sau lần force gần nhất. Lịch sử Git + audit của thao tác force giữ dấu vận hành; dựng kho version và diff policy tạo thêm schema, route và UI nhưng không tăng giá trị sản phẩm tương xứng.                                 |
-| **D13** | **PBKDF2-SHA256 đúng 100.000 vòng, thấp hơn khuyến nghị OWASP (600.000)** | WebCrypto của Cloudflare Workers từ chối PBKDF2 > 100.000 vòng; MVP chỉ deploy Cloudflare nên chọn trần này để hash di động Node ↔ Workers ↔ Postgres sau này, không rehash. Đánh đổi chấp nhận: kháng dò offline yếu hơn khi lộ DB; bù bằng rate limit hai trục (`BR-AUT-09`), 2FA/passkey và mật khẩu ≥ 8 ký tự bị chặn danh sách phổ biến. Xem lại nếu Workers nâng trần hoặc chuyển sang argon2 trên runtime khác |
+| **D13** | **PBKDF2-SHA256 đúng 100.000 vòng, thấp hơn khuyến nghị OWASP (600.000)** | WebCrypto của Cloudflare Workers từ chối PBKDF2 > 100.000 vòng; MVP chỉ deploy Cloudflare nên chọn trần này để hash di động Node ↔ Workers ↔ D1/SQLite sau này, không rehash. Đánh đổi chấp nhận: kháng dò offline yếu hơn khi lộ DB; bù bằng rate limit hai trục (`BR-AUT-09`), 2FA/passkey và mật khẩu ≥ 8 ký tự bị chặn danh sách phổ biến. Xem lại nếu Workers nâng trần hoặc chuyển sang argon2 trên runtime khác |
 | **D14** | **MVP deploy chỉ Cloudflare (Workers + D1 + Durable Objects)** | Một đường deploy duy nhất là một đường kiểm thử được: GitHub Actions (Terraform chạy tay, id D1 qua GitHub vars) → D1 → `wrangler deploy` → smoke `/api/guest/health`, rollback bằng `wrangler rollback`. Đường VPS (Nginx + PM2 + Docker PG/Valkey/Garage + script `mindkid.sh`) chưa phục vụ người dùng thật nhưng kéo theo script, spec và test phải giữ đúng song song. Đánh đổi chấp nhận: mất rate limit ở biên Nginx (nay chỉ còn limiter trong app và WAF Cloudflare — xem mục NEEDS-VALIDATION ở [`rate-limiting.md`](specs/01-platform/rate-limiting.md)); mất đường thoát sang VPS khi vượt quota Free. Mở lại bằng một quyết định mới khi DAU vượt quota Workers Free; code runtime `vps` (Node + Postgres + Valkey) vẫn là chế độ dev/test, không có đường phát hành |
 
 ### D7 chi tiết — hai luồng, cùng một cổng
@@ -624,7 +624,7 @@ cấp entitlement · export dữ liệu · đổi chính sách · đổi cấu h
    `concept` tự do — sai chính tả bị chặn ở FK.
 2. **`content_pack` tách khỏi `difficulty_params`.** §2.4.
 3. **`content_skill_map.weight`** cho một asset phục vụ nhiều skill ở mức khác nhau.
-4. **FK polymorphic không ép được ở Postgres** (`content_tag_map`, `content_skill_map`,
+4. **FK polymorphic không ép được ở D1/SQLite** (`content_tag_map`, `content_skill_map`,
    `curriculum_items`, bảng auth phụ). Toàn vẹn do tầng service giữ + **bắt buộc** integration
    test bắt orphan.
 5. **`audit_logs` · `consent_logs` · `telemetry_events` là INSERT-only**
@@ -647,9 +647,9 @@ cấp entitlement · export dữ liệu · đổi chính sách · đổi cấu h
 | Admin                | **Nuxt 4 SPA**                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | subdomain riêng                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | DB                   | **SQLite** (dev/test, `node:sqlite`) · **Cloudflare D1** (production)                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ORM                  | **Drizzle** (`^0.45`) qua driver SQLite/D1                                                                                                                                                                                                                                                                                                                                                                                                                                          | Cấm raw SQL, trừ `sql\`\``cho tăng nguyên tử và`coalesce`                                                                                                                                                                                                                                                                         |
-| Cache / rate limit   | **Valkey 9**; cache qua **unstorage** (driver `redis`), rate limit qua **`rate-limiter-flexible` `^11.2`** trên singleton `ioredis`                                                                                                                                                                                                                                                                                                                                                         | `unstorage` không sở hữu counter/rate-limit; hai trục và fail-open/closed vẫn do [`rate-limiting.md`](specs/01-platform/rate-limiting.md) sở hữu                                                                                                                                                                                                                                                                                 |
-| Queue                | **BullMQ** (`^6.0`) nối trực tiếp qua Nitro plugin, KHÔNG qua wrapper Nuxt                                                                                                                                                                                                                                                                                                                                                                                                                  | Cấm `nuxt-simple-bullmq` — solo-maintainer, README tự nhận "chỉ test với Node 21", tác giả khuyên dùng lựa chọn khác cho production                                                                                                                                                                                                                                                                                              |
-| Auth                 | **Opaque cookie session + Redis authority** do `apps/web` sở hữu: session tuyệt đối 1 giờ; `remember_me` tuỳ chọn, rotate-on-use và tuyệt đối tối đa 365 ngày. `nuxt-auth-utils` `^0.5.30` chỉ cung cấp sealed locator, `/api/_auth/session` và projection cho web; admin SPA gọi API bằng `credentials: "include"`. Identity/role/reauth/credential nằm trong Redis fail-closed. MindKid không phát hoặc nhận first-party JWT; gỡ dependency trực tiếp `jose`. OAuth P1 dùng `openid-client` `^6.8`; TOTP dùng `otpauth` `^9.5` | Redis auth keyspace dùng client riêng, AOF + `noeviction`, transaction/Lua cho rotate/revoke. MFA challenge cũng là opaque one-time Redis credential. Token OIDC từ provider chỉ là input protocol tạm thời do `openid-client` xác minh, không lưu/forward. Pin module tối thiểu `0.5.30`; cấm fallback file/memory/DB/JWT, Supabase Auth, Better-Auth, Sidebase/AuthJS/`next-auth` và helper OAuth/password/WebAuthn của module |
+| Cache / rate limit   | **Cloudflare**: giới hạn tần suất và cache nằm trong `AuthCoordinatorDO` (token bucket hai trục IP + account, `packages/cache`). **Dev local**: Valkey 9 (unstorage driver `redis`, `rate-limiter-flexible` trên `ioredis`), sẽ gỡ đợt sau | |
+| Queue                | **Cloudflare**: `JobQueueDO` (SQLite nội bộ của Durable Object, `packages/queue/src/do-queue-driver.ts`). **Dev local**: BullMQ trên Valkey, sẽ gỡ đợt sau | |
+| Auth                 | **Opaque cookie session + auth store authority** (Cloudflare: `AuthCoordinatorDO`; dev local: Valkey, sẽ gỡ) do `apps/web` sở hữu: session tuyệt đối 1 giờ; `remember_me` tuỳ chọn, rotate-on-use và tuyệt đối tối đa 365 ngày. `nuxt-auth-utils` `^0.5.30` chỉ cung cấp sealed locator, `/api/_auth/session` và projection cho web; admin SPA gọi API bằng `credentials: "include"`. Identity/role/reauth/credential nằm trong Redis fail-closed. MindKid không phát hoặc nhận first-party JWT; gỡ dependency trực tiếp `jose`. OAuth P1 dùng `openid-client` `^6.8`; TOTP dùng `otpauth` `^9.5` | Redis auth keyspace dùng client riêng, AOF + `noeviction`, transaction/Lua cho rotate/revoke. MFA challenge cũng là opaque one-time Redis credential. Token OIDC từ provider chỉ là input protocol tạm thời do `openid-client` xác minh, không lưu/forward. Pin module tối thiểu `0.5.30`; cấm fallback file/memory/DB/JWT, Supabase Auth, Better-Auth, Sidebase/AuthJS/`next-auth` và helper OAuth/password/WebAuthn của module |
 | Email                | **Nodemailer `^9.0` → AWS SES SMTP**; template **MJML `^5.4`**                                                                                                                                                                                                                                                                                                                                                                                                                              | SMTP TLS + pool; credential SMTP theo region, tách khỏi AWS credential; SES→SNS cho delivery/bounce/complaint                                                                                                                                                                                                                                                                                                                    |
 | HTTP hardening       | **`nuxt-security` `^2.6`** khai trực tiếp ở `apps/web`; header cho admin static do file `apps/admin/public/_headers` (Workers Static Assets) đặt                                                                                                                                                                                                                                                                                                                                                              | Dùng CSP/header/CORS/request-size ở web; static host không có Nitro server để chạy module                                                                                                                                                                                                                                                                                                                                         |
 | Browser notification | **FCM Web** (`firebase` client + FCM HTTP v1 qua `fetch` ở server), **P5 / Task #84**                                                                                                                                                                                                                                                                                                                                                                                                                | Chỉ là kênh best-effort; notification inbox là nguồn xem lại. Không cài package hay service worker trong Task #83                                                                                                                                                                                                                                                                                                                |
@@ -663,6 +663,12 @@ cấp entitlement · export dữ liệu · đổi chính sách · đổi cấu h
 | Storage              | Pluggable `ObjectStorageDriver`: **D1 Blobs + Workers Static Assets** (runtime Cloudflare, đường phát hành duy nhất); driver S3 SigV4 chỉ còn dùng cho dev/test | Đổi qua biến `STORAGE_DRIVER = "d1-blobs" \| "s3"`                                                                                                                                                                                                                                                                                                                                                                               |
 | Deploy               | **Chỉ Cloudflare (D14)**: Workers (`cloudflare_module`) + 3x D1 (`core`, `logs`, `blobs`) + Durable Objects SQLite (`AuthCoordinatorDO`, `JobQueueDO`) + Terraform v5 (chạy tay) + GitHub Actions (`.github/workflows/deploy-cloudflare.yml`). Dev/test: SQLite (`node:sqlite`) + Valkey `:6380` | Rollback bằng `wrangler rollback`; xem [`release-deploy.md`](specs/01-platform/release-deploy.md) | Không còn đường deploy khác (VPS/cutover đã gỡ, D14)                                                                                                                                                                                                                                                                                                                                 |
 
+**Thuật ngữ "Redis"/"Valkey" trong spec (cập nhật 2026-11-25):** production là Cloudflare Workers + D1 +
+Durable Objects, không có Postgres, Redis hay BullMQ. Trong các spec auth/session, "Redis session", "Redis
+authority", "Redis challenge", "Redis revoke" nghĩa là **auth keyspace fail-closed**: `AuthCoordinatorDO` trên
+Cloudflare, Valkey ở dev local (sẽ gỡ đợt sau). "BullMQ" nghĩa là driver queue dev local; production dùng
+`JobQueueDO`. "PostgreSQL/Postgres/PG" còn sót trong ghi chú lịch sử có ngày nghĩa là DB cũ, nay là D1/SQLite.
+
 Boring tech để ổn định — nhưng "boring" nghĩa là **thư viện được cộng đồng kiểm chứng**, không
 phải "tự viết cho quen". Baseline package core được rà lại ngày 2026-08-13; version patch mới
 hơn tại thời điểm bootstrap thì lấy version đó, không hạ xuống bảng này
@@ -675,7 +681,7 @@ hơn tại thời điểm bootstrap thì lấy version đó, không hạ xuống
 ```bash
 # Setup
 nvm use 24 && pnpm install
-docker compose up -d                          # PG 17 + Valkey 9
+docker compose up -d valkey                   # Valkey 9 cho dev local (DB dev/test là SQLite, không cần container)
 
 # Dev
 pnpm dev                                      # web        :3000
@@ -693,7 +699,7 @@ pnpm typecheck                                # tsc gốc + vue-tsc/tsc từng a
 pnpm test                                     # vitest run
 pnpm test:watch
 pnpm test:coverage                            # vitest run --coverage
-pnpm services                           # verify PG + Valkey kết nối được từ Node (repo-bootstrap.md §4 bước 5)
+pnpm services                           # verify Valkey dev kết nối được từ Node (repo-bootstrap.md §4 bước 5)
 
 # Database
 pnpm db:generate                              # sinh migration Drizzle
@@ -719,17 +725,17 @@ mindkid/
 ├── apps/                              3 workspace app
 │   ├── web/          Nuxt 4 — public + play + account + API        :3000
 │   ├── admin/        Nuxt 4 SPA tĩnh — quản trị & vận hành         (admin.{domain})
-│   └── worker/       Nitro — BullMQ consumer (email, export, job)  :3099
+│   └── worker/       Nitro — consumer queue (email, export, job)    :3099
 ├── packages/                          20 package
 │   ├── config/       Biome preset, TSConfig base, hằng số dùng chung
 │   ├── shared/       Zod schema, type, constant — KHÔNG logic
 │   ├── db/           Drizzle schema, migration, seed
 │   │   └── src/seed-master/    Lớp 1 — taxonomy, template, emoji, package
 │   │   └── src/seed-content/   Lớp 2 — game level, curriculum
-│   ├── auth/         opaque session/remember/challenge, Redis adapter, guard, CSRF
-│   ├── cache/        unstorage driver redis (Valkey 9) + cache util + rate limit
+│   ├── auth/         opaque session/remember/challenge, auth store adapter (DO/Valkey dev), guard, CSRF
+│   ├── cache/        cache util + rate limit (DO trên Cloudflare; unstorage/Valkey ở dev local)
 │   ├── storage/      S3 operation, ảnh WebP pipeline
-│   ├── queue/        BullMQ job definition + producer (consumer ở apps/worker)
+│   ├── queue/        job definition + producer (DO queue trên Cloudflare; BullMQ ở dev local)
 │   ├── taxonomy/     Cây 5 tầng, DAG validation, traversal — pure TS
 │   ├── emoji/        36 nhóm emoji data + SVG sprite registry + tìm tiếng Việt
 │   ├── game-engine/  Canvas 2D thuần TS, template + Session
@@ -772,7 +778,7 @@ chỉ thêm **khi** tính năng của chúng vào scope, không trước.
 | `packages/audit/`       | Ghi nhật ký kiểm toán, quét dữ liệu nhạy cảm                                   | Ghi content, UI logic                                                                     |
 | `packages/play/`        | Phiên chơi, sự kiện chơi, BKT mastery, huy hiệu                                 | Ghi content, direct HTTP                                                                  |
 | `packages/export/`      | Kết xuất PDF worksheet                                                         | Thao tác DB ngoài context kết xuất                                                        |
-| `packages/auth/`        | Opaque session/remember/challenge Redis adapter fail-closed, guard, hash, CSRF | Supabase / Better-Auth · JWT/JWS credential · `jose` · fallback auth sang cache fail-open |
+| `packages/auth/`        | Opaque session/remember/challenge auth store adapter fail-closed, guard, hash, CSRF | Supabase / Better-Auth · JWT/JWS credential · `jose` · fallback auth sang cache fail-open |
 | `packages/queue/`       | Job definition, producer                                                       | Consumer                                                                                  |
 | `apps/web/server/api/`  | Drizzle + Zod                                                                  | Frontend logic                                                                            |
 | `apps/web/app/`         | `useFetch()` / `$fetch`                                                        | Import `packages/db`                                                                      |
@@ -800,7 +806,7 @@ Không route nghiệp vụ mới nào được đặt dưới `/api/_auth/**`.
 
 HTTP code dùng: 200 · 201 · 400 · 401 · 402 (hết credit add-on) · 403 · 404 · 409 (xung
 đột / duyệt trùng) · 410 (snapshot hết hạn) · 422 · **428** (chưa chọn trẻ) · 500 ·
-**503** (Redis/DB/dependency bắt buộc không tới được).
+**503** (auth store/DB/dependency bắt buộc không tới được).
 
 Record của người khác → **404**, không phải 403. 403 xác nhận record tồn tại.
 
@@ -948,7 +954,7 @@ không dựa vào padding một mình.
 | Loại        | Framework                     | Vị trí                        | Ngưỡng                   |
 | ----------- | ----------------------------- | ----------------------------- | ------------------------ |
 | Unit        | Vitest 4                      | `*.test.ts` cạnh source       | ≥ 80% toàn bộ            |
-| Integration | Vitest + **PG thật** (Docker) | `apps/web/tests/integration/` | critical path ≥ 85%      |
+| Integration | Vitest + **SQLite thật** (`node:sqlite`, `.data/sqlite-test`) | `apps/web/tests/integration/` | critical path ≥ 85%      |
 | E2E         | Playwright                    | `apps/web/tests/e2e/`         | mỗi template ≥ 1 journey |
 | Property    | `fast-check`                  | cạnh source                   | mọi bất biến §10.2       |
 | Load        | k6                            | `infra/load/`                 | API P95 < 800 ms         |
@@ -983,7 +989,7 @@ thứ 4.000.
 
 ### 10.3 Cấm trong test
 
-Cấm Gọi LLM thật · Cấm **mock DB** (dùng PG Docker — mock DB không kiểm được ràng buộc, mà
+Cấm Gọi LLM thật · Cấm **mock DB** (dùng SQLite thật — mock DB không kiểm được ràng buộc, mà
 ràng buộc là thứ đáng kiểm nhất) · Cấm `setTimeout` để chờ (dùng `expect.poll()`) · Cấm chạm
 DB/S3/email production · Cấm dữ liệu random không seed.
 
@@ -1092,7 +1098,7 @@ Cấm cắt: gating, audit, tuân thủ §4. Ba thứ này rẻ khi làm
 - [ ] Đăng ký / đăng nhập / quên mật khẩu / xác thực email chạy end-to-end.
 - [ ] `social_identities` + `active_sessions.device_id/revoked_at` +
       `users.session_version`/`managers.session_version` có trong migration P0; reauth state
-      authoritative nằm trong Redis session.
+      authoritative nằm trong auth store session (DO/Valkey dev).
 
 ### Cổng ra P1
 
