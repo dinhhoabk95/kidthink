@@ -128,7 +128,7 @@ Child profile.
 
 | Biến | Worker | Loại | Ghi chú |
 |---|---|---|---|
-| `FCM_PROJECT_ID` | `worker` | tuỳ chọn, không bí mật | ID project Firebase, nằm trong URL `messages:send` |
+| `FCM_PROJECT_ID` | `worker` | tuỳ chọn, **secret** | ID project Firebase, nằm trong URL `messages:send` |
 | `FCM_CLIENT_EMAIL` | `worker` | tuỳ chọn, **secret** | `client_email` của service account |
 | `FCM_PRIVATE_KEY` | `worker` | tuỳ chọn, **secret** | `private_key` PEM PKCS8; chấp nhận `\n` literal thay cho xuống dòng |
 | `NUXT_NOTIFICATION_TOKEN_ENCRYPTION_KEY` | `web` + `worker` | bắt buộc | Worker cần để giải mã token; cùng giá trị với web |
