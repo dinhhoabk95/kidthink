@@ -99,6 +99,9 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 | `backup:postgres` | 01:00 ICT | `date_ict` | 30m |
 | `backup:verify` | 05:00 ICT thứ hai | `week` | 30m |
 
+Job `push:send` (event, idempotency key `notification_id`, timeout 30s, retry như `email:send`)
+do [`browser-push.md`](browser-push.md) §4.1 sở hữu; kênh best-effort P5 nên không tính vào 10 job MVP.
+
 **10 job.** Job của add-on (export PDF, AI batch) không tạo ở MVP — ví dụ cụ thể:
 `embed:content` (re-embed vector khi publish, xem `07-addon/semantic-search.md` §7.2), dùng
 chung hạ tầng queue này (`JobQueueDO`; dev/test: `JobQueueSqlEngine` trên SQLite) nhưng không tính vào 10 job MVP trên.

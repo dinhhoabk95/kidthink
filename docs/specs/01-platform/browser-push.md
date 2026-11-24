@@ -20,7 +20,7 @@ depends_on:
 
 # Thông báo trình duyệt qua FCM Web
 
-> **Chưa hoàn thành** — route `/api/users/notification-endpoints` và driver `fcm-driver.ts` đã có, nhưng trang `/me/settings/notifications` gửi token giả `fcm_token_client_*` thay vì lấy token từ Firebase Messaging; package `firebase` của web chưa được import ở đâu. Việc còn lại: [Task #311](../../tasks/311-addon-provider-gaps-plan.md).
+> **Chưa hoàn thành** — phía **gửi** (§4.1: FCM HTTP v1 + job `push:send`) đã có theo spec này. Phía **client** chưa có: route `/api/users/notification-endpoints` chưa được dựng, trang `/me/settings/notifications` chưa lấy token từ Firebase Messaging và package `firebase` của web chưa được import ở đâu. Producer chưa enqueue `push:send` cho loại thông báo nào vì Open question 2 chưa chốt. Việc còn lại: [Task #311](../../tasks/311-addon-provider-gaps-plan.md).
 
 ## 1. Objective
 
@@ -38,7 +38,7 @@ Child profile.
 |---|---|---|
 | User | phiên User hợp lệ, thao tác trên bề mặt người lớn | Bật/tắt permission và đăng ký thiết bị hiện tại |
 | Browser service worker | endpoint đã đăng ký | Hiện notification và mở internal action URL |
-| Worker | delivery `fcm_web` queued | Gửi qua FCM Admin SDK, cập nhật delivery |
+| Worker | job `push:send` | Gửi qua FCM HTTP v1 (`fetch` + WebCrypto), cập nhật delivery và endpoint |
 | Trẻ | — | Cấm thấy permission prompt hay nhận notification |
 
 ## 3. Entry points
@@ -64,6 +64,32 @@ Child profile.
 6. Token rotate thì cùng installation thay token trong transaction; FCM trả invalid/unregistered
    thì endpoint bị vô hiệu, không retry vô hạn.
 
+### 4.1 Đường gửi FCM HTTP v1 (worker)
+
+1. Producer enqueue job `push:send` với payload `{ notificationId, userId, title, body, actionUrl }`
+   (`jobId` = `notification_id`). Job này không mang token.
+2. Consumer (workerd và Node dev chạy cùng mã) đọc cấu hình service account từ env
+   (§7.1). Thiếu cấu hình → kênh tắt (`BR-BPS-11`).
+3. Consumer nạp các endpoint `active` của `userId`, giải mã token tại chỗ rồi gọi
+   `POST https://fcm.googleapis.com/v1/projects/{FCM_PROJECT_ID}/messages:send` bằng `fetch` với
+   `Authorization: Bearer <access token>`.
+4. Access token OAuth2 lấy bằng JWT service account ký **RS256** qua WebCrypto
+   (`crypto.subtle.importKey("pkcs8", …)` + `sign("RSASSA-PKCS1-v1_5")`), đổi tại
+   `https://oauth2.googleapis.com/token` với scope `https://www.googleapis.com/auth/firebase.messaging`;
+   cache trong bộ nhớ tiến trình đến **60 giây trước hạn** (`BR-BPS-10`).
+5. Kết quả từng endpoint phân loại theo bảng `BR-BPS-12`; kết quả gộp ghi vào
+   `notification_deliveries` kênh `fcm_web`.
+
+### 4.2 Phân loại lỗi FCM
+
+| FCM trả | Phân loại | Hành vi |
+|---|---|---|
+| 2xx | `dispatched` | Ghi `provider_message_id` (trường `name`) |
+| 404 `UNREGISTERED` | terminal, token chết | Endpoint → `invalid`, không retry |
+| 400 `INVALID_ARGUMENT` | terminal, token sai | Endpoint → `invalid`, không retry |
+| 429, 5xx, 401 (token OAuth hết hạn), lỗi mạng | retryable | Xoá cache access token, ném lỗi để queue retry theo chính sách job |
+| 4xx khác (403, 400 khác mã…) | non-retryable | Ghi lỗi (không kèm token/khoá), không retry, không vô hiệu endpoint |
+
 ## 5. Alternative flows
 
 | Nhánh | Điều kiện | Hành vi |
@@ -88,11 +114,27 @@ Child profile.
 | `BR-BPS-07` | Click target phải là path nội bộ trong allow-list; Cấm URL do payload/provider tự quyết | Chặn open redirect và phishing qua notification |
 | `BR-BPS-08` | Token rotate theo installation, invalid token bị terminalize; Cấm retry vô hạn endpoint chết | Token FCM thay đổi và endpoint chết là lifecycle bình thường |
 | `BR-BPS-09` | Firebase client/service-worker code được bundle/self-host theo CSP; Cấm remote script động | Remote script làm yếu CSP và thay đổi code ngoài review |
+| `BR-BPS-10` | Access token OAuth2 của FCM sinh bằng JWT service account ký RS256 qua **WebCrypto** (`crypto.subtle`, PKCS8), gọi bằng `fetch`; cache trong bộ nhớ đến 60 giây trước hạn; Cấm — **NEVER** dùng `firebase-admin` hay API chỉ có ở Node | `firebase-admin` không chạy trên workerd; một mã duy nhất phải chạy ở cả Cloudflare và dev |
+| `BR-BPS-11` | Cấu hình service account (`FCM_PROJECT_ID`, `FCM_CLIENT_EMAIL`, `FCM_PRIVATE_KEY`) là **tuỳ chọn**: thiếu bất kỳ biến nào thì kênh push tắt — consumer ghi delivery `suppressed` (`FCM_NOT_CONFIGURED`), log tên biến thiếu, **không** ném lỗi, không retry; email và inbox không bị ảnh hưởng. Khác email (`BR-NOT-10`, fail-closed ở production) vì push là best-effort (`BR-NOT-13`) | Push chưa cấu hình không được chặn queue hay làm hỏng kênh giao dịch |
+| `BR-BPS-12` | Phân loại lỗi theo §4.2: 404 `UNREGISTERED` và 400 `INVALID_ARGUMENT` → vô hiệu endpoint (`invalid`); 429/5xx/401/lỗi mạng → ném lỗi để retry; 4xx khác → non-retryable, ghi log. Nhiều endpoint: có ít nhất một endpoint `dispatched` thì job coi là thành công (best-effort, `BR-BPS-06`), không retry để khỏi gửi trùng; không endpoint nào thành công mà có lỗi retryable thì job ném lỗi | Retry vô hạn endpoint chết là lỗi vận hành; retry cả job khi một endpoint đã nhận làm trùng push |
+| `BR-BPS-13` | Cấm — **NEVER** log hoặc đưa vào `last_error`/alert: token thiết bị, access token, JWT, `FCM_PRIVATE_KEY`; thông báo lỗi chỉ gồm HTTP status và mã lỗi FCM | Token cho phép nhắm một browser cụ thể; khoá riêng cho phép giả mạo server |
 
 ## 7. Data
 
-**Đọc:** `notifications`, `notification_deliveries`, cấu hình public Firebase/VAPID.
-**Ghi:** `notification_endpoints`, delivery state.
+**Đọc:** `notifications`, `notification_deliveries`, `notification_endpoints`, cấu hình public Firebase/VAPID, env service account (§7.1).
+**Ghi:** `notification_endpoints` (đổi `status` sang `invalid` + `invalidated_at`), delivery state kênh `fcm_web`.
+
+### 7.1 Biến môi trường phía gửi
+
+| Biến | Worker | Loại | Ghi chú |
+|---|---|---|---|
+| `FCM_PROJECT_ID` | `worker` | tuỳ chọn, không bí mật | ID project Firebase, nằm trong URL `messages:send` |
+| `FCM_CLIENT_EMAIL` | `worker` | tuỳ chọn, **secret** | `client_email` của service account |
+| `FCM_PRIVATE_KEY` | `worker` | tuỳ chọn, **secret** | `private_key` PEM PKCS8; chấp nhận `\n` literal thay cho xuống dòng |
+| `NUXT_NOTIFICATION_TOKEN_ENCRYPTION_KEY` | `web` + `worker` | bắt buộc | Worker cần để giải mã token; cùng giá trị với web |
+
+Cả ba `FCM_*` đặt bằng `wrangler secret put` (`BR-ENV-18`), kể cả `FCM_PROJECT_ID`: giữ chung một
+nhóm với khoá để cấu hình service account đổi cùng lúc, và `secret: true` ngăn nó rơi vào `vars`.
 
 Schema cột canonical của `notification_endpoints` nằm ở
 [`schema-identity-billing.md`](schema-identity-billing.md) §7.10d. File này chỉ sở hữu semantics:
@@ -148,6 +190,29 @@ Scenario: BR-BPS-08 — token terminal bị vô hiệu
   Then endpoint chuyển invalid
   And job không retry endpoint đó
 
+Scenario: BR-BPS-10 — JWT ký RS256 bằng WebCrypto và được cache
+  Given service account hợp lệ
+  When gửi hai push liên tiếp trong cùng tiến trình
+  Then chỉ một lần đổi access token
+  And chữ ký JWT xác minh được bằng public key
+
+Scenario: BR-BPS-11 — thiếu cấu hình thì kênh tắt
+  Given thiếu FCM_PRIVATE_KEY
+  When job push:send chạy
+  Then delivery fcm_web là suppressed FCM_NOT_CONFIGURED
+  And job không ném lỗi và không có lời gọi fetch
+
+Scenario: BR-BPS-12 — 5xx được retry
+  Given FCM trả 503
+  When worker xử lý
+  Then job ném lỗi để queue retry
+  And endpoint vẫn active
+
+Scenario: BR-BPS-13 — không lộ bí mật qua log
+  Given FCM trả lỗi cho một token
+  When đọc mọi dòng log và last_error
+  Then không chứa token thiết bị, access token hay private key
+
 Scenario: BR-BPS-07 — click chỉ mở path nội bộ
   Given payload bị sửa action_url thành https://evil.example
   When User click notification
@@ -172,6 +237,7 @@ Scenario: BR-BPS-07 — click chỉ mở path nội bộ
 - Coi FCM accepted là User đã đọc.
 - Remote Firebase script ngoài bundle đã review.
 - Token/PII trong log hoặc analytics.
+- `firebase-admin` hoặc API chỉ có ở Node trên đường gửi.
 
 ## 11. Open questions
 
