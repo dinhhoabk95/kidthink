@@ -46,7 +46,7 @@ Vitest từng workspace (`cd <workspace> && rtk proxy npx vitest run --reporter=
 ### CI — `.github/workflows/deploy-cloudflare.yml`
 
 Node lấy từ `.nvmrc`. Chuỗi: `pnpm install --frozen-lockfile` → `nuxt prepare` (web, admin; env giả) → `pnpm check` →
-Terraform → `sync-wrangler-ids.ts` (sinh `.d1-ddl/{core,logs,blobs}.sql`) → `wrangler d1 execute` →
+`sync-wrangler-ids.ts` (id D1 từ GitHub vars, `BR-DEP-17`; sinh `.d1-ddl/{core,logs,blobs}.sql`) → `wrangler d1 execute` →
 `pnpm build` + `verify-cf-budget.ts` (bundle Worker < 64 MiB, không native addon) → `wrangler deploy` →
 smoke `/api/guest/health/deep` kèm rollback (`BR-DEP-08`). CI **không** chạy vitest.
 

@@ -10,16 +10,6 @@ import { STORED_BLOBS_DDL } from "@mindkid/storage";
  */
 export const LOGS_DDL = "SELECT 1;\n";
 
-interface TfOutputEntry {
-  readonly value: string;
-}
-
-interface TfOutputsJson {
-  readonly d1_core_database_id?: TfOutputEntry;
-  readonly d1_logs_database_id?: TfOutputEntry;
-  readonly d1_blobs_database_id?: TfOutputEntry;
-}
-
 function patchWranglerIds(
   filePath: string,
   ids: { core: string; logs: string; blobs: string }
@@ -72,38 +62,40 @@ export function syncWranglerVars(
   }
 }
 
+/**
+ * BR-DEP-17: id D1 do người vận hành chạy `terraform apply` tay rồi khai vào GitHub vars
+ * (`D1_CORE_DATABASE_ID`, `D1_LOGS_DATABASE_ID`, `D1_BLOBS_DATABASE_ID`). Thiếu một id thì dừng.
+ */
 export function syncWranglerAndDdl(
-  tfJsonPath?: string,
-  repoRoot = process.cwd()
+  repoRoot = process.cwd(),
+  env: Readonly<Record<string, string | undefined>> = process.env
 ): void {
   writeD1DdlArtifacts(repoRoot);
 
-  if (tfJsonPath && fs.existsSync(tfJsonPath)) {
-    const parsed = JSON.parse(
-      fs.readFileSync(tfJsonPath, "utf8")
-    ) as TfOutputsJson;
-    const core = parsed.d1_core_database_id?.value;
-    const logs = parsed.d1_logs_database_id?.value;
-    const blobs = parsed.d1_blobs_database_id?.value;
-    if (core && logs && blobs) {
-      patchWranglerIds(path.join(repoRoot, "apps/web/wrangler.jsonc"), {
-        core,
-        logs,
-        blobs,
-      });
-      patchWranglerIds(path.join(repoRoot, "apps/worker/wrangler.jsonc"), {
-        core,
-        logs,
-        blobs,
-      });
-      console.log(
-        "✅ [sync-wrangler-ids] Đã đồng bộ D1 database_id vào wrangler.jsonc."
-      );
-    }
+  const core = env.D1_CORE_DATABASE_ID?.trim();
+  const logs = env.D1_LOGS_DATABASE_ID?.trim();
+  const blobs = env.D1_BLOBS_DATABASE_ID?.trim();
+  const missing = [
+    ["D1_CORE_DATABASE_ID", core],
+    ["D1_LOGS_DATABASE_ID", logs],
+    ["D1_BLOBS_DATABASE_ID", blobs],
+  ]
+    .filter(([, value]) => !value)
+    .map(([name]) => name);
+  if (!(core && logs && blobs)) {
+    throw new Error(
+      `[sync-wrangler-ids] Thiếu GitHub vars: ${missing.join(", ")} (lấy từ \`terraform output\` chạy tay).`
+    );
   }
+  const ids = { core, logs, blobs };
+  patchWranglerIds(path.join(repoRoot, "apps/web/wrangler.jsonc"), ids);
+  patchWranglerIds(path.join(repoRoot, "apps/worker/wrangler.jsonc"), ids);
+  console.log(
+    "[sync-wrangler-ids] Đã đồng bộ D1 database_id vào wrangler.jsonc."
+  );
 }
 
 if (process.argv[1]?.endsWith("sync-wrangler-ids.ts")) {
-  syncWranglerAndDdl(process.argv[2]);
+  syncWranglerAndDdl();
   syncWranglerVars();
 }

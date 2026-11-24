@@ -45,7 +45,7 @@ commit, thư mục phụ thuộc của máy trạm, tệp cấu hình dev và c�
 
 | Nơi                                       | Actor          | Ghi chú                                                                                                                                                                                              |
 | ----------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.github/workflows/deploy-cloudflare.yml` | GitHub Actions | Kích hoạt khi đẩy `main` hoặc `workflow_dispatch`. `pnpm check` → Terraform → D1 DDL cộng thêm → build web + admin + `verify-cf-budget` → `wrangler deploy` worker, web, admin → smoke `/api/guest/health` |
+| `.github/workflows/deploy-cloudflare.yml` | GitHub Actions | Kích hoạt khi đẩy `main` hoặc `workflow_dispatch`. `pnpm check` → đồng bộ id D1 từ GitHub vars → D1 DDL cộng thêm → build web + admin + `verify-cf-budget` → `wrangler deploy` worker, web, admin → smoke `/api/guest/health` |
 | `npx wrangler rollback --config apps/<app>/wrangler.jsonc` | Người vận hành | Quay lui tay, xem [`release-rollback.md`](release-rollback.md)                                                                                                                       |
 | `pnpm verify:cf-budget`                   | Người vận hành / CI | Kiểm kích thước bundle Worker so với trần gói Free                                                                                                                                              |
 
@@ -56,8 +56,8 @@ commit, thư mục phụ thuộc của máy trạm, tệp cấu hình dev và c�
 2. Chốt commit  — actions/checkout đúng commit kích hoạt
 3. Cài phụ thuộc  — `pnpm install --frozen-lockfile`, Node theo `.nvmrc`
 4. Cổng tĩnh  — `pnpm check` (lint, ranh giới package, typecheck)
-5. Terraform  — áp biên Cloudflare (WAF, cache) và 3 D1 (`core`, `logs`, `blobs`)
-6. Đồng bộ ID D1 vào `wrangler.jsonc` và xuất DDL
+5. Đồng bộ ID D1 từ GitHub vars (`D1_*_DATABASE_ID`) vào `wrangler.jsonc` và xuất DDL — thiếu var thì dừng
+6. (Không còn bước Terraform trong workflow — Terraform chạy tay, xem `BR-DEP-17` và §7.0.1)
 7. Migration  — áp DDL cộng thêm lên D1, trước khi đổi bản
 8. Build  — web (Nitro `cloudflare_module`) và admin static SPA, rồi `verify-cf-budget`
 9. Đổi bản  — `wrangler deploy` worker, web, admin
@@ -91,9 +91,10 @@ Mỗi bước là một step của workflow; bước nào lỗi thì job dừng,
 | `BR-DEP-09` | Một lần phát hành tại một thời điểm, cưỡng chế bằng `concurrency.group` và `cancel-in-progress: false`                                     | Hai lần phát hành song song ghi chồng nhau ở bước DDL và bước deploy. Không huỷ lần đang chạy vì huỷ giữa `wrangler deploy` để lại ba Worker ở ba version khác nhau                                                                                        |
 | `BR-DEP-10` | Log workflow cấm chứa giá trị biến bí mật; mọi giá trị bí mật đi qua `secrets.*`                                                           | Không có bản ghi thì không truy được lần phát hành nào làm hỏng; nhưng bản ghi chứa bí mật là sự cố mới. Thi hành `BR-ENV-08` tại nơi log được ghi                                                                                                        |
 | `BR-DEP-11` | Thất bại phải thấy được: job đỏ trên GitHub là kênh tối thiểu; kênh [`monitoring-and-alerting.md`](monitoring-and-alerting.md) là kênh chủ động | Một lần phát hành thất bại lúc 23 giờ mà không ai biết là một đêm site chạy bản cũ trong khi người ta tin bản mới đã lên. Phần chủ động (Telegram từ workflow) chưa làm — xem §11                                                                         |
-| `BR-DEP-12` | Phát hành lại cùng một commit phải cho cùng kết quả, không được lỗi                                                                        | Đây là tính chất rẻ nhất để kiểm rằng quy trình không dựa vào trạng thái còn sót của lần trước. Terraform idempotent, `wrangler deploy` ghi đè version                                                                          |
+| `BR-DEP-12` | Phát hành lại cùng một commit phải cho cùng kết quả, không được lỗi                                                                        | Đây là tính chất rẻ nhất để kiểm rằng quy trình không dựa vào trạng thái còn sót của lần trước. `wrangler deploy` ghi đè version, id D1 lấy từ vars cố định                                                                          |
 | `BR-DEP-15` | Cổng build phải kiểm **artifact**, không chỉ mã thoát: bundle Worker khởi động được dưới trần Free, static SPA có entry CSS, chunk client không chứa code máy chủ | `nuxt build` trả 0 trong khi server chết ngay lúc khởi động vì native addon bị inline (`BR-MPA-10`), và `nuxt generate` trả 0 trong khi không sinh byte CSS nào vì layer thiết kế bị bỏ qua (`BR-DSC-21`). Cả hai đã xảy ra thật 2026-08-29                |
 | `BR-DEP-16` | Workflow Cloudflare Cấm — **NEVER** dùng `wrangler@latest`/`wrangler` không version: mọi lệnh gọi `npx --yes wrangler@<phiên bản cố định>` (hiện `4.168.0`; wrangler chưa là dependency của kho nên chưa nằm trong lockfile), và mọi `uses:` ghim theo commit SHA kèm comment tag | Công cụ chạm production không được tự đổi theo bản phát hành mới và tag Action có thể bị dời |
+| `BR-DEP-17` | Workflow **không** chạy `terraform apply`; Terraform (`infra/cloudflare`) do người vận hành chạy tay `init`/`plan`/`apply` trên máy có state, rồi khai id D1 vào GitHub vars `D1_CORE_DATABASE_ID`, `D1_LOGS_DATABASE_ID`, `D1_BLOBS_DATABASE_ID`; `sync-wrangler-ids.ts` đọc id từ các biến này và dừng khi thiếu | Terraform không có backend nên runner mới không có state: `apply` tự động sẽ tạo lại D1/WAF trùng hoặc lỗi. Đổi hạ tầng biên là việc hiếm, có người nhìn `plan`, không nên gắn vào mỗi lần đẩy `main` |
 
 Các luật `BR-DEP-02`, `-05`, `-07`, `-13`, `-14` thuộc đường VPS (cây làm việc bẩn trên máy trạm,
 build trong container, đổi liên kết mềm, thư mục bản đang phục vụ, in kế hoạch) đã gỡ theo `D14`;
@@ -101,7 +102,7 @@ số thứ tự giữ nguyên để không vỡ tham chiếu lịch sử.
 
 ## 7. Data
 
-**Đọc:** commit trên kho, secret và variable của GitHub, output Terraform.
+**Đọc:** commit trên kho, secret và variable của GitHub (gồm id D1 do người vận hành khai sau khi chạy Terraform tay).
 **Ghi:** D1 (`core`, `logs`, `blobs`) qua DDL cộng thêm; version Worker trên Cloudflare; không ghi
 gì lên kho.
 
@@ -118,6 +119,28 @@ từng Worker trước lần phát hành đầu: `npx wrangler secret put <TÊN>
 Biến không bí mật (`SITE_URL`, `NUXT_ALLOWED_ORIGINS`, `STORAGE_BASE_URL`, `PAYMENT_MODE`,
 `PAYMENT_MERCHANT_ID`, `VIETQR_*`, `TELEGRAM_CHAT_ID`, `OPERATIONS_ALERT_EMAIL`, …) do workflow
 ghi vào `vars` từ GitHub `vars` (`BR-ENV-18`); đừng đặt tay trên dashboard vì lần deploy sau ghi đè.
+
+### 7.0.1 Terraform chạy tay và GitHub vars (`BR-DEP-17`)
+
+Làm một lần, và lại khi đổi `infra/cloudflare/*.tf`:
+
+```
+cd infra/cloudflare
+cp terraform.tfvars.example terraform.tfvars   # điền token, account, zone, domain (gitignored)
+terraform init && terraform plan && terraform apply
+terraform output                               # d1_core_database_id, d1_logs_database_id, d1_blobs_database_id
+```
+
+Khai ba output D1 thành GitHub **variables** (Settings → Variables, không phải secret):
+
+| GitHub var             | Lấy từ Terraform output   |
+| ---------------------- | ------------------------- |
+| `D1_CORE_DATABASE_ID`  | `d1_core_database_id`     |
+| `D1_LOGS_DATABASE_ID`  | `d1_logs_database_id`     |
+| `D1_BLOBS_DATABASE_ID` | `d1_blobs_database_id`    |
+
+Workflow vẫn cần secret `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` và var `MINDKID_DOMAIN`;
+`CLOUDFLARE_ZONE_ID` chỉ còn dùng khi chạy Terraform tay.
 
 ### 7.1 Thứ tự deploy
 
