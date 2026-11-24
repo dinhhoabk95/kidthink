@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { Readable } from "node:stream";
 import { REPO_ROOT } from "@mindkid/config/paths";
@@ -6,7 +6,7 @@ import { CsrfInvalidError } from "@mindkid/errors/auth";
 import { PayloadTooLargeError } from "@mindkid/errors/common";
 import { createEvent, type H3Event } from "h3";
 import { describe, expect, it } from "vitest";
-import guardsMiddleware from "#server/middleware/guards";
+import guardsMiddleware from "#server/middleware/01-guards";
 import { listApiRoutes } from "../gates/rate-limit-coverage.ts";
 
 function createResponse() {
@@ -46,7 +46,22 @@ function makeEvent(options: {
 const AUTHENTICATED_ROUTE =
   /requireWebUserSession\(|requireManagerSession\(|requireSuperAdminSession\(|auth:\s*"(?:user|manager|super_admin)"/;
 
-describe("middleware/guards", () => {
+describe("middleware/01-guards", () => {
+  it("thứ tự middleware theo tên file: từ chối rẻ chạy trước auth và rate-limit", () => {
+    // Nitro `scanDir` sắp theo `localeCompare` của path; bài đo này khoá thứ tự đó.
+    const order = readdirSync(join(REPO_ROOT, "apps/web/server/middleware"))
+      .map((file) => file.slice(0, -".ts".length))
+      .sort((a, b) => a.localeCompare(b));
+    expect(order).toEqual([
+      "00-cors",
+      "00-security-headers",
+      "01-guards",
+      "auth",
+      "consent-gate",
+      "rate-limit",
+    ]);
+  });
+
   it("bỏ qua request GET không kiểm tra trần body hay same-origin", () => {
     const event = makeEvent({
       path: "/api/users/profile",

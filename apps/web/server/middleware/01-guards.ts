@@ -17,12 +17,13 @@ import {
 /**
  * Middleware phổ quát bảo vệ request cho mọi `/api/*` — Task #264, BR-CSRF-02, BR-SEC-13.
  *
- * Thứ tự middleware của Nitro theo bảng chữ cái tên file:
- * `auth` → `consent-gate` → `guards` → `rate-limit` → `security-headers`.
+ * Thứ tự middleware của Nitro theo bảng chữ cái tên file (`scanDir` sắp `localeCompare`):
+ * `00-cors` → `00-security-headers` → `01-guards` → `auth` → `consent-gate` → `rate-limit`.
  *
- * `guards` BẮT BUỘC chạy trước `rate-limit` để từ chối request vượt trần kích thước (413)
- * trước khi tiêu một lượt bucket rate-limit (T3.1f), và chặn CSRF / cross-site (403)
- * trước khi vào handler nghiệp vụ (T3.1g, T3.1h).
+ * `01-guards` BẮT BUỘC chạy trước `auth` và `rate-limit`: từ chối rẻ (413 vượt trần kích thước,
+ * 403 CSRF / cross-site) xảy ra trước khi đụng DB/Redis để resolve phiên và trước khi tiêu một
+ * lượt bucket rate-limit (T3.1f, T3.1g, T3.1h). `00-security-headers` chạy đầu để mọi response,
+ * kể cả lỗi bị từ chối sớm, đều mang header bảo mật.
  */
 const MUTATING_METHODS: ReadonlySet<string> = new Set([
   "POST",

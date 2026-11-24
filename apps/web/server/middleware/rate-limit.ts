@@ -20,8 +20,8 @@ import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
  * registry **không route nào gọi** — hạn mức tồn tại trên giấy còn
  * `export:data` (5 IP/1 account mỗi 24h) thực tế là không giới hạn.
  *
- * Thứ tự middleware của Nitro là theo tên file: `auth` → `consent-gate` →
- * `rate-limit`. Chạy sau `auth` là **bắt buộc**, vì trục account đọc
+ * Thứ tự middleware của Nitro là theo tên file: `01-guards` → `auth` →
+ * `consent-gate` → `rate-limit`. Chạy sau `auth` là **bắt buộc**, vì trục account đọc
  * `event.context.user` / `event.context.manager` do `auth` đặt.
  */
 function getAccountIdentifier(event: {

@@ -90,7 +90,7 @@ export function getVerifiedRemoteIp(event: H3Event): string {
   return normalizeIp(request?.socket?.remoteAddress) || "unknown";
 }
 
-/** CSRF do `middleware/guards.ts` kiểm một lần cho mọi mutation `/api/*` (BR-CSRF-02). */
+/** CSRF do `middleware/01-guards.ts` kiểm một lần cho mọi mutation `/api/*` (BR-CSRF-02). */
 export function requireWebUserSession(event: H3Event): UserTokenPayload {
   return requireUserAuth(event);
 }

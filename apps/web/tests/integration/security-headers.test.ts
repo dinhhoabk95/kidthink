@@ -6,7 +6,7 @@ import { createEvent } from "h3";
 import { describe, expect, it } from "vitest";
 import errorHandler from "#server/error";
 import corsMiddleware from "#server/middleware/00-cors";
-import securityHeaders from "#server/middleware/security-headers";
+import securityHeaders from "#server/middleware/00-security-headers";
 import { createWebEnv } from "#server/utils/env";
 
 function createResponse() {

@@ -27,7 +27,7 @@ export function getMfaEncryptionKey(): string {
   return secret;
 }
 
-/** CSRF do `middleware/guards.ts` kiểm một lần cho mọi mutation `/api/*` (BR-CSRF-02). */
+/** CSRF do `middleware/01-guards.ts` kiểm một lần cho mọi mutation `/api/*` (BR-CSRF-02). */
 export function requireManagerSession(event: H3Event): ManagerTokenPayload {
   return requireManagerAuth(event);
 }
