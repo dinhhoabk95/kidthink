@@ -115,7 +115,7 @@ Asset không phân giải được → `{ ref, kind, error: "not_found" }`, engi
 
 | | |
 |---|---|
-| Auth | `requireUserAuth()` + `assertActiveChild()` cho bậc ≥ `login` |
+| Auth | `requireUserAuth()` + `getActiveChildUuid()` cho bậc ≥ `login` |
 | 200 | §7.1 — **đồng thời tạo phiên chơi**, xem [`play-session-lifecycle.md`](play-session-lifecycle.md) |
 | 403 | `TIER_LOCKED` |
 | 404 | `NOT_FOUND` |

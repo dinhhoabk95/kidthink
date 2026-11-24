@@ -1,12 +1,6 @@
 export {
-  assertActiveChild,
-  checkUserEntitlement,
-  verifyChildOwnership,
-} from "./actor-boundaries.js";
-export {
   type AuthContext,
   type AuthEvent,
-  createAuthContext,
   type GuestAuthContext,
   type ManagerAuthContext,
   type ManagerRole,
@@ -62,34 +56,8 @@ export {
   validatePasswordStrength,
   verifyPassword,
 } from "./password.js";
-export type {
-  AccountReference,
-  AccountType,
-  AuditPort,
-  AuthAuditEvent,
-  AuthMethod,
-  ChildOwnershipPort,
-  EntitlementPort,
-  ManagerSessionRecord,
-  RateLimitAxis,
-  RateLimitDecision,
-  RateLimitPort,
-  ReauthMethod,
-  ReauthMethodAvailabilityPort,
-  SessionRecord,
-  SessionStorePort,
-  UserSessionRecord,
-} from "./ports.js";
-export {
-  CurrentSessionReauthService,
-  REAUTH_MAX_AGE_SECONDS,
-  verifyReauthWindow,
-} from "./reauth.js";
-export {
-  isSensitiveReauthRoute,
-  SENSITIVE_REAUTH_ROUTES,
-  type SensitiveRouteDefinition,
-} from "./reauth-routes.js";
+export type { AuthMethod, ReauthMethod } from "./ports.js";
+export { REAUTH_MAX_AGE_SECONDS, verifyReauthWindow } from "./reauth.js";
 export {
   type AuthCoordinatorRpcPort,
   createDurableObjectRedisClient,

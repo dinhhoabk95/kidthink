@@ -30,10 +30,7 @@ import {
   userTwoFactors,
   userVerifications,
 } from "@mindkid/db";
-import {
-  InsufficientRoleError,
-  UnauthenticatedError,
-} from "@mindkid/errors/auth";
+import { UnauthenticatedError } from "@mindkid/errors/auth";
 import { isAppError } from "@mindkid/errors/base";
 import { ServiceUnavailableError } from "@mindkid/errors/common";
 import { and, eq, ne, sql } from "drizzle-orm";
@@ -419,29 +416,6 @@ export async function requireBetterAuthUser(
     throw new UnauthenticatedError();
   }
   return resolved;
-}
-
-export async function requireBetterAuthManager(
-  event: H3Event
-): Promise<ManagerTokenPayload> {
-  if (event.context.user) {
-    throw new UnauthenticatedError();
-  }
-  const resolved = await resolveBetterAuthManagerSession(event);
-  if (!resolved) {
-    throw new UnauthenticatedError();
-  }
-  return resolved;
-}
-
-export async function requireBetterAuthSuperAdmin(
-  event: H3Event
-): Promise<ManagerTokenPayload> {
-  const manager = await requireBetterAuthManager(event);
-  if (manager.role !== "super_admin") {
-    throw new InsufficientRoleError();
-  }
-  return manager;
 }
 
 async function purgeSessionsFromStore(

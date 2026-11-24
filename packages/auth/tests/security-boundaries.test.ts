@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  assertActiveChild,
-  type ChildOwnershipPort,
-  createAuthContext,
   createRedisSecondaryStorage,
   deriveInstanceSecret,
   InMemoryRedisClient,
@@ -11,7 +8,6 @@ import {
   requireRole,
   requireUserAuth,
   type UserTokenPayload,
-  verifyChildOwnership,
   verifyReauthWindow,
 } from "#src/index";
 
@@ -29,10 +25,8 @@ describe("Security Evidence — Better Auth Dual-Instance Boundaries (Task #319)
       role: "content_reviewer",
     };
 
-    const userEvent = { context: createAuthContext({ user: userPayload }) };
-    const managerEvent = {
-      context: createAuthContext({ manager: managerPayload }),
-    };
+    const userEvent = { context: { user: userPayload } };
+    const managerEvent = { context: { manager: managerPayload } };
 
     expect(() => requireManagerAuth(userEvent)).toThrowError(
       expect.objectContaining({ code: "UNAUTHENTICATED", status: 401 })
@@ -55,30 +49,6 @@ describe("Security Evidence — Better Auth Dual-Instance Boundaries (Task #319)
     expect(await userStorage.get("session:tok123")).toBe('{"userId":"1"}');
   });
 
-  it("BR-ACT-03: Accessing another user's record returns NOT_FOUND (404), not 403", async () => {
-    const fakeOwnershipPort: ChildOwnershipPort = {
-      async isOwnedByUser(userId: number, childId: number): Promise<boolean> {
-        await Promise.resolve();
-        return userId === 10 && childId === 100;
-      },
-    };
-
-    const event = {
-      context: createAuthContext({
-        user: {
-          user_id: 20,
-          display_name: "User Twenty",
-          session_id: "s-user-20",
-        },
-      }),
-    };
-    await expect(
-      verifyChildOwnership(event, 100, fakeOwnershipPort)
-    ).rejects.toThrowError(
-      expect.objectContaining({ code: "NOT_FOUND", status: 404 })
-    );
-  });
-
   it("BR-ACT-05: User payload contains NO role, tier, package, or entitlement", () => {
     const userPayload: UserTokenPayload = {
       user_id: 1,
@@ -92,32 +62,16 @@ describe("Security Evidence — Better Auth Dual-Instance Boundaries (Task #319)
     expect(userPayload).not.toHaveProperty("entitlement");
   });
 
-  it("BR-ACT-07: Child profile active status verified via assertActiveChild", () => {
-    const eventWithoutChild = {
-      context: createAuthContext({
-        user: {
-          user_id: 1,
-          display_name: "User",
-          session_id: "s-1",
-        },
-      }),
-    };
-
-    expect(() => assertActiveChild(eventWithoutChild)).toThrowError(
-      expect.objectContaining({ code: "NO_ACTIVE_CHILD", status: 428 })
-    );
-  });
-
   it("BR-ACT-08: content_reviewer role cannot perform super_admin actions (INSUFFICIENT_ROLE 403)", () => {
     const reviewerEvent = {
-      context: createAuthContext({
+      context: {
         manager: {
           manager_id: 2,
           display_name: "Reviewer",
           session_id: "s-2",
-          role: "content_reviewer",
+          role: "content_reviewer" as const,
         },
-      }),
+      },
     };
 
     expect(() => requireRole(reviewerEvent, "super_admin")).toThrowError(

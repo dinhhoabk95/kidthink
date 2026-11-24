@@ -48,9 +48,6 @@ export interface UserAuthCallbacks {
     data: UserEmailCallbackInput
   ) => Promise<void>;
   readonly sendResetPassword?: (data: UserEmailCallbackInput) => Promise<void>;
-  readonly sendChangeEmailVerification?: (
-    data: UserEmailCallbackInput & { readonly newEmail: string }
-  ) => Promise<void>;
   readonly onEmailVerified?: (userId: number, email: string) => Promise<void>;
   readonly getUserStatusByEmail?: (
     email: string

@@ -5,17 +5,6 @@ import {
 } from "@mindkid/auth";
 import { requireEnv } from "@mindkid/config";
 import type { H3Event } from "h3";
-import { enforceTwoAxisRateLimit as runtimeEnforceTwoAxisRateLimit } from "./auth-runtime.js";
-import {
-  factoryAssertRateLimitAllowed,
-  factoryAssertRequestBodySize,
-  factoryAssertSameOriginRequest,
-} from "./auth-runtime-factory.js";
-
-export const assertManagerRateLimitAllowed = factoryAssertRateLimitAllowed;
-export const assertManagerRequestBodySize = factoryAssertRequestBodySize;
-export const assertManagerSameOriginRequest = factoryAssertSameOriginRequest;
-export const enforceTwoAxisRateLimit = runtimeEnforceTwoAxisRateLimit;
 
 export function getMfaEncryptionKey(): string {
   const secret = requireEnv("MFA_ENCRYPTION_KEY");

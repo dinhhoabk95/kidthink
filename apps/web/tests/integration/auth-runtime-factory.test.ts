@@ -1,11 +1,6 @@
 import { createEvent, type H3Event } from "h3";
 import { describe, expect, it } from "vitest";
 import {
-  assertManagerRateLimitAllowed,
-  assertManagerRequestBodySize,
-  assertManagerSameOriginRequest,
-} from "../../server/utils/admin-auth-runtime.js";
-import {
   assertRateLimitAllowed as userAssertRateLimitAllowed,
   assertRequestBodySize as userAssertRequestBodySize,
   assertSameOriginRequest as userAssertSameOriginRequest,
@@ -36,15 +31,12 @@ function createMockEvent(
 }
 
 describe("auth-runtime-factory", () => {
-  it("user and manager runtime share identical guard functions", () => {
+  it("runtime guard exports are the factory functions", () => {
     expect(userAssertRequestBodySize).toBe(factoryAssertRequestBodySize);
-    expect(assertManagerRequestBodySize).toBe(factoryAssertRequestBodySize);
 
     expect(userAssertRateLimitAllowed).toBe(factoryAssertRateLimitAllowed);
-    expect(assertManagerRateLimitAllowed).toBe(factoryAssertRateLimitAllowed);
 
     expect(userAssertSameOriginRequest).toBe(factoryAssertSameOriginRequest);
-    expect(assertManagerSameOriginRequest).toBe(factoryAssertSameOriginRequest);
   });
 
   describe("assertRequestBodySize", () => {

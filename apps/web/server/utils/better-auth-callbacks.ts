@@ -173,16 +173,6 @@ export function buildUserAuthCallbacks(
         secrets: { url, reset_url: url, token },
       });
     },
-    sendChangeEmailVerification: async ({ user, newEmail, url, token }) => {
-      await dispatchTransactionalEmail({
-        recipientType: "user",
-        recipientId: Number(user.id),
-        code: "email_change_verification",
-        to: newEmail,
-        payload: { display_name: user.name },
-        secrets: { url, verify_url: url, token },
-      });
-    },
     onEmailVerified: async (userId) => {
       const repos = useOwnerRepositories();
       await repos.users.markEmailVerifiedIfPending(userId, new Date());

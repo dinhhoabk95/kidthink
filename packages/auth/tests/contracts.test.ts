@@ -2,16 +2,10 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { describe, expect, expectTypeOf, it } from "vitest";
 import {
-  type AuditPort,
-  type ChildOwnershipPort,
-  createAuthContext,
-  type EntitlementPort,
   type ManagerTokenPayload,
-  type RateLimitPort,
   requireManagerAuth,
   requireRole,
   requireUserAuth,
-  type SessionStorePort,
   type UserTokenPayload,
 } from "#src/index";
 
@@ -33,8 +27,8 @@ const reviewer: ManagerTokenPayload = {
 
 describe("Task 16 contract boundaries", () => {
   it("BR-ACT-01/BR-ACT-02 rejects cross-audience contexts in both directions", () => {
-    const userEvent = { context: createAuthContext({ user }) };
-    const managerEvent = { context: createAuthContext({ manager: reviewer }) };
+    const userEvent = { context: { user } };
+    const managerEvent = { context: { manager: reviewer } };
 
     expect(() => requireManagerAuth(userEvent)).toThrowError(
       expect.objectContaining({ code: "UNAUTHENTICATED", status: 401 })
@@ -45,7 +39,7 @@ describe("Task 16 contract boundaries", () => {
   });
 
   it("BR-AUT-02 keeps guards synchronous", () => {
-    const event = { context: createAuthContext({ user }) };
+    const event = { context: { user } };
     const result = requireUserAuth(event);
 
     expect(result).toBe(user);
@@ -54,15 +48,18 @@ describe("Task 16 contract boundaries", () => {
   });
 
   it("rejects a context carrying both User and Manager identities", () => {
-    expect(() =>
-      createAuthContext({ user, manager: reviewer } as never)
-    ).toThrowError(
+    const bothEvent = { context: { user, manager: reviewer } };
+
+    expect(() => requireUserAuth(bothEvent)).toThrowError(
+      expect.objectContaining({ code: "UNAUTHENTICATED", status: 401 })
+    );
+    expect(() => requireManagerAuth(bothEvent)).toThrowError(
       expect.objectContaining({ code: "UNAUTHENTICATED", status: 401 })
     );
   });
 
   it("BR-ACT-08 prevents content reviewers from taking super-admin actions", () => {
-    const event = { context: createAuthContext({ manager: reviewer }) };
+    const event = { context: { manager: reviewer } };
 
     expect(() => requireRole(event, "super_admin")).toThrowError(
       expect.objectContaining({ code: "INSUFFICIENT_ROLE", status: 403 })
@@ -74,21 +71,6 @@ describe("Task 16 contract boundaries", () => {
     expect(user).not.toHaveProperty("package");
     expect(user).not.toHaveProperty("tier");
     expect(user).not.toHaveProperty("entitlement");
-  });
-
-  it("defines async seams for external state without implementing adapters", async () => {
-    const sessionStore = {} as SessionStorePort;
-    const rateLimit = {} as RateLimitPort;
-    const audit = {} as AuditPort;
-    const ownership = {} as ChildOwnershipPort;
-    const entitlement = {} as EntitlementPort;
-
-    expectTypeOf(sessionStore).toMatchTypeOf<SessionStorePort>();
-    expectTypeOf(rateLimit).toMatchTypeOf<RateLimitPort>();
-    expectTypeOf(audit).toMatchTypeOf<AuditPort>();
-    expectTypeOf(ownership).toMatchTypeOf<ChildOwnershipPort>();
-    expectTypeOf(entitlement).toMatchTypeOf<EntitlementPort>();
-    await expect(Promise.resolve()).resolves.toBeUndefined();
   });
 
   it("does not export or import auth-vendor types through the public entrypoint", async () => {

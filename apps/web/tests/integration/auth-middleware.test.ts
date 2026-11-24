@@ -10,7 +10,7 @@ import { eq } from "drizzle-orm";
 import { createEvent, type H3Event } from "h3";
 import { beforeEach, describe, expect, it } from "vitest";
 import authMiddleware from "#server/middleware/auth";
-import { assertManagerSameOriginRequest } from "#server/utils/admin-auth-runtime";
+import { assertSameOriginRequest } from "#server/utils/auth-runtime";
 import {
   getManagerAuth,
   getUserAuth,
@@ -290,14 +290,14 @@ describe("manager origin policy", () => {
 
   it("accepts an origin from NUXT_ALLOWED_ORIGINS", () => {
     expect(() =>
-      assertManagerSameOriginRequest(originRequest("http://localhost:3001"))
+      assertSameOriginRequest(originRequest("http://localhost:3001"))
     ).not.toThrow();
   });
 
   it("rejects an origin outside the allowlist with CSRF_INVALID", () => {
     let thrown: Error | null = null;
     try {
-      assertManagerSameOriginRequest(originRequest("http://evil.test"));
+      assertSameOriginRequest(originRequest("http://evil.test"));
     } catch (error) {
       thrown = error as Error;
     }
@@ -313,6 +313,6 @@ describe("manager origin policy", () => {
       "sec-fetch-site": "cross-site",
     });
 
-    expect(() => assertManagerSameOriginRequest(event)).toThrow();
+    expect(() => assertSameOriginRequest(event)).toThrow();
   });
 });

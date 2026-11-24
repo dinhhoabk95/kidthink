@@ -123,7 +123,7 @@ không dùng hành vi cá nhân của trẻ khác (`BR-REC-06`, `D-MU`).
 
 | | |
 |---|---|
-| Auth | `requireUserAuth()` + `assertActiveChild()` |
+| Auth | `requireUserAuth()` + `getActiveChildUuid()` |
 | Query | `?limit=5` (trần tối đa 5) |
 | 200 | §7.1 |
 | 428 | `NO_ACTIVE_CHILD` |

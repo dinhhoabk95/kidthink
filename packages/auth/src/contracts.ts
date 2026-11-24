@@ -62,28 +62,6 @@ export interface AuthEvent {
   readonly context: AuthContext | AuthEventContextShape;
 }
 
-export function createAuthContext(context: AuthContext): AuthContext {
-  const hasUser = context.user !== undefined;
-  const hasManager = context.manager !== undefined;
-
-  if (hasUser === hasManager) {
-    if (hasUser) {
-      throw new UnauthenticatedError();
-    }
-    return {};
-  }
-
-  if (context.user) {
-    return { user: context.user };
-  }
-
-  if (context.manager) {
-    return { manager: context.manager };
-  }
-
-  return {};
-}
-
 export function requireUserAuth(event: AuthEvent): UserTokenPayload {
   if (event.context.manager || !event.context.user) {
     throw new UnauthenticatedError();

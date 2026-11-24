@@ -31,7 +31,6 @@ import {
   factoryAssertRateLimitAllowed,
   factoryAssertRequestBodySize,
   factoryAssertSameOriginRequest,
-  factoryIsAllowedApiOrigin,
 } from "./auth-runtime-factory.js";
 
 export const DEFAULT_MAX_JSON_BODY_BYTES = FACTORY_DEFAULT_MAX_JSON_BODY_BYTES;
@@ -39,7 +38,6 @@ export const assertRateLimitAllowed = factoryAssertRateLimitAllowed;
 export const assertRequestBodySize = factoryAssertRequestBodySize;
 export const assertPayloadSize = factoryAssertPayloadSize;
 export const assertSameOriginRequest = factoryAssertSameOriginRequest;
-export const isAllowedApiOrigin = factoryIsAllowedApiOrigin;
 
 export async function enforceTwoAxisRateLimit(
   event: H3Event,

@@ -30,7 +30,6 @@ import {
   getDummyPasswordHash,
   hashPassword,
   InMemoryRedisClient,
-  isSensitiveReauthRoute,
   type ManagerAuthCallbacks,
   type ManagerAuthSchemaTables,
   registerAuthCoordinatorPort,
@@ -1461,19 +1460,5 @@ describe("Stage 1 Track 2 Auth Hardening", () => {
       .prepare("SELECT COUNT(*) AS cnt FROM user_sessions WHERE user_id = ?")
       .get(dbUser.id) as { cnt: number };
     expect(remaining.cnt).toBe(0);
-  });
-
-  it("[#23] exposes P2 manager sensitive reauth routes when includeFuturePhases=true", () => {
-    const p2Routes: [string, string][] = [
-      ["POST", "/api/managers/orders/ord-1/approve"],
-      ["POST", "/api/managers/orders/ord-1/reject"],
-      ["PATCH", "/api/managers/feature-flags/dark_mode"],
-      ["POST", "/api/managers/subscriptions/sub-1/cancel"],
-      ["GET", "/api/managers/audit-logs/export"],
-    ];
-    for (const [method, path] of p2Routes) {
-      expect(isSensitiveReauthRoute(method, path, false)).toBe(false);
-      expect(isSensitiveReauthRoute(method, path, true)).toBe(true);
-    }
   });
 });

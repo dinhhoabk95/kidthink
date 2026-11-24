@@ -87,7 +87,7 @@ nhập. Là một ngữ cảnh thuộc về User.
 | Tuổi | 3–6 |
 | Trường được phép | **Danh sách đóng** — xem [`child-data-compliance.md`](child-data-compliance.md) §4.1 |
 | Chọn trẻ | Cookie `active_child_id` (không HttpOnly, SameSite=Lax) |
-| Kiểm quyền | `assertActiveChild(event)` throw **428**, **và** kiểm ownership ở DB |
+| Kiểm quyền | `getActiveChildUuid(event)` throw **428** (`NO_ACTIVE_CHILD`), **và** kiểm ownership ở DB |
 
 **NEVER tin `active_child_id` từ cookie.** Cookie không HttpOnly, người dùng sửa được.
 Mọi endpoint chạm dữ liệu trẻ phải `SELECT … WHERE child_profiles.user_id = <user từ session context>`.
@@ -123,7 +123,7 @@ qua `super_admin` khác.
 1. Middleware đọc opaque session cookie, lookup Redis theo đúng namespace một lần.
 2. Gắn vào `event.context.user` **hoặc** `event.context.manager` — không bao giờ cả hai.
 3. Handler gọi đúng một guard. Guard là **hàm sync**, đọc context, throw 401 nếu thiếu.
-4. Nếu route cần trẻ: `assertActiveChild(event)` → 428 nếu chưa chọn.
+4. Nếu route cần trẻ: `getActiveChildUuid(event)` → 428 nếu chưa chọn.
 5. Nếu route cần trẻ: query có `WHERE user_id = ctx.user.user_id` — **luôn**.
 6. Nếu route cần năng lực: `hasEntitlement(user_id, key)` — hỏi DB/cache, không hỏi session projection.
 
@@ -171,7 +171,7 @@ Guard là hàm server bất đồng bộ gọi trực tiếp Better Auth instanc
 async function requireUserSession(event: H3Event): Promise<UserTokenPayload>;       // throw 401
 async function requireManagerSession(event: H3Event): Promise<ManagerTokenPayload>; // throw 401
 async function requireSuperAdminSession(event: H3Event): Promise<ManagerTokenPayload>; // throw 401/403
-function assertActiveChild(event: H3Event): number;                                 // throw 428
+function getActiveChildUuid(event: H3Event): string;                                // throw 428
 async function hasEntitlement(userId: number, key: string): Promise<boolean>;
 ```
 
