@@ -5,6 +5,9 @@ packages:
 ignoreWorkspaceCycles: true
 minimumReleaseAge: 0
 
+# sharp: KHÔNG còn package nào của repo khai trực tiếp; `pnpm why sharp` (2026-11-25) chỉ còn
+# đường bắc cầu wrangler -> miniflare. Giữ khai build script để `pnpm install` không exit 1
+# (ERR_PNPM_IGNORED_BUILDS). Gỡ khi wrangler/miniflare thôi phụ thuộc sharp.
 onlyBuiltDependencies:
   - sharp
 
