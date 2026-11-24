@@ -196,6 +196,34 @@ describe("middleware/01-guards", () => {
     ).rejects.toBeInstanceOf(PayloadTooLargeError);
   });
 
+  it("BR-SEC-13 ca âm: chunked vô hạn bị cắt 413 mà không buffer hết", async () => {
+    let produced = 0;
+    function* endless(): Generator<Buffer> {
+      while (produced < 2000) {
+        produced += 1;
+        yield Buffer.alloc(8 * 1024, 97);
+      }
+    }
+    const req = Object.assign(Readable.from(endless()), {
+      method: "POST",
+      url: "/api/users/collections",
+      headers: {
+        host: "mindkid.test",
+        "transfer-encoding": "chunked",
+        "sec-fetch-site": "same-origin",
+        origin: "https://mindkid.test",
+      },
+      socket: { remoteAddress: "127.0.0.1" },
+    });
+    const event = createEvent(req as never, createResponse() as never);
+
+    await expect(
+      Promise.resolve().then(() => guardsMiddleware(event))
+    ).rejects.toBeInstanceOf(PayloadTooLargeError);
+    // trần 128 KiB = 16 chunk 8 KiB; cho dư vài chunk, tuyệt đối không đọc cạn 2000.
+    expect(produced).toBeLessThan(40);
+  });
+
   it("BR-SEC-13/BR-CSRF-02: chunked cross-site bị 403 trước khi đọc thân", () => {
     const event = makeEvent({
       path: "/api/users/collections",

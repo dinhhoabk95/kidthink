@@ -1,18 +1,13 @@
-import { PayloadTooLargeError } from "@mindkid/errors/common";
 import {
   canonicalizeRequestPath,
   resolveRequestBodySizeLimit,
 } from "@mindkid/shared";
-import {
-  defineEventHandler,
-  getRequestURL,
-  type H3Event,
-  readRawBody,
-} from "h3";
+import { defineEventHandler, getRequestURL, type H3Event } from "h3";
 import {
   assertRequestBodySize,
   assertSameOriginRequest,
 } from "#server/utils/auth-runtime";
+import { readBoundedRawBody } from "#server/utils/bounded-body";
 
 /**
  * Middleware phổ quát bảo vệ request cho mọi `/api/*` — Task #264, BR-CSRF-02, BR-SEC-13.
@@ -40,16 +35,14 @@ function isMutatingMethod(method: string | undefined): boolean {
 
 /**
  * Request không khai `Content-Length` (chunked) thì header không nói lên kích thước thật:
- * đọc thân thô (h3 v1 cache lại cho handler phía sau) rồi đo byte thực (BR-SEC-13).
+ * đọc luồng và đếm byte thực, cắt ở trần (BR-SEC-13); thân đã đọc được gắn lại cho handler sau.
  */
 async function assertActualBodySize(
   event: H3Event,
   maxBytes: number
 ): Promise<void> {
-  const raw = await readRawBody(event, false);
-  if (raw && raw.byteLength > maxBytes) {
-    throw new PayloadTooLargeError();
-  }
+  // Đếm byte theo luồng, ném 413 ngay khi vượt trần — không buffer hết rồi mới so.
+  await readBoundedRawBody(event, maxBytes);
 }
 
 export default defineEventHandler((event): Promise<void> | undefined => {

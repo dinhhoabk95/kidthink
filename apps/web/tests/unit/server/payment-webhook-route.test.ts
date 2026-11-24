@@ -1,3 +1,4 @@
+import { Readable } from "node:stream";
 import { AppError } from "@mindkid/errors";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import paymentWebhookHandler from "#server/api/guest/webhooks/payments/[provider].post";
@@ -34,6 +35,32 @@ describe("Payment webhook route — UC-079 BR-001", () => {
       isDuplicate: false,
     });
     vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  });
+
+  it("BR-SEC-13: webhook chunked vượt trần 64 KiB bị 413 trước khi verify chữ ký", async () => {
+    let produced = 0;
+    function* endless(): Generator<Buffer> {
+      while (produced < 2000) {
+        produced += 1;
+        yield Buffer.alloc(8 * 1024, 97);
+      }
+    }
+    const event = mockRawWebhookEvent({ provider: "payos" });
+    const req = event.node.req as unknown as Readable & {
+      headers: Record<string, string>;
+    };
+    Object.defineProperty(event.node, "req", {
+      value: Object.assign(Readable.from(endless()), {
+        method: "POST",
+        url: req.url,
+        headers: { "transfer-encoding": "chunked", "x-signature": "bad" },
+      }),
+    });
+
+    const error = await rejectionOf(paymentWebhookHandler(event));
+    expect(error?.code).toBe("PAYLOAD_TOO_LARGE");
+    expect(produced).toBeLessThan(20);
+    expect(processMock).not.toHaveBeenCalled();
   });
 
   it("accepts a body signed over its exact raw bytes", async () => {

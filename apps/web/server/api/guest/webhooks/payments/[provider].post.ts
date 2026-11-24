@@ -12,6 +12,11 @@ import {
 } from "@mindkid/shared";
 import { defineEventHandler, getHeader, getRouterParam, readRawBody } from "h3";
 import { processAutomatedPaymentWebhook } from "#server/services/index.js";
+import { assertRequestBodySize } from "#server/utils/auth-runtime";
+import { readBoundedRawBody } from "#server/utils/bounded-body";
+
+/** BR-SEC-13: webhook JSON nhỏ; trần 64 KiB áp TRƯỚC khi đọc thân và verify chữ ký. */
+const PAYMENT_WEBHOOK_MAX_BODY_BYTES = 64 * 1024;
 
 function isOperatingMode(value: string): value is PaymentOperatingMode {
   return PAYMENT_OPERATING_MODES.some((mode) => mode === value);
@@ -49,6 +54,8 @@ export default defineEventHandler(async (event) => {
   // BR-001: chữ ký tính trên BYTE THÔ của thân request, không phải JSON đã
   // parse rồi tuần tự hoá lại. Chữ ký chỉ lấy từ header; chữ ký nằm trong thân
   // không được chấp nhận.
+  assertRequestBodySize(event, PAYMENT_WEBHOOK_MAX_BODY_BYTES);
+  await readBoundedRawBody(event, PAYMENT_WEBHOOK_MAX_BODY_BYTES);
   const rawBody = await readRawBody(event, "utf8");
   const signature =
     getHeader(event, "x-webhook-signature") ||
