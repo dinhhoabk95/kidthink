@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { repoPath } from "@mindkid/config/paths";
 import {
   buildPublicHreflangLinks,
   COMPETENCY_CATALOG,
@@ -13,15 +15,11 @@ import {
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
-import {
-  buildBreadcrumbListJsonLd,
-  buildFaqPageJsonLd,
-  buildHreflangLinks,
-  buildLearningResourceJsonLd,
-  buildOrganizationJsonLd,
-  buildWebSiteJsonLd,
-} from "#server/utils/seo-jsonld";
 import { scanDirectoryForThirdPartyScripts } from "~~/tests/gates/public-scripts";
+
+function readRepoFile(relativePath: string): string {
+  return readFileSync(repoPath(relativePath), "utf8");
+}
 
 describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
   describe("Task 1: Hạ tầng SEO (BR-SEO2-01..09)", () => {
@@ -63,34 +61,24 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
     });
 
     it("BR-SEO2-03: generates valid Organization, WebSite, and LearningResource JSON-LD", () => {
-      const org = buildOrganizationJsonLd();
-      expect(org["@type"]).toBe("Organization");
-      expect(org.url).toBeDefined();
+      const indexSource = readRepoFile("apps/web/app/pages/index.vue");
+      expect(indexSource).toContain('"@type": "Organization"');
+      expect(indexSource).toContain('"@type": "WebSite"');
 
-      const site = buildWebSiteJsonLd();
-      expect(site["@type"]).toBe("WebSite");
-      expect(site.potentialAction).toBeDefined();
-
-      const resource = buildLearningResourceJsonLd({
-        code: "GL-C1-001",
-        title: "Đếm số trái cây",
-        age_band: "3-4",
-        competency_name: "Tư duy toán học",
-        is_free: true,
-      });
-      expect(resource["@type"]).toBe("LearningResource");
-      expect(resource.isAccessibleForFree).toBe(true);
-      expect(resource.inLanguage).toBe("vi-VN");
+      const gameSeoSource = readRepoFile(
+        "apps/web/app/composables/use-game-detail-seo.ts"
+      );
+      expect(gameSeoSource).toContain('"@type": "LearningResource"');
+      expect(gameSeoSource).toContain('inLanguage: "vi-VN"');
+      expect(gameSeoSource).toContain("isAccessibleForFree");
     });
 
     it("BR-SEO2-04: ensures canonical URL and og:* meta presence", () => {
-      const breadcrumbs = buildBreadcrumbListJsonLd([
-        { name: "Trang chủ", url: "/" },
-        { name: "Thư viện trò chơi", url: "/games" },
-        { name: "Đếm số trái cây", url: "/games/GL-C1-001" },
-      ]);
-      expect(breadcrumbs.itemListElement).toHaveLength(3);
-      expect(breadcrumbs.itemListElement[2].position).toBe(3);
+      const gameSeoSource = readRepoFile(
+        "apps/web/app/composables/use-game-detail-seo.ts"
+      );
+      expect(gameSeoSource).toContain('"@type": "BreadcrumbList"');
+      expect(gameSeoSource.match(/"@type": "ListItem"/g)).toHaveLength(3);
     });
 
     it("BR-SEO2-07: gỡ bỏ game archived khỏi sitemap", () => {
@@ -128,12 +116,6 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
           href: "https://mindkid.vn/pricing",
         },
       ]);
-
-      const serverHreflang = buildHreflangLinks("/programs");
-      expect(serverHreflang).toHaveLength(2);
-      expect(serverHreflang[0]?.hreflang).toBe("vi-VN");
-      expect(serverHreflang[1]?.hreflang).toBe("x-default");
-      expect(serverHreflang[0]?.href.endsWith("/programs")).toBe(true);
 
       expect(
         buildPublicHreflangLinks("/me/settings", "https://mindkid.vn")
@@ -272,10 +254,9 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
       expect(FAQ_ITEMS.length).toBeGreaterThanOrEqual(6);
       const anchors = FAQ_ITEMS.map((f) => f.anchor);
       expect(new Set(anchors).size).toBe(FAQ_ITEMS.length);
-
-      const jsonLd = buildFaqPageJsonLd();
-      expect(jsonLd["@type"]).toBe("FAQPage");
-      expect(jsonLd.mainEntity.length).toBe(FAQ_ITEMS.length);
+      expect(readRepoFile("apps/web/app/pages/faq.vue")).toContain(
+        '"@type": "FAQPage"'
+      );
     });
 
     it("BR-FAQ-06: directly addresses product boundaries without evasion", () => {

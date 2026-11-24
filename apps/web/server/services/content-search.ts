@@ -25,10 +25,7 @@ import {
   toFacetRows,
   toSearchRepoFilter,
 } from "#server/services/content-search-facets";
-import {
-  useOwnerRepositories,
-  useRepositories,
-} from "#server/utils/repositories";
+import { useOwnerRepositories } from "#server/utils/repositories";
 
 export type SearchViewerRole = "guest" | "user" | "manager";
 export interface SearchViewer {
@@ -524,45 +521,5 @@ export async function searchGameLevels(
     total: facets.total,
     facets,
     no_store: hasPaidOrLockedContent,
-  };
-}
-
-/**
- * Helper for fallback base search across published content.
- */
-export async function searchContentPublished(
-  query: string,
-  options?: { limit?: number; userTier?: AccessTier }
-) {
-  const { gameLevels } = useRepositories();
-  const limit = options?.limit ?? 10;
-  const userTier = options?.userTier ?? "free";
-  const viewer: SearchViewer = { role: "user", userPackage: userTier };
-  const params = SearchParamsSchema.parse({
-    q: query,
-    limit,
-    status: "published",
-  });
-  const allowed = await getViewerAllowedTiers(viewer);
-
-  const candidates = await gameLevels.listPublished({ limit: 500 });
-  const matched = candidates
-    .filter((row) => matchesVietnameseSearch(row, params.q ?? ""))
-    .slice(0, params.limit ?? limit)
-    .map((row) => formatSearchItem(row, allowed, "user"));
-
-  return {
-    items: matched.map((it) => ({
-      id: it.id,
-      contentType: "game_level",
-      code: it.code,
-      title: it.title,
-      instruction: it.instruction,
-      ageMin: it.age_min ?? 3,
-      ageMax: it.age_max ?? 6,
-      difficulty: it.difficulty ?? 1,
-      accessTier: it.access_tier,
-      rank: 1,
-    })),
   };
 }

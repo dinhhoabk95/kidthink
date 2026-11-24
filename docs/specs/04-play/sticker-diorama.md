@@ -95,7 +95,7 @@ Unique `(child_profile_id, theme_code, emoji, instance_index)`.
 
 | | |
 |---|---|
-| Auth | Phiên User + `requireOwnedActiveChild` |
+| Auth | Phiên User + trẻ đang hoạt động thuộc caller |
 | Query | `theme` tuỳ chọn — lọc theo mã chủ đề trong `CONTENT_THEMES` |
 | 200 | `{ placements_by_theme: Record<string, Array<{ emoji: string, label: string, instance_index: number, norm_x: number, norm_y: number, scale: number }>> }` |
 | 428 | `NO_ACTIVE_CHILD` — chưa chọn hồ sơ trẻ hợp lệ |
@@ -104,7 +104,7 @@ Unique `(child_profile_id, theme_code, emoji, instance_index)`.
 
 | | |
 |---|---|
-| Auth | Phiên User + CSRF `x-csrf-token` + `requireOwnedActiveChild` |
+| Auth | Phiên User + CSRF `x-csrf-token` + trẻ đang hoạt động thuộc caller |
 | Body | `{ theme_code: string, placements: Array<{ emoji: string, instance_index: number, norm_x: number, norm_y: number, scale?: number }> }` (tối đa 24 phần tử) |
 | 200 | `{ theme_code: string, placements: Array<{ emoji: string, label: string, instance_index: number, norm_x: number, norm_y: number, scale: number }> }` |
 | 422 | `VALIDATION_FAILED` — chủ đề không hợp lệ, toạ độ ngoài biên, hoặc `emoji` trẻ chưa sở hữu trong `child_stickers` |

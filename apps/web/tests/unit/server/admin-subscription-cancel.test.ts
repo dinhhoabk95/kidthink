@@ -17,7 +17,6 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   adminCancelSubscription,
   createRecurringSubscription,
-  runDunningSweep,
   userCancelRecurringSubscription,
 } from "#server/services/recurring-billing";
 
@@ -258,76 +257,5 @@ describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task 
         adminNote: "Ngắn quá",
       })
     ).rejects.toThrowError(RE_INVALID_CANCEL_REASON);
-  });
-
-  it("Scenario: BR-RBL-05 — sweeps past due subscriptions and revokes grace period entitlements after limit", async () => {
-    const db = getOwnerDb();
-
-    const [user] = await db
-      .insert(users)
-      .values({
-        email: `dunning_user_${Date.now()}@example.com`,
-        displayName: "Dunning User",
-      })
-      .returning();
-    if (!user) {
-      throw new Error("Failed to insert user");
-    }
-
-    const pastDate = new Date(Date.now() - 10 * 86_400_000); // 10 days ago
-
-    const [sub] = await db
-      .insert(recurringSubscriptions)
-      .values({
-        userId: user.id,
-        packageCode: "PKG-standard",
-        offerCode: "monthly",
-        billingPeriod: "monthly",
-        priceVnd: 49_000,
-        autoRenew: true,
-        status: RECURRING_SUBSCRIPTION_STATUS.PAST_DUE,
-        currentPeriodStart: pastDate,
-        currentPeriodEnd: pastDate,
-        nextBillingAt: pastDate,
-        dunningAttempts: 3,
-        consentTermsVersion: "v1.0",
-      })
-      .returning();
-    if (!sub) {
-      throw new Error("Failed to insert sub");
-    }
-
-    await db.insert(entitlements).values({
-      userId: user.id,
-      entitlementKey: "play_standard_games",
-      source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
-      status: ENTITLEMENT_STATUS.GRACE_PERIOD,
-      expiresAt: new Date(Date.now() + 86_400_000),
-    });
-
-    const sweepResult = await runDunningSweep(new Date());
-
-    expect(sweepResult.totalProcessed).toBeGreaterThanOrEqual(1);
-    expect(sweepResult.expiredCount).toBeGreaterThanOrEqual(1);
-
-    // Sub is cancelled
-    const [updatedSub] = await db
-      .select()
-      .from(recurringSubscriptions)
-      .where(eq(recurringSubscriptions.id, sub.id));
-    if (!updatedSub) {
-      throw new Error("updatedSub not found");
-    }
-    expect(updatedSub.status).toBe(RECURRING_SUBSCRIPTION_STATUS.CANCELLED);
-
-    // Grace period entitlement is cancelled
-    const [updatedEntitlement] = await db
-      .select()
-      .from(entitlements)
-      .where(eq(entitlements.userId, user.id));
-    if (!updatedEntitlement) {
-      throw new Error("updatedEntitlement not found");
-    }
-    expect(updatedEntitlement.status).toBe(ENTITLEMENT_STATUS.CANCELLED);
   });
 });

@@ -133,7 +133,7 @@ interface ChildThemeMapResponse {
 
 | | |
 |---|---|
-| Auth | Phiên User (`defineApiRoute` `auth: "user"`) + trẻ đang hoạt động thuộc caller (`requireOwnedActiveChild`) |
+| Auth | Phiên User (`defineApiRoute` `auth: "user"`) + trẻ đang hoạt động thuộc caller |
 | Request | Không có query, không có body |
 | Response 200 | `ChildThemeMapResponse` (§7.1) |
 | 401 | Chưa đăng nhập |

@@ -88,7 +88,7 @@ Spec này biến khu vực trung tâm của sảnh `/play` thành **Phòng chơi
 
 | | |
 |---|---|
-| Auth | Phiên User + `requireOwnedActiveChild` |
+| Auth | Phiên User + trẻ đang hoạt động thuộc caller |
 | 200 | `{ equipped_gear_code: string \| null, unlocked_gears: Array<{ code: string, label_vi: string, icon_emoji: string }> }` |
 | 428 | `NO_ACTIVE_CHILD` — chưa chọn hồ sơ trẻ hợp lệ |
 
@@ -96,7 +96,7 @@ Spec này biến khu vực trung tâm của sảnh `/play` thành **Phòng chơi
 
 | | |
 |---|---|
-| Auth | Phiên User + CSRF `x-csrf-token` + `requireOwnedActiveChild` |
+| Auth | Phiên User + CSRF `x-csrf-token` + trẻ đang hoạt động thuộc caller |
 | Body | `{ equipped_gear_code: string \| null }` |
 | 200 | `{ equipped_gear_code: string \| null }` |
 | 422 | `VALIDATION_FAILED` — mã phụ kiện không tồn tại hoặc trẻ chưa mở khoá |

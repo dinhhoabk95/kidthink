@@ -54,9 +54,10 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
     });
 
     it("Scenario: BR-SEO2-03 — generates valid JSON-LD structured data", () => {
-      const jsonLdHelperSource = readRepoFile(
-        "apps/web/server/utils/seo-jsonld.ts"
-      );
+      const jsonLdHelperSource = [
+        readRepoFile("apps/web/app/pages/index.vue"),
+        readRepoFile("apps/web/app/composables/use-game-detail-seo.ts"),
+      ].join("\n");
       expect(jsonLdHelperSource).toContain("https://schema.org");
       expect(jsonLdHelperSource).toContain('"@type": "Organization"');
       expect(jsonLdHelperSource).toContain('"@type": "WebSite"');
@@ -533,8 +534,9 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Invariants (BR-SEO2, BR-GCP, BR
     it("Scenario: BR-FAQ-03 — generates FAQPage JSON-LD schema", () => {
       const indexSource = readRepoFile("apps/web/app/pages/index.vue");
       expect(indexSource).toContain('"@type": "FAQPage"');
-      const jsonLdSource = readRepoFile("apps/web/server/utils/seo-jsonld.ts");
-      expect(jsonLdSource).toContain('"@type": "FAQPage"');
+      expect(readRepoFile("apps/web/app/pages/faq.vue")).toContain(
+        '"@type": "FAQPage"'
+      );
     });
 
     it("Scenario: BR-FAQ-04 — FAQ contents stored as structured seed data", () => {

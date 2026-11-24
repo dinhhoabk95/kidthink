@@ -122,7 +122,7 @@ interface ChildCompetencyResponse {
 
 | | |
 |---|---|
-| Auth | Phiên User (`defineApiRoute` `auth: "user"`) + trẻ đang hoạt động thuộc caller (`requireOwnedActiveChild`) |
+| Auth | Phiên User (`defineApiRoute` `auth: "user"`) + trẻ đang hoạt động thuộc caller |
 | Param | `code` — mã năng lực `C1`…`C6`, không phân biệt hoa thường |
 | Response 200 | `ChildCompetencyResponse` (§7.1) |
 | 401 | Chưa đăng nhập |

@@ -74,7 +74,7 @@ Nó không phải bảng để "săn": trẻ chỉ thấy sticker mình đã có
 | Màn chơi không có chủ đề hợp lệ | `theme_id` của màn chơi không thuộc registry | Chọn chủ đề tất định từ mã màn chơi (`BR-STK-04`) |
 | Phiên chơi bị xoá | Hàng `play_sessions` bị xoá | Sticker ở lại, `play_session_id` thành `null` (`BR-STK-02`) |
 | Album trống | Trẻ chưa hoàn thành màn chơi nào | Trang hiện Gấu Con, không chữ, không ô trống |
-| Cookie trẻ không thuộc user | `requireOwnedActiveChild` từ chối | `NO_ACTIVE_CHILD`, không lộ album của trẻ khác (`BR-STK-07`) |
+| Cookie trẻ không thuộc user | Kiểm tra trẻ đang hoạt động thuộc caller từ chối | `NO_ACTIVE_CHILD`, không lộ album của trẻ khác (`BR-STK-07`) |
 
 ## 6. Business rules
 

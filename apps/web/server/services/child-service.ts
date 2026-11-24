@@ -122,14 +122,6 @@ export async function getOwnedChild(
   return await repos.childProfiles.findByUuidForUser(uuid, userId);
 }
 
-export async function archiveOwnedChild(
-  childId: number,
-  userId: number
-): Promise<ChildProfileEntity | null> {
-  const repos = useOwnerRepositories();
-  return await repos.childProfiles.archive(childId, userId);
-}
-
 function parseCreateChildInput(
   rawBody: RawChildInputRecord | object | null | undefined,
   currentYear: number

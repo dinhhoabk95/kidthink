@@ -510,10 +510,6 @@ let simulatedTimeout = false;
 let simulatedInappropriate = false;
 let simulatedMedicalDiagnosis = false;
 
-export function setSimulatedAiFailure(fail: boolean): void {
-  simulatedFailure = fail;
-}
-
 export const aiProvider = {
   configureHttpAdapter(config: HttpAiAdapterConfig | null): void {
     configuredHttpAdapter = config;

@@ -17,8 +17,6 @@ import {
   ADMIN_SUBSCRIPTION_CANCEL_REASONS,
   type AdminSubscriptionCancelReason,
   canCancelRecurringSubscription,
-  DUNNING_GRACE_PERIOD_DAYS,
-  DUNNING_MAX_ATTEMPTS,
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
 import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
@@ -276,82 +274,4 @@ export async function adminCancelSubscription(
   }
 
   return cancelResult;
-}
-
-/**
- * Sweeps past_due subscriptions and handles dunning retry or expiry.
- * BR-RBL-04, BR-RBL-05
- */
-export async function runDunningSweep(now = new Date()) {
-  const repos = useOwnerRepositories();
-  const expiredUserIds = new Set<number>();
-
-  const summary = await repos.recurringSubscriptions.transaction(async (tx) => {
-    const txRepos = createRepositories(tx);
-    const pastDueSubs =
-      await txRepos.recurringSubscriptions.listDueForDunning(now);
-
-    let retriedCount = 0;
-    let expiredCount = 0;
-
-    for (const sub of pastDueSubs) {
-      const daysSincePeriodEnd = Math.floor(
-        (now.getTime() - sub.currentPeriodEnd.getTime()) / (24 * 60 * 60 * 1000)
-      );
-
-      if (
-        sub.dunningAttempts < DUNNING_MAX_ATTEMPTS &&
-        daysSincePeriodEnd <= DUNNING_GRACE_PERIOD_DAYS
-      ) {
-        await txRepos.recurringSubscriptions.updateSubscriptionById(sub.id, {
-          dunningAttempts: sub.dunningAttempts + 1,
-          lastDunningAt: now,
-          updatedAt: now,
-        });
-        retriedCount++;
-      } else {
-        await txRepos.recurringSubscriptions.updateSubscriptionById(sub.id, {
-          status: RECURRING_SUBSCRIPTION_STATUS.CANCELLED,
-          autoRenew: false,
-          cancelledAt: now,
-          cancelledBy: "system",
-          cancelReason: "dunning_grace_period_exceeded",
-          updatedAt: now,
-        });
-
-        const pkg =
-          PACKAGE_CATALOG[sub.packageCode as keyof typeof PACKAGE_CATALOG];
-        const pkgKeys = pkg ? [...pkg.entitlements] : [];
-        if (pkgKeys.length > 0) {
-          await txRepos.entitlements.updateStatusForUserKeys(
-            sub.userId,
-            {
-              source: ENTITLEMENT_SOURCE.PACKAGE_ORDER,
-              currentStatuses: [ENTITLEMENT_STATUS.GRACE_PERIOD],
-              keys: pkgKeys,
-            },
-            {
-              status: ENTITLEMENT_STATUS.CANCELLED,
-              now,
-            }
-          );
-        }
-
-        expiredUserIds.add(sub.userId);
-        expiredCount++;
-      }
-    }
-
-    return {
-      totalProcessed: pastDueSubs.length,
-      retriedCount,
-      expiredCount,
-    };
-  });
-
-  for (const userId of expiredUserIds) {
-    await invalidateUserEntitlementsCache(userId);
-  }
-
-  return summary;
 }

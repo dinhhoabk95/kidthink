@@ -96,7 +96,7 @@ interface DailyAdventureResponse {
 
 | | |
 |---|---|
-| Auth | Phiên User (`defineApiRoute` `auth: "user"`) + `requireOwnedActiveChild` |
+| Auth | Phiên User (`defineApiRoute` `auth: "user"`) + trẻ đang hoạt động thuộc caller |
 | Query | Không có |
 | 200 | `DailyAdventureResponse` (§7) |
 | 401 | `UNAUTHENTICATED` — chưa đăng nhập |

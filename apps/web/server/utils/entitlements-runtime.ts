@@ -315,34 +315,3 @@ export async function resetUserQuota(
     };
   });
 }
-
-export async function deployPackageCatalog(actor?: {
-  id?: number | null;
-  ip?: string | null;
-  userAgent?: string | null;
-}): Promise<{ deployedCodes: string[] }> {
-  const repos = useRepositories();
-  const deployedCodes = Object.keys(PACKAGE_CATALOG);
-
-  await repos.packages.transaction(async (tx) => {
-    const txRepos = createRepositories(tx);
-    const existing = await txRepos.packages.listAll();
-    await writeAudit(tx, {
-      actor_type: actor?.id ? "manager" : "system",
-      actor_id: actor?.id ?? null,
-      action: "package_catalog_deployed",
-      entity_type: "package_catalog",
-      entity_id: "PACKAGE_CATALOG",
-      before_data: {
-        existing_codes: existing.map((row) => row.code),
-      },
-      after_data: {
-        deployed_codes: deployedCodes,
-      },
-      ip_address: actor?.ip ?? null,
-      user_agent: actor?.userAgent ?? null,
-    });
-  });
-
-  return { deployedCodes };
-}
