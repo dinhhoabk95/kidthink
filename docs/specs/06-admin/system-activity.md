@@ -56,6 +56,7 @@ nơi xác nhận và tra cứu sau khi nhận alert.
 | `BR-SYS-04` | Cấm — **NEVER hiện chuỗi kết nối, secret, hay biến môi trường** | Bảo vệ an toàn thông tin hạ tầng và ngăn ngừa nguy cơ lộ bí mật hệ thống theo `BR-SEC-01` |
 | `BR-SYS-05` | Chỉ `super_admin` | Giới hạn quyền giám sát hạ tầng cho đúng vai trò quản trị tối cao theo `BR-ADA-02` |
 | `BR-SYS-06` | Backup chưa verify → cảnh báo mức cao | `BR-BAK-06` |
+| `BR-SYS-07` | Trên Cloudflare, thăm dò hàng đợi dùng `getStats()` của queue port (số `waiting`, `failed` của `JobQueueDO`), không gọi BullMQ; các số `active`, `completed`, `delayed`, tuổi job cũ nhất báo `0`; chưa có port → dịch vụ `down`/`unknown`. Ngoài Cloudflare giữ đường BullMQ | DO không có BullMQ; gọi `getQueue()` trên Cloudflare luôn lỗi |
 
 ## 7. Data
 

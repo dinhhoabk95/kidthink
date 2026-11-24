@@ -1,9 +1,10 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   probePostgres,
   probeQueue,
   probeValkey,
 } from "#server/api/managers/system/status.get.js";
+import { probeQueue as probeQueueWithPort } from "#server/services/system-status-service";
 
 describe("System Activity Health Probes (BR-SYS-01..06, D-KT)", () => {
   describe("probePostgres", () => {
@@ -75,6 +76,64 @@ describe("System Activity Health Probes (BR-SYS-01..06, D-KT)", () => {
       expect(throwResult.status).toBe("unknown");
       expect(throwResult.state).toBe("down");
       expect(throwResult.status).not.toBe("ok");
+    });
+  });
+
+  describe("probeQueue trên Cloudflare (BR-SYS-07)", () => {
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
+    it("dùng getStats của queue port (waiting/failed), không đụng BullMQ", async () => {
+      vi.stubEnv("MINDKID_RUNTIME", "cloudflare");
+      const getQueueFn = vi.fn(() => {
+        throw new Error("getQueue không được gọi trên Cloudflare");
+      });
+      const result = await probeQueueWithPort(
+        getQueueFn,
+        Date.now(),
+        1000,
+        () => ({
+          enqueueBatch: () => Promise.resolve({ accepted: 0 }),
+          getStats: () => Promise.resolve({ waiting: 9, failed: 1 }),
+        })
+      );
+      expect(getQueueFn).not.toHaveBeenCalled();
+      expect(result.service.status).toBe("ok");
+      expect(result.service.state).toBe("up");
+      expect(result.jobs.waiting_count).toBe(9);
+      expect(result.jobs.failed_count).toBe(1);
+      expect(result.jobs.status).toBe("ok");
+    });
+
+    it("backlog vượt ngưỡng → jobs.status bad", async () => {
+      vi.stubEnv("MINDKID_RUNTIME", "cloudflare");
+      const result = await probeQueueWithPort(
+        () => {
+          throw new Error("không gọi");
+        },
+        Date.now(),
+        1000,
+        () => ({
+          enqueueBatch: () => Promise.resolve({ accepted: 0 }),
+          getStats: () => Promise.resolve({ waiting: 501, failed: 0 }),
+        })
+      );
+      expect(result.jobs.status).toBe("bad");
+    });
+
+    it("chưa có port → service down/unknown", async () => {
+      vi.stubEnv("MINDKID_RUNTIME", "cloudflare");
+      const result = await probeQueueWithPort(
+        () => {
+          throw new Error("không gọi");
+        },
+        Date.now(),
+        1000,
+        () => undefined
+      );
+      expect(result.service.state).toBe("down");
+      expect(result.service.status).toBe("unknown");
     });
   });
 

@@ -1,7 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { ping } from "@mindkid/cache";
+import { isCloudflareRuntime } from "@mindkid/config";
 import { BACKUP_DIR } from "@mindkid/config/backup";
+import {
+  getCloudflareQueuePort,
+  type JobQueueCoordinatorPort,
+} from "@mindkid/queue";
 import { getQueue } from "@mindkid/queue/connection";
 import {
   countErrorLogsSinceBySource,
@@ -252,38 +257,75 @@ export async function probeValkey(
   }
 }
 
+interface QueueCountsReading {
+  readonly counts: QueueCountsSnapshot;
+  readonly oldestJobAgeSeconds: number;
+}
+
+/** BR-SYS-07: JobQueueDO chỉ có waiting/failed. */
+async function readCloudflareQueueCounts(
+  getPort: () => JobQueueCoordinatorPort | undefined
+): Promise<QueueCountsReading> {
+  const port = getPort();
+  if (!port) {
+    throw new Error("Cloudflare queue port is not registered");
+  }
+  const stats = await withProbeTimeout(port.getStats());
+  return {
+    counts: {
+      waiting: stats.waiting,
+      active: 0,
+      completed: 0,
+      failed: stats.failed,
+      delayed: 0,
+    },
+    oldestJobAgeSeconds: 0,
+  };
+}
+
+async function readBullmqQueueCounts(
+  getQueueFn: () => QueueInspector,
+  nowMs: number
+): Promise<QueueCountsReading> {
+  const queue = getQueueFn();
+  const rawCounts = await withProbeTimeout(
+    queue.getJobCounts("waiting", "active", "completed", "failed", "delayed")
+  );
+  const counts: QueueCountsSnapshot = {
+    waiting: rawCounts.waiting ?? 0,
+    active: rawCounts.active ?? 0,
+    completed: rawCounts.completed ?? 0,
+    failed: rawCounts.failed ?? 0,
+    delayed: rawCounts.delayed ?? 0,
+  };
+  let oldestJobAgeSeconds = 0;
+  if (counts.waiting > 0 && typeof queue.getWaiting === "function") {
+    const waitingJobs = await withProbeTimeout(queue.getWaiting(0, 0));
+    const oldestTimestamp = waitingJobs[0]?.timestamp;
+    if (typeof oldestTimestamp === "number" && oldestTimestamp > 0) {
+      oldestJobAgeSeconds = Math.max(
+        0,
+        Math.round((nowMs - oldestTimestamp) / 1000)
+      );
+    }
+  }
+  return { counts, oldestJobAgeSeconds };
+}
+
 export async function probeQueue(
   getQueueFn: () => QueueInspector = () => getQueue(),
   nowMs: number = Date.now(),
-  degradedLatencyMs: number = QUEUE_DEGRADED_LATENCY_MS
+  degradedLatencyMs: number = QUEUE_DEGRADED_LATENCY_MS,
+  getCloudflarePort: () => JobQueueCoordinatorPort | undefined = () =>
+    getCloudflareQueuePort()
 ): Promise<QueueProbeResult> {
   const runbookUrl = "/docs/runbooks/bullmq-worker.md";
   const start = performance.now();
   try {
-    const queue = getQueueFn();
-    const rawCounts = await withProbeTimeout(
-      queue.getJobCounts("waiting", "active", "completed", "failed", "delayed")
-    );
+    const { counts, oldestJobAgeSeconds } = isCloudflareRuntime()
+      ? await readCloudflareQueueCounts(getCloudflarePort)
+      : await readBullmqQueueCounts(getQueueFn, nowMs);
     const latencyMs = Math.max(0, Math.round(performance.now() - start));
-    const counts: QueueCountsSnapshot = {
-      waiting: rawCounts.waiting ?? 0,
-      active: rawCounts.active ?? 0,
-      completed: rawCounts.completed ?? 0,
-      failed: rawCounts.failed ?? 0,
-      delayed: rawCounts.delayed ?? 0,
-    };
-
-    let oldestJobAgeSeconds = 0;
-    if (counts.waiting > 0 && typeof queue.getWaiting === "function") {
-      const waitingJobs = await withProbeTimeout(queue.getWaiting(0, 0));
-      const oldestTimestamp = waitingJobs[0]?.timestamp;
-      if (typeof oldestTimestamp === "number" && oldestTimestamp > 0) {
-        oldestJobAgeSeconds = Math.max(
-          0,
-          Math.round((nowMs - oldestTimestamp) / 1000)
-        );
-      }
-    }
 
     const isServiceDegraded = latencyMs >= degradedLatencyMs;
     const isJobsHealthy =
