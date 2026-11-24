@@ -46,7 +46,9 @@ function asBytes(cell: BlobCell | undefined): Uint8Array {
   if (Array.isArray(cell)) {
     return Uint8Array.from(cell);
   }
-  return new Uint8Array();
+  throw new Error(
+    `D1 private_blobs: unexpected blob cell type ${cell === null ? "null" : typeof cell}`
+  );
 }
 
 function asString(cell: BlobCell | undefined): string {

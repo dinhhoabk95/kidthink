@@ -76,6 +76,8 @@ function createFakeD1(): { db: BlobD1Database; rows: Map<string, FakeRow> } {
   return { db, rows };
 }
 
+const UNEXPECTED_CELL_RE = /unexpected blob cell type/;
+
 describe("private asset storage via active driver (BR-IMG-11)", () => {
   beforeEach(() => {
     setActiveObjectStorageDriver(undefined);
@@ -316,6 +318,36 @@ describe("createD1BlobSqlPort", () => {
     const row = await port.readBlob("private", "k");
     expect(Array.from(row?.body ?? [])).toEqual([1, 2, 3]);
   });
+
+  it.each([
+    ["string", "aGVsbG8="],
+    ["null", null],
+    ["number", 7],
+    ["boolean", true],
+  ])(
+    "BR-IMG-14: cell body kiểu lạ (%s) ném lỗi rõ ràng, không trả byte rỗng",
+    async (_label, cell) => {
+      const port = createD1BlobSqlPort({
+        prepare() {
+          const stmt = {
+            bind() {
+              return stmt;
+            },
+            raw() {
+              return Promise.resolve([["image/webp", cell, null]]);
+            },
+            run() {
+              return Promise.resolve({ meta: { changes: 0 } });
+            },
+          };
+          return stmt;
+        },
+      });
+      await expect(port.readBlob("private", "k")).rejects.toThrow(
+        UNEXPECTED_CELL_RE
+      );
+    }
+  );
 
   it("BR-IMG-14: rejects bodies above D1_MAX_BLOB_BYTES with PayloadTooLargeError", async () => {
     const { db, rows } = createFakeD1();
