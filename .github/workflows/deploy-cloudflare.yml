@@ -70,6 +70,28 @@ jobs:
           NUXT_ALLOWED_ORIGINS: "https://${{ vars.MINDKID_DOMAIN }},https://admin.${{ vars.MINDKID_DOMAIN }}"
           # Nitro cloudflare_module bundle ~13 MB: heap mặc định của Node không đủ.
           NODE_OPTIONS: "--max-old-space-size=10240"
+          # createWebEnv() chạy lúc `nuxt build` (nuxt.config nhập env.ts) với NODE_ENV=production
+          # nên đòi đủ tập biến production — BR-ENV-15. INITIAL_ADMIN_* không cần lúc build (BR-ENV-16).
+          NODE_ENV: production
+          PORT: "3000"
+          SITE_URL: "https://${{ vars.MINDKID_DOMAIN }}"
+          STORAGE_BASE_URL: "https://${{ vars.MINDKID_DOMAIN }}"
+          NUXT_SESSION_PASSWORD: ${{ secrets.NUXT_SESSION_PASSWORD }}
+          PARENT_GATE_SECRET: ${{ secrets.PARENT_GATE_SECRET }}
+          MFA_ENCRYPTION_KEY: ${{ secrets.MFA_ENCRYPTION_KEY }}
+          STORAGE_SIGNING_SECRET: ${{ secrets.STORAGE_SIGNING_SECRET }}
+          NUXT_NOTIFICATION_TOKEN_ENCRYPTION_KEY: ${{ secrets.NUXT_NOTIFICATION_TOKEN_ENCRYPTION_KEY }}
+          PAYMENT_WEBHOOK_SECRET: ${{ secrets.PAYMENT_WEBHOOK_SECRET }}
+          PAYMENT_MODE: ${{ vars.PAYMENT_MODE }}
+          PAYMENT_MERCHANT_ID: ${{ vars.PAYMENT_MERCHANT_ID }}
+          VIETQR_BANK_ID: ${{ vars.VIETQR_BANK_ID }}
+          VIETQR_BANK_NAME: ${{ vars.VIETQR_BANK_NAME }}
+          VIETQR_ACCOUNT_NO: ${{ vars.VIETQR_ACCOUNT_NO }}
+          VIETQR_ACCOUNT_NAME: ${{ vars.VIETQR_ACCOUNT_NAME }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ vars.TELEGRAM_CHAT_ID }}
+          HEALTHCHECKS_PING_URL: ${{ secrets.HEALTHCHECKS_PING_URL }}
+          OPERATIONS_ALERT_EMAIL: ${{ vars.OPERATIONS_ALERT_EMAIL }}
         run: |
           pnpm build
           npx tsx scripts/deploy/verify-cf-budget.ts
