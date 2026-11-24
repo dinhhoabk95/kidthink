@@ -987,6 +987,7 @@ export async function computeSessionReauthAt(input: {
   }
   const isPre2faLoginPath =
     pathStr === "/sign-in/email" ||
+    pathStr === "/sign-up/email" ||
     pathStr === "/passkey/verify-authentication" ||
     pathStr === "/sign-in/social" ||
     pathStr.startsWith("/callback/");

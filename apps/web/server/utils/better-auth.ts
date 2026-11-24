@@ -90,7 +90,6 @@ function buildReauthRedisKey(
 async function resolveReauthTimestamp(
   namespace: AuthInstanceNamespace,
   sessionId: string,
-  createdAt: Date,
   dbReauthAt: Date | null | undefined
 ): Promise<Date | undefined> {
   const redisRaw = await withFailClosedRedis(() =>
@@ -105,7 +104,7 @@ async function resolveReauthTimestamp(
   if (dbReauthAt && !Number.isNaN(dbReauthAt.getTime())) {
     return dbReauthAt;
   }
-  return createdAt;
+  return undefined;
 }
 
 export function getUserAuth(): MindKidUserAuth {
@@ -142,8 +141,8 @@ export function getUserAuth(): MindKidUserAuth {
             : undefined,
       },
       callbacks: buildUserAuthCallbacks(
-        (sessionId, createdAt, dbReauthAt) =>
-          resolveReauthTimestamp("user", sessionId, createdAt, dbReauthAt),
+        (sessionId, dbReauthAt) =>
+          resolveReauthTimestamp("user", sessionId, dbReauthAt),
         {
           onPasswordReset: (userId) =>
             revokeAllBetterAuthSessions("user", userId),
@@ -179,8 +178,8 @@ export function getManagerAuth(): MindKidManagerAuth {
       trustedOrigins: getTrustedOriginsList(),
       isProduction: process.env.NODE_ENV === "production",
       callbacks: buildManagerAuthCallbacks(
-        (sessionId, createdAt, dbReauthAt) =>
-          resolveReauthTimestamp("manager", sessionId, createdAt, dbReauthAt),
+        (sessionId, dbReauthAt) =>
+          resolveReauthTimestamp("manager", sessionId, dbReauthAt),
         {
           revokeOtherSessions: (managerId, keepSessionToken) =>
             revokeOtherBetterAuthSessionsByToken(
@@ -307,7 +306,6 @@ export async function resolveBetterAuthUserSession(
     const reauthAt = await resolveReauthTimestamp(
       "user",
       sessionId,
-      createdAt,
       dbReauthAt
     );
 

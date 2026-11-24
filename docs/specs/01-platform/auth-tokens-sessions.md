@@ -264,6 +264,11 @@ Reauth state authoritative nằm trong Redis session hiện tại. Cửa sổ **
 428 `REAUTH_REQUIRED`. Chấp nhận mật khẩu hiện tại, OAuth provider đã liên kết hoặc TOTP hợp
 lệ theo availability của account. Reauth chỉ cập nhật session hiện tại.
 
+**Không có mốc reauth thì coi như chưa reauth**: session khôi phục từ remember
+(`reauthAt=null`) KHÔNG được suy ra mốc từ `createdAt`; mọi thao tác §7.5 trả 428 cho tới khi
+reauth. Chỉ các session tạo bằng đăng nhập/đăng ký mật khẩu (`/sign-in/email`,
+`/sign-up/email`), xác thực 2FA, passkey hoặc OAuth mới mang mốc tươi (`BR-AUT-13`, `BR-AUT-34`).
+
 ## 8. API contract
 
 Middleware lookup Redis bất đồng bộ một lần; guard sau đó vẫn đồng bộ:

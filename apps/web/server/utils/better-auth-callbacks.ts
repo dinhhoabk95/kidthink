@@ -130,7 +130,6 @@ async function resolveAvailableManagerReauthMethods(
 
 export type ResolveReauthTimestampFn = (
   sessionId: string,
-  createdAt: Date,
   dbReauthAt: Date | null | undefined
 ) => Promise<Date | undefined>;
 
@@ -251,12 +250,7 @@ export function buildUserAuthCallbacks(
       const repos = useOwnerRepositories();
       return await repos.authAccounts.countUserLoginMethods(userId);
     },
-    verifySessionReauth: async ({
-      userId,
-      sessionId,
-      createdAt,
-      dbReauthAt,
-    }) => {
+    verifySessionReauth: async ({ userId, sessionId, dbReauthAt }) => {
       let resolvedDbReauth = dbReauthAt;
       const numericId = Number(sessionId);
       if (Number.isInteger(numericId) && numericId > 0) {
@@ -266,11 +260,7 @@ export function buildUserAuthCallbacks(
           resolvedDbReauth = sessReauthAt;
         }
       }
-      const reauthAt = await resolveReauth(
-        sessionId,
-        createdAt,
-        resolvedDbReauth
-      );
+      const reauthAt = await resolveReauth(sessionId, resolvedDbReauth);
       const methods = await resolveAvailableUserReauthMethods(userId);
       verifyReauthWindow(reauthAt, methods);
     },
@@ -356,12 +346,7 @@ export function buildManagerAuthCallbacks(
       });
       assertRateLimitAllowed(res.statusCode);
     },
-    verifySessionReauth: async ({
-      managerId,
-      sessionId,
-      createdAt,
-      dbReauthAt,
-    }) => {
+    verifySessionReauth: async ({ managerId, sessionId, dbReauthAt }) => {
       let resolvedDbReauth = dbReauthAt;
       const numericId = Number(sessionId);
       if (Number.isInteger(numericId) && numericId > 0) {
@@ -371,11 +356,7 @@ export function buildManagerAuthCallbacks(
           resolvedDbReauth = sessReauthAt;
         }
       }
-      const reauthAt = await resolveReauth(
-        sessionId,
-        createdAt,
-        resolvedDbReauth
-      );
+      const reauthAt = await resolveReauth(sessionId, resolvedDbReauth);
       const methods = await resolveAvailableManagerReauthMethods(managerId);
       verifyReauthWindow(reauthAt, methods);
     },
