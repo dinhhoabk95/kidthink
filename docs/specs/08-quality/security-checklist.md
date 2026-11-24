@@ -60,6 +60,7 @@ Checklist trong PR template · `pnpm check` · rà soát trước release.
 | `BR-SEC-10` | `apps/web` dùng `nuxt-security` cho CSP, SRI, security headers (HSTS 1 năm + preload, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy, COOP/CORP), API CORS và request-size (tắt `rateLimiter`, `csrf`, `xssValidator` nội bộ module); admin static nhận security headers từ Nginx | Web là owner duy nhất của API; admin không có Nitro server để tạo middleware hoặc auth boundary thứ hai; rate limit/CSRF/validation thuộc domain packages và Zod (`BR-SEC-04`) |
 | `BR-SEC-11` | `script-src` của trang phải khai `'nonce-{{nonce}}'` và `'strict-dynamic'`; Cấm — **NEVER** `'unsafe-inline'` cho script | `defuReplaceArray` **thay** mảng mặc định của module, nên thiếu placeholder thì header không có nonce nào trong khi trang vẫn gắn nonce vào `<script>` — hai khối inline của Nuxt bị chặn và trang không hydrate. `'strict-dynamic'` bịt lỗ `'self'`: `/api/guest/storage/[...path]` phục vụ file đã lưu từ cùng origin |
 | `BR-SEC-12` | Chỉ **một** nơi đặt CSP cho mỗi loại response: `nuxt-security` cho trang, `server/middleware/security-headers.ts` cho `/api/*`; Cấm — **NEVER** đặt CSP trang ở middleware | Hook `render:response` đè mọi header của middleware. Chính sách thứ hai không biến mất — nó thành mã chết mà người đọc tưởng là chính sách thật (đo 2026-08-28: middleware khai `script-src 'self' 'unsafe-inline'` suốt nhiều tháng và chưa bao giờ tới trình duyệt trên response trang) |
+| `BR-SEC-13` | Trần kích thước body đo trên **byte thực**: request mutating không có `Content-Length` (chunked) vẫn bị đọc thân thô ở `guards` và trả **413** `PAYLOAD_TOO_LARGE` nếu vượt trần theo route | Header `Content-Length` do client khai; chunked bỏ qua nó nên chỉ kiểm header là không kiểm gì |
 
 ## 7. Data
 
@@ -167,6 +168,11 @@ Scenario: BR-SEC-01 — CRITICAL chặn merge
   Given một PR có secret hardcode
   When cổng tự động chạy
   Then merge bị chặn
+
+Scenario: BR-SEC-13 — trần body đo byte thực
+  When POST chunked không Content-Length, thân 200 KiB tới route có trần 128 KiB
+  Then trả 413 PAYLOAD_TOO_LARGE
+  And body chunked nhỏ hơn trần vẫn đi qua
 
 Scenario: BR-SEC-11 — nonce trong header khớp nonce trên thẻ script
   When gọi GET / và đọc header Content-Security-Policy cùng thân HTML

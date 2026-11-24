@@ -1,8 +1,14 @@
+import { PayloadTooLargeError } from "@mindkid/errors/common";
 import {
   canonicalizeRequestPath,
   resolveRequestBodySizeLimit,
 } from "@mindkid/shared";
-import { defineEventHandler, getRequestURL } from "h3";
+import {
+  defineEventHandler,
+  getRequestURL,
+  type H3Event,
+  readRawBody,
+} from "h3";
 import {
   assertRequestBodySize,
   assertSameOriginRequest,
@@ -31,28 +37,47 @@ function isMutatingMethod(method: string | undefined): boolean {
   );
 }
 
-export default defineEventHandler((event) => {
+/**
+ * Request không khai `Content-Length` (chunked) thì header không nói lên kích thước thật:
+ * đọc thân thô (h3 v1 cache lại cho handler phía sau) rồi đo byte thực (BR-SEC-13).
+ */
+async function assertActualBodySize(
+  event: H3Event,
+  maxBytes: number
+): Promise<void> {
+  const raw = await readRawBody(event, false);
+  if (raw && raw.byteLength > maxBytes) {
+    throw new PayloadTooLargeError();
+  }
+}
+
+export default defineEventHandler((event): Promise<void> | undefined => {
   const pathname = canonicalizeRequestPath(
     event.path || getRequestURL(event).pathname
   );
 
   if (!(pathname === "/api" || pathname.startsWith("/api/"))) {
-    return;
+    return undefined;
   }
 
   if (!isMutatingMethod(event.method)) {
-    return;
+    return undefined;
   }
 
   // Provider webhooks verify signatures in their service layer
   if (pathname.startsWith("/api/guest/webhooks/")) {
-    return;
+    return undefined;
   }
 
   // 1. Trần kích thước request body (T3.1d, BR-SEC-03)
   const maxBytes = resolveRequestBodySizeLimit(pathname);
   if (maxBytes !== null) {
     assertRequestBodySize(event, maxBytes);
+    if (!event.node.req.headers["content-length"]) {
+      return assertActualBodySize(event, maxBytes).then(() =>
+        assertSameOriginRequest(event)
+      );
+    }
   }
 
   // 2. Kiểm tra same-origin / CSRF bảo vệ mutation (T3.1a, BR-CSRF-02, S1)

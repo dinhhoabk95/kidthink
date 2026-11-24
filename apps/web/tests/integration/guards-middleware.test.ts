@@ -1,3 +1,4 @@
+import { Readable } from "node:stream";
 import { CsrfInvalidError } from "@mindkid/errors/auth";
 import { PayloadTooLargeError } from "@mindkid/errors/common";
 import { createEvent, type H3Event } from "h3";
@@ -23,13 +24,15 @@ function makeEvent(options: {
   path: string;
   method?: string;
   headers?: Record<string, string>;
+  body?: Buffer;
 }): H3Event {
-  const req = {
+  const base = options.body ? Readable.from([options.body]) : {};
+  const req = Object.assign(base, {
     method: options.method ?? "POST",
     url: options.path,
     headers: { host: "mindkid.test", ...(options.headers ?? {}) },
     socket: { remoteAddress: "127.0.0.1" },
-  };
+  });
   return createEvent(
     req as never,
     createResponse() as never
@@ -152,5 +155,39 @@ describe("middleware/guards", () => {
     });
 
     expect(() => guardsMiddleware(event)).toThrow(PayloadTooLargeError);
+  });
+
+  it("BR-SEC-13 ca âm: chunked không có Content-Length nhưng body thực 200 KiB ném 413", async () => {
+    const event = makeEvent({
+      path: "/api/users/collections",
+      method: "POST",
+      headers: {
+        "transfer-encoding": "chunked",
+        "sec-fetch-site": "same-origin",
+        origin: "https://mindkid.test",
+      },
+      body: Buffer.alloc(200 * 1024, 97),
+    });
+
+    await expect(
+      Promise.resolve().then(() => guardsMiddleware(event))
+    ).rejects.toBeInstanceOf(PayloadTooLargeError);
+  });
+
+  it("BR-SEC-13: chunked body nhỏ không có Content-Length đi qua", async () => {
+    const event = makeEvent({
+      path: "/api/users/collections",
+      method: "POST",
+      headers: {
+        "transfer-encoding": "chunked",
+        "sec-fetch-site": "same-origin",
+        origin: "https://mindkid.test",
+      },
+      body: Buffer.from('{"a":1}'),
+    });
+
+    await expect(
+      Promise.resolve().then(() => guardsMiddleware(event))
+    ).resolves.toBeUndefined();
   });
 });
