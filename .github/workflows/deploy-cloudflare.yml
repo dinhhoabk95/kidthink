@@ -29,11 +29,21 @@ jobs:
         uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "24"
+          node-version-file: .nvmrc
           cache: "pnpm"
 
       - name: Install dependencies (frozen lockfile)
         run: pnpm install --frozen-lockfile
+
+      # vue-tsc đọc .nuxt/tsconfig.*.json; nuxt.config nhập env.ts nên cần env giả (chỉ để sinh type, không build).
+      - name: Generate .nuxt tsconfig (web, admin) for vue-tsc
+        env:
+          NUXT_PUBLIC_API_BASE_URL: "https://example.com"
+        run: |
+          cp apps/web/.env.example apps/web/.env
+          pnpm --filter @mindkid/web exec nuxt prepare
+          rm apps/web/.env
+          pnpm --filter @mindkid/admin exec nuxt prepare
 
       - name: Gate 1 - Static Typecheck, Lint & Dependency Boundaries
         run: pnpm check
