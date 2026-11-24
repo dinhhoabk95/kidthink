@@ -124,7 +124,7 @@ Module này chỉ ghi INSERT vào `consent_logs`; chỉ admin force được UPD
 | Trang public và pháp lý | Đọc văn bản trước khi quyết định |
 | `GET/POST /api/users/consents` và route withdraw | Xem, đồng ý hoặc từ chối |
 | `POST /api/users/auth/reauth` | Xác minh thao tác nhạy cảm |
-| `GET/PATCH /api/users/profile` | Hiển thị và sửa hồ sơ tài khoản khi đang xem điều khoản (hành vi hiện có trong code, `consent-guard.ts`) |
+| `GET/PATCH /api/users/profile` | Hiển thị và sửa hồ sơ tài khoản khi đang xem điều khoản. **Quy tắc chính thức** (đã xác nhận giữ miễn trừ): người dùng đang bị chặn vì chưa đồng ý vẫn phải xem và chỉnh được dữ liệu cá nhân của chính mình (quyền chủ thể dữ liệu); route này không mở thêm tính năng sản phẩm nào |
 | `GET /api/users/data-export` | Quyền lấy bản sao dữ liệu |
 | Route xem, tạo và huỷ yêu cầu xoá tài khoản | Đường từ chối điều khoản mà không mất quyền chủ thể dữ liệu |
 
