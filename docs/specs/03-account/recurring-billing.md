@@ -85,6 +85,7 @@ kế thừa các quy tắc quản lý quyền lợi từ [`../00-foundation/enti
 | `BR-RBL-04` | Cơ chế dunning và thử lại thông minh (tối đa 3 lần trong 7 ngày) khi thanh toán định kỳ thất bại — gửi thông báo nhắc nhở mà không spam | Tối ưu tỉ lệ duy trì thuê bao nhưng không làm phiền User |
 | `BR-RBL-05` | Thu hồi quyền lợi khi hết thời gian ân hạn thanh toán định kỳ thất bại — chuyển trạng thái subscription sang `cancelled` | Bảo vệ mô hình kinh doanh và không duy trì dịch vụ trả phí miễn phí vô hạn |
 | `BR-RBL-06` | Thay đổi giá subscription chỉ áp dụng cho chu kỳ tiếp theo sau khi User nhận được thông báo và đồng ý theo quy định pháp luật | Nghiêm cấm tự ý tăng giá định kỳ khi chưa có sự chấp thuận của khách hàng |
+| `BR-RBL-07` | Handler thu tiền mặc định của worker (`defaultChargeHandler`) luôn trả `paid: false`; Cấm — **NEVER** suy ra `paid` từ cờ trong `consent_snapshot` (như `auto_charge_ready`). Chỉ một `RecurringChargeHandler` thật nối nhà cung cấp mới được báo `paid`/`ok`. Chưa nối nhà cung cấp thì subscription đến hạn đi vào dunning (`BR-RBL-04`), không được gia hạn miễn phí | Một cờ do client/seed đặt không phải bằng chứng đã thu tiền; trả `paid` giả cấp quyền lợi trả phí mà không có giao dịch |
 
 ## 7. Data
 

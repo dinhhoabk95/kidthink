@@ -71,20 +71,14 @@ function logUnknownPackageSkip(
   );
 }
 
-function defaultChargeHandler(
-  sub: RecurringSubscriptionRow
+/**
+ * BR-RBL-07: chưa nối nhà cung cấp thu tiền định kỳ thì KHÔNG bao giờ báo `paid`. Gia hạn
+ * chỉ được ghi nhận khi một `RecurringChargeHandler` thật trả `paid`/`ok`; mặc định luôn
+ * `paid: false` (đi vào dunning) — không suy ra từ cờ trong `consentSnapshot`.
+ */
+export function defaultChargeHandler(
+  _sub: RecurringSubscriptionRow
 ): Promise<{ paid: boolean; transactionRef?: string }> {
-  const snapshot = sub.consentSnapshot;
-  if (
-    snapshot &&
-    typeof snapshot === "object" &&
-    snapshot.auto_charge_ready === true
-  ) {
-    return Promise.resolve({
-      paid: true,
-      transactionRef: `AUTO-${sub.id}-${Date.now()}`,
-    });
-  }
   return Promise.resolve({ paid: false });
 }
 
