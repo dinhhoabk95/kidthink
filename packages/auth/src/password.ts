@@ -11,7 +11,12 @@ const scrypt = promisify(scryptCb);
 const pbkdf2Async = promisify(pbkdf2Cb);
 
 export const PBKDF2_ITERATIONS = 100_000;
-const PBKDF2_MAX_ITERATIONS = 1_000_000;
+/**
+ * Trần số vòng lặp: WebCrypto PBKDF2 của Cloudflare Workers từ chối > 100.000 vòng. Giữ đúng trần
+ * này để hash di động Node ↔ Workers ↔ Postgres sau này (xem D13 ở docs/SPEC.md §0, đánh đổi với
+ * khuyến nghị OWASP 600.000).
+ */
+const PBKDF2_MAX_ITERATIONS = 100_000;
 const PBKDF2_KEYLEN_BYTES = 32;
 const HEX_STRING_PATTERN = /^[0-9a-f]+$/i;
 
@@ -167,6 +172,15 @@ export async function hashPassword(password: string): Promise<string> {
   return await hashPasswordPbkdf2(password);
 }
 
+async function verifyDummyThenFalse(password: string): Promise<false> {
+  try {
+    await verifyPbkdf2Hash(password, DUMMY_PBKDF2_HASH);
+  } catch {
+    // Chỉ cân bằng thời gian; kết quả luôn là false.
+  }
+  return false;
+}
+
 /**
  * Xác thực `pbkdf2$...` (chuẩn hiện tại) và `scrypt$...` (legacy). Hash `$argon2id$...` không còn
  * được hỗ trợ (đã gỡ phụ thuộc native) nên trả `false`.
@@ -176,7 +190,7 @@ export async function verifyPassword(
   hash: string
 ): Promise<boolean> {
   if (!hash) {
-    return false;
+    return await verifyDummyThenFalse(password);
   }
   if (hash.startsWith("pbkdf2$")) {
     try {
@@ -186,7 +200,8 @@ export async function verifyPassword(
     }
   }
   if (!hash.startsWith("scrypt$")) {
-    return false;
+    // Định dạng không hỗ trợ (vd. argon2id): tốn cùng chi phí PBKDF2 để thời gian không lộ (BR-AUT-10).
+    return await verifyDummyThenFalse(password);
   }
   const parts = hash.split("$");
   if (parts.length !== 3) {
@@ -205,18 +220,6 @@ export async function verifyPassword(
   } catch {
     return false;
   }
-}
-
-/**
- * `true` khi hash không phải PBKDF2 hoặc số vòng lặp thấp hơn `PBKDF2_ITERATIONS`: nâng cấp ngầm
- * ngay khi đăng nhập thành công.
- */
-export function needsPasswordRehash(hash: string): boolean {
-  if (!hash.startsWith("pbkdf2$")) {
-    return true;
-  }
-  const iterations = Number(hash.split("$")[1]);
-  return !Number.isInteger(iterations) || iterations < PBKDF2_ITERATIONS;
 }
 
 export function generateSecureToken(): string {

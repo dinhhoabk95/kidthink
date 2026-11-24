@@ -4,7 +4,6 @@ import {
   createDurableObjectRedisClient,
   createRedisSecondaryStorage,
   hashPassword,
-  needsPasswordRehash,
   verifyPassword,
 } from "#src/index";
 
@@ -17,16 +16,13 @@ describe("Dual-Runtime Password Crypto & Durable Object Auth Store", () => {
       expect(cfHash.startsWith("pbkdf2$100000$")).toBe(true);
       expect(await verifyPassword("MatKhauAnToan!2026", cfHash)).toBe(true);
       expect(await verifyPassword("SaiMatKhau123!", cfHash)).toBe(false);
-      expect(needsPasswordRehash(cfHash)).toBe(false);
 
       process.env.MINDKID_RUNTIME = "vps";
       expect(await verifyPassword("MatKhauAnToan!2026", cfHash)).toBe(true);
-      expect(needsPasswordRehash(cfHash)).toBe(false);
 
       const vpsHash = await hashPassword("MatKhauAnToan!2026");
       expect(vpsHash.startsWith("pbkdf2$100000$")).toBe(true);
       expect(await verifyPassword("MatKhauAnToan!2026", vpsHash)).toBe(true);
-      expect(needsPasswordRehash(vpsHash)).toBe(false);
     } finally {
       process.env.MINDKID_RUNTIME = prev;
     }

@@ -26,7 +26,7 @@ Quy tắc thô: nếu có người sẽ ngạc nhiên vì kết quả, việc đ
 
 ---
 
-## 0. Mười hai quyết định định hình sản phẩm
+## 0. Mười ba quyết định định hình sản phẩm
 
 Mỗi dòng là một quyết định đã chốt, kèm lý do.
 
@@ -44,6 +44,7 @@ Mỗi dòng là một quyết định đã chốt, kèm lý do.
 | **D10** | **Ưu tiên adopt thư viện Nuxt ecosystem đã kiểm chứng** (auth, sitemap/SEO, cache, queue) thay vì tự xây từ đầu. Khi cần dùng chung nhiều app, bọc lại thành **package driver nội bộ** — xem [`docs/specs/00-foundation/monorepo-package-architecture.md`](specs/00-foundation/monorepo-package-architecture.md) | Tự xây auth/queue/sitemap không tạo khác biệt cạnh tranh, chỉ tốn thời gian dev và mang rủi ro bảo mật tự phát hiện. Thư viện phổ biến có test, security patch, cộng đồng review. Driver nội bộ giữ interface ổn định cho nhiều app và không khoá cứng vào một thư viện    |
 | **D11** | **Phạm vi hiện hành là web-only và vận hành tại Việt Nam.** PWA vẫn là web delivery; native mobile app, classroom/B2B, licensing/white-label, marketplace và mở thị trường ngoài Việt Nam không có spec triển khai, task hay placeholder schema trong roadmap hiện hành.                                         | Lập kế hoạch cho một mô hình sản phẩm chưa được chọn tạo contract giả và kéo theo actor, pháp lý, thanh toán, store review hoặc multi-tenancy không cần thiết. Nếu sau này mở rộng, người quyết phải mở một chương trình scope mới và viết spec sở hữu trước khi lập task. |
 | **D12** | **Tài liệu pháp lý là singleton code-owned, không quản lý policy version.** Sửa nội dung bằng PR; sau deploy, `super_admin` chủ động force re-consent bằng một mốc thời gian cho từng loại `terms` · `privacy` · `child_data`.                                                                                   | Hệ thống chỉ cần biết User đã đồng ý trước hay sau lần force gần nhất. Lịch sử Git + audit của thao tác force giữ dấu vận hành; dựng kho version và diff policy tạo thêm schema, route và UI nhưng không tăng giá trị sản phẩm tương xứng.                                 |
+| **D13** | **PBKDF2-SHA256 đúng 100.000 vòng, thấp hơn khuyến nghị OWASP (600.000)** | WebCrypto của Cloudflare Workers từ chối PBKDF2 > 100.000 vòng; MVP chỉ deploy Cloudflare nên chọn trần này để hash di động Node ↔ Workers ↔ Postgres sau này, không rehash. Đánh đổi chấp nhận: kháng dò offline yếu hơn khi lộ DB; bù bằng rate limit hai trục (`BR-AUT-09`), 2FA/passkey và mật khẩu ≥ 8 ký tự bị chặn danh sách phổ biến. Xem lại nếu Workers nâng trần hoặc chuyển sang argon2 trên runtime khác |
 
 ### D7 chi tiết — hai luồng, cùng một cổng
 

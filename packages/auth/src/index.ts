@@ -58,7 +58,6 @@ export {
   hashPassword,
   hashPasswordPbkdf2,
   hashSecureToken,
-  needsPasswordRehash,
   PBKDF2_ITERATIONS,
   validatePasswordStrength,
   verifyPassword,

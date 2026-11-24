@@ -5,7 +5,6 @@ import {
   getDummyPasswordHash,
   hashPassword,
   hashSecureToken,
-  needsPasswordRehash,
   PBKDF2_ITERATIONS,
   validatePasswordStrength,
   verifyPassword,
@@ -84,19 +83,23 @@ describe("password utilities (BR-REG-05, BR-EVF-01, BR-PWR-02, BR-PWR-08)", () =
     });
   });
 
-  it("needsPasswordRehash chỉ true khi không phải pbkdf2 hoặc số vòng lặp thấp hơn chuẩn", () => {
-    const good = `pbkdf2$${PBKDF2_ITERATIONS}$${"01".repeat(16)}$${"ab".repeat(32)}`;
-    expect(needsPasswordRehash(good)).toBe(false);
-    expect(needsPasswordRehash(`pbkdf2$${PBKDF2_ITERATIONS + 1}$aa$bb`)).toBe(
-      false
-    );
-    expect(needsPasswordRehash("pbkdf2$10000$aa$bb")).toBe(true);
-    expect(needsPasswordRehash("scrypt$salt$abcd")).toBe(true);
-    expect(needsPasswordRehash(ARGON2_HASH)).toBe(true);
-  });
-
   it("hash argon2 không còn được hỗ trợ: verify trả false", async () => {
     expect(await verifyPassword("chuoixanh123", ARGON2_HASH)).toBe(false);
+  });
+
+  it("hash không hỗ trợ (argon2id) vẫn chạy một PBKDF2 giả để cân thời gian (BR-AUT-10)", async () => {
+    const spy = vi.spyOn(globalThis.crypto.subtle, "deriveBits");
+    try {
+      expect(await verifyPassword("chuoixanh123", ARGON2_HASH)).toBe(false);
+      expect(spy).toHaveBeenCalledTimes(1);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it("từ chối pbkdf2 vượt trần 100.000 vòng", async () => {
+    const hash = `pbkdf2$100001$${"01".repeat(16)}$${"ab".repeat(32)}`;
+    expect(await verifyPassword("bat-ky", hash)).toBe(false);
   });
 
   it("dummy hash là PBKDF2 ở mọi runtime", () => {
