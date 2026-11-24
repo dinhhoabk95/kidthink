@@ -39,6 +39,7 @@ import {
   enforceTotpStepUpForSensitiveMfaAction,
   handleTwoFactorVerifyBeforeHook,
   issueTwoFactorChallengeAndRevokeSession,
+  proveSignInPassword,
   readCookieFromHeader,
   resolvePendingTwoFactorAccountId,
   revokeOtherInstanceSessions,
@@ -66,6 +67,8 @@ export interface ManagerStatusSnapshot {
   readonly role: string | number;
   readonly sessionVersion?: number;
   readonly mfaEnabled?: boolean;
+  /** Hash credential, chỉ để chứng minh mật khẩu trước khi lộ trạng thái ngừng hoạt động (BR-LGN-03). */
+  readonly passwordHash?: string | null;
 }
 
 export type ManagerAuditAction =
@@ -182,7 +185,7 @@ async function resolveManagerIsRemembered(
   return !hasDontRememberManagerCookie(headers);
 }
 
-async function handleManagerSignInBefore(
+export async function handleManagerSignInBefore(
   body: ManagerSignInBody,
   ipAddress: string,
   userAgent: string,
@@ -219,6 +222,16 @@ async function handleManagerSignInBefore(
       });
     }
     if (!snapshot.isActive) {
+      const proven = await proveSignInPassword(
+        body.password ?? "",
+        snapshot.passwordHash
+      );
+      if (!proven) {
+        throw new APIError("UNAUTHORIZED", {
+          code: "INVALID_CREDENTIALS",
+          message: "Email hoặc mật khẩu không chính xác.",
+        });
+      }
       throw new APIError("FORBIDDEN", {
         code: "ACCOUNT_SUSPENDED",
         message: "Tài khoản quản trị đang ngừng hoạt động.",

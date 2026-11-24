@@ -195,6 +195,7 @@ export function buildUserAuthCallbacks(
         status: USER_STATUS_CODEC.toLabel(row.status),
         purgeAt: row.purgeAt,
         hasPassword: Boolean(cred?.password || row.passwordHash),
+        passwordHash: cred?.password || row.passwordHash,
         sessionVersion: row.sessionVersion,
         twoFactorEnabled: row.twoFactorEnabled,
       };
@@ -288,12 +289,16 @@ export function buildManagerAuthCallbacks(
       if (!row) {
         return null;
       }
+      const cred = await repos.authAccounts.findManagerCredentialAccountForAuth(
+        row.id
+      );
       return {
         id: row.id,
         uuid: row.uuid,
         isActive: row.isActive,
         role: row.role,
         sessionVersion: row.sessionVersion,
+        passwordHash: cred?.password ?? null,
       };
     },
     getManagerStatusById: async (managerId) => {

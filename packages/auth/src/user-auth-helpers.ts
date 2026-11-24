@@ -300,6 +300,47 @@ export function assertActiveOrPendingUserStatus(
   }
 }
 
+const INVALID_CREDENTIALS_MESSAGE = "Email hoặc mật khẩu không chính xác.";
+
+function invalidCredentialsError(): APIError {
+  return new APIError("UNAUTHORIZED", {
+    code: "INVALID_CREDENTIALS",
+    message: INVALID_CREDENTIALS_MESSAGE,
+  });
+}
+
+/** Verify với hash thật, hoặc hash giả (giữ thời gian đều) rồi trả false khi không có hash. */
+export async function proveSignInPassword(
+  password: string,
+  passwordHash: string | null | undefined
+): Promise<boolean> {
+  if (passwordHash) {
+    return await verifyPassword(password, passwordHash);
+  }
+  await verifyPassword(password, getDummyPasswordHash());
+  return false;
+}
+
+/**
+ * BR-LGN-03: chỉ khi người gọi chứng minh được mật khẩu mới được biết tài khoản đang
+ * suspended/deleted. Sai mật khẩu (hoặc không có hash) → lỗi chung như user không tồn tại.
+ */
+export async function assertStatusAfterPasswordProof(
+  status: string | number | undefined,
+  passwordHash: string | null | undefined,
+  password: string
+): Promise<void> {
+  const normalized =
+    status === undefined ? undefined : decodeUserStatusValue(status);
+  if (
+    (normalized === "suspended" || normalized === "deleted") &&
+    !(await proveSignInPassword(password, passwordHash))
+  ) {
+    throw invalidCredentialsError();
+  }
+  assertActiveOrPendingUserStatus(status);
+}
+
 export function sanitizeAccountTokens<T extends object>(
   account: T,
   callbacks?: UserAuthCallbacks
@@ -369,7 +410,11 @@ export async function handleUserSignInBefore(
         message: "Email hoặc mật khẩu không chính xác.",
       });
     }
-    assertActiveOrPendingUserStatus(snapshot.status);
+    await assertStatusAfterPasswordProof(
+      snapshot.status,
+      snapshot.passwordHash,
+      body.password ?? ""
+    );
     await setPending2faRemember(
       redis,
       "user",

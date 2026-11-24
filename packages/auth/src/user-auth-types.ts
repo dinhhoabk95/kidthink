@@ -30,6 +30,8 @@ export interface UserStatusSnapshot {
   readonly status: string;
   readonly purgeAt: Date | null;
   readonly hasPassword: boolean;
+  /** Hash credential, chỉ để chứng minh mật khẩu trước khi lộ trạng thái suspended/deleted (BR-LGN-03). */
+  readonly passwordHash?: string | null;
   readonly sessionVersion?: number;
   readonly twoFactorEnabled?: boolean;
 }

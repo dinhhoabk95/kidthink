@@ -138,6 +138,16 @@ describe("Task 3 — Better Auth Login & Session Management (BR-LGN-01..12)", ()
     expect(delBody.code).toBe("ACCOUNT_DELETED");
   });
 
+  it("BR-LGN-13 không lộ trạng thái: suspended/deleted + sai mật khẩu trả INVALID_CREDENTIALS giống user không tồn tại", async () => {
+    for (const status of ["suspended", "deleted"] as const) {
+      const seeded = await seedUserWithPassword(`enum-${status}`, status);
+      const res = await postSignIn(seeded.email, "matkhausai-12345");
+      expect(res.status, status).toBe(401);
+      const body = (await res.json()) as SignInResponsePayload;
+      expect(body.code, status).toBe("INVALID_CREDENTIALS");
+    }
+  });
+
   it("lists sessions, revokes single session, and revokes all sessions via Better Auth (BR-LGN-07..10)", async () => {
     const db = getOwnerDb();
     const { user, email, password } = await seedUserWithPassword("multi");
