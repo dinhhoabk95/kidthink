@@ -70,7 +70,7 @@ describe("P0 foundation contracts", () => {
     const webDeps = readDeps("apps/web/package.json");
     const authDeps = readDeps("packages/auth/package.json");
 
-    expect(notifDeps.nodemailer).toBe("^10.6.0");
+    expect(notifDeps.nodemailer).toBeUndefined();
     expect(notifDeps.mjml).toBe("^5.4.1");
     expect(cacheDeps["rate-limiter-flexible"]).toBe("^11.5.0");
     expect(webDeps["nuxt-security"]).toBe("^2.7.0");

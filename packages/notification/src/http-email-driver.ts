@@ -1,4 +1,5 @@
 import { isCloudflareRuntime } from "@mindkid/config";
+import type { NotificationCode } from "@mindkid/shared";
 import {
   type EmailTemplateCode,
   escapeTemplateVars,
@@ -6,11 +7,24 @@ import {
   TEMPLATE_REGISTRY,
   type TemplateVars,
 } from "#src/mjml-renderer";
-import type {
-  EmailDriver,
-  SendEmailRequest,
-  SendEmailResponse,
-} from "#src/smtp-driver";
+
+export interface SendEmailRequest {
+  to: string;
+  code: NotificationCode;
+  payload: Record<string, unknown>;
+  deliveryId?: number;
+}
+
+export interface SendEmailResponse {
+  sent: boolean;
+  providerMessageId?: string;
+  suppressedReason?: string;
+  error?: string;
+}
+
+export interface EmailDriver {
+  sendEmail(req: SendEmailRequest): Promise<SendEmailResponse>;
+}
 
 const PARAGRAPH_SPLIT_REGEX = /\n{2,}/;
 const LINE_BREAK_REGEX = /\n/g;

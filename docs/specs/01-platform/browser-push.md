@@ -49,7 +49,7 @@ Child profile.
 | `POST /api/users/notification-endpoints` | User | Đăng ký/rotate token của browser hiện tại |
 | `DELETE /api/users/notification-endpoints/{uuid}` | User | Thu hồi endpoint thuộc chính User |
 | `apps/web/public/firebase-messaging-sw.js` hoặc service worker build tương đương | Browser | Background message + click handler |
-| `packages/notification` | Worker | `fcm_web` channel driver dùng `firebase-admin` |
+| `packages/notification` | Worker | `fcm_web` channel driver gọi FCM HTTP v1 qua `fetch` |
 
 ## 4. Main flow
 
@@ -58,7 +58,7 @@ Child profile.
    VAPID public key và gửi token + `client_installation_id` first-party lên server.
 3. Server encrypt token, lưu fingerprint HMAC để dedup và gắn endpoint với User hiện tại.
 4. Khi logical notification có delivery `fcm_web`, worker gửi payload tối thiểu qua
-   `firebase-admin` rồi cập nhật `notification_deliveries`.
+   FCM HTTP v1 rồi cập nhật `notification_deliveries`.
 5. Service worker hiện notification. Click chỉ mở `action_url` nội bộ allow-list; inbox vẫn giữ
    bản xem lại nếu push bị OS hoặc browser bỏ.
 6. Token rotate thì cùng installation thay token trong transaction; FCM trả invalid/unregistered
@@ -79,7 +79,7 @@ Child profile.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-BPS-01` | Provider browser push là **FCM Web**; server dùng `firebase-admin`, client dùng Firebase Web SDK | Một provider đã chốt tránh hai lifecycle token/service worker cạnh tranh |
+| `BR-BPS-01` | Provider browser push là **FCM Web**; server gọi FCM HTTP v1 (`fetch`, không dùng SDK `firebase-admin`), client dùng Firebase Web SDK | Một provider đã chốt tránh hai lifecycle token/service worker cạnh tranh |
 | `BR-BPS-02` | Permission chỉ được yêu cầu sau thao tác rõ ràng trên bề mặt người lớn; Cấm — **NEVER** auto-prompt | Browser prompt sớm làm User từ chối vĩnh viễn và gây gián đoạn |
 | `BR-BPS-03` | Cấm — **NEVER** đăng ký endpoint cho Child profile hoặc hiện prompt trong `/play` | Trẻ không phải actor có credential/permission hệ thống |
 | `BR-BPS-04` | FCM registration token phải mã hoá at-rest, không log/analytics/response sau đăng ký; key dedup là HMAC fingerprint | Token cho phép nhắm tới một browser cụ thể và không được trở thành identifier vận hành công khai |

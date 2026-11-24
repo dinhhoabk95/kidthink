@@ -1,12 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  type EmailTemplateCode,
-  FakeLocalEmailDriver,
-  NodemailerSmtpDriver,
-  renderEmailTemplate,
-} from "#src/index";
-
-const FAKE_MSG_ID_REGEX = /^msg_fake_/;
+import { type EmailTemplateCode, renderEmailTemplate } from "#src/index";
 
 describe("@mindkid/notification tests (BR-NOT-09, BR-NOT-10, BR-NOT-13)", () => {
   describe("Typed MJML renderer (BR-NOT-08, BR-NOT-09)", () => {
@@ -106,39 +99,6 @@ describe("@mindkid/notification tests (BR-NOT-09, BR-NOT-10, BR-NOT-13)", () => 
       await expect(
         renderEmailTemplate("email_verification", { code: "123" })
       ).rejects.toThrow("Missing required variable 'url'");
-    });
-  });
-
-  describe("Email drivers (BR-NOT-02, BR-NOT-10, BR-NOT-13)", () => {
-    it("FakeLocalEmailDriver records sent emails in memory", async () => {
-      const driver = new FakeLocalEmailDriver();
-      const res = await driver.sendEmail({
-        to: "parent@example.com",
-        code: "email_verification",
-        payload: { url: "https://tinimath.vn/v", code: "123456" },
-      });
-
-      expect(res.sent).toBe(true);
-      expect(res.providerMessageId).toMatch(FAKE_MSG_ID_REGEX);
-      expect(driver.getSentMails()).toHaveLength(1);
-    });
-
-    it("NodemailerSmtpDriver lazy initializes and validates email recipient (BR-NOT-02, BR-NOT-10)", async () => {
-      const driver = new NodemailerSmtpDriver({
-        host: "smtp.mailtrap.io",
-        port: 2525,
-        user: "test_user",
-        pass: "test_pass",
-        from: "noreply@tinimath.vn",
-      });
-
-      await expect(
-        driver.sendEmail({
-          to: "invalid-email",
-          code: "email_verification",
-          payload: { url: "x", code: "123" },
-        })
-      ).rejects.toThrow("BR-NOT-02 violation");
     });
   });
 });

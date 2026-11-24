@@ -5,4 +5,3 @@ export * from "./fcm-driver";
 export * from "./fcm-http-client";
 export * from "./http-email-driver";
 export * from "./mjml-renderer";
-export * from "./smtp-driver";
