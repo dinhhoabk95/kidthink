@@ -137,9 +137,11 @@ nào **không còn cổng** sau khi gỡ.
 | `packages/shared/tests/quality-rules.test.ts` ca tài liệu AIG | `BR-AIG-03` | **MẤT** (tài liệu không còn bị đối chiếu); `BR-AIG-04` còn |
 | `packages/db/tests/unit/schema-files.test.ts` trần 400 dòng | `BR-DM-11` | **MẤT** |
 
-Lưu ý `BR-TST-02` (cấm mock DB): regex đã sửa để bắt `vi.mock` driver DB (`drizzle-orm`, `postgres`, `pg`,
-`*sqlite*`) kể cả khi có factory. Tám lời gọi `vi.mock("@mindkid/db")` trong 7 file test hiện **không**
-bị bắt vì `@mindkid/db` là package nội bộ, không phải driver.
+Lưu ý `BR-TST-02` (cấm mock DB): regex bắt `vi.mock` driver DB (`drizzle-orm`, `postgres`, `pg`,
+`*sqlite*`) **và** package DB nội bộ `@mindkid/db` (kể cả subpath như `@mindkid/db/repositories`), có
+hay không có factory. Cổng có ca âm với fixture ở `packages/shared/tests/fixtures/quality-rules/`.
+Các test từng mock `@mindkid/db` đã chuyển sang DB test thật (SQLite) hoặc tiêm lỗi qua seam của
+service (`runSystemHealthCheck(..., { pingDb })`).
 
 ## 4. Câu hỏi mở
 

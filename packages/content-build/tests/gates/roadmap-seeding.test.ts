@@ -20,13 +20,6 @@ import {
 
 const calls: string[] = [];
 
-vi.mock("@mindkid/db", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@mindkid/db")>()),
-  getOwnerDb: vi.fn(() => {
-    calls.push("db");
-    return {};
-  }),
-}));
 vi.mock("#src/seed-master/taxonomy/index", async (importOriginal) => ({
   ...(await importOriginal<typeof import("#src/seed-master/taxonomy/index")>()),
   seedTaxonomyMasterData: vi.fn(() => {

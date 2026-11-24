@@ -7,40 +7,6 @@ import { describe, expect, it, vi } from "vitest";
 
 const ROOT_DIR = path.resolve(import.meta.dirname, "../../../../..");
 
-vi.mock("@mindkid/db", () => {
-  const selectChain = () => {
-    const chain = {
-      from: vi.fn(() => chain),
-      where: vi.fn(() => chain),
-      orderBy: vi.fn(() => chain),
-      limit: vi.fn(async () => []),
-    };
-    return chain;
-  };
-  const mockDb = {
-    select: vi.fn(() => selectChain()),
-  };
-  return {
-    getOwnerDb: vi.fn(() => mockDb),
-    getDb: vi.fn(() => mockDb),
-    auditLogs: {
-      id: "id",
-      uuid: "uuid",
-      actorType: "actor_type",
-      actorId: "actor_id",
-      action: "action",
-      entityType: "entity_type",
-      entityId: "entity_id",
-      reason: "reason",
-      beforeData: "before_data",
-      afterData: "after_data",
-      ipAddress: "ip_address",
-      userAgent: "user_agent",
-      createdAt: "created_at",
-    },
-  };
-});
-
 vi.mock("#server/utils/admin-auth-runtime", () => ({
   requireSuperAdminSession: vi.fn(() => ({
     manager_id: "1",

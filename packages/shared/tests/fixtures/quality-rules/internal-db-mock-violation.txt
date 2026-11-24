@@ -1,0 +1,6 @@
+import { vi } from "vitest";
+
+vi.mock("@mindkid/db", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@mindkid/db")>()),
+  getOwnerDb: vi.fn(() => ({})),
+}));

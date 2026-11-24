@@ -1,19 +1,11 @@
 import { getCloudflareCachePort } from "@mindkid/cache";
+import { clearCloudflareD1Bindings, DB } from "@mindkid/db";
 import { getActiveObjectStorageDriver } from "@mindkid/storage";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-const dbMock = vi.hoisted(() => ({ registerCloudflareD1Bindings: vi.fn() }));
 
 vi.mock("nitropack/runtime", () => ({
   defineNitroPlugin: (fn: unknown) => fn,
 }));
-vi.mock("@mindkid/db", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@mindkid/db")>();
-  return {
-    ...actual,
-    registerCloudflareD1Bindings: dbMock.registerCloudflareD1Bindings,
-  };
-});
 
 import { wireCloudflareEnv } from "#server/plugins/00-cloudflare-bindings";
 
@@ -44,7 +36,7 @@ function makeNamespace() {
 
 describe("00-cloudflare-bindings fail-closed (BR-JOB-12)", () => {
   beforeEach(() => {
-    dbMock.registerCloudflareD1Bindings.mockClear();
+    clearCloudflareD1Bindings();
   });
   afterEach(() => {
     vi.restoreAllMocks();
@@ -76,7 +68,7 @@ describe("00-cloudflare-bindings fail-closed (BR-JOB-12)", () => {
       AUTH_COORDINATOR: makeNamespace(),
     };
     expect(() => wireCloudflareEnv(env)).toThrow(JOB_QUEUE_DO_RE);
-    expect(dbMock.registerCloudflareD1Bindings).not.toHaveBeenCalled();
+    expect(DB.getD1Driver().hasBindings()).toBe(false);
   });
 
   it("đủ binding → nối một lần cho mỗi env", () => {
@@ -89,7 +81,7 @@ describe("00-cloudflare-bindings fail-closed (BR-JOB-12)", () => {
     };
     wireCloudflareEnv(env);
     wireCloudflareEnv(env);
-    expect(dbMock.registerCloudflareD1Bindings).toHaveBeenCalledTimes(1);
+    expect(DB.getD1Driver().hasBindings()).toBe(true);
     expect(getActiveObjectStorageDriver()).toBeDefined();
   });
 

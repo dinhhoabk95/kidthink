@@ -1,14 +1,14 @@
+import fs from "node:fs";
+import { repoPath } from "@mindkid/config/paths";
 import { createEvent, type H3Event } from "h3";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@mindkid/db", () => ({ getOwnerDb: vi.fn() }));
 vi.mock("@mindkid/cache", () => ({ ping: vi.fn() }));
 vi.mock("@mindkid/queue", () => ({ getWaitingCount: vi.fn(), alert: vi.fn() }));
 vi.mock("@mindkid/auth", () => ({ getAuthRedisClient: vi.fn() }));
 
 import { getAuthRedisClient } from "@mindkid/auth";
 import { ping } from "@mindkid/cache";
-import { getOwnerDb } from "@mindkid/db";
 import { getWaitingCount } from "@mindkid/queue";
 import getHandler from "#server/api/guest/health.get";
 import headHandler from "#server/api/guest/health.head";
@@ -33,11 +33,23 @@ function makeEvent(method: string): H3Event {
   return createEvent(req as never, res as never);
 }
 
+/** Không mock DB (BR-TST-02): handler công khai không được import package DB nên không thể chạm DB. */
+const HANDLER_SOURCES = [
+  "apps/web/server/api/guest/health.get.ts",
+  "apps/web/server/api/guest/health.head.ts",
+].map((rel) => fs.readFileSync(repoPath(rel), "utf-8"));
+
+function expectNoDbImport(): void {
+  for (const source of HANDLER_SOURCES) {
+    expect(source).not.toContain("@mindkid/db");
+  }
+}
+
 describe("BR-HLT-07 — health công khai chỉ là liveness nông", () => {
   it("GET trả 200 {status:ok} mà không chạm DB, cache, auth DO hay queue", async () => {
     const body = await getHandler(makeEvent("GET"));
     expect(body).toEqual({ status: "ok" });
-    expect(getOwnerDb).not.toHaveBeenCalled();
+    expectNoDbImport();
     expect(ping).not.toHaveBeenCalled();
     expect(getAuthRedisClient).not.toHaveBeenCalled();
     expect(getWaitingCount).not.toHaveBeenCalled();
@@ -46,7 +58,7 @@ describe("BR-HLT-07 — health công khai chỉ là liveness nông", () => {
   it("HEAD trả 200 không body và cũng không chạm dịch vụ nào", async () => {
     const result = await headHandler(makeEvent("HEAD"));
     expect(result).toBe("");
-    expect(getOwnerDb).not.toHaveBeenCalled();
+    expectNoDbImport();
     expect(getAuthRedisClient).not.toHaveBeenCalled();
   });
 });

@@ -39,14 +39,6 @@ vi.mock("#server/services/index.js", async (importOriginal) => {
   };
 });
 
-vi.mock("@mindkid/db", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@mindkid/db")>();
-  return {
-    ...actual,
-    getOwnerDb: vi.fn(() => ({})),
-  };
-});
-
 import faqHandler from "#server/api/guest/faq.get";
 import homeHandler from "#server/api/guest/home.get";
 import guestLevelsHandler from "#server/api/guest/levels/index.get";

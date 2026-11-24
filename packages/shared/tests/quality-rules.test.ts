@@ -9,11 +9,12 @@ const SCAN_DIRS = ["apps", "packages", "scripts"].map((d) =>
 );
 
 const TEST_FILE_REGEX = /\.(test|spec)\.ts$/;
-// Khớp theo specifier của driver DB (drizzle-orm, postgres, pg, *sqlite*), kể
+// Khớp theo specifier của driver DB (drizzle-orm, postgres, pg, *sqlite*) và
+// package DB nội bộ (`@mindkid/db`, `@mindkid/db/repositories`...), kể
 // cả khi `vi.mock` có factory đi kèm. Bản cũ đòi `)` ngay sau specifier nên
 // bỏ sót mọi lời gọi có factory, và `.*pg.*` khớp nhầm cả "page", "upgrade".
 const MOCKED_DB_REGEX =
-  /v(?:i|itest)\.mock\(\s*["'`](?:drizzle-orm[^"'`]*|postgres|pg|better-sqlite3|[^"'`]*sqlite[^"'`]*)["'`]/i;
+  /v(?:i|itest)\.mock\(\s*["'`](?:drizzle-orm[^"'`]*|@mindkid\/db(?:\/[^"'`]*)?|postgres|pg|better-sqlite3|[^"'`]*sqlite[^"'`]*)["'`]/i;
 const SET_TIMEOUT_WAIT_REGEX_1 = /await new Promise.*setTimeout/;
 const SET_TIMEOUT_WAIT_REGEX_2 = /setTimeout\([^)]+,\s*\d+\)/;
 const TS_FILE_REGEX = /\.ts$/;
@@ -51,6 +52,36 @@ describe("P0.0 Quality & Governance Rules (BR-TST, BR-AIG, BR-MVP)", () => {
     expect(MOCKED_DB_REGEX.test('vi.mock("~/pages/upgrade", () => ({}))')).toBe(
       false
     );
+  });
+
+  it("BR-TST-02 ca âm: regex bắt vi.mock package DB nội bộ @mindkid/db (kể cả subpath), bỏ qua package khác", () => {
+    const violation = fs.readFileSync(
+      path.join(
+        import.meta.dirname,
+        "fixtures/quality-rules/internal-db-mock-violation.txt"
+      ),
+      "utf-8"
+    );
+    expect(MOCKED_DB_REGEX.test(violation)).toBe(true);
+
+    // Mẫu vi phạm/hợp lệ nằm trong fixture để file test này không tự khớp regex của chính nó.
+    const subpath = fs.readFileSync(
+      path.join(
+        import.meta.dirname,
+        "fixtures/quality-rules/internal-db-subpath-mock-violation.txt"
+      ),
+      "utf-8"
+    );
+    expect(MOCKED_DB_REGEX.test(subpath)).toBe(true);
+
+    const unrelated = fs.readFileSync(
+      path.join(
+        import.meta.dirname,
+        "fixtures/quality-rules/internal-db-mock-unrelated.txt"
+      ),
+      "utf-8"
+    );
+    expect(MOCKED_DB_REGEX.test(unrelated)).toBe(false);
   });
 
   it("enforces BR-TST-04: no setTimeout waiting in tests", () => {

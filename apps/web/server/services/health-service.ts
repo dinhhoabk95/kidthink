@@ -53,14 +53,21 @@ async function probeAuthKeyspace(): Promise<void> {
   }
 }
 
-function collectHealthProbes(cfEnv?: CloudflareHealthEnv): Promise<void>[] {
+export interface HealthCheckDeps {
+  /** Seam cho test ca âm (DB chết/treo); mặc định ping DB chủ thật. */
+  readonly pingDb?: () => Promise<void>;
+}
+
+function pingOwnerDb(): Promise<void> {
+  return createRepositories(getOwnerDb()).system.ping();
+}
+
+function collectHealthProbes(
+  cfEnv: CloudflareHealthEnv | undefined,
+  pingDb: () => Promise<void>
+): Promise<void>[] {
   const conn = getDbConnectionName();
-  const systemRepo = createRepositories(getOwnerDb()).system;
-  const dbProbe = withTimeout(
-    systemRepo.ping(),
-    SERVICE_TIMEOUT_MS,
-    "Database"
-  );
+  const dbProbe = withTimeout(pingDb(), SERVICE_TIMEOUT_MS, "Database");
 
   if (conn === "sqlite") {
     return [dbProbe];
@@ -100,12 +107,13 @@ function collectHealthProbes(cfEnv?: CloudflareHealthEnv): Promise<void>[] {
 }
 
 export async function runSystemHealthCheck(
-  cfEnv?: CloudflareHealthEnv
+  cfEnv?: CloudflareHealthEnv,
+  deps: HealthCheckDeps = {}
 ): Promise<HealthCheckResult> {
   const start = Date.now();
 
   try {
-    await Promise.all(collectHealthProbes(cfEnv));
+    await Promise.all(collectHealthProbes(cfEnv, deps.pingDb ?? pingOwnerDb));
 
     const totalTime = Date.now() - start;
     if (totalTime > TOTAL_BUDGET_MS) {

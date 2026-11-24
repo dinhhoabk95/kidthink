@@ -34,10 +34,6 @@ vi.mock("@mindkid/config", async (importOriginal) => {
   };
 });
 
-vi.mock("@mindkid/db", () => ({
-  getOwnerDb: vi.fn(),
-}));
-
 vi.mock("@mindkid/cache", () => ({
   ping: vi.fn(),
 }));
@@ -48,19 +44,15 @@ vi.mock("@mindkid/queue", () => ({
 }));
 
 import { ping } from "@mindkid/cache";
-import { getOwnerDb } from "@mindkid/db";
 import { alert, getWaitingCount } from "@mindkid/queue";
 import { setHeader, setResponseStatus } from "h3";
 import handler from "#server/api/guest/health/deep.get";
+import { runSystemHealthCheck } from "#server/services/health-service";
 
-const mockedGetOwnerDb = vi.mocked(getOwnerDb);
 const mockedPing = vi.mocked(ping);
 const mockedGetWaitingCount = vi.mocked(getWaitingCount);
 
 function setupHealthyDependencies(): void {
-  mockedGetOwnerDb.mockReturnValue({
-    run: vi.fn().mockResolvedValue([{ "?column?": 1 }]),
-  } as never);
   mockedPing.mockResolvedValue(true);
   mockedGetWaitingCount.mockResolvedValue(0);
   mockRedisSet.mockResolvedValue("OK");
@@ -97,7 +89,6 @@ describe("Health Check API (BR-HLT-01..06)", () => {
         statusCode: 404,
       });
     }
-    expect(mockedGetOwnerDb).not.toHaveBeenCalled();
     expect(mockRedisSet).not.toHaveBeenCalled();
     expect(mockedGetWaitingCount).not.toHaveBeenCalled();
   });
@@ -135,14 +126,12 @@ describe("Health Check API (BR-HLT-01..06)", () => {
   });
 
   it("Ca âm BR-HLT-01 & BR-HLT-03: tắt PostgreSQL → 503, không phải 200, phát alert", async () => {
-    mockedGetOwnerDb.mockReturnValue({
-      run: vi.fn().mockRejectedValue(new Error("Connection refused")),
-    } as never);
+    // Không mock DB (BR-TST-02): tiêm lỗi qua seam `pingDb` của service.
+    const result = await runSystemHealthCheck(undefined, {
+      pingDb: () => Promise.reject(new Error("Connection refused")),
+    });
 
-    const response = await handler(mockEvent);
-
-    expect(response).toEqual({ status: "error" });
-    expect(setResponseStatus).toHaveBeenCalledWith(mockEvent, 503);
+    expect(result).toEqual({ ok: false, body: { status: "error" } });
 
     expect(alert).toHaveBeenCalledWith(
       "error",
@@ -175,23 +164,18 @@ describe("Health Check API (BR-HLT-01..06)", () => {
   it("Ca âm BR-HLT-05 & BR-HLT-03: dịch vụ vượt ngân sách timeout 2s → 503 + alert", async () => {
     vi.useFakeTimers();
 
-    mockedGetOwnerDb.mockReturnValue({
-      run: vi.fn().mockImplementation(
-        () =>
-          new Promise(() => {
-            /* never resolves */
-          })
-      ),
-    } as never);
-
-    const handlerPromise = handler(mockEvent);
+    const resultPromise = runSystemHealthCheck(undefined, {
+      pingDb: () =>
+        new Promise<void>(() => {
+          /* never resolves */
+        }),
+    });
 
     vi.advanceTimersByTime(2100);
 
-    const response = await handlerPromise;
+    const result = await resultPromise;
 
-    expect(response).toEqual({ status: "error" });
-    expect(setResponseStatus).toHaveBeenCalledWith(mockEvent, 503);
+    expect(result).toEqual({ ok: false, body: { status: "error" } });
     expect(alert).toHaveBeenCalledWith(
       "error",
       "Health check failed",

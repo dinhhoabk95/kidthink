@@ -1,27 +1,18 @@
 import { getAuthRedisClient } from "@mindkid/auth";
 import { invalidateUserEntitlementsCache } from "@mindkid/cache";
-import { hardPurgeChildProfile, hardPurgeUser } from "@mindkid/db";
+import {
+  CHILD_STATUS,
+  childProfiles,
+  getOwnerDb,
+  USER_STATUS,
+  userSessions,
+  users,
+} from "@mindkid/db";
 import { alert } from "@mindkid/queue";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { inArray, sql } from "drizzle-orm";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { accountPurge } from "./account-purge.js";
 import type { JobContext } from "./types.js";
-
-const dueRows = [
-  { id: 1, purgeAt: new Date("2026-08-01") },
-  { id: 2, purgeAt: new Date("2026-08-02") },
-  { id: 3, purgeAt: new Date("2026-08-03") },
-];
-
-const dueChildren: Array<{ id: number; uuid: string }> = [
-  { id: 10, uuid: "child-10" },
-  { id: 11, uuid: "child-11" },
-];
-
-const mockFindUserSessions = vi.fn(
-  async (args: { readonly where: { readonly userId: number } }) => [
-    { id: args.where.userId * 100, token: `tok_${args.where.userId}` },
-  ]
-);
 
 const mockRedisDel = vi.fn(async (..._keys: string[]) => 1);
 
@@ -33,38 +24,6 @@ vi.mock("@mindkid/auth", () => ({
 
 vi.mock("@mindkid/cache", () => ({
   invalidateUserEntitlementsCache: vi.fn(async () => undefined),
-}));
-
-vi.mock("@mindkid/db", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@mindkid/db")>();
-  return {
-    ...actual,
-    getOwnerDb: () => ({
-      query: {
-        userSessions: {
-          findMany: mockFindUserSessions,
-        },
-      },
-      insert: vi.fn(() => ({
-        values: vi.fn(() => ({
-          returning: vi.fn().mockResolvedValue([{ id: 1 }]),
-        })),
-      })),
-    }),
-    hardPurgeUser: vi.fn(() => Promise.resolve({ purged: true })),
-    hardPurgeChildProfile: vi.fn(() => Promise.resolve()),
-  };
-});
-
-vi.mock("@mindkid/db/repositories", () => ({
-  createRepositories: () => ({
-    users: {
-      listDueForPurge: vi.fn(async () => dueRows),
-    },
-    childProfiles: {
-      listDueForPurge: vi.fn(async () => dueChildren),
-    },
-  }),
 }));
 
 vi.mock("@mindkid/queue", () => ({ alert: vi.fn() }));
@@ -80,30 +39,142 @@ function abortedSignal(): AbortSignal {
   return controller.signal;
 }
 
+const PAST = new Date("2026-08-01T00:00:00Z");
+const TRIGGER = "trg_account_purge_test_boom";
+
+interface Seeded {
+  readonly userIds: number[];
+  readonly sessions: { id: number; token: string; userId: number }[];
+  readonly childIds: number[];
+  readonly boomChildId: number;
+}
+
+let seeded: Seeded;
+let tag = 0;
+
+async function seedDueRows(): Promise<Seeded> {
+  const db = getOwnerDb();
+  tag += 1;
+  const stamp = `${Date.now()}-${tag}`;
+  const userIds: number[] = [];
+  const sessions: Seeded["sessions"] = [];
+  for (let i = 1; i <= 3; i++) {
+    const [u] = await db
+      .insert(users)
+      .values({
+        email: `purge-${stamp}-${i}@example.com`,
+        displayName: `Purge ${i}`,
+        emailVerified: true,
+        status: USER_STATUS.DELETED,
+        purgeAt: new Date(PAST.getTime() + i * 1000),
+      })
+      .returning();
+    if (!u) {
+      throw new Error("seed user failed");
+    }
+    userIds.push(u.id);
+    const [sess] = await db
+      .insert(userSessions)
+      .values({
+        userId: u.id,
+        token: `tok-${stamp}-${i}`,
+        expiresAt: new Date("2030-01-01T00:00:00Z"),
+      })
+      .returning();
+    if (!sess) {
+      throw new Error("seed session failed");
+    }
+    sessions.push({ id: sess.id, token: sess.token, userId: u.id });
+  }
+  const [owner] = await db
+    .insert(users)
+    .values({
+      email: `purge-owner-${stamp}@example.com`,
+      displayName: "Owner",
+      emailVerified: true,
+      status: USER_STATUS.ACTIVE,
+    })
+    .returning();
+  if (!owner) {
+    throw new Error("seed owner failed");
+  }
+  userIds.push(owner.id);
+  const childIds: number[] = [];
+  let boomChildId = 0;
+  for (const name of ["Bé A", "boom-child"]) {
+    const [c] = await db
+      .insert(childProfiles)
+      .values({
+        userId: owner.id,
+        displayName: name,
+        birthYear: 2021,
+        avatarId: "preset_cat_01",
+        status: CHILD_STATUS.PENDING_DELETION,
+        purgeAt: PAST,
+      })
+      .returning();
+    if (!c) {
+      throw new Error("seed child failed");
+    }
+    childIds.push(c.id);
+    if (name === "boom-child") {
+      boomChildId = c.id;
+    }
+  }
+  return { userIds, sessions, childIds, boomChildId };
+}
+
+/** `hardPurgeUser` ẩn danh hoá hàng user (xoá `purge_at`), không xoá hàng. */
+async function stillDueUserIds(ids: readonly number[]): Promise<number[]> {
+  const rows = await getOwnerDb()
+    .select({ id: users.id, purgeAt: users.purgeAt })
+    .from(users)
+    .where(inArray(users.id, [...ids]));
+  return rows.filter((r) => r.purgeAt !== null).map((r) => r.id);
+}
+
+async function existingChildIds(ids: readonly number[]): Promise<number[]> {
+  const rows = await getOwnerDb()
+    .select({ id: childProfiles.id })
+    .from(childProfiles)
+    .where(inArray(childProfiles.id, [...ids]));
+  return rows.map((r) => r.id);
+}
+
 describe("accountPurge — tôn trọng ctx.signal & thu hồi AuthStore (job-queue.md §5)", () => {
-  beforeEach(() => {
-    vi.mocked(hardPurgeUser).mockReset();
-    vi.mocked(hardPurgeUser).mockResolvedValue({ purged: true });
-    vi.mocked(hardPurgeChildProfile).mockClear();
+  beforeEach(async () => {
     vi.mocked(alert).mockClear();
-    mockFindUserSessions.mockClear();
-    mockRedisDel.mockClear();
+    mockRedisDel.mockReset();
+    mockRedisDel.mockResolvedValue(1);
     vi.mocked(invalidateUserEntitlementsCache).mockClear();
+    seeded = await seedDueRows();
+  });
+
+  afterEach(async () => {
+    const db = getOwnerDb();
+    await db.run(sql.raw(`DROP TRIGGER IF EXISTS ${TRIGGER}`));
+    await db
+      .delete(childProfiles)
+      .where(inArray(childProfiles.id, seeded.childIds));
+    await db.delete(users).where(inArray(users.id, seeded.userIds));
   });
 
   it("chạy hết danh sách khi signal còn sống và thu hồi session AuthStore + cache quyền", async () => {
     const result = await accountPurge({}, ctx(new AbortController().signal));
 
-    expect(hardPurgeUser).toHaveBeenCalledTimes(3);
-    expect(getAuthRedisClient().del).toHaveBeenCalledWith(
-      "ba:v1:user:active-sessions-1",
-      "ba:v1:user:tok_1",
-      "ba:v1:user:reauth:100"
-    );
+    const purgedUserIds = seeded.userIds.slice(0, 3);
+    expect(await stillDueUserIds(purgedUserIds)).toEqual([]);
+    for (const session of seeded.sessions) {
+      expect(getAuthRedisClient().del).toHaveBeenCalledWith(
+        `ba:v1:user:active-sessions-${session.userId}`,
+        `ba:v1:user:${session.token}`,
+        `ba:v1:user:reauth:${session.id}`
+      );
+    }
     expect(invalidateUserEntitlementsCache).toHaveBeenCalledTimes(3);
-    expect(invalidateUserEntitlementsCache).toHaveBeenCalledWith(1);
-    expect(invalidateUserEntitlementsCache).toHaveBeenCalledWith(2);
-    expect(invalidateUserEntitlementsCache).toHaveBeenCalledWith(3);
+    for (const id of purgedUserIds) {
+      expect(invalidateUserEntitlementsCache).toHaveBeenCalledWith(id);
+    }
     expect(result).toEqual({
       purgedCount: 3,
       purgedChildren: 2,
@@ -114,7 +185,7 @@ describe("accountPurge — tôn trọng ctx.signal & thu hồi AuthStore (job-qu
   it("ca âm: signal đã abort thì Cấm — NEVER xoá cứng thêm một tài khoản nào", async () => {
     const result = await accountPurge({}, ctx(abortedSignal()));
 
-    expect(hardPurgeUser).not.toHaveBeenCalled();
+    expect(await stillDueUserIds(seeded.userIds)).toHaveLength(3);
     expect(mockRedisDel).not.toHaveBeenCalled();
     expect(invalidateUserEntitlementsCache).not.toHaveBeenCalled();
     expect(result).toEqual({
@@ -126,14 +197,15 @@ describe("accountPurge — tôn trọng ctx.signal & thu hồi AuthStore (job-qu
 
   it("abort giữa chừng thì dừng ngay và báo đúng số đã xoá", async () => {
     const controller = new AbortController();
-    vi.mocked(hardPurgeUser).mockImplementation(() => {
+    // Thu hồi session chạy ngay sau mỗi lần xoá user: abort ở đây = abort giữa chừng.
+    mockRedisDel.mockImplementation(() => {
       controller.abort();
-      return Promise.resolve({ purged: true });
+      return Promise.resolve(1);
     });
 
     const result = await accountPurge({}, ctx(controller.signal));
 
-    expect(hardPurgeUser).toHaveBeenCalledTimes(1);
+    expect(await stillDueUserIds(seeded.userIds.slice(0, 3))).toHaveLength(2);
     expect(result).toEqual({
       purgedCount: 1,
       purgedChildren: 0,
@@ -144,30 +216,30 @@ describe("accountPurge — tôn trọng ctx.signal & thu hồi AuthStore (job-qu
   it("UC-019: xoá thật từng hồ sơ trẻ đến hạn (id + uuid)", async () => {
     await accountPurge({}, ctx(new AbortController().signal));
 
-    expect(hardPurgeChildProfile).toHaveBeenCalledTimes(2);
-    expect(hardPurgeChildProfile).toHaveBeenCalledWith(
-      expect.anything(),
-      10,
-      "child-10"
-    );
+    expect(await existingChildIds(seeded.childIds)).toEqual([]);
   });
 
   it("ca âm: signal đã abort thì không xoá hồ sơ trẻ nào", async () => {
     await accountPurge({}, ctx(abortedSignal()));
 
-    expect(hardPurgeChildProfile).not.toHaveBeenCalled();
+    expect(await existingChildIds(seeded.childIds)).toHaveLength(2);
   });
 
   it("BR-008: xoá hồ sơ trẻ lỗi thì alert và ném lại, không im lặng", async () => {
-    vi.mocked(hardPurgeChildProfile).mockRejectedValueOnce(new Error("boom"));
+    // Lỗi thật từ DB: trigger chặn xoá đúng hồ sơ `boom-child`.
+    await getOwnerDb().run(
+      sql.raw(
+        `CREATE TRIGGER ${TRIGGER} BEFORE DELETE ON child_profiles WHEN OLD.display_name = 'boom-child' BEGIN SELECT RAISE(ABORT, 'boom'); END`
+      )
+    );
 
     await expect(
       accountPurge({}, ctx(new AbortController().signal))
-    ).rejects.toThrow("boom");
+    ).rejects.toThrow();
     expect(alert).toHaveBeenCalledWith(
       "error",
       "Child profile purge job failed",
-      expect.objectContaining({ childId: 10 })
+      expect.objectContaining({ childId: seeded.boomChildId })
     );
   });
 });
