@@ -43,7 +43,7 @@ function renderEngineSummaryCard(
       <div><span>Luồng song song:</span> <strong>x${engine.recommended_concurrency}</strong></div>
       <div><span>Ước tính ${catalogTotal.toLocaleString("vi-VN")} câu:</span> <strong class="highlight">${formatEstimateLabel(engine.estimated_catalog_minutes)}</strong></div>
     </div>
-    <div class="cmd-box"><code>pnpm voice:generate --engine=${escapeHtml(engine.engine_id)} --concurrency=${engine.recommended_concurrency}</code></div>
+    <div class="cmd-box"><code>pnpm --filter @mindkid/content-build voice:generate --engine=${escapeHtml(engine.engine_id)} --concurrency=${engine.recommended_concurrency}</code></div>
     <button type="button" class="seq-btn" data-seq-engine="${escapeHtml(engine.engine_id)}">▶ Nghe trọn bộ 12 câu của giọng này</button>
   </div>`;
 }

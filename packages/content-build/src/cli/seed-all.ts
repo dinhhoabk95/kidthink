@@ -18,7 +18,7 @@ export async function seedAllContent(options?: { masterOnly?: boolean }) {
   }
   if (runDeriveDemand({ check: true }) !== 0) {
     throw new Error(
-      "check:content-demand đỏ: content-demand.json không khớp lộ trình, dừng trước khi gieo. Chạy `pnpm derive:demand`."
+      "check:content-demand đỏ: content-demand.json không khớp lộ trình, dừng trước khi gieo. Chạy `pnpm --filter @mindkid/content-build derive:demand`."
     );
   }
 

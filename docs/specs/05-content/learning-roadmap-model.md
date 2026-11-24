@@ -193,7 +193,7 @@ xuống dưới 36 tuần để giảm nợ.
 `packages/content-build/src/gates/skill-template-affinity.ts`, thứ đã suy được khuôn hợp lệ
 cho một kỹ năng bằng giao `thinking_processes` và khoảng tuổi.
 
-Sổ cầu nằm ở `packages/content/src/roadmaps/content-demand.json`, sinh bằng `pnpm derive:demand`
+Sổ cầu nằm ở `packages/content/src/roadmaps/content-demand.json`, sinh bằng `pnpm --filter @mindkid/content-build derive:demand`
 và kiểm bằng `pnpm check:content-demand` (so theo giá trị vì Biome định dạng lại file).
 
 Cách lấp ô là phép tra xác định, không có phép chia lấy dư:

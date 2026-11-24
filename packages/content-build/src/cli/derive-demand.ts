@@ -103,7 +103,7 @@ function checkCommittedLedger(
   const committed = committedText === "" ? "" : canonical(committedText);
   if (committed !== JSON.stringify(ledger)) {
     console.error(
-      "❌ content-demand.json lệch lộ trình hoặc kho — chạy `pnpm derive:demand` rồi commit"
+      "❌ content-demand.json lệch lộ trình hoặc kho — chạy `pnpm --filter @mindkid/content-build derive:demand` rồi commit"
     );
     return 1;
   }

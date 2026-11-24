@@ -56,7 +56,8 @@ export async function checkGraduationReadiness(
         rolling7DayAvgDau,
         estimatedDailyWrites,
         estimatedWriteQuotaRatio: Number(estimatedWriteQuotaRatio.toFixed(3)),
-        action: "Chạy `pnpm cutover:cf-to-vps --rehearse` trên VPS đích",
+        action:
+          "Rà soát giới hạn D1/Workers và kế hoạch mở rộng (luồng cutover sang VPS đã gỡ)",
       }
     );
   }
