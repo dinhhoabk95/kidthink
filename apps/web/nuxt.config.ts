@@ -1,9 +1,36 @@
+import { readdirSync } from "node:fs";
+import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineNuxtConfig } from "nuxt/config";
 import { env } from "./env";
 
 const isDevelopment = env.NODE_ENV === "development";
 const isCloudflareTarget = process.env.MINDKID_RUNTIME === "cloudflare";
+
+/**
+ * Helper CJS của `@babel/runtime` theo tên import → đường dẫn tệp CJS thật. Xem `nitro.alias`.
+ * `@babel/runtime` là phụ thuộc bắc cầu của mjml.
+ */
+function babelRuntimeCjsHelperAliases(): Record<string, string> {
+  // packages/notification -> mjml -> mjml-core -> @babel/runtime (pnpm không hoist).
+  const packageJsonPath = fileURLToPath(
+    new URL("../../packages/notification/package.json", import.meta.url)
+  );
+  const runtimePackageJson = ["mjml", "mjml-core", "@babel/runtime"].reduce(
+    (from, name) => createRequire(from).resolve(`${name}/package.json`),
+    packageJsonPath
+  );
+  const helpersDir = join(dirname(runtimePackageJson), "helpers");
+  return Object.fromEntries(
+    readdirSync(helpersDir)
+      .filter((file) => file.endsWith(".js"))
+      .map((file) => [
+        `@babel/runtime/helpers/${file.slice(0, -3)}`,
+        join(helpersDir, file),
+      ])
+  );
+}
 
 const allowedOrigins = env.NUXT_ALLOWED_ORIGINS.split(",")
   .map((origin) => origin.trim())
@@ -41,6 +68,11 @@ export default defineNuxtConfig({
               import.meta.url
             )
           ),
+          // mjml-core (CJS) đọc `require("@babel/runtime/helpers/x").default`. Điều kiện "import" của
+          // Nitro chọn bản ESM `helpers/esm/x` (chỉ có default export) và `requireReturnsDefault:
+          // "auto"` trả thẳng hàm, nên `.default` là undefined và web crash lúc nạp module
+          // ("B38 is not a function"). Ép về bản CJS (có `module.exports.default = module.exports`).
+          ...babelRuntimeCjsHelperAliases(),
           ioredis: fileURLToPath(
             new URL(
               "./server/utils/cloudflare-ioredis-stub.ts",
@@ -57,6 +89,11 @@ export default defineNuxtConfig({
           // sharp là native addon (chỉ dùng khi MINDKID_RUNTIME=vps).
           external: ["sharp"],
         },
+    // tsyringe (qua @peculiar/x509 <- @simplewebauthn/server <- @better-auth/passkey) cần polyfill
+    // `reflect-metadata` nạp bằng import side-effect; Rollup treeshake của Nitro 2 sẽ bỏ import đó
+    // và web crash lúc khởi tạo trên workerd ("tsyringe requires a reflect polyfill").
+    moduleSideEffects: ["reflect-metadata/"],
+
     // ERROR-CODES §4 + §8: chỗ duy nhất dựng body lỗi cho `/api/*`.
     // Nitro nối handler mặc định vào cuối chuỗi, nên trang lỗi Nuxt (SSR, 404
     // trang) vẫn do Nitro xử lý như trước — `server/error.ts` return sớm cho
