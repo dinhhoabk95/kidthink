@@ -66,10 +66,6 @@ export class DatabaseManager {
     this.d1Driver.setBindings(binding);
   }
 
-  enterCloudflareD1Binding(binding: D1BindingInput): void {
-    this.d1Driver.enterRequestBinding(binding);
-  }
-
   clearD1Bindings(): void {
     this.d1Driver.clearBindings();
   }

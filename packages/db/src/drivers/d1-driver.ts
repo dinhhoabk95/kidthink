@@ -196,11 +196,6 @@ export class D1Driver implements DatabaseDriver {
     return this.ensureProxyDb();
   }
 
-  enterRequestBinding(binding: D1BindingInput): AppDb {
-    this.requestBindingAls.enterWith(unwrapD1Binding(binding));
-    return this.ensureProxyDb();
-  }
-
   async runWithBinding<T>(
     binding: D1BindingInput,
     fn: () => Promise<T>

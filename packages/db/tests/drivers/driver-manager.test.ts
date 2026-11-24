@@ -109,14 +109,6 @@ function createSpyD1Binding(base: MinimalD1Database): D1SpyHandle {
   return { d1, execCalls, preparedSqls };
 }
 
-function runInIsolatedAsyncContext<T>(fn: () => Promise<T>): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    setTimeout(() => {
-      fn().then(resolve, reject);
-    }, 0);
-  });
-}
-
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
@@ -514,7 +506,7 @@ describe("DatabaseManager (DB) & Multi-Driver Engine (SQLite & Cloudflare D1)", 
     }
   });
 
-  it("isolates concurrent DB.enterCloudflareD1Binding(bindingA) vs bindingB via AsyncLocalStorage in Promise.all", async () => {
+  it("isolates concurrent D1Driver.runWithBinding(bindingA) vs bindingB via AsyncLocalStorage in Promise.all", async () => {
     const suffix = `${Date.now()}-${Math.floor(Math.random() * 100_000)}`;
     const d1CtxA = createInMemoryD1Database();
     const d1CtxB = createInMemoryD1Database();
@@ -525,8 +517,7 @@ describe("DatabaseManager (DB) & Multi-Driver Engine (SQLite & Cloudflare D1)", 
 
     try {
       const [rowsFromA, rowsFromB] = await Promise.all([
-        runInIsolatedAsyncContext(async () => {
-          DB.enterCloudflareD1Binding(d1CtxA.d1);
+        DB.getD1Driver().runWithBinding(d1CtxA.d1, async () => {
           await DB.connection("d1").insert(users).values({
             email: emailA,
             displayName: "Worker Isolate A",
@@ -536,8 +527,7 @@ describe("DatabaseManager (DB) & Multi-Driver Engine (SQLite & Cloudflare D1)", 
             .select({ email: users.email })
             .from(users);
         }),
-        runInIsolatedAsyncContext(async () => {
-          DB.enterCloudflareD1Binding(d1CtxB.d1);
+        DB.getD1Driver().runWithBinding(d1CtxB.d1, async () => {
           await delay(10);
           await DB.connection("d1").insert(users).values({
             email: emailB,

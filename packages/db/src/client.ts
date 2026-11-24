@@ -16,10 +16,6 @@ export function registerCloudflareD1Bindings(binding: D1BindingInput): AppDb {
   return DB.connection("d1");
 }
 
-export function enterCloudflareD1Binding(binding: D1BindingInput): void {
-  DB.enterCloudflareD1Binding(binding);
-}
-
 export function clearCloudflareD1Bindings(): void {
   DB.clearD1Bindings();
 }
