@@ -11,7 +11,6 @@ import {
 describe("enqueue đóng-khi-lỗi trên driver cloudflare-do (BR-JOB-12)", () => {
   afterEach(() => {
     registerCloudflareQueuePort(undefined);
-    // biome-ignore lint/performance/noDelete: env var phải bị gỡ thật
     delete process.env.QUEUE_DRIVER;
   });
 
