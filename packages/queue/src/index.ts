@@ -142,8 +142,8 @@ export async function enqueueBatch(
 }
 
 export async function getWaitingCount(): Promise<number> {
-  const cfPort = getCloudflareQueuePort();
-  if (getQueueDriverKind() === "cloudflare-do" && cfPort) {
+  const cfPort = resolveCloudflareQueuePort();
+  if (cfPort) {
     const stats = await cfPort.getStats();
     return stats.waiting;
   }
@@ -152,8 +152,8 @@ export async function getWaitingCount(): Promise<number> {
 }
 
 export async function getFailedCount(): Promise<number> {
-  const cfPort = getCloudflareQueuePort();
-  if (getQueueDriverKind() === "cloudflare-do" && cfPort) {
+  const cfPort = resolveCloudflareQueuePort();
+  if (cfPort) {
     const stats = await cfPort.getStats();
     return stats.failed;
   }
