@@ -10,6 +10,7 @@ import { entitlementExpire } from "./entitlement-expire.js";
 import { entitlementSoftUnlockExpire } from "./entitlement-soft-unlock-expire.js";
 import { orderExpire } from "./order-expire.js";
 import { pdfRender } from "./pdf-render.js";
+import { pushSend } from "./push-send.js";
 import { reportManualGrantsMonthly } from "./report-manual-grants-monthly.js";
 import { rollupDaily } from "./rollup-daily.js";
 import { rollupSession } from "./rollup-session.js";
@@ -69,6 +70,7 @@ export const CONSUMERS: Record<JobName, ErasedConsumer> = {
   ),
   "order:expire": bind("order:expire", orderExpire),
   "pdf:render": bind("pdf:render", pdfRender),
+  "push:send": bind("push:send", pushSend),
   "report:manual-grants-monthly": bind(
     "report:manual-grants-monthly",
     reportManualGrantsMonthly
