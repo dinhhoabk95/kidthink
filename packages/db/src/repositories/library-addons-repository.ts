@@ -203,43 +203,6 @@ export class LibraryRepository extends BaseRepository {
     );
   }
 
-  async updateCollection(
-    collectionId: number,
-    userId: number,
-    input: {
-      readonly name?: string;
-      readonly position?: number;
-      readonly updatedAt?: Date;
-    }
-  ): Promise<CollectionEntity | null> {
-    return await firstOrNull(
-      this.db
-        .update(collections)
-        .set({
-          ...(input.name === undefined ? {} : { name: input.name.trim() }),
-          ...(input.position === undefined ? {} : { position: input.position }),
-          updatedAt: input.updatedAt ?? new Date(),
-        })
-        .where(
-          and(eq(collections.id, collectionId), eq(collections.userId, userId))
-        )
-        .returning()
-    );
-  }
-
-  async deleteCollection(
-    collectionId: number,
-    userId: number
-  ): Promise<boolean> {
-    const rows = await this.db
-      .delete(collections)
-      .where(
-        and(eq(collections.id, collectionId), eq(collections.userId, userId))
-      )
-      .returning({ id: collections.id });
-    return rows.length > 0;
-  }
-
   async addLibraryItem(input: AddLibraryItemInput): Promise<LibraryItemEntity> {
     const now = input.createdAt ?? new Date();
     return await requireFirst(
