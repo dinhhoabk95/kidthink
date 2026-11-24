@@ -15,7 +15,6 @@ import {
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
-import { scanDirectoryForThirdPartyScripts } from "~~/tests/gates/public-scripts";
 
 function readRepoFile(relativePath: string): string {
   return readFileSync(repoPath(relativePath), "utf8");
@@ -123,13 +122,6 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
       expect(
         buildPublicHreflangLinks("/play/GL-C1-001", "https://mindkid.vn")
       ).toEqual([]);
-    });
-  });
-
-  describe("Task 2: Hai cổng cắt ngang (BR-SEO2-08, BR-LND-04, D-IC, D-HZ)", () => {
-    it("D-IC & BR-SEO2-08 & BR-LND-04: scans public surface and verifies 0 forbidden third-party scripts", () => {
-      const violations = scanDirectoryForThirdPartyScripts("apps/web/app");
-      expect(violations).toHaveLength(0);
     });
   });
 

@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { REPO_ROOT } from "@mindkid/config/paths";
 
 /**
- * Static scanner gates for Child Data Compliance rules BR-CDC-08 and BR-CDC-11,
+ * Static scanner gates for Child Data Compliance rule BR-CDC-11 (BR-CDC-08 nằm ở public-scripts),
  * and Admin Route Compliance rules BR-USM-07, BR-USM-08, BR-CPA-01, BR-CPA-06, BR-CPA-07, BR-CPA-08 (D-JB).
  * Called during pnpm check or test suite to ensure compliance before code is written.
  */
@@ -11,40 +11,6 @@ import { REPO_ROOT } from "@mindkid/config/paths";
 export interface CodeFileFixture {
   filePath: string;
   content: string;
-}
-
-/**
- * BR-CDC-08: Ensures no 3rd-party tracking scripts or domains exist in /play/** or legal pages.
- */
-export function scanTrackingScripts(files: CodeFileFixture[]): void {
-  const forbiddenDomainsAndScripts = [
-    "google-analytics.com",
-    "googletagmanager.com",
-    "connect.facebook.net",
-    "fbevents.js",
-    "cdn.mixpanel.com",
-    "cdn.segment.com",
-    "amplitude.com",
-    "hotjar.com",
-  ];
-
-  for (const f of files) {
-    if (
-      f.filePath.includes("/play/") ||
-      f.filePath.includes("/legal/") ||
-      f.filePath.includes("/terms") ||
-      f.filePath.includes("/privacy")
-    ) {
-      const lower = f.content.toLowerCase();
-      for (const forbidden of forbiddenDomainsAndScripts) {
-        if (lower.includes(forbidden)) {
-          throw new Error(
-            `BR-CDC-08 VIOLATION: 3rd-party tracking script/domain "${forbidden}" found in sensitive page ${f.filePath}`
-          );
-        }
-      }
-    }
-  }
 }
 
 function scanSchemaChildCredentials(schemaFiles: CodeFileFixture[]): void {
@@ -384,4 +350,11 @@ export function readComplianceRouteFiles(): CodeFileFixture[] {
     ...scanDirectoryFiles(join(REPO_ROOT, "apps/web/server/api/users")),
     ...scanDirectoryFiles(join(REPO_ROOT, "apps/web/server/api/guest")),
   ];
+}
+
+/** File schema bảng trẻ em thật mà BR-CDC-11 phải phủ. */
+export function readChildSchemaFiles(): CodeFileFixture[] {
+  return scanDirectoryFiles(join(REPO_ROOT, "packages/db/src/schema")).filter(
+    (f) => f.filePath.includes("child")
+  );
 }

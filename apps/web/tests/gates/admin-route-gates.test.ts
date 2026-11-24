@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  readChildSchemaFiles,
   readComplianceRouteFiles,
   scanAdminChildProfilesBoundToUser,
   scanAdminChildProfilesNoDelete,
@@ -8,6 +9,7 @@ import {
   scanAdminQueryNoChildNameParam,
   scanAdminRouteGates,
   scanAdminUsersNoDelete,
+  scanChildCredentialRoutesAndColumns,
 } from "./child-data-compliance.ts";
 
 const ERR_USM_07 = /BR-USM-07 VIOLATION/;
@@ -17,6 +19,7 @@ const ERR_CPA_06 = /BR-CPA-06 VIOLATION/;
 const ERR_CPA_07 = /BR-CPA-07 VIOLATION/;
 const ERR_CPA_08 = /BR-CPA-08 VIOLATION/;
 const ERR_PAY_08 = /BR-PAY-08 VIOLATION/;
+const ERR_CDC_11 = /BR-CDC-11 VIOLATION/;
 
 describe("Admin Route Compliance Gates — Task 1 / D-JB (BR-USM-07, BR-USM-08, BR-CPA-01, BR-CPA-06, BR-CPA-07, BR-CPA-08)", () => {
   const cleanAdminRoutes = [
@@ -198,5 +201,56 @@ describe("Cổng route quản trị trên repo thật", () => {
 
     expect(routes.length).toBeGreaterThan(0);
     expect(() => scanAdminRouteGates(routes)).not.toThrow();
+  });
+});
+
+describe("BR-CDC-11: trẻ em không có thông tin đăng nhập", () => {
+  const cleanSchema = [
+    {
+      filePath: "packages/db/src/schema/child.ts",
+      content: "export const childProfiles = pgTable('child_profiles', {...});",
+    },
+  ];
+  const cleanRoutes = [
+    {
+      filePath: "apps/web/server/api/auth/login.ts",
+      content: "defineEventHandler(() => { return { user_id: 1 }; });",
+    },
+  ];
+
+  it("ca âm: cột mật khẩu trên bảng trẻ em làm cổng đỏ", () => {
+    expect(() =>
+      scanChildCredentialRoutesAndColumns(cleanSchema, cleanRoutes)
+    ).not.toThrow();
+    expect(() =>
+      scanChildCredentialRoutesAndColumns(
+        [
+          {
+            filePath: "packages/db/src/schema/child.ts",
+            content: "child_password_hash: varchar('child_password_hash')",
+          },
+        ],
+        cleanRoutes
+      )
+    ).toThrowError(ERR_CDC_11);
+  });
+
+  it("ca âm: route đăng nhập của trẻ làm cổng đỏ", () => {
+    expect(() =>
+      scanChildCredentialRoutesAndColumns(cleanSchema, [
+        {
+          filePath: "apps/web/server/api/children/login.ts",
+          content: "export default defineEventHandler(() => {});",
+        },
+      ])
+    ).toThrowError(ERR_CDC_11);
+  });
+
+  it("repo thật: schema trẻ em và route không có cột/route đăng nhập", () => {
+    const schemas = readChildSchemaFiles();
+    expect(schemas.length).toBeGreaterThan(0);
+    expect(() =>
+      scanChildCredentialRoutesAndColumns(schemas, readComplianceRouteFiles())
+    ).not.toThrow();
   });
 });

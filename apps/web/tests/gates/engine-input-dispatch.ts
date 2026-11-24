@@ -12,14 +12,6 @@ export const PLAY_PAGE_PATH = resolve(
   "[code].vue"
 );
 
-export const ENGINE_INPUT_READY_CONFIG_PATH = resolve(
-  REPO_ROOT,
-  "packages",
-  "game-engine",
-  "config",
-  "engine-input-ready.json"
-);
-
 /**
  * Cổng bậc thang duck-typing: nợ đã về 0 từ Task #259.
  * Số này Cấm — NEVER tăng. Mọi nhánh `typeof session.*` mới trên bề mặt chơi
@@ -48,7 +40,6 @@ const ON_ITEM_LOCKED_REGEX = /typeof\s+session\.onItemLocked/;
 export interface EngineInputDispatchScanResult {
   readonly totalTypeOfSessionCount: number;
   readonly occurrences: readonly { line: number; text: string }[];
-  readonly readyCodes: readonly string[];
   readonly hasOnItemLockedInTapOptions: boolean;
 }
 
@@ -70,7 +61,6 @@ function listScannedFiles(
 
 export function scanEngineInputDispatch(
   playPagePath: string = PLAY_PAGE_PATH,
-  readyConfigPath: string = ENGINE_INPUT_READY_CONFIG_PATH,
   composablesDir: string = PLAY_COMPOSABLES_DIR
 ): EngineInputDispatchScanResult {
   if (!existsSync(playPagePath)) {
@@ -93,12 +83,6 @@ export function scanEngineInputDispatch(
     }
   }
 
-  let readyCodes: string[] = [];
-  if (existsSync(readyConfigPath)) {
-    const raw = readFileSync(readyConfigPath, "utf8");
-    readyCodes = JSON.parse(raw) as string[];
-  }
-
   // Check if handleTapOptionOrToggle still has typeof session.onItemLocked
   const handleTapOptionMatch = content.match(HANDLE_TAP_OPTION_FN_REGEX);
   const hasOnItemLockedInTapOptions = handleTapOptionMatch
@@ -108,7 +92,6 @@ export function scanEngineInputDispatch(
   return {
     totalTypeOfSessionCount: occurrences.length,
     occurrences,
-    readyCodes,
     hasOnItemLockedInTapOptions,
   };
 }
