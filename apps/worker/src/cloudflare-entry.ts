@@ -48,7 +48,7 @@ export class AuthCoordinatorDO extends DurableObject<CloudflareWorkerEnv> {
 
   constructor(ctx: DurableObjectStateLike, env: CloudflareWorkerEnv) {
     super(ctx, env);
-    this.engine = new AuthCoordinatorEngine(ctx.storage.sql);
+    this.engine = new AuthCoordinatorEngine(ctx.storage.sql, ctx.storage);
   }
 
   kvGet(key: string): Promise<string | null> {
@@ -89,6 +89,11 @@ export class AuthCoordinatorDO extends DurableObject<CloudflareWorkerEnv> {
     readonly windowSeconds: number;
   }): ReturnType<AuthCoordinatorEngine["consumeRateLimit"]> {
     return this.engine.consumeRateLimit(input);
+  }
+
+  /** Dọn khoá/bucket hết hạn rồi tự hẹn lại khi còn dòng có hạn. */
+  alarm(): Promise<number> {
+    return this.engine.runAlarm();
   }
 }
 

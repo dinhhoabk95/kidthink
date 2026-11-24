@@ -15,6 +15,15 @@ export interface MinimalCoordinatorSql {
   };
 }
 
+/** Phần của `DurableObjectStorage` mà engine dùng để hẹn dọn rác (alarm). */
+export interface CoordinatorAlarmStorage {
+  getAlarm(): Promise<number | null>;
+  setAlarm(scheduledTimeMs: number): Promise<void>;
+}
+
+/** Không đánh thức DO dày hơn mức này: dọn hạn chỉ để giữ gọn, đọc đã tự xoá khoá hết hạn. */
+export const PRUNE_MIN_INTERVAL_MS = 5 * 60 * 1000;
+
 /**
  * Lõi lưu trữ nhất quán mạnh cho `AuthCoordinatorDO` trên Cloudflare Workers Free:
  * - Giữ toàn bộ khóa `ba:v1:user:*` và `ba:v1:manager:*` của Better Auth trong SQLite nội bộ của DO
@@ -25,10 +34,52 @@ export class AuthCoordinatorEngine
   implements AuthCoordinatorRpcPort, RateLimitCoordinatorPort
 {
   private readonly sql: MinimalCoordinatorSql;
+  private readonly alarms: CoordinatorAlarmStorage | null;
   private initialized = false;
 
-  constructor(sql: MinimalCoordinatorSql) {
+  constructor(sql: MinimalCoordinatorSql, alarms?: CoordinatorAlarmStorage) {
     this.sql = sql;
+    this.alarms = alarms ?? null;
+  }
+
+  /** Hẹn alarm dọn hạn nếu chưa có alarm nào; không đặt lại alarm đang chờ. */
+  private async ensureAlarm(expiresAtMs: number): Promise<void> {
+    if (!this.alarms) {
+      return;
+    }
+    const existing = await this.alarms.getAlarm();
+    if (existing !== null) {
+      return;
+    }
+    await this.alarms.setAlarm(
+      Math.max(expiresAtMs, Date.now() + PRUNE_MIN_INTERVAL_MS)
+    );
+  }
+
+  /**
+   * Handler của `alarm()`: dọn khoá hết hạn rồi hẹn lại nếu còn dòng có hạn, để `pruneExpired`
+   * thực sự chạy định kỳ thay vì chỉ tồn tại trên giấy.
+   */
+  async runAlarm(): Promise<number> {
+    const pruned = this.pruneExpired();
+    if (!this.alarms) {
+      return pruned;
+    }
+    const next = this.sql
+      .exec(
+        `SELECT MIN(t) AS next FROM (
+           SELECT MIN(expires_at_ms) AS t FROM auth_kv WHERE expires_at_ms IS NOT NULL
+           UNION ALL
+           SELECT MIN(reset_at_ms) AS t FROM rate_limits
+         )`
+      )
+      .toArray()[0]?.next;
+    if (typeof next === "number") {
+      await this.alarms.setAlarm(
+        Math.max(next, Date.now() + PRUNE_MIN_INTERVAL_MS)
+      );
+    }
+    return pruned;
   }
 
   private ensureSchema(): void {
@@ -86,7 +137,7 @@ export class AuthCoordinatorEngine
     return Promise.resolve(val);
   }
 
-  kvSet(
+  async kvSet(
     key: string,
     value: string,
     ttlSeconds?: number
@@ -103,7 +154,10 @@ export class AuthCoordinatorEngine
       value,
       expiresAtMs
     );
-    return Promise.resolve("OK");
+    if (expiresAtMs !== null) {
+      await this.ensureAlarm(expiresAtMs);
+    }
+    return "OK";
   }
 
   kvDel(keys: readonly string[]): Promise<number> {
@@ -165,24 +219,36 @@ export class AuthCoordinatorEngine
     return Promise.resolve(nextVal);
   }
 
-  kvExpire(key: string, seconds: number): Promise<number> {
+  async kvExpire(key: string, seconds: number): Promise<number> {
     const existing = this.readLiveValue(key);
     if (existing === null) {
-      return Promise.resolve(0);
+      return 0;
     }
+    const expiresAtMs = Date.now() + seconds * 1000;
     this.sql.exec(
       "UPDATE auth_kv SET expires_at_ms = ? WHERE k = ?",
-      Date.now() + seconds * 1000,
+      expiresAtMs,
       key
     );
-    return Promise.resolve(1);
+    await this.ensureAlarm(expiresAtMs);
+    return 1;
   }
 
-  consumeRateLimit(input: {
+  async consumeRateLimit(input: {
     readonly key: string;
     readonly limit: number;
     readonly windowSeconds: number;
   }): Promise<RateLimitCheckResult> {
+    const result = this.consumeRateLimitSync(input);
+    await this.ensureAlarm(Date.now() + input.windowSeconds * 1000);
+    return result;
+  }
+
+  private consumeRateLimitSync(input: {
+    readonly key: string;
+    readonly limit: number;
+    readonly windowSeconds: number;
+  }): RateLimitCheckResult {
     this.ensureSchema();
     const nowMs = Date.now();
     const windowMs = input.windowSeconds * 1000;
@@ -206,19 +272,19 @@ export class AuthCoordinatorEngine
         1,
         resetAtMs
       );
-      return Promise.resolve({
+      return {
         allowed: input.limit > 0,
         remaining: Math.max(0, input.limit - 1),
         resetSeconds: input.windowSeconds,
-      });
+      };
     }
 
     if (currentCount >= input.limit) {
-      return Promise.resolve({
+      return {
         allowed: false,
         remaining: 0,
         resetSeconds: Math.max(1, Math.ceil((currentResetAtMs - nowMs) / 1000)),
-      });
+      };
     }
 
     const updatedCount = currentCount + 1;
@@ -227,11 +293,11 @@ export class AuthCoordinatorEngine
       updatedCount,
       input.key
     );
-    return Promise.resolve({
+    return {
       allowed: true,
       remaining: Math.max(0, input.limit - updatedCount),
       resetSeconds: Math.max(1, Math.ceil((currentResetAtMs - nowMs) / 1000)),
-    });
+    };
   }
 
   pruneExpired(): number {
