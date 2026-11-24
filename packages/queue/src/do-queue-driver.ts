@@ -65,14 +65,17 @@ export type QueueDeadLetterReporter = (input: {
 
 export const DEFAULT_BATCH_WINDOW_MS = 3000;
 export const DEFAULT_MAX_DRAIN_BATCH = 100;
+/** Cửa sổ nhớ job đã xong để khử trùng khi cron/producer đẩy lại cùng `jobId` (BR-JOB-14). */
+export const COMPLETED_JOB_RETENTION_MS = 48 * 60 * 60 * 1000;
 
 /**
  * Động cơ hàng đợi SQLite nội bộ cho Cloudflare Durable Objects (`JobQueueDO`):
  * - Khử trùng theo `job_id` (`BR-JOB-02`).
  * - Single-Pending-Alarm: hàng trăm job đẩy vào trong cửa sổ 3 giây chỉ gọi `setAlarm()` đúng 1 lần
  *   (tiết kiệm 95%+ hạn ngạch 100.000 DO SQLite writes/ngày, mở trần lên 50.000-200.000+ jobs/ngày).
- * - Gom xoá toàn bộ lô hoàn tất bằng 1 câu SQL duy nhất; job hết lượt retry chuyển sang `dead_letter_jobs`
- *   kèm cảnh báo `BR-JOB-05`.
+ * - Mỗi job rời hàng đợi và được ghi vào `completed_job_ids` (giữ 48 giờ) NGAY sau khi xong, nên lô
+ *   bị ngắt giữa chừng không chạy lại job đã xong (`BR-JOB-14`); job hết lượt retry chuyển sang
+ *   `dead_letter_jobs` kèm cảnh báo `BR-JOB-05`.
  */
 export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
   private readonly sql: MinimalDoSqlStorage;
@@ -131,6 +134,15 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
         failed_at_ms INTEGER NOT NULL
       );
     `);
+    this.sql.exec(`
+      CREATE TABLE IF NOT EXISTS completed_job_ids (
+        job_id TEXT PRIMARY KEY,
+        done_at INTEGER NOT NULL
+      );
+    `);
+    this.sql.exec(
+      "CREATE INDEX IF NOT EXISTS idx_completed_job_ids_done_at ON completed_job_ids (done_at);"
+    );
     this.initialized = true;
   }
 
@@ -160,7 +172,21 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
     const nowMs = Date.now();
     let earliestRunAt = nowMs + this.batchWindowMs;
 
+    const completedSince = nowMs - COMPLETED_JOB_RETENTION_MS;
+    let skippedCompleted = 0;
+
     for (const job of jobs) {
+      const alreadyDone = this.sql
+        .exec(
+          "SELECT 1 AS hit FROM completed_job_ids WHERE job_id = ? AND done_at > ?",
+          job.jobId,
+          completedSince
+        )
+        .toArray();
+      if (alreadyDone.length > 0) {
+        skippedCompleted += 1;
+        continue;
+      }
       const runAt = nowMs + Math.max(0, job.delayMs ?? 0);
       if (runAt < earliestRunAt) {
         earliestRunAt = Math.max(nowMs + this.batchWindowMs, runAt);
@@ -185,8 +211,10 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
       );
     }
 
-    await this.scheduleSingleAlarmIfNeeded(earliestRunAt);
-    return { accepted: jobs.length };
+    if (skippedCompleted < jobs.length) {
+      await this.scheduleSingleAlarmIfNeeded(earliestRunAt);
+    }
+    return { accepted: jobs.length - skippedCompleted };
   }
 
   getStats(): Promise<JobQueueStats> {
@@ -218,6 +246,34 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
     return nowMs + baseDelayMs * 2 ** Math.max(0, nextAttempt - 1);
   }
 
+  /** Job rời hàng đợi ngay; job chạy thành công còn được nhớ 48 giờ để khử trùng. */
+  private markFinished(rowId: number, jobId: string, remember: boolean): void {
+    if (remember) {
+      this.sql.exec(
+        "INSERT OR REPLACE INTO completed_job_ids (job_id, done_at) VALUES (?, ?)",
+        jobId,
+        Date.now()
+      );
+    }
+    this.sql.exec("DELETE FROM queued_jobs WHERE id = ?", rowId);
+  }
+
+  /** BR-JOB-14: alert hỏng không được làm lô chạy lại. */
+  private async reportDeadLetter(
+    info: Parameters<QueueDeadLetterReporter>[0]
+  ): Promise<void> {
+    if (!this.onDeadLetter) {
+      return;
+    }
+    try {
+      await this.onDeadLetter(info);
+    } catch (alertError) {
+      const reason =
+        alertError instanceof Error ? alertError.message : String(alertError);
+      console.error(`[queue] onDeadLetter failed for ${info.jobId}: ${reason}`);
+    }
+  }
+
   async drainBatch(maxItems = DEFAULT_MAX_DRAIN_BATCH): Promise<{
     readonly processed: number;
     readonly failed: number;
@@ -226,6 +282,10 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
     this.hasPendingAlarmInMemory = false;
 
     const nowMs = Date.now();
+    this.sql.exec(
+      "DELETE FROM completed_job_ids WHERE done_at <= ?",
+      nowMs - COMPLETED_JOB_RETENTION_MS
+    );
     const dueRows = this.sql
       .exec(
         `SELECT id, job_id, name, payload_json, attempts, max_attempts,
@@ -239,7 +299,6 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
       )
       .toArray();
 
-    const completedIds: number[] = [];
     let failedCount = 0;
 
     for (const row of dueRows) {
@@ -268,7 +327,7 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
           attempt: nextAttempt,
           timeoutSeconds,
         });
-        completedIds.push(rowId);
+        this.markFinished(rowId, jobId, true);
       } catch (err) {
         failedCount += 1;
         const errMsg = err instanceof Error ? err.message : String(err);
@@ -285,7 +344,7 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
             errMsg.slice(0, 500),
             Date.now()
           );
-          completedIds.push(rowId);
+          this.markFinished(rowId, jobId, false);
         } else {
           const retryAt = this.computeNextRunMs(
             Date.now(),
@@ -301,8 +360,8 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
           );
         }
 
-        if ((exhausted || alertImmediate) && this.onDeadLetter) {
-          await this.onDeadLetter({
+        if (exhausted || alertImmediate) {
+          await this.reportDeadLetter({
             jobId,
             name: jobName,
             attempts: nextAttempt,
@@ -312,14 +371,6 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
           });
         }
       }
-    }
-
-    if (completedIds.length > 0) {
-      const placeholders = completedIds.map(() => "?").join(", ");
-      this.sql.exec(
-        `DELETE FROM queued_jobs WHERE id IN (${placeholders})`,
-        ...completedIds
-      );
     }
 
     const nextRow = this.sql
@@ -333,10 +384,7 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
     }
 
     return {
-      processed:
-        completedIds.length - failedCount >= 0
-          ? dueRows.length - failedCount
-          : 0,
+      processed: Math.max(0, dueRows.length - failedCount),
       failed: failedCount,
     };
   }

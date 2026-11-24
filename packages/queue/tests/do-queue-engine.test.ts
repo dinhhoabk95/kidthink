@@ -1,5 +1,5 @@
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   JobQueueSqlEngine,
   type MinimalDoSqlStorage,
@@ -29,6 +29,105 @@ function createSqliteDoStorage(): MinimalDoSqlStorage {
     },
   };
 }
+
+function envelope(jobId: string, maxAttempts = 1): QueuedJobEnvelope {
+  return {
+    jobId,
+    name: "rollup:session",
+    payloadJson: JSON.stringify({ sessionUuid: jobId }),
+    maxAttempts,
+    backoffType: "none",
+    backoffDelayMs: 0,
+    timeoutSeconds: 10,
+  };
+}
+
+function makeEngine(options: {
+  readonly handler: (jobId: string) => Promise<void>;
+  readonly onDeadLetter?: (jobId: string) => Promise<void>;
+}): JobQueueSqlEngine {
+  let alarm: number | null = null;
+  return new JobQueueSqlEngine({
+    sql: createSqliteDoStorage(),
+    batchWindowMs: 0,
+    alarms: {
+      getAlarm: () => Promise.resolve(alarm),
+      setAlarm: (ms) => {
+        alarm = ms;
+        return Promise.resolve();
+      },
+    },
+    handler: ({ jobId }) => options.handler(jobId),
+    onDeadLetter: options.onDeadLetter
+      ? ({ jobId }) => options.onDeadLetter?.(jobId) ?? Promise.resolve()
+      : undefined,
+  });
+}
+
+describe("JobQueueSqlEngine dedupe 48h & độ bền lô (BR-JOB-14)", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("jobId đã hoàn tất trong 48h bị bỏ qua khi enqueue lại; sau 48h chạy lại được", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-11-24T00:00:00Z"));
+    const ran: string[] = [];
+    const engine = makeEngine({
+      handler: (jobId) => {
+        ran.push(jobId);
+        return Promise.resolve();
+      },
+    });
+
+    await engine.enqueueBatch([envelope("billing:renew:t1")]);
+    await engine.drainBatch();
+    expect(ran).toEqual(["billing:renew:t1"]);
+
+    vi.setSystemTime(new Date("2026-11-25T23:00:00Z")); // +47h
+    await engine.enqueueBatch([envelope("billing:renew:t1")]);
+    await engine.drainBatch();
+    expect(ran).toEqual(["billing:renew:t1"]);
+    expect((await engine.getStats()).waiting).toBe(0);
+
+    vi.setSystemTime(new Date("2026-11-26T01:00:00Z")); // +49h
+    await engine.drainBatch(); // dọn dòng quá hạn
+    await engine.enqueueBatch([envelope("billing:renew:t1")]);
+    await engine.drainBatch();
+    expect(ran).toEqual(["billing:renew:t1", "billing:renew:t1"]);
+  });
+
+  it("onDeadLetter ném lỗi không làm lô chạy lại job đã xong", async () => {
+    const ran: string[] = [];
+    const engine = makeEngine({
+      handler: (jobId) => {
+        ran.push(jobId);
+        return jobId === "poison"
+          ? Promise.reject(new Error("hỏng vĩnh viễn"))
+          : Promise.resolve();
+      },
+      onDeadLetter: () => Promise.reject(new Error("alert provider down")),
+    });
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+
+    await engine.enqueueBatch([
+      envelope("a"),
+      envelope("poison"),
+      envelope("c"),
+    ]);
+    await expect(engine.drainBatch()).resolves.toMatchObject({ failed: 1 });
+    await engine.drainBatch();
+
+    expect(ran.filter((id) => id === "a")).toHaveLength(1);
+    expect(ran.filter((id) => id === "c")).toHaveLength(1);
+    expect(ran.filter((id) => id === "poison")).toHaveLength(1);
+    expect(await engine.getStats()).toEqual({ waiting: 0, failed: 1 });
+    expect(consoleError).toHaveBeenCalled();
+    consoleError.mockRestore();
+  });
+});
 
 describe("JobQueueSqlEngine (Cloudflare DO > 50k-200k jobs/day Batch Coalescing)", () => {
   it("coalesces 500 enqueued jobs into ONLY 1 setAlarm write and drains in batch with idempotency & DLQ", async () => {
