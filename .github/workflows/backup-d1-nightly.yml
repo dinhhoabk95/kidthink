@@ -18,17 +18,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - name: Setup pnpm & Node.js
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version-file: .nvmrc
+          cache: "pnpm"
+
+      - name: Install dependencies (frozen lockfile)
+        run: pnpm install --frozen-lockfile
 
       - name: Export mindkid-core & mindkid-logs via Wrangler & Encrypt AES-256-GCM
         run: |
           mkdir -p .backup-out
           DATE_STAMP=$(date -u +"%Y%m%dT%H%M%SZ")
-          npx --yes wrangler@4.168.0 d1 export mindkid-core --remote --output=".backup-out/core-${DATE_STAMP}.sql"
-          npx --yes wrangler@4.168.0 d1 export mindkid-logs --remote --output=".backup-out/logs-${DATE_STAMP}.sql"
+          pnpm exec wrangler d1 export mindkid-core --remote --output=".backup-out/core-${DATE_STAMP}.sql"
+          pnpm exec wrangler d1 export mindkid-logs --remote --output=".backup-out/logs-${DATE_STAMP}.sql"
           tar -czf ".backup-out/mindkid-d1-${DATE_STAMP}.tar.gz" -C .backup-out "core-${DATE_STAMP}.sql" "logs-${DATE_STAMP}.sql"
           node -e '
             const crypto = require("node:crypto");

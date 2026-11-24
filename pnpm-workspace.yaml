@@ -19,6 +19,7 @@ allowBuilds:
   protobufjs: false
   sharp: true
   vue-demi: false
+  workerd: false
 
 # Chốt về MỘT bản duy nhất trong cây runtime (BR-RBS-09):
 # - @opentelemetry/api: để drizzle-orm 1.0.0-rc.5 không sinh hai peer instance khác nhau.

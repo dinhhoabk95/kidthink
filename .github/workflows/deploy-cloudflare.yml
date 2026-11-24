@@ -81,9 +81,9 @@ jobs:
 
       - name: Gate 3 - Apply Additive D1 Schema DDL (core, logs, blobs)
         run: |
-          npx --yes wrangler@4.168.0 d1 execute mindkid-core --remote --file=.d1-ddl/core.sql
-          npx --yes wrangler@4.168.0 d1 execute mindkid-logs --remote --file=.d1-ddl/logs.sql
-          npx --yes wrangler@4.168.0 d1 execute mindkid-blobs --remote --file=.d1-ddl/blobs.sql
+          pnpm exec wrangler d1 execute mindkid-core --remote --file=.d1-ddl/core.sql
+          pnpm exec wrangler d1 execute mindkid-logs --remote --file=.d1-ddl/logs.sql
+          pnpm exec wrangler d1 execute mindkid-blobs --remote --file=.d1-ddl/blobs.sql
 
       - name: Gate 4 - Build Web (Nitro cloudflare_module) & Admin Static SPA & Verify Budget
         env:
@@ -119,9 +119,9 @@ jobs:
 
       - name: Gate 5 - Deploy Worker Queue Consumer, Web Worker & Admin Static SPA
         run: |
-          npx --yes wrangler@4.168.0 deploy --config apps/worker/wrangler.jsonc
-          npx --yes wrangler@4.168.0 deploy --config apps/web/wrangler.jsonc
-          npx --yes wrangler@4.168.0 deploy --config apps/admin/wrangler.jsonc
+          pnpm exec wrangler deploy --config apps/worker/wrangler.jsonc
+          pnpm exec wrangler deploy --config apps/web/wrangler.jsonc
+          pnpm exec wrangler deploy --config apps/admin/wrangler.jsonc
 
       - name: Gate 6 - Smoke Health Check & Auto-Rollback on Failure (BR-DEP-08)
         env:
@@ -131,8 +131,8 @@ jobs:
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "x-health-token: ${HEALTHCHECK_TOKEN}" "https://${{ vars.MINDKID_DOMAIN }}/api/guest/health/deep" || echo "000")
           if [ "$STATUS" != "200" ]; then
             echo "❌ Smoke check failed with HTTP $STATUS. Rolling back Workers immediately..."
-            npx --yes wrangler@4.168.0 rollback --config apps/web/wrangler.jsonc --yes
-            npx --yes wrangler@4.168.0 rollback --config apps/worker/wrangler.jsonc --yes
+            pnpm exec wrangler rollback --config apps/web/wrangler.jsonc --yes
+            pnpm exec wrangler rollback --config apps/worker/wrangler.jsonc --yes
             exit 1
           fi
           echo "✅ Smoke check 200 OK."
