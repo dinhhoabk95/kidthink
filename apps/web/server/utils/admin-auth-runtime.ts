@@ -17,14 +17,6 @@ export const assertManagerRequestBodySize = factoryAssertRequestBodySize;
 export const assertManagerSameOriginRequest = factoryAssertSameOriginRequest;
 export const enforceTwoAxisRateLimit = runtimeEnforceTwoAxisRateLimit;
 
-const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
-
-export function validateManagerCsrf(event: H3Event): void {
-  if (event.method && MUTATING_METHODS.has(event.method.toUpperCase())) {
-    factoryAssertSameOriginRequest(event);
-  }
-}
-
 export function getMfaEncryptionKey(): string {
   const secret = requireEnv("MFA_ENCRYPTION_KEY");
   if (new TextEncoder().encode(secret).byteLength < 32) {
@@ -35,13 +27,12 @@ export function getMfaEncryptionKey(): string {
   return secret;
 }
 
+/** CSRF do `middleware/guards.ts` kiểm một lần cho mọi mutation `/api/*` (BR-CSRF-02). */
 export function requireManagerSession(event: H3Event): ManagerTokenPayload {
-  validateManagerCsrf(event);
   return requireManagerAuth(event);
 }
 
 export function requireSuperAdminSession(event: H3Event): ManagerTokenPayload {
-  validateManagerCsrf(event);
   requireRole(event, "super_admin");
   return requireManagerAuth(event);
 }

@@ -1,9 +1,13 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { Readable } from "node:stream";
+import { REPO_ROOT } from "@mindkid/config/paths";
 import { CsrfInvalidError } from "@mindkid/errors/auth";
 import { PayloadTooLargeError } from "@mindkid/errors/common";
 import { createEvent, type H3Event } from "h3";
 import { describe, expect, it } from "vitest";
 import guardsMiddleware from "#server/middleware/guards";
+import { listApiRoutes } from "../gates/rate-limit-coverage.ts";
 
 function createResponse() {
   const headers = new Map<string, string | string[]>();
@@ -38,6 +42,9 @@ function makeEvent(options: {
     createResponse() as never
   ) as never as H3Event;
 }
+
+const AUTHENTICATED_ROUTE =
+  /requireWebUserSession\(|requireManagerSession\(|requireSuperAdminSession\(|auth:\s*"(?:user|manager|super_admin)"/;
 
 describe("middleware/guards", () => {
   it("bỏ qua request GET không kiểm tra trần body hay same-origin", () => {
@@ -206,5 +213,40 @@ describe("middleware/guards", () => {
     await expect(
       Promise.resolve().then(() => guardsMiddleware(event))
     ).resolves.toBeUndefined();
+  });
+
+  // Helper `require*Session` không còn tự kiểm CSRF: `guards` là chỗ duy nhất (BR-CSRF-02).
+  // Test này chứng minh `guards` phủ MỌI route mutation có xác thực phiên.
+  it("BR-CSRF-02: guards chặn cross-site trên mọi route mutation có xác thực phiên", () => {
+    const mutating = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+    const apiRoot = join(REPO_ROOT, "apps/web/server/api");
+    const covered = listApiRoutes().filter(
+      (route) =>
+        mutating.has(route.method) &&
+        AUTHENTICATED_ROUTE.test(
+          readFileSync(join(apiRoot, route.file), "utf8")
+        )
+    );
+
+    expect(covered.length).toBeGreaterThan(50);
+    for (const route of covered) {
+      expect(
+        route.path.startsWith("/api/") &&
+          !route.path.startsWith("/api/guest/webhooks/"),
+        route.path
+      ).toBe(true);
+      const event = makeEvent({
+        path: route.path,
+        method: route.method,
+        headers: {
+          "content-length": "10",
+          "sec-fetch-site": "cross-site",
+          origin: "https://evil.com",
+        },
+      });
+      expect(() => guardsMiddleware(event), route.path).toThrow(
+        CsrfInvalidError
+      );
+    }
   });
 });

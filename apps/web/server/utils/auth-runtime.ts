@@ -90,16 +90,8 @@ export function getVerifiedRemoteIp(event: H3Event): string {
   return normalizeIp(request?.socket?.remoteAddress) || "unknown";
 }
 
-const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
-
-export function validateUserCsrf(event: H3Event): void {
-  if (event.method && MUTATING_METHODS.has(event.method.toUpperCase())) {
-    factoryAssertSameOriginRequest(event);
-  }
-}
-
+/** CSRF do `middleware/guards.ts` kiểm một lần cho mọi mutation `/api/*` (BR-CSRF-02). */
 export function requireWebUserSession(event: H3Event): UserTokenPayload {
-  validateUserCsrf(event);
   return requireUserAuth(event);
 }
 

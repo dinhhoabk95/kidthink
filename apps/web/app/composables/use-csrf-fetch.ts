@@ -4,7 +4,7 @@ import { useCookie } from "#imports";
  * Header bảo mật cho request đổi trạng thái tới `/api/users/*`.
  *
  * Dưới kiến trúc Better Auth (`BR-AUT-41`), server xác thực `Origin` /
- * `Sec-Fetch-Site` tại `validateUserCsrf`. Composable giữ tương thích ngược
+ * `Sec-Fetch-Site` tại `middleware/guards.ts`. Composable giữ tương thích ngược
  * cho các call-site hiện hữu; nếu môi trường test có sẵn cookie `tm_u_csrf`
  * thì đính kèm, còn mặc định trả `{}` để không chặn request hợp lệ cùng origin.
  */

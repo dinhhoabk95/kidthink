@@ -6,10 +6,7 @@ import {
   cancelAccountDeletion,
   verifyCancelDeletionCredentials,
 } from "#server/services/account-lifecycle-service";
-import {
-  enforceTwoAxisRateLimit,
-  validateUserCsrf,
-} from "#server/utils/auth-runtime";
+import { enforceTwoAxisRateLimit } from "#server/utils/auth-runtime";
 
 const CancelDeletionSchema = z
   .object({
@@ -25,7 +22,6 @@ async function resolveTargetUserId(event: H3Event): Promise<number> {
 
   if (sessionUserId) {
     await enforceTwoAxisRateLimit(event, "auth:login", `u:${sessionUserId}`);
-    validateUserCsrf(event);
     return Number(sessionUserId);
   }
 
