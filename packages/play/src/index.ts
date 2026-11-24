@@ -7,7 +7,6 @@ export {
   type CurriculumCompletedProgressRef,
   type CurriculumEnrollmentRef,
   type CurriculumWeekItemRef,
-  computeNewChildBadges,
   evaluateStrandCompletion,
   evaluateWeekCurriculumCompletion,
   hasCompletedAnyCurriculumWeek,

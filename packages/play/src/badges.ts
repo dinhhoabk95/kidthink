@@ -131,33 +131,6 @@ export function evaluateWeekCurriculumCompletion(params: {
   return false;
 }
 
-export function computeNewChildBadges(params: {
-  readonly distinctPlayDays: number;
-  readonly masteredSkillIds: ReadonlySet<number>;
-  readonly strandSkills: readonly StrandSkillRef[];
-  readonly enrollments: readonly CurriculumEnrollmentRef[];
-  readonly items: readonly CurriculumWeekItemRef[];
-  readonly completedProgress: readonly CurriculumCompletedProgressRef[];
-  readonly existingBadgeCodes?: ReadonlySet<string>;
-}): ReturnType<typeof evaluateBadges> {
-  const isFirstStrandComplete = evaluateStrandCompletion({
-    masteredSkillIds: params.masteredSkillIds,
-    strandSkills: params.strandSkills,
-  });
-  const isWeekCurriculumComplete = evaluateWeekCurriculumCompletion({
-    enrollments: params.enrollments,
-    items: params.items,
-    completedProgress: params.completedProgress,
-  });
-
-  return evaluateBadges({
-    distinctPlayDays: params.distinctPlayDays,
-    isFirstStrandComplete,
-    isWeekCurriculumComplete,
-    existingBadgeCodes: new Set(params.existingBadgeCodes ?? []),
-  });
-}
-
 export async function hasCompletedAnyStrand(
   db: DbOrTx,
   childId: number

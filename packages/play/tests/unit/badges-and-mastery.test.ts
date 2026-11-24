@@ -1,10 +1,38 @@
+import { evaluateBadges } from "@mindkid/adaptive";
 import { describe, expect, it } from "vitest";
 import {
+  type CurriculumCompletedProgressRef,
+  type CurriculumEnrollmentRef,
+  type CurriculumWeekItemRef,
   cleanEventPayload,
-  computeNewChildBadges,
   evaluateStrandCompletion,
   evaluateWeekCurriculumCompletion,
+  type StrandSkillRef,
 } from "#src/index";
+
+function computeNewChildBadges(params: {
+  readonly distinctPlayDays: number;
+  readonly masteredSkillIds: ReadonlySet<number>;
+  readonly strandSkills: readonly StrandSkillRef[];
+  readonly enrollments: readonly CurriculumEnrollmentRef[];
+  readonly items: readonly CurriculumWeekItemRef[];
+  readonly completedProgress: readonly CurriculumCompletedProgressRef[];
+  readonly existingBadgeCodes: ReadonlySet<string>;
+}): ReturnType<typeof evaluateBadges> {
+  return evaluateBadges({
+    distinctPlayDays: params.distinctPlayDays,
+    isFirstStrandComplete: evaluateStrandCompletion({
+      masteredSkillIds: params.masteredSkillIds,
+      strandSkills: params.strandSkills,
+    }),
+    isWeekCurriculumComplete: evaluateWeekCurriculumCompletion({
+      enrollments: params.enrollments,
+      items: params.items,
+      completedProgress: params.completedProgress,
+    }),
+    existingBadgeCodes: new Set(params.existingBadgeCodes),
+  });
+}
 
 describe("Progress, Mastery & Badges Unit Tests (BR-PRG-04, BR-PRG-06, BR-PRG-07, §7.2)", () => {
   it("Scenario: BR-PRG-06 — server strips client-injected p_learn, best_p_learn, ema_correct and score from telemetry event payloads", () => {
@@ -79,7 +107,7 @@ describe("Progress, Mastery & Badges Unit Tests (BR-PRG-04, BR-PRG-06, BR-PRG-07
     ).toBe(true);
   });
 
-  it("Scenario: §7.2 & BR-PRG-04 — computeNewChildBadges awards PLAY_DAYS_5, STRAND_FIRST_COMPLETE, WEEK_CURRICULUM_COMPLETE idempotently", () => {
+  it("Scenario: §7.2 & BR-PRG-04 — badges composition awards PLAY_DAYS_5, STRAND_FIRST_COMPLETE, WEEK_CURRICULUM_COMPLETE idempotently", () => {
     const firstPass = computeNewChildBadges({
       distinctPlayDays: 5,
       masteredSkillIds: new Set([101, 102]),
