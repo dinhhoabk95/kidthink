@@ -159,6 +159,13 @@ const TEST_SQLITE_DATA_DIR = path.join(REPO_ROOT, ".data", "sqlite-test");
 
 export interface WorkspaceTestOptions {
   readonly database?: boolean;
+  /**
+   * Thay (không nối) `include`/`exclude` mặc định: `mergeConfig` nối mảng nên
+   * không thể ghi đè qua `overrides`. Dùng để tách một workspace thành project
+   * chạy song song (`database: false`) và project DB tuần tự.
+   */
+  readonly include?: readonly string[];
+  readonly exclude?: readonly string[];
 }
 
 /** Điểm vào duy nhất cho `vitest.config.ts` của workspace. */
@@ -172,8 +179,8 @@ export function defineWorkspaceTest(
     resolve: { alias: workspaceAliases() },
     test: {
       environment: "node",
-      include: [...WORKSPACE_TEST_INCLUDE],
-      exclude: [...WORKSPACE_TEST_EXCLUDE],
+      include: [...(options.include ?? WORKSPACE_TEST_INCLUDE)],
+      exclude: [...(options.exclude ?? WORKSPACE_TEST_EXCLUDE)],
       testTimeout: BASE_TIMEOUT_MS,
       env: usesDatabase
         ? {
