@@ -11,6 +11,7 @@ export default defineEventHandler((event) => {
 Disallow: /play/
 Disallow: /me/
 Disallow: /api/
+Disallow: /private/
 Sitemap: ${siteUrl}/sitemap.xml
 `.trim();
 });
