@@ -205,6 +205,7 @@ export function createWebEnv(options: CreateWebEnvOptions = {}) {
         urlWithProtocols(["https:"]),
         isProduction
       ),
+      HEALTHCHECK_TOKEN: secretSchema.optional(),
       HEALTHCHECKS_CHECK_UUID: nonEmptyString.optional(),
       OPERATIONS_ALERT_EMAIL: productionRequired(emailSchema, isProduction),
       SENTRY_DSN: urlWithProtocols(["https:"]).optional(),

@@ -5,6 +5,7 @@ import {
   setAuthRedisClient,
 } from "@mindkid/auth";
 import { getOwnerDb, managers, users } from "@mindkid/db";
+import { MfaEnrollmentRequiredError } from "@mindkid/errors/auth";
 import { AppError } from "@mindkid/errors/base";
 import { eq } from "drizzle-orm";
 import { createEvent, type H3Event } from "h3";
@@ -173,13 +174,25 @@ describe("web auth middleware — Dual Better Auth Instances", () => {
     const { managerId, cookie } = await signInTestManager("m1");
     const event = createRequest("/api/managers/dashboard", { cookie });
 
-    await authMiddleware(event);
+    // BR-ADA-01: manager chưa bật MFA có phiên nhưng bị chặn ở `/api/managers/**`.
+    await expect(authMiddleware(event)).rejects.toBeInstanceOf(
+      MfaEnrollmentRequiredError
+    );
 
     expect(event.context.manager).toMatchObject({
       manager_id: managerId,
       role: "super_admin",
     });
     expect(event.context.user).toBeUndefined();
+  });
+
+  it("BR-ADA-01: manager chưa bật MFA vẫn qua allowlist reauth", async () => {
+    const { managerId, cookie } = await signInTestManager("m-reauth");
+    const event = createRequest("/api/managers/auth/reauth", { cookie });
+
+    await authMiddleware(event);
+
+    expect(event.context.manager).toMatchObject({ manager_id: managerId });
   });
 
   it("ignores a valid user cookie on a manager route", async () => {
