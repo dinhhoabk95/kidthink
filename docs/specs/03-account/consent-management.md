@@ -123,9 +123,14 @@ Module này chỉ ghi INSERT vào `consent_logs`; chỉ admin force được UPD
 |---|---|
 | Trang public và pháp lý | Đọc văn bản trước khi quyết định |
 | `GET/POST /api/users/consents` và route withdraw | Xem, đồng ý hoặc từ chối |
-| `POST /api/users/auth/reauth` · `POST /api/users/auth/logout` | Xác minh thao tác nhạy cảm hoặc rời tài khoản |
+| `POST /api/users/auth/reauth` | Xác minh thao tác nhạy cảm |
+| `GET/PATCH /api/users/profile` | Hiển thị và sửa hồ sơ tài khoản khi đang xem điều khoản (hành vi hiện có trong code, `consent-guard.ts`) |
 | `GET /api/users/data-export` | Quyền lấy bản sao dữ liệu |
 | Route xem, tạo và huỷ yêu cầu xoá tài khoản | Đường từ chối điều khoản mà không mất quyền chủ thể dữ liệu |
+
+Gate chỉ áp cho `/api/users/**`: `/api/auth/**` (gồm đăng xuất `sign-out` của Better Auth), `/api/guest/**` và
+`/api/managers/**` nằm ngoài phạm vi nên không có dòng trong allow-list. Mỗi dòng allow-list phải khớp ít nhất một
+route thật (test `consent-management.test.ts` đo); route chưa có file thì không có dòng.
 
 Allow-list là danh sách đóng trong code. Route `/api/users/**` mới mặc định bị gate khi
 `terms` hoặc `privacy` required cho tới khi được review và thêm tường minh vào danh sách.

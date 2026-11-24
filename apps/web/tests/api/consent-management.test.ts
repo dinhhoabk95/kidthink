@@ -21,8 +21,10 @@ import withdrawConsentHandler from "#server/api/users/consents/withdraw.post";
 import dataExportHandler from "#server/api/users/data-export/index.get";
 import {
   assertUserTermsAndPrivacyConsent,
+  EXEMPT_PATH_PREFIXES,
   isAllowedConsentExemptPath,
 } from "#server/utils/consent-guard";
+import { listApiRoutes } from "../gates/rate-limit-coverage.ts";
 
 const KEBAB_URL_REGEX = /^\/[a-z-]+$/;
 
@@ -515,8 +517,7 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
         true
       );
       expect(isAllowedConsentExemptPath("/api/users/auth/reauth")).toBe(true);
-      expect(isAllowedConsentExemptPath("/api/users/auth/logout")).toBe(true);
-      expect(isAllowedConsentExemptPath("/api/users/auth/me")).toBe(true);
+      expect(isAllowedConsentExemptPath("/api/users/profile")).toBe(true);
       expect(isAllowedConsentExemptPath("/api/users/data-export")).toBe(true);
       expect(isAllowedConsentExemptPath("/api/users/account/delete")).toBe(
         true
@@ -531,6 +532,23 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
         false
       );
       expect(isAllowedConsentExemptPath("/api/users/levels")).toBe(false);
+    });
+
+    it("every allow-list entry matches a real /api/users route", () => {
+      const routes = listApiRoutes();
+      for (const prefix of EXEMPT_PATH_PREFIXES) {
+        expect(
+          routes.some((route) => route.path.startsWith(prefix)),
+          prefix
+        ).toBe(true);
+      }
+    });
+
+    it("negative — an allow-list prefix with no route is detected", () => {
+      const routes = listApiRoutes();
+      expect(
+        routes.some((route) => route.path.startsWith("/api/users/auth/logout"))
+      ).toBe(false);
     });
 
     it("GET /api/users/data-export returns user data JSON export (D-QX)", async () => {

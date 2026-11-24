@@ -10,19 +10,12 @@ import { useOwnerRepositories } from "#server/utils/repositories";
 
 /**
  * Closed allow-list of exempt paths when terms or privacy requires re-consent (D-QX, BR-CSM-05).
- * All other /api/users/** routes must return 428 CONSENT_REQUIRED.
+ * The gate only covers /api/users/**; every route there not listed must return 428 CONSENT_REQUIRED.
  */
-const EXEMPT_PATH_PREFIXES = [
-  "/api/auth/",
-  "/api/guest/",
-  "/api/managers/",
+export const EXEMPT_PATH_PREFIXES: readonly string[] = [
   "/api/users/consents",
   "/api/users/profile",
   "/api/users/auth/reauth",
-  "/api/users/auth/logout",
-  "/api/users/auth/logout-all",
-  "/api/users/auth/me",
-  "/api/users/auth/session",
   "/api/users/data-export",
   "/api/users/account/delete",
 ];
