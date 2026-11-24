@@ -266,8 +266,16 @@ lệ theo availability của account. Reauth chỉ cập nhật session hiện t
 
 **Không có mốc reauth thì coi như chưa reauth**: session khôi phục từ remember
 (`reauthAt=null`) KHÔNG được suy ra mốc từ `createdAt`; mọi thao tác §7.5 trả 428 cho tới khi
-reauth. Chỉ các session tạo bằng đăng nhập/đăng ký mật khẩu (`/sign-in/email`,
-`/sign-up/email`), xác thực 2FA, passkey hoặc OAuth mới mang mốc tươi (`BR-AUT-13`, `BR-AUT-34`).
+reauth. Mốc tươi (`reauthAt = now`) chỉ được gán theo ma trận sau (áp dụng cho cả User lẫn
+Manager; `BR-AUT-13`, `BR-AUT-34`):
+
+| Cách tạo session | Tài khoản chưa bật 2FA | Tài khoản đã bật 2FA |
+|---|---|---|
+| `/sign-in/email`, `/sign-up/email` | tươi | **không tươi** (`null`; phải qua 2FA) |
+| `/passkey/verify-authentication` (UV=required) | tươi | **tươi** (passkey là xác thực mạnh) |
+| OAuth `/sign-in/social`, `/callback/*` | tươi | **không tươi** (`null`) |
+| `/two-factor/verify-totp`, `/two-factor/verify-backup-code` | tươi | tươi |
+| remember restore, đường dẫn khác | không tươi | không tươi |
 
 ## 8. API contract
 

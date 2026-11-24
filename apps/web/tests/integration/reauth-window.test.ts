@@ -1,6 +1,7 @@
 import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
-import { getOwnerDb, userSessions } from "@mindkid/db";
+import { getOwnerDb, userSessions, users } from "@mindkid/db";
 import { ReauthRequiredError } from "@mindkid/errors/auth";
+import { eq } from "drizzle-orm";
 import { createEvent, type H3Event } from "h3";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
@@ -73,7 +74,16 @@ describe("BR-AUT-13/34 — cửa sổ reauth không được suy ra từ created
     const cookie = await signUp(email);
     // Mô phỏng session khôi phục: không còn dấu mốc reauth nào.
     const db = getOwnerDb();
-    await db.update(userSessions).set({ reauthAt: null });
+    const [owner] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+    expect(owner).toBeDefined();
+    await db
+      .update(userSessions)
+      .set({ reauthAt: null })
+      .where(eq(userSessions.userId, owner?.id ?? -1));
     // Xoá cache session ở secondary storage để buộc đọc lại từ DB.
     setAuthRedisClient(new InMemoryRedisClient());
     resetBetterAuthInstancesForTests();

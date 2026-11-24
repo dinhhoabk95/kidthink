@@ -994,6 +994,11 @@ export async function computeSessionReauthAt(input: {
   if (!isPre2faLoginPath) {
     return null;
   }
+  // BR-AUT-13: passkey (UV=required) là xác thực mạnh — fresh kể cả khi user bật 2FA.
+  const isPasskeyPath = pathStr === "/passkey/verify-authentication";
+  if (isPasskeyPath) {
+    return now;
+  }
   if (snapshot2faEnabled) {
     return null;
   }
