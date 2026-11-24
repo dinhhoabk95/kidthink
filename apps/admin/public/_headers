@@ -1,6 +1,7 @@
 # Security headers cho admin static SPA (Workers Static Assets).
 # Admin không có Nitro server nên `nuxt-security` không chạy; file này là owner duy nhất của header.
 # Spec: docs/SPEC.md D14, docs/specs/01-platform/release-deploy.md §7.2, BR-SEC-10.
+# Placeholder trong script-src được thay lúc build bằng sha256 của inline script Nuxt (scripts/csp-hashes.ts).
 # Giá trị chép từ cấu hình Nginx admin đã gỡ (infra/nginx/mindkid-admin.conf.tmpl).
 
 /*
@@ -10,7 +11,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Cross-Origin-Opener-Policy: same-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: https:; object-src 'none'; script-src 'self'; style-src 'self' https: 'unsafe-inline'; connect-src 'self' https:;
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: https:; object-src 'none'; script-src 'self' {{SCRIPT_HASHES}}; style-src 'self' https: 'unsafe-inline'; connect-src 'self' https:;
 
 /_nuxt/*
   Cache-Control: public, max-age=31536000, immutable

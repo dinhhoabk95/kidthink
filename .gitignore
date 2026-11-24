@@ -69,3 +69,6 @@ docs/tasks/scratch/
 !.agents/workflows/spec.md
 !.agents/workflows/test.md
 !.agents/workflows/webperf.md
+
+# wrangler local state
+.wrangler/

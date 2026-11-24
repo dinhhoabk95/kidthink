@@ -118,6 +118,12 @@ Admin không có Nitro server nên `nuxt-security` không chạy. Header (CSP, H
 DENY`, `nosniff`, `Referrer-Policy`, COOP, `Permissions-Policy`, cache `immutable` cho `/_nuxt/*`)
 nằm ở `apps/admin/public/_headers`; build admin phải sinh `.output/public/_headers`.
 
+Nuxt chèn inline `<script>` (importmap, runtime config, color-mode) vào HTML nên `script-src 'self'` một mình
+chặn chúng và SPA trắng trang. Cấm — NEVER dùng `'unsafe-inline'` cho `script-src`: `public/_headers` giữ
+placeholder `{{SCRIPT_HASHES}}`, bước `node scripts/csp-hashes.ts` (chạy sau `nuxt generate` trong
+`pnpm --filter @mindkid/admin build`) thay bằng `'sha256-…'` của mọi inline script thực thi được trong
+`.output/public/**/*.html` (`BR-SEC-10`).
+
 ## 8. API contract
 
 Không có route công khai. Quy trình phát hành **gọi** endpoint sức khoẻ do
