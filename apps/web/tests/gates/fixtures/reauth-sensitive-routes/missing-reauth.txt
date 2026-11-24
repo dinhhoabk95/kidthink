@@ -1,0 +1,8 @@
+// Mẫu vi phạm BR-ACS-01: route đổi mật khẩu không kiểm reauth.
+// Chỉ nhắc requireReauth(event) trong comment thì không tính là có gọi.
+import { defineEventHandler } from "h3";
+
+export default defineEventHandler(async (event) => {
+  const user = await requireWebUserSession(event);
+  return await changePassword(user.user_id, await readRequestBody(event));
+});

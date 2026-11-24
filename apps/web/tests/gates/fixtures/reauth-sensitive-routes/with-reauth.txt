@@ -1,0 +1,8 @@
+import { defineEventHandler } from "h3";
+import { requireReauth } from "#server/utils/reauth-runtime";
+
+export default defineEventHandler(async (event) => {
+  const user = await requireWebUserSession(event);
+  requireReauth(event);
+  return await changePassword(user.user_id, await readRequestBody(event));
+});
