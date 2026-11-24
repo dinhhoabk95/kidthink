@@ -60,6 +60,42 @@ describe("isUniqueConstraintError (BR-ERR-03)", () => {
     expect(isUniqueConstraintError(err, ["entitlements.user_id"])).toBe(false);
   });
 
+  describe("DrizzleQueryError bọc lỗi D1 thật", () => {
+    const D1_MESSAGE =
+      "D1_ERROR: UNIQUE constraint failed: payment_orders.user_id: SQLITE_CONSTRAINT (extended: SQLITE_CONSTRAINT_UNIQUE)";
+
+    function drizzleWrapper(params: string, cause: Error): Error {
+      return new Error(
+        `Failed query: insert into "payment_orders" ("user_id") values (?)\nparams: ${params}`,
+        { cause }
+      );
+    }
+
+    it("nhận khi có và không có columns", () => {
+      const err = drizzleWrapper("1", new Error(D1_MESSAGE));
+      expect(isUniqueConstraintError(err)).toBe(true);
+      expect(isUniqueConstraintError(err, ["payment_orders.user_id"])).toBe(
+        true
+      );
+      expect(isUniqueConstraintError(err, ["entitlements.user_id"])).toBe(
+        false
+      );
+    });
+
+    it("params chứa 'UNIQUE constraint failed' nhưng cause là NOT NULL => false", () => {
+      const err = drizzleWrapper(
+        "UNIQUE constraint failed: payment_orders.user_id",
+        new Error(
+          "D1_ERROR: NOT NULL constraint failed: payment_orders.user_id: SQLITE_CONSTRAINT"
+        )
+      );
+      expect(isUniqueConstraintError(err)).toBe(false);
+      expect(isUniqueConstraintError(err, ["payment_orders.user_id"])).toBe(
+        false
+      );
+    });
+  });
+
   it("dừng sau 5 tầng cause", () => {
     let node: Error = sqliteError("UNIQUE constraint failed: a.b", 2067);
     for (let i = 0; i < 6; i++) {

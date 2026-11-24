@@ -11,7 +11,9 @@ const MAX_CAUSE_DEPTH = 5;
 const SQLITE_CONSTRAINT_UNIQUE = 2067;
 const SQLITE_CONSTRAINT_PRIMARYKEY = 1555;
 const NODE_SQLITE_ERROR_CODE = "ERR_SQLITE_ERROR";
-const UNIQUE_MESSAGE_PATTERN = /UNIQUE constraint failed/i;
+// Neo ở đầu message: DrizzleQueryError bọc "Failed query: ...\nparams: ..." có thể chứa chuỗi
+// "UNIQUE constraint failed" trong params của người dùng — không được tính là lỗi UNIQUE.
+const UNIQUE_MESSAGE_PATTERN = /^(?:D1_ERROR: )?UNIQUE constraint failed: /;
 
 type ErrorCandidate = Error | object | null | undefined;
 
