@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
   const resolution = resolveRateLimitRouteClass(pathname, event.method);
 
   // `in-route`: handler tự gọi vì trục account cần email trong body.
-  // `exempt`: bốn lý do đã liệt kê ở §7.2, không phải nhánh mặc định.
+  // `exempt`: các lý do đã liệt kê ở §7.2, không phải nhánh mặc định.
   if (resolution.mode !== "middleware") {
     return;
   }

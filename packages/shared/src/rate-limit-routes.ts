@@ -5,10 +5,7 @@ import type { RouteClassName } from "./rate-limiting.js";
  * nhánh mặc định không giới hạn, nên mọi trường hợp miễn phải có tên và có dòng
  * tương ứng trong `docs/specs/01-platform/rate-limiting.md` §7.2.
  */
-export type RateLimitExemptReason =
-  | "not-api"
-  | "provider-webhook"
-  | "unclassified-user-route";
+export type RateLimitExemptReason = "not-api" | "provider-webhook";
 
 export type RateLimitRouteResolution =
   | { mode: "middleware"; className: RouteClassName }
@@ -223,6 +220,12 @@ export const USER_PREFIX_RULES: ReadonlyArray<{
   { prefix: "/api/users/ai", className: "search" },
 ];
 
+const USER_READ_METHODS: ReadonlySet<string> = new Set([
+  "GET",
+  "HEAD",
+  "OPTIONS",
+]);
+
 function resolveUserRoute(
   path: string,
   method: string
@@ -299,7 +302,11 @@ export function resolveRateLimitRouteClass(
     return { mode: "middleware", className: "read:public" };
   }
   if (path === "/api/users" || path.startsWith("/api/users/")) {
-    return { mode: "exempt", reason: "unclassified-user-route" };
+    // BR-RTL-14: traffic chung của user đã đăng nhập — không bao giờ miễn.
+    return {
+      mode: "middleware",
+      className: USER_READ_METHODS.has(method) ? "user:default" : "user:write",
+    };
   }
   return { mode: "middleware", className: "read:public" };
 }

@@ -68,8 +68,8 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
       className: "read:public",
     });
     expect(resolve("/api/users/auth/resend-verification", "POST")).toEqual({
-      mode: "exempt",
-      reason: "unclassified-user-route",
+      mode: "middleware",
+      className: "user:write",
     });
   });
 
@@ -124,7 +124,10 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
       className: "payment:proof",
     });
     // Đọc một đơn không phải tạo đơn.
-    expect(resolve("/api/users/orders/abc-123", "GET").mode).toBe("exempt");
+    expect(resolve("/api/users/orders/abc-123", "GET")).toEqual({
+      mode: "middleware",
+      className: "user:default",
+    });
   });
 
   it("rule 12 — event ingest is play:events for both namespaces (BR-RTL-06, BR-ING-07)", () => {
@@ -177,11 +180,21 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
     });
   });
 
-  it("rule 16 — remaining user routes are the known gap, named not silent", () => {
+  it("rule 16 — remaining user routes get user:default (read) / user:write (mutation), never exempt", () => {
     expect(resolve("/api/users/dashboard")).toEqual({
-      mode: "exempt",
-      reason: "unclassified-user-route",
+      mode: "middleware",
+      className: "user:default",
     });
+    expect(resolve("/api/users/dashboard", "HEAD")).toEqual({
+      mode: "middleware",
+      className: "user:default",
+    });
+    for (const method of ["POST", "PUT", "PATCH", "DELETE"]) {
+      expect(resolve("/api/users/children", method)).toEqual({
+        mode: "middleware",
+        className: "user:write",
+      });
+    }
   });
 
   it("rule 17 — the bottom branch is a class, never unlimited", () => {

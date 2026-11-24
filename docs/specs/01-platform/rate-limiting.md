@@ -70,6 +70,7 @@ Middleware trước mọi route. `packages/cache` cung cấp giao diện giới 
 | `BR-RTL-11` | IP client: trên Cloudflare lấy từ `CF-Connecting-IP`; ngoài Cloudflare (dev, test) lấy địa chỉ socket và **không** đọc header IP nào | Production chỉ chạy sau Cloudflare, nơi `CF-Connecting-IP` do biên đặt và client không giả được. Ngoài Cloudflare không có proxy tin cậy nào, nên mọi header IP (`X-Real-IP`, `X-Forwarded-For`) là input của kẻ tấn công. Danh sách `TRUSTED_PROXY_IPS` thuộc đường Nginx đã gỡ theo `D14` |
 | `BR-RTL-12` | Trên Cloudflare, `checkRateLimit` chưa có port coordinator → **fail closed**: ném `ServiceUnavailableError`, bất kể `failOpen`. Chỉ lỗi tạm thời của port mới theo `failOpen` | Thiếu port là lỗi cấu hình; fail open ở đó là tắt toàn bộ giới hạn mà không ai biết |
 | `BR-RTL-13` | `two-factor/verify-totp` và `verify-backup-code` giới hạn **cả hai trục** của `auth:mfa`: trục IP do middleware đếm; trục account do hook `before` của Better Auth đếm, với định danh `user:{id}` / `manager:{id}` suy từ challenge 2FA đang chờ (`two_factor` cookie → bản ghi verification) hoặc từ session đang kích hoạt MFA, và chỉ đếm trục account (`skipIpCheck`) để IP không bị đếm hai lần | Chỉ có trục IP thì kẻ có mật khẩu đổi IP liên tục vẫn dò được mã TOTP 6 số của một tài khoản; khoá `MfaAttemptGuard` chỉ tính lần sai, không chặn tốc độ thử |
+| `BR-RTL-14` | `/api/users/**` chưa có lớp riêng rơi vào `user:default` (đọc) hoặc `user:write` (mutation), hai trục IP + account; Cấm — **NEVER** miễn route người dùng vì "chưa phân lớp" | Route đã đăng nhập miễn rate limit là bề mặt brute force / lạm dụng tài nguyên không giới hạn |
 
 ## 7. Data
 
@@ -94,6 +95,8 @@ Cổng giữ hai bên trùng nhau: `packages/shared/tests/rate-limiting-registry
 | `play:events` | 600 | 300 | 10 phút / phiên | open |
 | `search` | 300 | 200 | 5 phút | open |
 | `read:public` | 600 | — | 5 phút | open |
+| `user:default` | 600 | 300 | 5 phút | open |
+| `user:write` | 120 | 60 | 5 phút | open |
 | `managers:*` | 600 | 600 | 5 phút | open |
 
 `auth:refresh` là lớp cho đường khôi phục phiên bằng cookie remember-me. Bản trước của
@@ -127,12 +130,10 @@ Luật đọc **theo thứ tự**, luật đầu tiên khớp thì thắng. Ngu�
 | 13 | `GET /api/users/ai/search` | `search` | tìm kiếm ngữ nghĩa, mỗi lần một lượt embedding |
 | 14 | `GET /api/users/data-export`, `POST /api/users/exports` | `export:data` | hai đường xuất dữ liệu cá nhân trọn gói |
 | 15 | `/api/guest/**` còn lại | `read:public` | |
-| 16 | `/api/users/**` còn lại | miễn — `unclassified-user-route` | §11 câu hỏi 3 |
+| 16 | `/api/users/**` còn lại | `user:default` (GET/HEAD/OPTIONS) · `user:write` (method đổi trạng thái) | `BR-RTL-14`; trục IP + account |
 | 17 | còn lại | `read:public` | nhánh đáy, không phải nhánh mặc định im lặng |
 
-Luật 16 là **lỗ đã biết, không phải quyết định đã chốt**: §7.1 không có lớp nào mô tả
-traffic chung của người dùng đã đăng nhập. Ánh xạ tạm chúng vào `search` hay `read:public`
-là bịa hạn mức, nên bảng ghi thẳng chúng là miễn và đẩy sang §11.
+Luật 16 thay lỗ cũ (`unclassified-user-route`, từng miễn hẳn ~130 route người dùng đã đăng nhập). Hạn mức là lựa chọn an toàn, không phải đo từ tải thật: mở rộng khi có số liệu.
 
 Mọi dòng ánh xạ theo path cụ thể (bảng trong `rate-limit-routes.ts`) **phải trỏ về một route thật** trong
 `apps/web/server/api` (catch-all Better Auth tính cho `/api/auth/{users,managers}/*`). Gate
@@ -252,5 +253,5 @@ Scenario: BR-RTL-09 — key không chứa định danh thô
 |---|---|---|---|---|
 | 1 | Có dùng CAPTCHA cho đăng ký không? CAPTCHA bên thứ ba đụng ràng buộc tracking | Đăng ký P1 | P1 | người quyết |
 | 2 | Hạn mức `play:events` đủ cho trẻ chơi nhanh không? Cần đo thực tế | Gameplay P1 | P1 | Studio UI |
-| 3 | §7.1 không có lớp nào cho traffic chung của user đã đăng nhập (~130 route `/api/users/**` ngoài payment/export/play/search). Cần một lớp `users:*` với hạn mức đo được, hay chấp nhận không giới hạn theo user ở app khi Nginx 20r/s đã gỡ (`D14`)? | Luật 16 của §7.2 | P1 | người quyết |
+| ~~3~~ | ~~§7.1 không có lớp nào cho traffic chung của user đã đăng nhập (~130 route `/api/users/**` ngoài payment/export/play/search). Cần một lớp `users:*` với hạn mức đo được, hay chấp nhận không giới hạn theo user ở app khi Nginx 20r/s đã gỡ (`D14`)?~~ **Đóng**: `BR-RTL-14` thêm `user:default` và `user:write`; hạn mức khởi điểm chưa đo từ tải thật — mở lại khi có số liệu. | Luật 16 của §7.2 | P1 | người quyết |
 | 4 | **NEEDS-VALIDATION** — Nginx từng chặn theo IP ở biên (`limit_req`, 20r/s cho `/api/`, 5r/s cho auth, 600 req/phút cho ingest event chơi) và đã gỡ theo `D14`. Hiện còn: limiter trong app (§7.1, §7.2) và 5 rule WAF trong `infra/cloudflare/waf.tf`, **không** có rule rate limit theo IP ở Cloudflare. Trước go-live phải hoặc (a) thêm rate rule ở Cloudflare WAF cho `/api/*` (đặc biệt `/api/auth/*`, `/api/guest/*`), hoặc (b) chứng minh bằng đo đạc rằng limiter trong app đủ, kể cả luật 16 của §7.2 (`/api/users/**` còn lại đang miễn) | Điều kiện go-live | go-live | người quyết |

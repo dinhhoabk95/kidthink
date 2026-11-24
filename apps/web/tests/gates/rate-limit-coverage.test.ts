@@ -62,6 +62,8 @@ describe("BR-RTL-10: every API route resolves to a rate limit class", () => {
       "search",
       "read:public",
       "managers:*",
+      "user:default",
+      "user:write",
     ]) {
       expect(coveredClasses.has(className)).toBe(true);
     }
@@ -79,11 +81,7 @@ describe("BR-RTL-10: every API route resolves to a rate limit class", () => {
 
   it("exempt routes carry a reason from the closed list in §7.2", () => {
     const { resolutions } = computeRouteClassCoverage(routes);
-    const allowed = new Set([
-      "not-api",
-      "provider-webhook",
-      "unclassified-user-route",
-    ]);
+    const allowed = new Set(["not-api", "provider-webhook"]);
     for (const [key, resolution] of resolutions) {
       if (resolution.mode === "exempt") {
         expect(allowed.has(resolution.reason), key).toBe(true);

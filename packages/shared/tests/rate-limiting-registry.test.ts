@@ -6,9 +6,9 @@ import {
 } from "#src/rate-limiting";
 
 describe("Rate Limiting Registry (Task 6 / BR-RTL-01..05)", () => {
-  it("defines exactly 15 route classes matching spec §7", () => {
+  it("defines exactly 17 route classes matching spec §7", () => {
     const keys = Object.keys(RATE_LIMIT_CONFIGS);
-    expect(keys).toHaveLength(15);
+    expect(keys).toHaveLength(17);
   });
 
   it("auth and payment route classes failMode is 'closed'", () => {
@@ -30,6 +30,17 @@ describe("Rate Limiting Registry (Task 6 / BR-RTL-01..05)", () => {
     expect(RATE_LIMIT_CONFIGS.search?.failMode).toBe("open");
     expect(RATE_LIMIT_CONFIGS["read:public"]?.failMode).toBe("open");
     expect(RATE_LIMIT_CONFIGS["managers:*"]?.failMode).toBe("open");
+    expect(RATE_LIMIT_CONFIGS["user:default"]?.failMode).toBe("open");
+    expect(RATE_LIMIT_CONFIGS["user:write"]?.failMode).toBe("open");
+  });
+
+  it("BR-RTL-14: user:default đo cả IP lẫn account; mutation chặt hơn đọc", () => {
+    const read = RATE_LIMIT_CONFIGS["user:default"];
+    const write = RATE_LIMIT_CONFIGS["user:write"];
+    expect(read?.accountLimit).toBeDefined();
+    expect(write?.accountLimit).toBeDefined();
+    expect(write?.ipLimit).toBeLessThan(read?.ipLimit ?? 0);
+    expect(write?.accountLimit).toBeLessThan(read?.accountLimit ?? 0);
   });
 
   it("getRouteClassConfig throws error for unregistered route class (no unlimited fallback)", () => {

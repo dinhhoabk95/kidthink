@@ -102,6 +102,20 @@ export const RATE_LIMIT_CONFIGS: Record<string, RouteClassConfig> = {
     windowSeconds: 300, // 5 min
     failMode: "open",
   },
+  "user:default": {
+    className: "user:default",
+    ipLimit: 600,
+    accountLimit: 300,
+    windowSeconds: 300, // 5 min
+    failMode: "open",
+  },
+  "user:write": {
+    className: "user:write",
+    ipLimit: 120,
+    accountLimit: 60,
+    windowSeconds: 300, // 5 min
+    failMode: "open",
+  },
   "managers:*": {
     className: "managers:*",
     ipLimit: 600,
