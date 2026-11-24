@@ -20,7 +20,7 @@ depends_on:
 
 Việc chậm, việc theo lịch, và việc được phép thất bại không nằm trong đường request.
 Producer ở `packages/queue`, consumer ở `apps/worker` qua giao diện Pluggable `QueueDriver`:
-- **Giai đoạn 1 (`QUEUE_DRIVER=cloudflare-do`, `< 1.000 DAU`):** Đẩy lô qua `waitUntil` vào `JobQueueDO` (Durable Objects SQLite + cơ chế `Single-Pending-Alarm` gom lô cửa sổ `3–5s`, đáp ứng `50.000–200.000+ jobs/ngày` trên gói Free) kết hợp 1 Cron Dispatcher `*/15 * * * *` và cảm biến `ops:graduation-check` (cảnh báo ở `850 DAU` hoặc `65%` quota ngày).
+- **Giai đoạn 1 (`QUEUE_DRIVER=cloudflare-do`, `< 1.000 DAU`):** Đẩy lô qua `waitUntil` vào `JobQueueDO` (Durable Objects SQLite + cơ chế `Single-Pending-Alarm` gom lô cửa sổ `3–5s`, đáp ứng `50.000–200.000+ jobs/ngày` trên gói Free) kết hợp 1 Cron Dispatcher `*/5 * * * *` và cảm biến `ops:graduation-check` (cảnh báo ở `850 DAU` hoặc `65%` quota ngày).
 - **Giai đoạn 2 (`QUEUE_DRIVER=bullmq`, `≥ 1.000 DAU`):** BullMQ trên Valkey 9 chạy trong tiến trình `apps/worker` trên VPS.
 
 Hỏng đắt nhất của job nền: **worker bị tắt mà không ai biết**. Producer vẫn đẩy job, không
@@ -73,6 +73,9 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 | `BR-JOB-06` | Job chạm dữ liệu trẻ tuân thủ đủ ràng buộc [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) | Job chạy ngoài ngữ cảnh request dễ quên guard |
 | `BR-JOB-07` | Worker **phải có process trong cấu hình production** | Worker bị comment khỏi cấu hình thì không ai phát hiện |
 | `BR-JOB-08` | Job dài chia lô có checkpoint | Job 30 phút fail ở phút 29 mà làm lại từ đầu là lãng phí |
+| `BR-JOB-09` | Trên Cloudflare, scheduler là **một** cron trigger `*/5 * * * *`; mỗi lần chạy kiểm **mọi** `schedule.pattern` của `JOB_DEFINITIONS` theo giờ ICT (`Asia/Ho_Chi_Minh`, UTC+7, không DST) và đẩy job đến hạn với `jobId` = `<tên>:<YYYY-MM-DDTHH:mm ICT>` | Một nguồn lịch duy nhất (registry) — danh sách job trong cron không được trôi khỏi registry như bản `*/15` cũ đã bỏ sót `billing:*`, `soft-unlock`, `manual-grants`, `pdf-cleanup` |
+| `BR-JOB-10` | Trên Cloudflare `backup:postgres` và `backup:verify` **không** được dispatch (`CLOUDFLARE_SKIPPED_JOBS`); mọi job theo lịch còn lại phải được dispatch ít nhất một lần/chu kỳ của nó | Backup D1 do workflow riêng ([`backup-and-restore.md`](backup-and-restore.md) `BR-BAK-09`); test drift chặn việc thêm job mà quên scheduler |
+| `BR-JOB-11` | Trên Cloudflare chỉ có **một** Durable Object hàng đợi (`JobQueueDO`, tên `queue-v1`), không sharding; `JobQueueDO` và `AuthCoordinatorDO` cùng nằm trong Worker `mindkid-worker`, web gọi qua binding `script_name: "mindkid-worker"` | Sharding theo ký tự đầu `jobId` làm job trùng khử không được (`BR-JOB-02`) và vỡ `getStats`; hai DO chung một script để có một migration, một bundle |
 
 ## 7. Data
 
@@ -116,6 +119,14 @@ hơn việc chạy muộn một ngày.
 | Không job nào hoàn thành | 15 phút |
 | Tuổi job cũ nhất | > 30 phút |
 
+### 7.4 Scheduler trên Cloudflare
+
+`scheduled()` (mỗi 5 phút) → `scheduledEnvelopesAt(ms)` → `JobQueueDO.enqueueBatch`. Pattern hỗ trợ:
+`*`, `*/n`, số, danh sách phân cách dấu phẩy, khoảng `a-b`; field ngày-trong-tháng và thứ cùng bị
+giới hạn thì khớp khi **một trong hai** khớp (đúng cron chuẩn). Mọi pattern hiện có có phút là bội
+số của 5; pattern lệch 5 phút được dispatch ở tick 5 phút phủ nó. Cảm biến `ops:graduation-check`
+chạy ở tick 02:00 ICT.
+
 ## 8. API contract
 
 ```ts
@@ -154,6 +165,18 @@ Scenario: BR-JOB-05 — job fail không im lặng
   Given một job vượt số retry
   Then job nằm trong failed queue
   And một alert được ghi nhận
+
+Scenario: BR-JOB-09 — cron Cloudflare dispatch job đến hạn
+  Given tick `scheduled()` lúc 00:30 ICT
+  Then `billing:renew` được đẩy vào JobQueueDO với jobId `billing:renew:<ngày>T00:30`
+
+Scenario: BR-JOB-10 — không job theo lịch nào bị bỏ sót
+  When mô phỏng một tuần tick 5 phút
+  Then mọi job `kind: cron` được dispatch ít nhất một lần, trừ `backup:postgres` và `backup:verify`
+
+Scenario: BR-JOB-11 — enqueue trong DO không chạm BullMQ
+  Given consumer chạy trong JobQueueDO gọi `enqueue`
+  Then job vào queue của chính DO đó, BullMQ không được nạp
 
 Scenario: Valkey mất không chặn request
   Given Valkey không truy cập được

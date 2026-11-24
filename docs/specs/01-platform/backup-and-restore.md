@@ -83,6 +83,7 @@ Spec này biến backup thành điều kiện go-live, không phải việc đ�
 | `BR-BAK-06` | Go-live **không được** khi chưa có ít nhất **một** lần verify restore thành công | Đây là chỗ biến `BR-BAK-01` từ ý định thành cổng. Có bảng `backup_log` không có nghĩa là đã có backup được kiểm chứng. Một lần restore thật là bằng chứng rẻ nhất rằng đường khôi phục tồn tại |
 | `BR-BAK-07` | Dump Cấm — **NEVER** để trên máy cá nhân hoặc bucket công khai | Chứa dữ liệu trẻ |
 | `BR-BAK-08` | DR drill hàng quý, ghi RTO đo được | RTO không đo là RTO không biết |
+| `BR-BAK-09` | Trên Cloudflare (`MINDKID_RUNTIME=cloudflare`) `backup:postgres`/`backup:verify` **bị bỏ qua** ở scheduler ([`job-queue.md`](job-queue.md) `BR-JOB-10`); sao lưu do `.github/workflows/backup-d1-nightly.yml` (`wrangler d1 export`) và D1 Time Travel đảm nhiệm | Không có Postgres để `pg_dump`; job chạy sẽ fail im lặng hoặc báo thành công giả |
 
 ## 7. Data
 
