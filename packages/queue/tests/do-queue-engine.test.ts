@@ -212,3 +212,42 @@ describe("JobQueueSqlEngine (Cloudflare DO > 50k-200k jobs/day Batch Coalescing)
     expect(await engine.getStats()).toEqual({ waiting: 0, failed: 1 });
   });
 });
+
+describe("JobQueueSqlEngine alarm sớm hơn alarm đang chờ (BR-JOB-12)", () => {
+  it("alarm backoff +300s không làm job ngay bị trễ: setAlarm được gọi lại với target ≈ now", async () => {
+    const now = Date.now();
+    const alarmWrites: number[] = [];
+    let alarm: number | null = null;
+    const engine = new JobQueueSqlEngine({
+      sql: createSqliteDoStorage(),
+      batchWindowMs: 0,
+      alarms: {
+        getAlarm: () => Promise.resolve(alarm),
+        setAlarm: (ms) => {
+          alarm = ms;
+          alarmWrites.push(ms);
+          return Promise.resolve();
+        },
+      },
+      handler: ({ jobId }) =>
+        jobId === "retry"
+          ? Promise.reject(new Error("boom"))
+          : Promise.resolve(),
+    });
+    await engine.enqueueBatch([
+      {
+        ...envelope("retry", 3),
+        backoffType: "fixed",
+        backoffDelayMs: 300_000,
+      },
+    ]);
+    alarm = null; // DO xoá alarm khi nó nổ
+    await engine.drainBatch();
+    expect(alarm).toBeGreaterThanOrEqual(now + 300_000);
+    alarmWrites.length = 0;
+
+    await engine.enqueueBatch([envelope("now")]);
+    expect(alarmWrites).toHaveLength(1);
+    expect(alarmWrites[0] ?? 0).toBeLessThan(now + 5000);
+  });
+});

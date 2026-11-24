@@ -83,7 +83,7 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
   private readonly handler: QueueJobHandler;
   private readonly onDeadLetter?: QueueDeadLetterReporter;
   private readonly batchWindowMs: number;
-  private hasPendingAlarmInMemory = false;
+  private pendingAlarmAtMs: number | null = null;
   private initialized = false;
 
   constructor(options: {
@@ -149,16 +149,19 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
   private async scheduleSingleAlarmIfNeeded(
     targetTimeMs: number
   ): Promise<void> {
-    if (this.hasPendingAlarmInMemory) {
+    if (
+      this.pendingAlarmAtMs !== null &&
+      this.pendingAlarmAtMs <= targetTimeMs
+    ) {
       return;
     }
     const existing = await this.alarms.getAlarm();
     if (existing !== null && existing <= targetTimeMs) {
-      this.hasPendingAlarmInMemory = true;
+      this.pendingAlarmAtMs = existing;
       return;
     }
     await this.alarms.setAlarm(targetTimeMs);
-    this.hasPendingAlarmInMemory = true;
+    this.pendingAlarmAtMs = targetTimeMs;
   }
 
   async enqueueBatch(
@@ -279,7 +282,7 @@ export class JobQueueSqlEngine implements JobQueueCoordinatorPort {
     readonly failed: number;
   }> {
     this.ensureSchema();
-    this.hasPendingAlarmInMemory = false;
+    this.pendingAlarmAtMs = null;
 
     const nowMs = Date.now();
     this.sql.exec(
