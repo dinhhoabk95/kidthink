@@ -1,6 +1,6 @@
 import type { MinimalBlobSqlPort } from "#src/object-storage-driver";
 
-/** Giá giá trị bind/cell tối thiểu mà bảng `stored_blobs` cần. */
+/** Giá giá trị bind/cell tối thiểu mà bảng `private_blobs` cần. */
 type BlobCell =
   | string
   | number
@@ -23,7 +23,7 @@ export interface BlobD1Database {
   prepare(query: string): BlobD1Statement;
 }
 
-export const STORED_BLOBS_DDL = `CREATE TABLE IF NOT EXISTS stored_blobs (
+export const STORED_BLOBS_DDL = `CREATE TABLE IF NOT EXISTS private_blobs (
   bucket TEXT NOT NULL,
   key TEXT NOT NULL,
   content_type TEXT NOT NULL,
@@ -33,7 +33,7 @@ export const STORED_BLOBS_DDL = `CREATE TABLE IF NOT EXISTS stored_blobs (
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
   PRIMARY KEY (bucket, key)
 );
-CREATE INDEX IF NOT EXISTS stored_blobs_expires_idx ON stored_blobs (expires_at);
+CREATE INDEX IF NOT EXISTS private_blobs_expires_idx ON private_blobs (expires_at);
 `;
 
 function asBytes(cell: BlobCell | undefined): Uint8Array {
@@ -58,7 +58,7 @@ export function createD1BlobSqlPort(db: BlobD1Database): MinimalBlobSqlPort {
     async upsertBlob(row) {
       await db
         .prepare(
-          `INSERT INTO stored_blobs (bucket, key, content_type, byte_size, body, expires_at)
+          `INSERT INTO private_blobs (bucket, key, content_type, byte_size, body, expires_at)
            VALUES (?, ?, ?, ?, ?, ?)
            ON CONFLICT (bucket, key) DO UPDATE SET
              content_type = excluded.content_type,
@@ -79,7 +79,7 @@ export function createD1BlobSqlPort(db: BlobD1Database): MinimalBlobSqlPort {
     async readBlob(bucket, key) {
       const rows = await db
         .prepare(
-          "SELECT content_type, body, expires_at FROM stored_blobs WHERE bucket = ? AND key = ?"
+          "SELECT content_type, body, expires_at FROM private_blobs WHERE bucket = ? AND key = ?"
         )
         .bind(bucket, key)
         .raw();
@@ -96,7 +96,7 @@ export function createD1BlobSqlPort(db: BlobD1Database): MinimalBlobSqlPort {
     },
     async removeBlob(bucket, key) {
       const result = await db
-        .prepare("DELETE FROM stored_blobs WHERE bucket = ? AND key = ?")
+        .prepare("DELETE FROM private_blobs WHERE bucket = ? AND key = ?")
         .bind(bucket, key)
         .run();
       return (result.meta?.changes ?? 0) > 0;
@@ -104,7 +104,7 @@ export function createD1BlobSqlPort(db: BlobD1Database): MinimalBlobSqlPort {
     async removeExpiredBlobs(nowIso) {
       const result = await db
         .prepare(
-          "DELETE FROM stored_blobs WHERE expires_at IS NOT NULL AND expires_at <= ?"
+          "DELETE FROM private_blobs WHERE expires_at IS NOT NULL AND expires_at <= ?"
         )
         .bind(nowIso)
         .run();

@@ -58,7 +58,7 @@ export interface MinimalBlobSqlPort {
 
 /**
  * Driver Giai đoạn 1 (`STORAGE_DRIVER=d1-blobs` - $0, không cần thẻ tín dụng):
- * Lưu biên lai thanh toán WebP (<= 1,5 MB) và PDF tạm vào bảng `stored_blobs` trên `mindkid-blobs`.
+ * Lưu biên lai thanh toán WebP (<= 1,5 MB) và PDF tạm vào bảng `private_blobs` trên `mindkid-blobs`.
  */
 export class D1BlobObjectStorageDriver implements ObjectStorageDriver {
   private readonly port: MinimalBlobSqlPort;

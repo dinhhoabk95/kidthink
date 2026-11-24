@@ -59,7 +59,7 @@ cách chúng được đọc lại. Tệp **private** (chứng từ, PDF) chỉ 
 | `BR-IMG-05` | Khoá storage là đường dẫn **tương đối**, không chứa `..`, `\`, ký tự điều khiển | Chặn path traversal |
 | `BR-IMG-06` | Ảnh public không bị ghi đè | Cache vĩnh viễn theo đường dẫn |
 | `BR-IMG-10` | Tệp private chỉ đọc được qua `GET /private/<path>` với HMAC-SHA256 trên `<path>:<expires>`, khoá `STORAGE_SIGNING_SECRET`, chữ ký phải khớp đúng `^[0-9a-f]{64}$` (không nhận đuôi rác), so sánh hằng thời gian | Chứng từ chứa dữ liệu tài chính |
-| `BR-IMG-11` | Driver đang hoạt động: **D1 blobs** (`stored_blobs` trên `mindkid-blobs`) trên Cloudflare; **in-memory** (giới hạn 200 mục) ở dev/test khi chưa đặt driver. Mọi upload/đọc/xoá private đi qua driver, không có đường song song | Bản in-memory riêng làm chứng từ biến mất khi isolate khởi động lại |
+| `BR-IMG-11` | Driver đang hoạt động: **D1 blobs** (`private_blobs` trên `mindkid-blobs`) trên Cloudflare; **in-memory** (giới hạn 200 mục) ở dev/test khi chưa đặt driver. Mọi upload/đọc/xoá private đi qua driver, không có đường song song | Bản in-memory riêng làm chứng từ biến mất khi isolate khởi động lại |
 | `BR-IMG-12` | Response `/private/*` luôn có `Cache-Control: private, no-store`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer` và `Content-Security-Policy: sandbox`; chỉ `image/jpeg`, `image/png`, `image/webp` (không phân biệt hoa thường, đúng nguyên giá trị) được hiển thị inline, mọi loại khác là `Content-Disposition: attachment` | Chống cache chung và đoán kiểu |
 | `BR-IMG-13` | Trên Cloudflare `STORAGE_BASE_URL` = `SITE_URL` (cùng origin với route đọc) | URL ký phải trỏ tới Worker phục vụ nó |
 | `BR-IMG-14` | Driver D1 lưu **byte thô** trong cột `body` kiểu `BLOB` (không base64) và từ chối ghi tệp > `D1_MAX_BLOB_BYTES` (1 900 000 byte) bằng `PayloadTooLargeError` (413). Ảnh chứng từ bị chặn sớm hơn ở 1,5 MB (`PROOF_MAX_IMAGE_SIZE_BYTES` = 1 572 864) | D1 giới hạn khoảng 2 MB mỗi dòng/giá trị; vượt là lỗi 500 khó chẩn đoán |
@@ -68,9 +68,13 @@ cách chúng được đọc lại. Tệp **private** (chứng từ, PDF) chỉ 
 
 ## 7. Data
 
-**Ghi/đọc:** bảng `stored_blobs(bucket, key, content_type, byte_size, body BLOB, expires_at, created_at)`,
+**Ghi/đọc:** bảng `private_blobs(bucket, key, content_type, byte_size, body BLOB, expires_at, created_at)`,
 khoá chính `(bucket, key)`, DDL là hằng `STORED_BLOBS_DDL` ở `packages/storage`, được
 `scripts/deploy/sync-wrangler-ids.ts` ghi ra `.d1-ddl/blobs.sql`.
+
+Bảng `stored_blobs` cũ (schema `body_base64`, nếu từng được tạo trên `mindkid-blobs`) bị **bỏ rơi**:
+schema mới dùng tên `private_blobs` để `CREATE TABLE IF NOT EXISTS` không đụng bảng sai cột
+(`no such column: body`). Có thể xoá thủ công bảng cũ khi đã chắc không còn dùng.
 
 ## 8. API contract
 

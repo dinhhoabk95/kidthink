@@ -338,9 +338,9 @@ describe("createD1BlobSqlPort", () => {
     expect(rows.size).toBe(1);
   });
 
-  it("exposes DDL for stored_blobs", () => {
+  it("exposes DDL for private_blobs", () => {
     expect(STORED_BLOBS_DDL).toContain(
-      "CREATE TABLE IF NOT EXISTS stored_blobs"
+      "CREATE TABLE IF NOT EXISTS private_blobs"
     );
     expect(STORED_BLOBS_DDL).toContain("PRIMARY KEY (bucket, key)");
     expect(STORED_BLOBS_DDL).toContain("body BLOB NOT NULL");
