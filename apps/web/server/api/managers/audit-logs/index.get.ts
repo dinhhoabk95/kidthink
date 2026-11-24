@@ -13,6 +13,14 @@ export type {
 } from "#server/services/audit-log-service";
 
 const AuditQuerySchema = z.object({
+  actor_type: z.enum(["user", "manager", "system"]).optional(),
+  actorType: z.enum(["user", "manager", "system"]).optional(),
+  actor_id: z.union([z.string().max(100), z.number()]).optional(),
+  actorId: z.union([z.string().max(100), z.number()]).optional(),
+  from: z.string().max(40).optional(),
+  to: z.string().max(40).optional(),
+  // Trần 200 do service ép (BR-ALV-03): vượt trần thì cắt, không từ chối.
+  limit: z.coerce.number().int().min(1).optional(),
   q: z.string().max(100).optional(),
   entity_type: z.string().max(100).optional(),
   entityType: z.string().max(100).optional(),
@@ -38,5 +46,5 @@ export default defineEventHandler(async (event) => {
     throw new ValidationError("Tham số tra cứu không hợp lệ");
   }
 
-  return await listAuditLogs(query);
+  return await listAuditLogs(validatedQuery.data);
 });

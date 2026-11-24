@@ -8,6 +8,8 @@ function mockEvent(
 ) {
   return {
     method: "GET",
+    path: url,
+    url,
     node: {
       req: {
         headers: {},
@@ -73,5 +75,18 @@ describe("Task 6 — GET /api/managers/audit-logs (BR-AUD-09)", () => {
     expect(res.items.some((item: any) => item.entityId === testEntityId)).toBe(
       true
     );
+  });
+
+  it("limit không phải số nguyên dương bị từ chối 422 thay vì lọt xuống service", async () => {
+    const event = mockEvent(
+      "super_admin",
+      "/api/managers/audit-logs?limit=abc"
+    );
+    try {
+      await handler(event);
+      expect.fail("Should have thrown 422");
+    } catch (err: any) {
+      expect(err.statusCode || err.status).toBe(422);
+    }
   });
 });
