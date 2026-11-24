@@ -66,43 +66,17 @@ module.exports = {
       },
     },
     {
-      name: "no-service-raw-drizzle",
+      name: "no-raw-drizzle-outside-db",
       comment:
-        "DAL Global Lock: Web Services (apps/web/server/services/**) NEVER import drizzle-orm trực tiếp — " +
-        "mọi truy vấn đi qua Repositories trong @mindkid/db.",
-      severity: "error",
-      from: { path: "^apps/web/server/services/" },
-      to: { path: "(^|/)node_modules/drizzle-orm(/|$)" },
-    },
-    {
-      name: "no-web-util-raw-drizzle",
-      comment:
-        "DAL Global Lock: Web Utils (apps/web/server/utils/**, trừ better-auth.ts adapter) NEVER import drizzle-orm trực tiếp.",
+        "DAL Global Lock: Web Services và Utils (apps/web/server/{services,utils}/**, trừ utils/better-auth.ts adapter), " +
+        "Worker runtime (apps/worker/src/**, trừ test và allowlist backup PG restore/verify) và các package runtime " +
+        "(play, export, notification, audit) NEVER import drizzle-orm trực tiếp — mọi truy vấn đi qua Repositories trong @mindkid/db.",
       severity: "error",
       from: {
-        path: "^apps/web/server/utils/",
-        pathNot: "^apps/web/server/utils/better-auth\\.ts$",
-      },
-      to: { path: "(^|/)node_modules/drizzle-orm(/|$)" },
-    },
-    {
-      name: "no-worker-raw-drizzle",
-      comment:
-        "DAL Global Lock: Worker runtime (apps/worker/src/**, trừ allowlist backup PG restore/verify) NEVER import drizzle-orm trực tiếp.",
-      severity: "error",
-      from: {
-        path: "^apps/worker/src/",
+        path: "^(apps/web/server/(services|utils)/|apps/worker/src/|packages/(play|export|notification|audit)/src/)",
         pathNot:
-          "(\\.test\\.ts$|^apps/worker/src/(backup/(restore|verify-gate)|consumers/backup-verify)\\.ts$)",
+          "(^apps/web/server/utils/better-auth\\.ts$|^apps/worker/src/.*\\.test\\.ts$|^apps/worker/src/(backup/(restore|verify-gate)|consumers/backup-verify)\\.ts$)",
       },
-      to: { path: "(^|/)node_modules/drizzle-orm(/|$)" },
-    },
-    {
-      name: "no-runtime-pkg-raw-drizzle",
-      comment:
-        "DAL Global Lock: Runtime domain packages (play, export, notification, audit) NEVER import drizzle-orm trực tiếp.",
-      severity: "error",
-      from: { path: "^packages/(play|export|notification|audit)/src/" },
       to: { path: "(^|/)node_modules/drizzle-orm(/|$)" },
     },
     {
