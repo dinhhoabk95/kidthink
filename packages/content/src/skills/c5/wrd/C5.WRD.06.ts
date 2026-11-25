@@ -259,13 +259,5 @@ export const C5_WRD_06_SEED: SkillSeed = {
       theme: "vehicle",
       rounds: 3,
     },
-    {
-      code: "GL-C5-WRD-SHAD-0001",
-      template: "GT-007",
-      band: "5-6",
-      difficulty: 4,
-      theme: "family",
-      rounds: 3,
-    },
   ],
 };

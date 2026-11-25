@@ -200,19 +200,33 @@ export function pickSingleObjectToken(
   const ordered = preferred
     ? [preferred, ...items.filter((i) => i !== preferred)]
     : [...items];
+  return singleObjectTokens(ordered, allowLetters)[0] ?? null;
+}
+
+/**
+ * Mọi vật đơn khác hình nhau của dataset, theo thứ tự `items`: glyph một-vật
+ * trước, ảnh một-vật sau (cùng thứ tự ưu tiên với `pickSingleObjectToken`).
+ */
+export function singleObjectTokens(
+  items: readonly DatasetItem[],
+  allowLetters = false
+): SingleObjectToken[] {
   const singleObjectGlyph = (item: DatasetItem): DatasetAsset | null =>
     item.glyph && isSingleObjectText(item.glyph, allowLetters)
       ? { kind: "text", text: item.glyph.trim() }
       : null;
+  const out: SingleObjectToken[] = [];
+  const seen = new Set<string>();
   for (const pick of [singleObjectGlyph, singleObjectImage]) {
-    for (const item of ordered) {
+    for (const item of items) {
       const asset = pick(item);
-      if (asset) {
-        return { item, asset };
+      if (asset && !seen.has(visualAssetKey(asset))) {
+        seen.add(visualAssetKey(asset));
+        out.push({ item, asset });
       }
     }
   }
-  return null;
+  return out;
 }
 
 const DIGITS_ONLY = /^\p{N}+$/u;

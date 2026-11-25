@@ -240,6 +240,16 @@ export const C5_TMK_01_SEED: SkillSeed = {
       sequence_no: 61,
     },
     {
+      code: "GL-C5-TMK-TAP-6008",
+      template: "GT-001",
+      band: "4-5",
+      difficulty: 2,
+      access_tier: "standard",
+      theme: "home",
+      rounds: 3,
+      sequence_no: 67,
+    },
+    {
       code: "GL-C5-TMK-SORT-6004",
       template: "GT-004",
       band: "4-5",
@@ -258,16 +268,6 @@ export const C5_TMK_01_SEED: SkillSeed = {
       theme: "homeland",
       rounds: 3,
       sequence_no: 65,
-    },
-    {
-      code: "GL-C5-TMK-BOND-6008",
-      template: "GT-007",
-      band: "4-5",
-      difficulty: 2,
-      access_tier: "standard",
-      theme: "home",
-      rounds: 3,
-      sequence_no: 67,
     },
     {
       code: "GL-C5-TMK-SLOT-6010",

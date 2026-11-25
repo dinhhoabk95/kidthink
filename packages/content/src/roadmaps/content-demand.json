@@ -41667,9 +41667,9 @@
       ],
       "level_quota": 3,
       "filled_by": [
-        "GL-C5-TMK-BOND-6008",
         "GL-C5-TMK-MATCH-6006",
-        "GL-C5-TMK-SLOT-6010"
+        "GL-C5-TMK-SLOT-6010",
+        "GL-C5-TMK-SORT-6004"
       ]
     },
     {
@@ -41897,7 +41897,7 @@
       ],
       "level_quota": 1,
       "filled_by": [
-        "GL-C5-TMK-SORT-6004"
+        "GL-C5-TMK-TAP-6008"
       ]
     },
     {
@@ -56444,9 +56444,9 @@
       ],
       "level_quota": 3,
       "filled_by": [
-        "GL-C5-TMK-BOND-6008",
         "GL-C5-TMK-MATCH-6006",
-        "GL-C5-TMK-SLOT-6010"
+        "GL-C5-TMK-SLOT-6010",
+        "GL-C5-TMK-SORT-6004"
       ]
     },
     {
@@ -56674,7 +56674,7 @@
       ],
       "level_quota": 1,
       "filled_by": [
-        "GL-C5-TMK-SORT-6004"
+        "GL-C5-TMK-TAP-6008"
       ]
     },
     {

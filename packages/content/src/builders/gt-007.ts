@@ -1,5 +1,6 @@
 import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
+  DatasetAsset,
   ProjectedPack,
   Projection,
   ProjectOptions,
@@ -8,10 +9,18 @@ import type {
 import {
   createRng,
   pickAgeBandPrompt,
-  resolveItemAsset,
   safeGetItem,
   shuffleDeterministic,
+  singleObjectTokens,
+  visualAssetKey,
 } from "./utils.js";
+
+/** Vật đếm khung bù khi dataset thiếu vật đơn (`BR-SDS-17`). */
+export const GT007_FALLBACK_TOKENS: readonly DatasetAsset[] = [
+  { kind: "emoji", ref: "🍬" },
+  { kind: "emoji", ref: "🍎" },
+  { kind: "emoji", ref: "⭐" },
+];
 
 export const projectGT007: Projection<"GT-007"> = {
   template: "GT-007",
@@ -26,11 +35,29 @@ export const projectGT007: Projection<"GT-007"> = {
     const params = getEngineDifficultyParams("GT-007", opts.difficulty);
     const wholeVal = params.item_count;
 
-    const rng = createRng(opts.seed + (opts.round_index ?? 0));
-    const baseItem = safeGetItem(
-      dataset.items,
-      rng.nextInt(dataset.items.length)
+    const roundIdx = opts.round_index ?? 0;
+    const rng = createRng(opts.seed + roundIdx);
+    // Engine vẽ `asset` một lần cho mỗi đơn vị của `value`, nên asset phải là
+    // **một** vật: cụm "🍊🍊🍊🍊" làm 2 vật hiện thành 8. Mỗi vòng một vật khác
+    // (`BR-E007-11`): ở tổng 2 phép tách luôn là 1 + 1, vật là thứ duy nhất làm
+    // các vòng khác nhau; dataset thiếu vật đơn thì bù bằng vật khung.
+    const start = createRng(opts.seed).nextInt(dataset.items.length);
+    const rotated = [
+      ...dataset.items.slice(start),
+      ...dataset.items.slice(0, start),
+    ];
+    const tokens: DatasetAsset[] = singleObjectTokens(rotated).map(
+      (t) => t.asset
     );
+    for (const extra of GT007_FALLBACK_TOKENS) {
+      if (tokens.length >= 3) {
+        break;
+      }
+      if (!tokens.some((t) => visualAssetKey(t) === visualAssetKey(extra))) {
+        tokens.push(extra);
+      }
+    }
+    const tokenAsset = safeGetItem(tokens, roundIdx % tokens.length);
     const part1Val = 1 + rng.nextInt(wholeVal - 1);
     const targetPartVal = wholeVal - part1Val;
 
@@ -39,18 +66,19 @@ export const projectGT007: Projection<"GT-007"> = {
         id: "part_1",
         value: part1Val,
         is_target: false,
-        asset: resolveItemAsset(baseItem, true),
+        asset: tokenAsset,
       },
       {
         id: "part_2",
         value: targetPartVal,
         is_target: true,
-        asset: resolveItemAsset(baseItem, true),
+        asset: tokenAsset,
       },
     ];
 
+    // Phương án nhiễu vẫn nằm trong tổng: lớn hơn tổng thì không phải một phần.
     const distractorCandidates = [1, 2, 3, 4, 5, 6].filter(
-      (v) => v !== targetPartVal
+      (v) => v !== targetPartVal && v <= wholeVal
     );
     const distractorOptionCount = Math.max(1, params.distractor_count ?? 0);
     const distractors = shuffleDeterministic(distractorCandidates, rng).slice(
@@ -62,13 +90,13 @@ export const projectGT007: Projection<"GT-007"> = {
       {
         id: "opt_correct",
         value: targetPartVal,
-        asset: resolveItemAsset(baseItem, true),
+        asset: tokenAsset,
         is_correct: true,
       },
       ...distractors.map((v, i) => ({
         id: `opt_d_${i + 1}`,
         value: v,
-        asset: resolveItemAsset(baseItem, true),
+        asset: tokenAsset,
         is_correct: false,
       })),
     ];
@@ -102,7 +130,7 @@ export const projectGT007: Projection<"GT-007"> = {
         whole: {
           id: "whole_1",
           value: wholeVal,
-          asset: resolveItemAsset(baseItem, true),
+          asset: tokenAsset,
         },
         parts,
         options: shuffleDeterministic(options, rng),
