@@ -175,10 +175,8 @@ export class ClockHandsSession extends TemplateGameSession<C, D> {
     targetId?: string
   ): void {
     this.mood.set("wonder", GT016_WONDER_MS);
-    const curStr = formatClockTime(this.currentTime);
-    const targetStr = formatClockTime(this.content.target_time);
     this.exploreTracker.recordWrongAttempt({
-      reasonVi: `Đồng hồ chỉ ${curStr}, mục tiêu là ${targetStr}`,
+      reasonVi: "Kim chưa đúng giờ rồi, bé xoay lại nhé!",
       targetId,
       actualValue,
       expectedValue,

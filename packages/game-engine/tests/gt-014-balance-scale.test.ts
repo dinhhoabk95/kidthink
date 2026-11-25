@@ -11,6 +11,8 @@ import template, {
   GT014DifficultySchema,
 } from "#src/templates/GT-014/template";
 
+const DIGIT = /\d/;
+
 const WEIGHT_WORDING = /\d|nặng/;
 const RE_BALANCE_REACHABLE =
   /phải tồn tại cách đặt vật từ khay để 2 đĩa cân bằng nhau/;
@@ -168,9 +170,10 @@ describe("GT-014: Cân hai bên (balance-scale)", () => {
 
       // Sai lần 1: chọn bên phải (1 < 5)
       compareSession.selectSide("right");
-      expect(compareSession.getControlOfError()?.reasonVi).toBe(
-        "Bên trái (5) nặng hơn bên phải (1)"
-      );
+      const reason = compareSession.getControlOfError()?.reasonVi ?? "";
+      expect(reason).toBe("Cân chưa đúng rồi, bé thử lại nhé!");
+      // BR-FBK-20: không lộ khối lượng hai bên
+      expect(reason).not.toMatch(DIGIT);
       expect(compareSession.isMicroSandboxActive()).toBe(false);
 
       // Sai lần 2 liên tiếp -> bật Micro-Sandbox

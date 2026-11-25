@@ -256,7 +256,7 @@ export class SubstitutionSession extends TemplateGameSession<
       this.mood.set("wonder", GT010_WONDER_MS);
       const expected = this.getExpectedAnswer();
       const enteredSandbox = this.exploreTracker.recordWrongAttempt({
-        reasonVi: `Giá trị ${value} chưa khớp phép thay thế (cần ${expected})`,
+        reasonVi: "Chưa đúng rồi, bé thử số khác nhé!",
         actualValue: value,
         expectedValue: expected,
       });

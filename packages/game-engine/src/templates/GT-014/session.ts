@@ -442,10 +442,7 @@ export class BalanceScaleSession extends TemplateGameSession<
     this.mood.set("wonder", GT014_WONDER_MS);
     const leftW = this.getLeftWeight();
     const rightW = this.getRightWeight();
-    const reasonVi =
-      leftW > rightW
-        ? `Bên trái (${leftW}) nặng hơn bên phải (${rightW})`
-        : `Bên phải (${rightW}) nặng hơn bên trái (${leftW})`;
+    const reasonVi = "Cân chưa đúng rồi, bé thử lại nhé!";
     this.exploreTracker.recordWrongAttempt({
       reasonVi,
       targetId: side,

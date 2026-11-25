@@ -270,7 +270,7 @@ describe("GT-028: Chạm đếm tích luỹ (tap-count)", () => {
       // Nộp thiếu lần 1: đang có 4, cần 8
       session.commit({ type: "submit_count", data: {} });
       expect(session.getControlOfError()?.reasonVi).toBe(
-        "Đang có 4, còn thiếu 4 để đủ 8"
+        "Còn thiếu một chút, bé đếm thêm nhé!"
       );
       expect(session.isMicroSandboxActive()).toBe(false);
 
@@ -280,7 +280,7 @@ describe("GT-028: Chạm đếm tích luỹ (tap-count)", () => {
       session.commit({ type: "tap_item", data: { item_id: "apple_5" } });
       session.commit({ type: "submit_count", data: {} });
       expect(session.getControlOfError()?.reasonVi).toBe(
-        "Đang có 10, dư 2 so với 8"
+        "Nhiều quá rồi, bé bớt đi nhé!"
       );
       expect(session.isMicroSandboxActive()).toBe(true);
 

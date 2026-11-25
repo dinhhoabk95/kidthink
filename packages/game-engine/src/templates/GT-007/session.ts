@@ -375,7 +375,7 @@ export class GT007Session extends TemplateGameSession<
     }
     const known = computeKnownSum(this.content, this.filledParts, targetId);
     const actual = known + option.value;
-    const reason = `Gộp ${known} và ${option.value} được ${actual} (cần ${this.content.whole.value})`;
+    const reason = "Hai phần này chưa vừa, bé thử lại nhé!";
     this.recordWrongBond(reason, targetId, actual, { option_id: optionId });
   }
 
@@ -615,7 +615,7 @@ export class GT007Session extends TemplateGameSession<
     const outcome = candy.move(move.from, move.to);
     if (outcome === "locked") {
       const expected = this.content.whole.value;
-      const reason = `Khay này đã đủ phần rồi, thêm vào thì nhiều hơn ${expected}`;
+      const reason = "Khay này đã đủ rồi, bé thử khay khác nhé!";
       this.recordWrongBond(reason, this.content.whole.id, expected + 1, {
         remaining: candy.remaining,
       });

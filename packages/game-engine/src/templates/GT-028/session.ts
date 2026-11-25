@@ -318,8 +318,8 @@ export class GT028Session extends TemplateGameSession<
     const d = t - c;
     const reasonVi =
       d > 0
-        ? `Đang có ${c}, còn thiếu ${d} để đủ ${t}`
-        : `Đang có ${c}, dư ${Math.abs(d)} so với ${t}`;
+        ? "Còn thiếu một chút, bé đếm thêm nhé!"
+        : "Nhiều quá rồi, bé bớt đi nhé!";
     const wInfo = { reasonVi, actualValue: c, expectedValue: t };
     this.exploreTracker.recordWrongAttempt(wInfo);
     const msb = this.exploreTracker.isMicroSandboxActive();

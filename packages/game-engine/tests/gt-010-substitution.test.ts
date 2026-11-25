@@ -11,6 +11,8 @@ import template, {
   GT010DifficultySchema,
 } from "#src/templates/GT-010/template";
 
+const DIGIT = /\d/;
+
 const RE_UNIQUE_SOL = /nghiệm nguyên dương duy nhất/;
 
 describe("GT-010: Thay thế biểu tượng (substitution)", () => {
@@ -152,9 +154,10 @@ describe("GT-010: Thay thế biểu tượng (substitution)", () => {
 
       // First wrong attempt -> Control of Error reasonVi
       expect(session.selectValue(4)).toBe(false);
-      expect(session.getControlOfError()?.reasonVi).toBe(
-        "Giá trị 4 chưa khớp phép thay thế (cần 5)"
-      );
+      const reason = session.getControlOfError()?.reasonVi ?? "";
+      expect(reason).toBe("Chưa đúng rồi, bé thử số khác nhé!");
+      // BR-FBK-20: không lộ đáp án
+      expect(reason).not.toMatch(DIGIT);
       expect(session.isMicroSandboxActive()).toBe(false);
       expect(session.getPinnedSymbolValue("apple")).toBeUndefined();
 

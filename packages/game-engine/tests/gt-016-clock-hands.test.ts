@@ -10,6 +10,8 @@ import template, {
   GT016DifficultySchema,
 } from "#src/templates/GT-016/template";
 
+const DIGIT = /\d/;
+
 const RE_MATCH_TIME = /khớp với target_time/;
 
 describe("GT-016: Xoay kim đồng hồ (clock-hands)", () => {
@@ -123,9 +125,10 @@ describe("GT-016: Xoay kim đồng hồ (clock-hands)", () => {
       session.setHour(4);
       session.setMinute(0);
       expect(session.submitTime()).toBe(false);
-      expect(session.getControlOfError()?.reasonVi).toBe(
-        "Đồng hồ chỉ 04:00, mục tiêu là 04:30"
-      );
+      const reason = session.getControlOfError()?.reasonVi ?? "";
+      expect(reason).toBe("Kim chưa đúng giờ rồi, bé xoay lại nhé!");
+      // BR-FBK-20: không lộ giờ mục tiêu
+      expect(reason).not.toMatch(DIGIT);
       expect(session.isMicroSandboxActive()).toBe(false);
 
       // Nộp sai lần 2 liên tiếp -> bật Micro-Sandbox
