@@ -53,6 +53,54 @@ function selectDistractorPool(
   return distractorPool.length > 0 ? distractorPool : orderedItems;
 }
 
+type ArithmeticOp = "add" | "sub";
+
+const ARITHMETIC_SKILL = /\.(ADD|SUB)\./;
+
+/** Kỹ năng cộng/trừ: đề GT-001 phải nêu số hạng (`BR-E001-09`). */
+function arithmeticOp(skillCode: string): ArithmeticOp | null {
+  const m = ARITHMETIC_SKILL.exec(skillCode);
+  if (!m) {
+    return null;
+  }
+  return m[1] === "ADD" ? "add" : "sub";
+}
+
+/** Mỗi giá trị nguyên ≥ 0 một vật (vật đầu tiên mang giá trị đó). */
+function distinctValuedItems(
+  items: SkillDataset["items"]
+): SkillDataset["items"] {
+  const seen = new Set<number>();
+  return items.filter((i) => {
+    const v = i.value;
+    if (typeof v !== "number" || !Number.isInteger(v) || v < 0 || seen.has(v)) {
+      return false;
+    }
+    seen.add(v);
+    return true;
+  });
+}
+
+/**
+ * Phép tính có kết quả `result`, số hạng nêu thẳng trong đề: "Có 2, thêm 3 nữa
+ * là mấy?" — đề "Gộp lại có tất cả bao nhiêu số 0?" không có số hạng nào thì
+ * trẻ không thể tính (`BR-E001-09`).
+ */
+function arithmeticPrompt(
+  op: ArithmeticOp,
+  result: number,
+  maxValue: number,
+  rng: ReturnType<typeof createRng>
+): string {
+  if (op === "add") {
+    const a = result >= 2 ? 1 + rng.nextInt(result - 1) : result;
+    return `Có ${a}, thêm ${result - a} nữa là mấy?`;
+  }
+  const room = Math.max(0, Math.min(10, maxValue) - result);
+  const b = room > 0 ? 1 + rng.nextInt(room) : 0;
+  return `Có ${result + b}, bớt ${b} thì còn mấy?`;
+}
+
 export const projectGT001: Projection<"GT-001"> = {
   template: "GT-001",
   requires: { min_items: 2, max_items: 6 },
@@ -68,12 +116,32 @@ export const projectGT001: Projection<"GT-001"> = {
     const expectedDistractorCount =
       params.distractor_count ?? Math.max(1, expectedItemCount - 1);
 
-    const orderedItems = getOrderedDatasetItems(dataset.items);
+    const op = arithmeticOp(dataset.skill_code);
+    const valuedItems = op
+      ? distinctValuedItems(getOrderedDatasetItems(dataset.items))
+      : [];
+    // Cộng/trừ: đáp án và vật nhiễu là các giá trị khác nhau, đề nêu số hạng.
+    const arithmetic = op !== null && valuedItems.length >= 2;
+    const orderedItems = arithmetic
+      ? valuedItems
+      : getOrderedDatasetItems(dataset.items);
 
     const baseRng = createRng(opts.seed);
-    const baseIdx = baseRng.nextInt(orderedItems.length);
-    const targetIdx = (baseIdx + (opts.round_index ?? 0)) % orderedItems.length;
-    const targetItem = safeGetItem(orderedItems, targetIdx);
+    // Cộng thì kết quả ≥ 2; trừ thì 1 ≤ kết quả < giá trị lớn nhất để còn số
+    // bị trừ ≥ 1 ("Có 0, thêm 0" hay "Có 5, bớt 0" không phải bài tính).
+    const maxValue = Math.max(...orderedItems.map((i) => i.value ?? 0));
+    const isResult = (v: number): boolean =>
+      op === "add" ? v >= 2 : v >= 1 && v < Math.min(10, maxValue);
+    const targetPool = arithmetic
+      ? orderedItems.filter((i) => isResult(i.value ?? 0))
+      : orderedItems;
+    const candidates = targetPool.length > 0 ? targetPool : orderedItems;
+    const baseIdx = baseRng.nextInt(candidates.length);
+    const targetItem = safeGetItem(
+      candidates,
+      (baseIdx + (opts.round_index ?? 0)) % candidates.length
+    );
+    const targetIdx = orderedItems.indexOf(targetItem);
     const targetAsset = keywordAsset(targetItem);
     const targetKey = assetKey(targetAsset);
 
@@ -150,13 +218,20 @@ export const projectGT001: Projection<"GT-001"> = {
       "Bé chạm chọn đáp án đúng nhé!",
       { forbidConjunctionVa: true }
     );
-    const prompt = dataset.phrasing.prompt_template
-      ? sanitizeChildPrompt(
-          dataset.phrasing.prompt_template.replace("{label}", targetLabel),
-          bandFallback,
-          { forbidConjunctionVa: true }
-        )
-      : bandFallback;
+    const prompt =
+      arithmetic && op && typeof targetItem.value === "number"
+        ? arithmeticPrompt(op, targetItem.value, maxValue, rng)
+        : templatePrompt();
+
+    function templatePrompt(): string {
+      return dataset.phrasing.prompt_template
+        ? sanitizeChildPrompt(
+            dataset.phrasing.prompt_template.replace("{label}", targetLabel),
+            bandFallback,
+            { forbidConjunctionVa: true }
+          )
+        : bandFallback;
+    }
 
     const showcase = buildGT001PedagogicalShowcase({
       dataset,
