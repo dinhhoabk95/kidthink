@@ -10,6 +10,7 @@ import {
   pickAgeBandPrompt,
   resolveItemAsset,
   shuffleDeterministic,
+  visualAssetKey,
 } from "./utils.js";
 
 export const projectGT020: Projection<"GT-020"> = {
@@ -24,25 +25,31 @@ export const projectGT020: Projection<"GT-020"> = {
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const params = getEngineDifficultyParams("GT-020", opts.difficulty);
-    const pairCount = Math.min(params.target_count ?? 2, dataset.items.length);
+    // Đề và khung chuyện là "tìm hai thẻ giống nhau" (`BR-E020-10`): hai thẻ
+    // của một cặp mang **cùng một** hình, và hai cặp khác nhau không được trùng
+    // hình — nếu không, trẻ lật hai thẻ trông giống hệt mà vẫn bị tính lệch cặp.
+    const seen = new Set<string>();
+    const distinct = shuffleDeterministic(dataset.items, rng)
+      .map((item) => ({ item, asset: resolveItemAsset(item, true) }))
+      .filter(({ asset }) => {
+        const key = visualAssetKey(asset);
+        if (seen.has(key)) {
+          return false;
+        }
+        seen.add(key);
+        return true;
+      });
+    if (distinct.length < 2) {
+      throw new Error(
+        `[BR-E020-10] Dataset ${dataset.skill_code} có ít hơn 2 vật khác hình cho GT-020`
+      );
+    }
+    const pairCount = Math.min(params.target_count ?? 2, distinct.length);
 
-    const chosenItems = shuffleDeterministic(dataset.items, rng).slice(
-      0,
-      pairCount
-    );
-
-    const pairs = chosenItems.map((item) => ({
+    const pairs = distinct.slice(0, pairCount).map(({ item, asset }) => ({
       pair_key: `pair_${item.id}`,
-      card_a: {
-        card_id: `${item.id}_a`,
-        asset: item.glyph
-          ? { kind: "text" as const, text: item.glyph }
-          : resolveItemAsset(item, true),
-      },
-      card_b: {
-        card_id: `${item.id}_b`,
-        asset: item.image ?? { kind: "text" as const, text: item.label },
-      },
+      card_a: { card_id: `${item.id}_a`, asset },
+      card_b: { card_id: `${item.id}_b`, asset },
     }));
 
     const prompt = pickAgeBandPrompt(

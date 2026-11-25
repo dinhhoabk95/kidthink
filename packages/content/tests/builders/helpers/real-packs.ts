@@ -76,16 +76,17 @@ export function asString(v: PackValue): string {
   return v;
 }
 
-/** Khoá nhìn thấy của một asset: hai asset cùng khoá là cùng một hình trên màn. */
+/**
+ * Khoá nhìn thấy của một asset: hai asset cùng khoá là cùng một hình trên màn
+ * (`text:"🍎"` và `emoji:"🍎"` trùng khoá, bỏ VS16).
+ */
 export function assetKeyOf(v: PackValue): string {
   const a = asObject(v);
-  if (a.kind === "emoji") {
-    return `emoji:${asString(a.ref)}`;
+  if (a.kind === "image") {
+    return `image:${asString(a.path)}`;
   }
-  if (a.kind === "text") {
-    return `text:${asString(a.text)}`;
-  }
-  return `image:${asString(a.path)}`;
+  const shown = asString(a.kind === "text" ? a.text : a.ref);
+  return `shown:${shown.replace(/\uFE0F/gu, "").trim()}`;
 }
 
 /** Chuỗi hiện ra của một asset (emoji ref hoặc text). */

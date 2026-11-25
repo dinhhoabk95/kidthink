@@ -6,10 +6,10 @@ import type {
   SkillDataset,
 } from "@mindkid/shared";
 import {
-  assetKey,
   createRng,
   resolveItemAsset,
   shuffleDeterministic,
+  visualAssetKey,
 } from "./utils.js";
 
 /** Bậc độ khó cao nhất còn dùng lệnh tuyệt đối (`BR-E035-15`). */
@@ -34,11 +34,11 @@ export const projectGT035: Projection<"GT-035"> = {
     const params = getEngineDifficultyParams("GT-035", opts.difficulty);
     // Vật nhặt là vật của dataset nhưng không được trùng hình lá cờ đích
     // (`BR-E035-18`): đích và vật nhặt giống nhau thì trẻ không biết đâu là đích.
-    const goalKey = assetKey(GT035_GOAL_ASSET);
+    const goalKey = visualAssetKey(GT035_GOAL_ASSET);
     const collectibleAsset =
       shuffleDeterministic(dataset.items, rng)
         .map((item) => resolveItemAsset(item, true))
-        .find((asset) => assetKey(asset) !== goalKey) ??
+        .find((asset) => visualAssetKey(asset) !== goalKey) ??
       GT035_FALLBACK_COLLECTIBLE;
 
     const collectibleCount = params.collectible_count ?? 1;

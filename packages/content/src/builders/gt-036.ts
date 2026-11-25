@@ -6,10 +6,10 @@ import type {
   SkillDataset,
 } from "@mindkid/shared";
 import {
-  assetKey,
   createRng,
   resolveItemAsset,
   shuffleDeterministic,
+  visualAssetKey,
 } from "./utils.js";
 
 export const projectGT036: Projection<"GT-036"> = {
@@ -30,7 +30,7 @@ export const projectGT036: Projection<"GT-036"> = {
     const distinct = shuffleDeterministic(dataset.items, rng)
       .map((item) => ({ id: item.id, asset: resolveItemAsset(item, true) }))
       .filter((entry) => {
-        const key = assetKey(entry.asset);
+        const key = visualAssetKey(entry.asset);
         if (seen.has(key)) {
           return false;
         }

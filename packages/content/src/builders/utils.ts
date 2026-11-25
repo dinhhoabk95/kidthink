@@ -131,3 +131,18 @@ export function assetKey(asset: DatasetAsset): string {
   }
   return JSON.stringify(asset);
 }
+
+const VARIATION_SELECTOR_16 = /️/gu;
+
+/**
+ * Khoá **nhìn thấy** của asset: `text:"🍎"` và `emoji:"🍎"` hiện ra giống hệt nhau
+ * trên màn nên cùng khoá (bỏ cả VS16). Dùng khi luật nói về cái trẻ nhìn thấy —
+ * hai thẻ "giống nhau", đích khác vật nhặt — thay cho `assetKey` (khoá dữ liệu).
+ */
+export function visualAssetKey(asset: DatasetAsset): string {
+  if (asset.kind === "image") {
+    return `image:${asset.path}`;
+  }
+  const shown = asset.kind === "text" ? asset.text : asset.ref;
+  return `shown:${shown.replace(VARIATION_SELECTOR_16, "").trim()}`;
+}
