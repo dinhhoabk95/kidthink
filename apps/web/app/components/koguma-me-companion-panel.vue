@@ -293,6 +293,11 @@
       36
     );
     const stageSuffix = meta.koguma_stage === 2 ? " (Chặng 2)" : "";
+    // Chưa ghi danh: gợi ý chỉ là học phần đầu của khối tuổi, số tuần xếp lịch
+    // trong lộ trình không phải "tuần của bé" nên không hiển thị.
+    if (!props.isEnrolled) {
+      return `Xem lộ trình Năm học${stageSuffix}`;
+    }
     const weekNo = activeUnit.value.scheduled_week_no || 1;
     return `Xem Năm học${stageSuffix} · Tuần ${weekNo}`;
   });

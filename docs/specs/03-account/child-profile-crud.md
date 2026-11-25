@@ -72,6 +72,7 @@ tự phục vụ xem/sửa/rút, không cần để **tạo** hồ sơ lần đ�
 | `BR-CPC-08` | `age_band` **suy tự động**, không nhập | Đảm bảo tính chính xác của phân nhóm tuổi và tránh lỗi nhập tay từ người dùng |
 | `BR-CPC-09` | Ownership kiểm ở DB mọi thao tác sửa | `BR-ACT-07` |
 | `BR-CPC-10` | Tuổi ngoài 3–6 → từ chối kèm giải thích, không im lặng cắt | Người lớn cần biết vì sao |
+| `BR-CPC-11` | Khi hồ sơ đã đạt hạn mức gói, form tạo hồ sơ hiện **cảnh báo kèm đường nâng cấp/quản lý hồ sơ** và khoá nút gửi; server vẫn là nơi chặn thật (`BR-CPC-07`) | Điền xong form rồi mới bị từ chối là trải nghiệm tệ |
 
 ## 7. Data
 

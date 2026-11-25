@@ -182,14 +182,9 @@
               <span
                 class="px-2.5 py-0.5 rounded-xl bg-warning-100 dark:bg-warning-900/50 text-warning-900 dark:text-warning-200 text-sm font-extrabold tabular-nums kuno-print-badge"
               >
-                {{ sess.unit_code }} · {{ sess.pillar_code }}
+                {{ PILLAR_LABELS[sess.pillar_code] ?? sess.pillar_code }}
               </span>
             </div>
-            <span
-              class="text-sm font-mono font-bold text-surface-600 dark:text-surface-300 kuno-print-muted"
-            >
-              {{ sess.skill_code }}
-            </span>
           </div>
 
           <h5
@@ -263,6 +258,14 @@
 
 <script lang="ts" setup>
   import { nextTick, ref } from "vue";
+
+  const PILLAR_LABELS: Readonly<Record<string, string>> = {
+    K1: "Vị trí – Không gian",
+    K2: "Số lượng",
+    K3: "Hình học",
+    K4: "Ngôn ngữ tư duy",
+    K5: "Logic – Quan sát – Điều hành",
+  };
 
   export interface PrintableKunoSessionItem {
     readonly session_no: number;

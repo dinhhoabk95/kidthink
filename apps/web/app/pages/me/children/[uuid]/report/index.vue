@@ -140,7 +140,7 @@
                   {{ game.title }}
                 </p>
                 <p class="text-slate-600 text-sm">
-                  Năng lực {{ game.competency_code }}
+                  {{ competencyLabel(game.competency_code) }}
                 </p>
               </div>
             </div>
@@ -477,10 +477,15 @@
     BASIC_REPORT_DISCLAIMER,
     type BasicReportPeriod,
     type BasicReportResult,
+    findCompetency,
   } from "@mindkid/shared/client";
   import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, onMounted, ref } from "vue";
   import { useApi } from "~/composables/use-api";
+
+  function competencyLabel(code: string): string {
+    return findCompetency(code)?.name ?? "Năng lực tư duy";
+  }
 
   definePageMeta({
     layout: "account",

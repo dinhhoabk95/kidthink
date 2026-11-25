@@ -103,7 +103,7 @@
           </h2>
           <p class="text-surface-700 text-base leading-relaxed">
             Phân tích chuyên sâu 6 năng lực tư duy, xu hướng tuần, mức độ độc
-            lập và lộ trình củng cố cùng bé tại nhà. Dành riêng cho gói Standard
+            lập và lộ trình củng cố cùng bé tại nhà. Dành riêng cho gói Tiêu chuẩn
             và Premium.
           </p>
         </div>
@@ -703,6 +703,7 @@
   import { isApiError, normalizeApiError } from "@mindkid/errors/client";
   import {
     type AdvancedReportResult,
+    COMPETENCY_CATALOG,
     findCompetency,
   } from "@mindkid/shared/client";
   import { computed, ref } from "vue";
@@ -769,19 +770,22 @@
     return "i-lucide-move-right";
   }
 
+  const MOCKUP_MASTERY_LABELS: readonly string[] = [
+    "Đang phát triển",
+    "Mới làm quen",
+    "Khá ổn định",
+    "Mới làm quen",
+    "Đang phát triển",
+    "Khá ổn định",
+  ];
+
+  // Tên năng lực lấy từ catalog dùng chung (không viết tay) để mẫu không lệch báo cáo thật.
   const staticMockup = {
-    competencies: [
-      { code: "C1", name: "Tư duy Số học", mastery_label: "Đang phát triển" },
-      { code: "C2", name: "Tư duy Không gian", mastery_label: "Mới làm quen" },
-      { code: "C3", name: "Tư duy Logic", mastery_label: "Khá ổn định" },
-      { code: "C4", name: "Tư duy Quan sát", mastery_label: "Mới làm quen" },
-      { code: "C5", name: "Tư duy Ngôn ngữ", mastery_label: "Đang phát triển" },
-      {
-        code: "C6",
-        name: "Chức năng Điều hành",
-        mastery_label: "Khá ổn định",
-      },
-    ],
+    competencies: COMPETENCY_CATALOG.map((entry, index) => ({
+      code: entry.code,
+      name: entry.name,
+      mastery_label: MOCKUP_MASTERY_LABELS[index] ?? "Mới làm quen",
+    })),
   };
 </script>
 

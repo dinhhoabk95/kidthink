@@ -262,11 +262,6 @@
               >
                 {{ item.title }}
               </h3>
-              <p
-                class="text-sm text-surface-600 dark:text-surface-300 font-mono truncate"
-              >
-                {{ item.code }}
-              </p>
             </div>
           </div>
 
@@ -388,11 +383,6 @@
                 >
                   {{ rec.title }}
                 </h4>
-                <p
-                  class="text-sm text-surface-600 dark:text-surface-300 font-mono truncate"
-                >
-                  {{ rec.level_code }}
-                </p>
               </div>
             </div>
             <NuxtLink

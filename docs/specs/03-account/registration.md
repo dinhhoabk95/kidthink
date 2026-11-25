@@ -81,6 +81,7 @@ Guest → User. Cấm Trẻ không đăng ký.
 | `BR-REG-09` | Rate limit theo IP | [`rate-limiting.md`](../01-platform/rate-limiting.md) |
 | `BR-REG-10` | 409 trùng email **không** nói tài khoản đó đăng ký bằng cách nào | Biết "email này dùng Google" là một mẩu thông tin cho kẻ tấn công chọn hướng, và ta không đổi được nó cho người dùng |
 | `BR-REG-11` | Trang đăng ký hiện nút SNS **trước** form email khi provider đang bật | Đường ít ma sát nhất phải là đường dễ thấy nhất. Form vẫn đầy đủ ngay dưới, không giấu sau một cú bấm |
+| `BR-REG-12` | Form đăng ký `novalidate`: bấm gửi khi thiếu thì chỉ ra **từng trường** (tên, email, mật khẩu, hai checkbox đồng ý) bằng lỗi inline tiếng Việt, nút gửi chỉ khoá tới khi hydrate | Nút xám không nói thiếu gì thì phụ huynh bỏ đi |
 
 ## 7. Data
 

@@ -353,7 +353,18 @@
           <h3 class="text-base font-bold font-heading text-surface-700">
             Các tính năng đang mở khóa
           </h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <p
+            class="text-sm text-surface-600"
+            data-testid="entitlements-empty"
+            v-if="data.entitlements.length === 0"
+          >
+            Gói Miễn phí chưa mở thêm tính năng nào. Nâng cấp gói để mở khóa
+            trò chơi và báo cáo nâng cao.
+          </p>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+            v-else
+          >
             <div
               class="p-3 rounded-2xl border-2 border-surface-100 bg-surface-50/70 space-y-1"
               v-for="ent in data.entitlements"

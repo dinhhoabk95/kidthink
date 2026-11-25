@@ -58,6 +58,7 @@ Guest · User.
 | `BR-PSH-05` | Chương trình archived → **410** | `BR-GDP-03` |
 | `BR-PSH-06` | Cấm — **NEVER hứa hẹn kết quả** — mô tả **hoạt động**, không mô tả **thành tựu** | `BR-LND-06` |
 | `BR-PSH-07` | Prerender, không phụ thuộc JS | Tối ưu hóa thời gian tải trang đầu tiên và đảm bảo công cụ tìm kiếm cào được nội dung đầy đủ |
+| `BR-PSH-08` | Mã chương trình không tồn tại → trả **HTTP 404 thật** và trang lỗi chung, không hiện đồng thời "Đang tải" lẫn "Không tìm thấy" | Trạng thái 200 làm công cụ tìm kiếm index trang rỗng |
 
 ## 7. Data
 

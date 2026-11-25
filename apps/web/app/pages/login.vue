@@ -143,7 +143,12 @@
       </form>
 
       <!-- Password Login Form -->
-      <form class="flex flex-col gap-4" v-else @submit.prevent="handleLogin">
+      <form
+        class="flex flex-col gap-4"
+        novalidate
+        v-else
+        @submit.prevent="handleLogin"
+      >
         <div class="flex flex-col gap-1.5">
           <label
             class="text-sm font-bold text-surface-700 dark:text-surface-300"
@@ -156,10 +161,19 @@
             class="min-h-11 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-base text-surface-900 transition-all placeholder:text-surface-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100 dark:placeholder:text-surface-500 dark:focus:border-brand-500 dark:focus:bg-surface-900"
             id="login-email"
             placeholder="phuhuynh@example.com"
-            required
             type="email"
             v-model.trim="loginEmail"
+            :aria-describedby="emailError ? 'login-email-error' : undefined"
+            :aria-invalid="Boolean(emailError)"
           >
+          <p
+            class="text-sm font-semibold text-danger-700 dark:text-danger-300"
+            id="login-email-error"
+            role="alert"
+            v-if="emailError"
+          >
+            {{ emailError }}
+          </p>
         </div>
 
         <div class="flex flex-col gap-1.5">
@@ -183,10 +197,19 @@
             class="min-h-11 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-base text-surface-900 transition-all placeholder:text-surface-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100 dark:placeholder:text-surface-500 dark:focus:border-brand-500 dark:focus:bg-surface-900"
             id="login-password"
             placeholder="••••••••"
-            required
             type="password"
             v-model="loginPassword"
+            :aria-describedby="passwordError ? 'login-password-error' : undefined"
+            :aria-invalid="Boolean(passwordError)"
           >
+          <p
+            class="text-sm font-semibold text-danger-700 dark:text-danger-300"
+            id="login-password-error"
+            role="alert"
+            v-if="passwordError"
+          >
+            {{ passwordError }}
+          </p>
         </div>
 
         <div class="mt-1 flex items-start gap-2.5">
@@ -207,7 +230,7 @@
         <button
           class="mt-2 flex min-h-12 w-full items-center justify-center rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-6 py-3 font-heading text-base font-bold text-white shadow-[0_4px_0_var(--color-brand-700)] transition-all hover:bg-brand-500 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-brand-700)] disabled:cursor-not-allowed disabled:opacity-60"
           type="submit"
-          :disabled="isLoading"
+          :disabled="isLoading || !isHydrated"
         >
           <span v-if="isLoading">Đang xử lý...</span>
           <span v-else>Đăng nhập ngay</span>
@@ -262,6 +285,11 @@
   } from "#imports";
   import { useApi } from "~/composables/use-api";
   import { useUserAuthClient } from "~/composables/use-auth-client";
+  import {
+    mapLoginError,
+    validateEmailField,
+    validatePasswordField,
+  } from "~/utils/auth-form";
 
   definePageMeta({
     layout: false,
@@ -307,6 +335,10 @@
 
   const loginEmail = ref("");
   const loginPassword = ref("");
+  const emailError = ref("");
+  const passwordError = ref("");
+  // Trước hydration form chưa có handler: submit native sẽ gửi mật khẩu qua URL.
+  const isHydrated = ref(false);
   const rememberMe = ref(false);
 
   const isMfaStep = ref(false);
@@ -337,6 +369,7 @@
   });
 
   onMounted(async () => {
+    isHydrated.value = true;
     if (route.query.tab === "register") {
       await router.replace(registerLink.value);
       return;
@@ -366,9 +399,7 @@
         errorCallbackURL: consentFallback,
       });
       if (res.error) {
-        errorMessage.value =
-          res.error.message ||
-          `Không thể khởi tạo đăng nhập với ${providerId}.`;
+        errorMessage.value = `Không thể khởi tạo đăng nhập với ${providerId}.`;
       }
     } catch {
       errorMessage.value = "Không thể kết nối nhà cung cấp đăng nhập lúc này.";
@@ -384,7 +415,6 @@
       const res = await authClient.signIn.passkey();
       if (res.error) {
         errorMessage.value =
-          res.error.message ||
           "Đăng nhập bằng Passkey không thành công hoặc đã bị huỷ.";
         return;
       }
@@ -453,6 +483,11 @@
 
   async function handleLogin(): Promise<void> {
     errorMessage.value = "";
+    emailError.value = validateEmailField(loginEmail.value);
+    passwordError.value = validatePasswordField(loginPassword.value, false);
+    if (emailError.value || passwordError.value) {
+      return;
+    }
     isLoading.value = true;
 
     try {
@@ -463,9 +498,7 @@
       });
 
       if (res.error) {
-        errorMessage.value =
-          res.error.message ||
-          "Đăng nhập không thành công. Vui lòng kiểm tra lại email và mật khẩu.";
+        errorMessage.value = mapLoginError(res.error);
         return;
       }
 
@@ -481,8 +514,7 @@
       const nextDest = await resolvePostLoginDestination();
       await navigateTo(nextDest);
     } catch {
-      errorMessage.value =
-        "Đăng nhập không thành công. Vui lòng kiểm tra lại email và mật khẩu.";
+      errorMessage.value = mapLoginError(null);
     } finally {
       isLoading.value = false;
     }
@@ -504,7 +536,6 @@
 
       if (res.error) {
         errorMessage.value =
-          res.error.message ||
           "Mã xác thực không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.";
         return;
       }

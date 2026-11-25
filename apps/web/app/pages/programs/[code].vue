@@ -515,7 +515,13 @@
     parseKogumaProgramMeta,
   } from "@mindkid/taxonomy";
   import { computed, onMounted, ref, watch } from "vue";
-  import { definePageMeta, useFetch, useHead, useRoute } from "#imports";
+  import {
+    createError,
+    definePageMeta,
+    useFetch,
+    useHead,
+    useRoute,
+  } from "#imports";
   import KogumaProgramBanner from "~/components/koguma-program-banner.vue";
   import KogumaRoadmapView, {
     type EnrichedProgramWeekInput,
@@ -624,6 +630,17 @@
       key: `guest-curriculum-${programCode.value}`,
     }
   );
+
+  if (
+    fetchError.value &&
+    !isApiError(fetchError.value, "CONTENT_ARCHIVED")
+  ) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Không tìm thấy chương trình học",
+      fatal: true,
+    });
+  }
 
   const kogumaTrackBadgeLabel = computed(() => {
     const meta = parseKogumaProgramMeta(

@@ -72,7 +72,11 @@
       </div>
 
       <!-- Register Form (BR-REG-01: 3 fields + 2 consent checkboxes) -->
-      <form class="flex flex-col gap-4" @submit.prevent="handleRegister">
+      <form
+        class="flex flex-col gap-4"
+        novalidate
+        @submit.prevent="handleRegister"
+      >
         <div class="flex flex-col gap-1.5">
           <label
             class="text-sm font-bold text-surface-700 dark:text-surface-300"
@@ -85,10 +89,18 @@
             class="min-h-11 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-base text-surface-900 transition-all placeholder:text-surface-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100 dark:placeholder:text-surface-500 dark:focus:border-brand-500 dark:focus:bg-surface-900"
             id="reg-name"
             placeholder="Bố Mẹ Bé Gấu"
-            required
             type="text"
             v-model.trim="regName"
+            :aria-invalid="Boolean(fieldErrors.name)"
           >
+          <p
+            class="text-sm font-semibold text-danger-700 dark:text-danger-300"
+            id="reg-name-error"
+            role="alert"
+            v-if="fieldErrors.name"
+          >
+            {{ fieldErrors.name }}
+          </p>
         </div>
 
         <div class="flex flex-col gap-1.5">
@@ -103,10 +115,18 @@
             class="min-h-11 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-base text-surface-900 transition-all placeholder:text-surface-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100 dark:placeholder:text-surface-500 dark:focus:border-brand-500 dark:focus:bg-surface-900"
             id="reg-email"
             placeholder="phuhuynh@example.com"
-            required
             type="email"
             v-model.trim="regEmail"
+            :aria-invalid="Boolean(fieldErrors.email)"
           >
+          <p
+            class="text-sm font-semibold text-danger-700 dark:text-danger-300"
+            id="reg-email-error"
+            role="alert"
+            v-if="fieldErrors.email"
+          >
+            {{ fieldErrors.email }}
+          </p>
         </div>
 
         <div class="flex flex-col gap-1.5">
@@ -121,10 +141,18 @@
             class="min-h-11 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-base text-surface-900 transition-all placeholder:text-surface-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100 dark:placeholder:text-surface-500 dark:focus:border-brand-500 dark:focus:bg-surface-900"
             id="reg-password"
             placeholder="Tối thiểu 8 ký tự"
-            required
             type="password"
             v-model="regPassword"
+            :aria-invalid="Boolean(fieldErrors.password)"
           >
+          <p
+            class="text-sm font-semibold text-danger-700 dark:text-danger-300"
+            id="reg-password-error"
+            role="alert"
+            v-if="fieldErrors.password"
+          >
+            {{ fieldErrors.password }}
+          </p>
         </div>
 
         <!-- Checkbox 1: Terms (BR-REG-02) -->
@@ -132,7 +160,6 @@
           <input
             class="mt-0.5 h-6 w-6 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
             id="reg-terms"
-            required
             type="checkbox"
             v-model="acceptTerms"
           >
@@ -151,13 +178,20 @@
             của MindKid.
           </label>
         </div>
+        <p
+          class="text-sm font-semibold text-danger-700 dark:text-danger-300"
+          id="reg-acceptTerms-error"
+          role="alert"
+          v-if="fieldErrors.acceptTerms"
+        >
+          {{ fieldErrors.acceptTerms }}
+        </p>
 
         <!-- Checkbox 2: Privacy (BR-REG-02) -->
         <div class="flex items-start gap-2.5">
           <input
             class="mt-0.5 h-6 w-6 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
             id="reg-privacy"
-            required
             type="checkbox"
             v-model="acceptPrivacy"
           >
@@ -184,11 +218,19 @@
             >.
           </label>
         </div>
+        <p
+          class="text-sm font-semibold text-danger-700 dark:text-danger-300"
+          id="reg-acceptPrivacy-error"
+          role="alert"
+          v-if="fieldErrors.acceptPrivacy"
+        >
+          {{ fieldErrors.acceptPrivacy }}
+        </p>
 
         <button
           class="mt-2 flex min-h-12 w-full items-center justify-center rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-6 py-3 font-heading text-base font-bold text-white shadow-[0_4px_0_var(--color-brand-700)] transition-all hover:bg-brand-500 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-brand-700)] disabled:cursor-not-allowed disabled:opacity-60"
           type="submit"
-          :disabled="isLoading || !acceptTerms || !acceptPrivacy"
+          :disabled="isLoading || !isHydrated"
         >
           <span v-if="isLoading">Đang đăng ký...</span>
           <span v-else>Đăng ký tài khoản</span>
@@ -232,7 +274,7 @@
     DEFAULT_REDIRECT_TARGET,
     sanitizeRedirectTarget,
   } from "@mindkid/shared/client";
-  import { computed, ref } from "vue";
+  import { computed, onMounted, ref } from "vue";
   import {
     definePageMeta,
     useRoute,
@@ -242,6 +284,10 @@
   } from "#imports";
   import { useApi } from "~/composables/use-api";
   import { useUserAuthClient } from "~/composables/use-auth-client";
+  import {
+    type RegisterFieldErrors,
+    validateRegisterForm,
+  } from "~/utils/auth-form";
 
   definePageMeta({
     layout: false,
@@ -285,6 +331,12 @@
   const regPassword = ref("");
   const acceptTerms = ref(false);
   const acceptPrivacy = ref(false);
+  const fieldErrors = ref<RegisterFieldErrors>({});
+  // Trước hydration form chưa có handler: submit native sẽ gửi mật khẩu qua URL.
+  const isHydrated = ref(false);
+  onMounted(() => {
+    isHydrated.value = true;
+  });
 
   const targetDestination = computed(() => {
     const rawRedirect = route.query.redirect ?? route.query.return_to;
@@ -380,9 +432,15 @@
   }
 
   async function handleRegister(): Promise<void> {
-    if (!(acceptTerms.value && acceptPrivacy.value)) {
-      errorMessage.value =
-        "Vui lòng đồng ý với Điều khoản sử dụng và Chính sách quyền riêng tư để tiếp tục.";
+    fieldErrors.value = validateRegisterForm({
+      name: regName.value,
+      email: regEmail.value,
+      password: regPassword.value,
+      acceptTerms: acceptTerms.value,
+      acceptPrivacy: acceptPrivacy.value,
+    });
+    if (Object.keys(fieldErrors.value).length > 0) {
+      errorMessage.value = "";
       return;
     }
 
@@ -421,7 +479,6 @@
             "Email này đã được đăng ký tài khoản. Vui lòng chuyển sang trang Đăng nhập hoặc sử dụng tính năng Quên mật khẩu.";
         } else {
           errorMessage.value =
-            res.error.message ||
             "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin và thử lại.";
         }
         return;

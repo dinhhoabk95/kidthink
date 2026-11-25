@@ -313,11 +313,6 @@
                     {{ getKogumaBadge(prog.code, prog.duration_weeks) }}
                   </span>
                 </div>
-                <span
-                  class="text-sm text-surface-600 dark:text-surface-300 font-mono font-bold"
-                >
-                  {{ toPublicProgramCode(prog.code) }}
-                </span>
               </div>
               <h3
                 class="font-heading font-extrabold text-lg text-surface-900 dark:text-white line-clamp-2"

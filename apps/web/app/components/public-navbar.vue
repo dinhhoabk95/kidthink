@@ -39,10 +39,18 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed } from "vue";
+  import { computed, onMounted } from "vue";
   import { useUserSession } from "#imports";
 
-  const { loggedIn, user } = useUserSession();
+  const { loggedIn, user, fetchStatus, hasRecentAuthHint } = useUserSession();
+
+  // Trang công khai không qua middleware /me nên state phiên rỗng sau khi tải
+  // cứng. Chỉ hỏi get-session khi có gợi ý đã đăng nhập, tránh 429 cho khách.
+  onMounted(async () => {
+    if (!loggedIn.value && hasRecentAuthHint()) {
+      await fetchStatus();
+    }
+  });
 
   const userName = computed(() => {
     const u = user.value as { display_name?: string; email?: string } | null;

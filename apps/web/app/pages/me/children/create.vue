@@ -15,6 +15,32 @@
       </p>
     </div>
 
+    <div
+      class="space-y-2 rounded-2xl border-2 border-warning-300 bg-warning-50 p-4 text-sm text-warning-900 dark:border-warning-700 dark:bg-warning-950/30 dark:text-warning-200"
+      data-testid="child-quota-warning"
+      role="alert"
+      v-if="isQuotaReached"
+    >
+      <p class="font-bold">
+        Tài khoản đã dùng hết {{ quotaTotal }} hồ sơ bé của gói hiện tại.
+      </p>
+      <p>Nâng cấp gói hoặc lưu trữ bớt một hồ sơ để tạo hồ sơ mới.</p>
+      <div class="flex flex-wrap gap-2">
+        <NuxtLink
+          class="inline-flex min-h-11 items-center rounded-xl bg-white px-3.5 font-bold text-brand-700 underline dark:bg-surface-800"
+          to="/pricing"
+        >
+          Xem các gói
+        </NuxtLink>
+        <NuxtLink
+          class="inline-flex min-h-11 items-center rounded-xl bg-white px-3.5 font-bold text-brand-700 underline dark:bg-surface-800"
+          to="/me/children"
+        >
+          Quản lý hồ sơ
+        </NuxtLink>
+      </div>
+    </div>
+
     <form
       class="space-y-5 rounded-3xl border-4 border-surface-200 bg-white p-6 shadow-[0_10px_25px_-5px_rgba(30,27,75,0.08)] dark:border-surface-700 dark:bg-surface-800 sm:p-8"
       data-testid="create-child-form"
@@ -152,7 +178,7 @@
           class="flex min-h-12 flex-1 items-center justify-center rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-6 font-heading text-base font-bold text-white shadow-[0_4px_0_var(--color-brand-700)] transition-all hover:bg-brand-500 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-brand-700)] disabled:cursor-not-allowed disabled:opacity-50"
           data-testid="submit-child-btn"
           type="submit"
-          :disabled="isSaving || !displayName"
+          :disabled="isSaving || !displayName || isQuotaReached"
         >
           {{ isSaving ? "Đang lưu..." : "Tạo hồ sơ" }}
         </button>
@@ -175,7 +201,7 @@
     sanitizeRedirectTarget,
   } from "@mindkid/shared/client";
   import BrandEmoji from "@mindkid/ui/brand-emoji";
-  import { computed, ref } from "vue";
+  import { computed, onMounted, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
 
   import { definePageMeta } from "#imports";
@@ -219,6 +245,38 @@
   const isSaving = ref(false);
   const errorMessage = ref<string | null>(null);
   const pendingActivationChildUuid = ref<string | null>(null);
+
+  interface SubscriptionQuota {
+    quota_key: string;
+    used: number;
+    total: number;
+  }
+  interface SubscriptionQuotaResponse {
+    quotas?: SubscriptionQuota[];
+  }
+
+  const quotaUsed = ref(0);
+  const quotaTotal = ref(Number.POSITIVE_INFINITY);
+  // Chỉ để cảnh báo sớm; server vẫn là nơi chặn thật (BR-CPC-07).
+  const isQuotaReached = computed(
+    (): boolean => quotaUsed.value >= quotaTotal.value
+  );
+
+  onMounted(async () => {
+    try {
+      const sub = await api<SubscriptionQuotaResponse>(
+        "/api/users/subscription",
+        { credentials: "include" }
+      );
+      const quota = sub?.quotas?.find((q) => q.quota_key === "child_profiles");
+      if (quota) {
+        quotaUsed.value = quota.used;
+        quotaTotal.value = quota.total;
+      }
+    } catch {
+      // Không lấy được hạn mức: bỏ qua cảnh báo, server vẫn kiểm.
+    }
+  });
 
   const derivedAgeBand = computed((): string =>
     deriveAgeBand(birthYear.value, currentYear)

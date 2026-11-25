@@ -410,7 +410,7 @@
   import { isApiError } from "@mindkid/errors/client";
   import { findCompetency } from "@mindkid/shared/client";
   import { computed, ref, watch } from "vue";
-  import { useFetch, useRoute, useSeoMeta } from "#imports";
+  import { createError, useFetch, useRoute, useSeoMeta } from "#imports";
   import { useApi } from "~/composables/use-api";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
@@ -460,8 +460,19 @@
   const {
     data: curriculum,
     pending,
+    error: fetchError,
     refresh,
-  } = useFetch<CurriculumDetail>(() => `/api/users/curricula/${uuid.value}`);
+  } = await useFetch<CurriculumDetail>(
+    () => `/api/users/curricula/${uuid.value}`
+  );
+
+  if (fetchError.value?.statusCode === 404) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Không tìm thấy lộ trình cá nhân",
+      fatal: true,
+    });
+  }
 
   useSeoMeta({
     title: () =>

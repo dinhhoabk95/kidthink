@@ -69,7 +69,13 @@
 <script lang="ts" setup>
   import { LEGAL_DOCUMENTS, type LegalDocument } from "@mindkid/shared/client";
   import { computed } from "vue";
-  import { definePageMeta, useHead, useRoute, useSeoMeta } from "#imports";
+  import {
+    createError,
+    definePageMeta,
+    useHead,
+    useRoute,
+    useSeoMeta,
+  } from "#imports";
   import PublicNavbar from "~/components/public-navbar.vue";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
@@ -90,6 +96,15 @@
   const doc = computed<LegalDocument | undefined>(() => {
     return LEGAL_DOCUMENTS.find((d) => d.slug === slug.value);
   });
+
+  // Slug ngoài danh sách đóng: 404 thật (BR-LGL), error.vue dựng trang lỗi.
+  if (!doc.value) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Trang không tìm thấy",
+      fatal: true,
+    });
+  }
 
   function formatDate(d: string): string {
     const [year, month, day] = d.split("-");

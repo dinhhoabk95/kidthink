@@ -10,12 +10,12 @@
             class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-warning-100 dark:bg-warning-900/50 text-warning-900 dark:text-warning-200 text-sm font-bold tabular-nums"
           >
             <UIcon class="w-4 h-4 shrink-0" name="i-lucide-sparkles" />
-            <span>{{ props.unitCode }}</span>
+            <span>Hoạt động tại nhà</span>
           </span>
           <span
             class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-brand-100 dark:bg-brand-900/50 text-brand-800 dark:text-brand-200 text-sm font-bold"
           >
-            <span>{{ props.pillarCode }} · {{ pillarLabel }}</span>
+            <span>{{ pillarLabel }}</span>
           </span>
           <span
             class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-200 text-sm font-semibold"
@@ -34,12 +34,6 @@
           class="text-base font-semibold text-brand-700 dark:text-brand-300 leading-relaxed"
         >
           Học phần: {{ props.unitTitle }}
-          <span
-            class="ml-1 font-mono text-sm text-surface-500 dark:text-surface-400"
-            v-if="props.skillCode"
-          >
-            ({{ props.skillCode }})
-          </span>
         </p>
       </div>
 

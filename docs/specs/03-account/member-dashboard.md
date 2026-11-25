@@ -59,6 +59,7 @@ User đã đăng nhập. Cấm Trẻ không thấy trang này.
 | `BR-MDB-05` | Hiện quota còn lại khi **gần hết** (>80%), không phải lúc nào | Hiện thường trực tạo cảm giác bị giới hạn |
 | `BR-MDB-06` | Cấm — **NEVER so sánh giữa các trẻ** trong cùng tài khoản | `BR-PRG-05` |
 | `BR-MDB-07` | Nhắc nâng cấp tối đa **một chỗ** mỗi trang | Nhiều lời mời cùng lúc đọc thành ép mua |
+| `BR-MDB-08` | Bề mặt phụ huynh (`/me`, `/me/library`, `/curricula`, báo cáo) **không hiện mã nội bộ** (`KGM-*`, `C1.*`, `RM-*`, `GL-*`, `C1`…`C6` trần); dùng tên tiếng Việt (tên năng lực lấy từ `competency-catalog`). Gợi ý khi chưa ghi danh không nêu số tuần | Mã là định danh kỹ thuật, không mang nghĩa với phụ huynh |
 
 ## 7. Data
 
