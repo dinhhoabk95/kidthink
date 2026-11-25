@@ -372,16 +372,6 @@ export const C1_CNT_07_SEED: SkillSeed = {
       montessori_ref: "WB04-D1",
     },
     {
-      code: "GL-C1-CNT-TCNT-0149",
-      template: "GT-028",
-      band: "5-6",
-      difficulty: 4,
-      access_tier: "premium",
-      theme: "festival",
-      rounds: 3,
-      montessori_ref: "WB04-D1",
-    },
-    {
       code: "GL-C1-CNT-HIDE-0150",
       template: "GT-022",
       band: "5-6",

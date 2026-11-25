@@ -5,6 +5,7 @@ import {
 } from "@mindkid/game-engine";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  isAudioUrl,
   MAX_DECODED_BITMAP_CACHE_ENTRIES,
   MAX_HIGH_RES_RASTER_PX,
   MAX_STANDARD_RASTER_PX,
@@ -124,6 +125,38 @@ describe("use-item-sprites: Adaptive Raster Cap & ImageBitmap VRAM lifecycle", (
       writable: true,
       value: originalCreateImageBitmap,
     });
+  });
+
+  it("file âm thanh (.mp3...) không bị tải như ảnh sprite", async () => {
+    const loaded: string[] = [];
+    class RecordingImage extends MockHtmlImage {
+      override get src(): string {
+        return super.src;
+      }
+      override set src(value: string) {
+        loaded.push(value);
+        super.src = value;
+      }
+    }
+    Object.defineProperty(globalThis, "Image", {
+      configurable: true,
+      writable: true,
+      value: RecordingImage,
+    });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+
+    await preloadSpritesForSession([
+      { kind: "image", path: "/audio/voice/common/numbers/3.mp3" },
+      { kind: "image", url: "https://cdn.mindkid.test/v.m4a?x=1" },
+      { kind: "image", path: "/s3/real-item.webp" },
+    ]);
+
+    expect(loaded).toContain("/s3/real-item.webp");
+    expect(loaded.some((src) => isAudioUrl(src))).toBe(false);
+    expect(warn).not.toHaveBeenCalled();
+    expect(isAudioUrl("/audio/voice/common/numbers/3.MP3")).toBe(true);
+    expect(isAudioUrl("/s3/a.svg")).toBe(false);
+    warn.mockRestore();
   });
 
   it("resolveSvgRasterSize tính đúng mức standard (cap 256) và highRes (cap 384)", () => {

@@ -220,22 +220,6 @@ export const C5_WRD_04_SEED: SkillSeed = {
   dataset: C5_WRD_04_DATASET,
   levels: [
     {
-      code: "GL-C5-WRD-MEAS-0001",
-      template: "GT-028",
-      band: "5-6",
-      difficulty: 4,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C5-WRD-MEAS-0002",
-      template: "GT-028",
-      band: "5-6",
-      difficulty: 5,
-      theme: "animal",
-      rounds: 3,
-    },
-    {
       code: "GL-C5-WRD-TIME-0001",
       template: "GT-029",
       band: "5-6",

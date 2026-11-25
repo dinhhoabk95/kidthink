@@ -315,21 +315,5 @@ export const C1_ADD_06_SEED: SkillSeed = {
       theme: "art",
       rounds: 3,
     },
-    {
-      code: "GL-C1-ADD-TAP-0020",
-      template: "GT-028",
-      band: "5-6",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-ADD-TAP-0021",
-      template: "GT-028",
-      band: "5-6",
-      difficulty: 2,
-      theme: "farm",
-      rounds: 3,
-    },
   ],
 };

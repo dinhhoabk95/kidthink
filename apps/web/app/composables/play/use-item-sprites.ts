@@ -113,6 +113,13 @@ export function resolveSvgRasterSize(dpr: number, highRes = false): number {
   );
 }
 
+const AUDIO_URL_REGEX = /\.(?:mp3|wav|ogg|oga|m4a|aac|opus|flac)(?:[?#].*)?$/i;
+
+/** File âm thanh không phải sprite: không preload bằng `Image` (lỗi console "Không tải được sprite"). */
+export function isAudioUrl(url: string): boolean {
+  return AUDIO_URL_REGEX.test(url);
+}
+
 function collectImageTarget(
   record: { readonly [key: string]: SpriteScanValue },
   images: Map<string, Set<string>>
@@ -124,7 +131,7 @@ function collectImageTarget(
   const urlKey = typeof record.url === "string" ? record.url.trim() : "";
   const refKey = typeof record.ref === "string" ? record.ref.trim() : "";
   const fetchUrl = urlKey || pathKey || refKey;
-  if (!fetchUrl) {
+  if (!fetchUrl || isAudioUrl(fetchUrl)) {
     return;
   }
   let keys = images.get(fetchUrl);
