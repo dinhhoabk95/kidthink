@@ -1,40 +1,40 @@
 {
   "format": "mindkid-voice-catalog-v1",
   "profile": "teacher-v1",
-  "generated_at": "2026-11-25T16:15:58.957Z",
+  "generated_at": "2026-11-25T18:37:01.092Z",
   "total_entries": 10546,
-  "cached_entries": 34,
-  "missing_entries": 10512,
+  "cached_entries": 10493,
+  "missing_entries": 53,
   "by_category": {
     "round_instruction": {
       "total": 2325,
-      "cached": 0,
-      "missing": 2325
+      "cached": 2325,
+      "missing": 0
     },
     "gt000_step": {
       "total": 6131,
-      "cached": 0,
-      "missing": 6131
+      "cached": 6131,
+      "missing": 0
     },
     "skill_item": {
       "total": 1597,
-      "cached": 0,
-      "missing": 1597
+      "cached": 1597,
+      "missing": 0
     },
     "encouragement": {
       "total": 79,
-      "cached": 0,
-      "missing": 79
+      "cached": 79,
+      "missing": 0
     },
     "koguma_guide": {
       "total": 300,
-      "cached": 0,
-      "missing": 300
+      "cached": 247,
+      "missing": 53
     },
     "kid_ui": {
       "total": 114,
-      "cached": 34,
-      "missing": 80
+      "cached": 114,
+      "missing": 0
     }
   },
   "items": {
