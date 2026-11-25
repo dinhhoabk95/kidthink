@@ -13,6 +13,7 @@ import {
   resolveThemeContainers,
   safeGetItem,
   shuffleDeterministic,
+  visualAssetKey,
 } from "./utils.js";
 
 const WHITESPACE_RUN = /\s+/;
@@ -55,7 +56,7 @@ export const projectGT003: Projection<"GT-003"> = {
     );
     const targetPool = eligibleTargets.length ? eligibleTargets : dataset.items;
     const params = getEngineDifficultyParams("GT-003", opts.difficulty);
-    const targetCount = params.target_count ?? 2;
+    const tableTargetCount = params.target_count ?? 2;
 
     // Vật nhiễu BẮT BUỘC khác vật đích cả ở `id` lẫn ở thuộc tính. Lọc riêng
     // theo `id` để lọt vật cùng `category.type` — một quả cam trong rổ trái
@@ -64,11 +65,19 @@ export const projectGT003: Projection<"GT-003"> = {
     // vật cùng `id` sinh ra `item_id` trùng nhau.
     const assemble = (targetItem: DatasetItem) => {
       const targetAttr = attrOf(targetItem);
+      // Vật nhiễu còn phải **khác hình** vật đích (`BR-E003-10`): lê xanh và
+      // lê vàng cùng vẽ 🍐 thì trẻ không thể phân biệt.
+      const targetKey = visualAssetKey(resolveItemAsset(targetItem, true));
       const otherItems = dataset.items.filter(
-        (i) => i.id !== targetItem.id && attrOf(i) !== targetAttr
+        (i) =>
+          i.id !== targetItem.id &&
+          attrOf(i) !== targetAttr &&
+          visualAssetKey(resolveItemAsset(i, true)) !== targetKey
       );
+      // Ít nhất một vật nhiễu (`BR-E003-10`): bàn chỉ có vật đích thì trẻ bỏ
+      // hết vào giỏ mà không phải phân biệt gì — hai nhóm giống hệt nhau.
       const distractorCount = Math.min(
-        params.distractor_count ?? 0,
+        Math.max(1, params.distractor_count ?? 0),
         otherItems.length
       );
       const chosenDistractors = shuffleDeterministic(otherItems, rng).slice(
@@ -107,6 +116,11 @@ export const projectGT003: Projection<"GT-003"> = {
     }
 
     const { targetItem, targetAttr, chosenDistractors } = picked;
+    // Giữ tổng số vật của bảng tra: vật nhiễu bù thêm thì bớt một vật đích.
+    const targetCount = Math.max(
+      1,
+      Math.min(tableTargetCount, params.item_count - chosenDistractors.length)
+    );
 
     // Thuộc tính là khoá nội bộ, còn danh từ hiển thị đi vào câu đề và nhãn
     // rổ — nó phải đọc được. Nhãn dài kiểu "xếp sách lên kệ gọn gàng" đẩy câu
