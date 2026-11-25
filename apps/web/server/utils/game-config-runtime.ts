@@ -177,6 +177,7 @@ async function runContentAccessGuard(
               guestDeviceId: options.guestDeviceId,
               isManagerPreview: options.isManagerPreview,
               resolvedChildId: ownedChild?.id ?? null,
+              activeKeys: options.activeKeys,
             },
             ownedChild?.id ?? null
           ),

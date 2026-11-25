@@ -5,7 +5,7 @@ area: play
 status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-10-18
+reviewed: 2026-11-25
 owns:
   - Bước 8 của thứ tự kiểm quyền — điều kiện sư phạm
   - Hàng đợi bài làm quen của một trò chơi
@@ -71,17 +71,22 @@ thành hình phạt.
    bao đóng prerequisite bắc cầu của chúng theo `skill_prerequisites`.
 5. Tra ra mọi level **`published`** thuộc template `kind = 'teach'` có `content_skill_map`
    chạm một kỹ năng trong tập. Kỹ năng chưa có bài dạy thì đơn giản là không góp level nào —
-   Cấm — **NEVER** chặn trẻ vì thư viện còn thiếu (`BR-CIG-04`).
-6. Bỏ những level trẻ **đã đi hết** (`BR-CIR-08`). Còn lại là **`intro_queue`**.
-7. `intro_queue` rỗng → **mở**.
-8. Không rỗng → sắp theo **thứ tự topo trên kỹ năng** (cạnh lấy thẳng từ
+   Cấm — **NEVER** chặn trẻ vì thư viện còn thiếu (`BR-CIG-04`). Bỏ luôn level dạy có
+   `access_tier` **cao hơn** bậc người gọi mở được — trẻ không vào được bài đó thì cổng
+   Cấm — **NEVER** đòi nó (`BR-CIG-19`).
+6. Bỏ những level trẻ **đã đi hết** (`BR-CIR-08`). Còn lại là **`Q`**.
+7. `Q` rỗng → **mở**.
+8. **Lượt vào đã trả bài** (`BR-CIG-16`): trẻ đã đi hết **ít nhất một** level dạy trong `L`
+   **sau** phiên gần nhất của chính level đang xin → **mở**. Bài làm quen vừa đi là cái giá
+   của lượt vào này; bài kế đòi ở lượt vào sau.
+9. Còn lại → sắp `Q` theo **thứ tự topo trên kỹ năng** (cạnh lấy thẳng từ
    `skill_prerequisites`, kỹ năng nền đứng trước); các tiết của cùng một chủ đề sắp theo
-   `concept.sequence_no` (`BR-CIM-20`). Cắt còn **2 bài đầu**, trả **428 `INTRO_REQUIRED`** kèm
-   `details.intro_queue[]`, `details.intro_remaining` và `details.return_level_code`.
-9. Client cho trẻ đi lần lượt hàng đợi. Xong bài cuối trong hàng → quay lại
-   `return_level_code`.
-10. Nếu `intro_remaining > 0`, lần vào sau bước 8 dựng lại hàng đợi với hai bài kế. Trẻ đi
-    dần cho tới khi hàng rỗng.
+   `concept.sequence_no` (`BR-CIM-20`). Cắt còn **1 bài đầu** (`intro_queue`), trả
+   **428 `INTRO_REQUIRED`** kèm `details.intro_queue[]`, `details.intro_remaining` và
+   `details.return_level_code`.
+10. Client cho trẻ đi bài trong hàng. Xong → quay lại `return_level_code`, và bước 8 mở cửa.
+11. Lần vào sau (đã có phiên mới của level), nếu `Q` còn bài thì đòi **một** bài kế. Trẻ đi
+    dần, mỗi lượt vào tối đa một bài, cho tới khi `Q` rỗng.
 
 ## 5. Alternative flows
 
@@ -116,7 +121,8 @@ thành hình phạt.
 | `BR-CIG-13` (bậc thang chỉ đi xuống) | Số **kỹ năng** có level chấm nhưng thiếu bài làm quen chỉ được **giảm**. Level chấm mới cho kỹ năng chưa có bài làm quen làm cổng **đỏ** | Không có bậc thang thì `BR-CIG-04` biến thành cửa thoát vĩnh viễn: mọi kỹ năng cứ thiếu bài là cổng cứ mở |
 | `BR-CIG-14` (Cấm nới để qua cổng) | Cấm — **NEVER** thêm kỹ năng vào danh sách miễn trừ chỉ để một đợt nội dung kịp phát hành | `AGENTS.md`: không nới rule chỉ để code hiện tại qua được cổng |
 | `BR-CIG-15` (thứ tự nền trước) | Hàng đợi sắp theo **thứ tự topo trên kỹ năng**, cạnh lấy thẳng từ `skill_prerequisites`. Hai tiết cùng một chủ đề — không có cạnh nào giữa chúng — sắp theo `concept.sequence_no` | Dạy từ trước khi dạy ký tự là dạy ngược. Prerequisite là ràng buộc sư phạm không được nới. Topo không phân biệt được hai tiết cùng chủ đề, nên phải có số thứ tự tường minh — `BR-CIM-20` |
-| `BR-CIG-16` (tối đa 2 bài mỗi lần vào) | Một lần vào trả tối đa **2** bài trong `intro_queue`; phần còn lại đòi ở lần vào sau, kèm `intro_remaining` | Bao đóng prerequisite có thể dài. Chắn một đứa trẻ sau sáu phút bài dạy để tới màn chơi 90 giây là cách chắc chắn nhất làm nó bỏ. Trẻ đi dần vẫn phải qua hết, chỉ là không qua hết trong một hơi |
+| `BR-CIG-16` (tối đa 1 bài mỗi lượt vào) | Một lượt vào đòi tối đa **1** bài (`intro_queue` dài ≤ 1), kèm `intro_remaining = \|Q\| − \|intro_queue\|`. Đi hết bài đó → lượt vào này **mở**: cổng mở khi có level dạy trong `L` được đi hết **sau** phiên gần nhất của chính level đang xin (so `play_sessions.id`, suy từ `play_sessions` theo `BR-CIG-10`). Phần còn lại của `Q` đòi ở lượt vào sau, mỗi lượt một bài | Bao đóng prerequisite có thể dài: đo 2026-11-25, `GL-C1-CDW-ORD-0001` đòi 5 bài (~520 s), một level GT-033 khó đòi 11. Bản cũ (trần 2, chốt 2026-09-06) chỉ cắt **payload**: trẻ đi xong 2 bài quay lại vẫn bị dựng hàng mới và chặn tiếp, nên thực tế vẫn phải qua hết trong một hơi. Trẻ 3–6 tuổi chịu được một bài dạy ngắn trước trò chơi, không chịu được chuỗi bài dạy dài hơn trò chơi. Trẻ đi dần vẫn phải qua hết, chỉ là không qua hết trong một hơi. Đổi trần từ 2 xuống 1 theo yêu cầu người đặt việc 2026-11-25 |
+| `BR-CIG-19` (bài làm quen phải mở được với trẻ) | `L` chỉ gồm level dạy có `access_tier` nằm trong bậc người gọi vào được ở bước 4–5 của cùng thứ tự kiểm quyền: khách và người dùng chưa chọn hồ sơ trẻ chỉ `free`; trẻ đã chọn hồ sơ theo `allowedTiers(caller, activeKeys)`. Level dạy bậc cao hơn **bỏ khỏi hàng đợi**, không chặn | Đo 2026-11-25: `GL-C1-ADD-TAP-0001` (free) đòi `GL-C1-NCOMP-INTRO-6005` (premium) → khách bị 403 và người dùng chưa chọn hồ sơ bị 428 `NO_ACTIVE_CHILD` khi mở bài làm quen, kẹt vĩnh viễn ở trò chơi free. Đòi một bài trẻ không mở được là khoá bằng tiền đội lốt điều kiện sư phạm — trái `BR-CIG-11`. Cùng lập trường `BR-CIG-04`: thiếu bài (với trẻ này) thì mở |
 | `BR-CIG-18` (cổng phải có người gọi) | Cổng bậc thang mục 7.4 BẮT BUỘC được gọi bởi một script có tên trong `package.json` và chạy trong gate tự động (`scripts/check.sh` và `check:intro-coverage` **đã gỡ** 2026-10-31: hiện **chưa có cổng nào chạy**, luật giữ bằng review cho tới khi dựng lại cổng trong `tests/gates/` của workspace). Ca âm mục 7.4 BẮT BUỘC tồn tại | Đo 2026-09-06: `scripts/check-intro-coverage.ts` cài đặt đúng `BR-CIG-13` nhưng **không script nào gọi nó** — không `package.json`, không `lefthook.yml`, không `check.sh`. Nợ 392 tăng tự do suốt thời gian đó. Một cổng không ai gọi là tài liệu, không phải cổng |
 | `BR-CIG-17` (bao đóng, không phải một tầng) | Tập kỹ năng gồm cả prerequisite **bắc cầu**, không chỉ tầng liền kề. Cấm — **NEVER** gom về strand ở bất cứ bước nào | Chặn ở một tầng thì trẻ vào được màn chơi mà vẫn thiếu nền hai tầng dưới — đúng lỗ hổng file này đang vá. Gom về strand thì mất cạnh giữa hai kỹ năng cùng strand, và một bài dạy của strand mở khoá cho cả 11 kỹ năng khác chưa được dạy |
 
@@ -149,9 +155,12 @@ cuối**, không chèn vào giữa, và không bước nào đang có đổi v�
 K  = { skill_code của level trong content_skill_map }
 K+ = K ∪ bao đóng bắc cầu qua skill_prerequisites          [BR-CIG-17]
 E  = { (a, b) ∈ skill_prerequisites : a, b ∈ K+ }
-L  = { level dạy published chạm một kỹ năng trong K+ }     [BR-CIG-04]
+L  = { level dạy published chạm một kỹ năng trong K+,
+       access_tier ∈ bậc người gọi mở được }              [BR-CIG-04, BR-CIG-19]
 Q  = { l ∈ L : trẻ chưa đi hết l }                         [BR-CIG-02, BR-CIR-08]
-intro_queue = topo_sort(Q by skill, E, then sequence_no)[0..2]   [BR-CIG-15, BR-CIG-16]
+paid = ∃ phiên completed của một l ∈ L có id > id phiên gần nhất của level đang xin
+Q = ∅ hoặc paid  → mở                                       [BR-CIG-16]
+intro_queue = topo_sort(Q by skill, E, then sequence_no)[0..1]   [BR-CIG-15, BR-CIG-16]
 intro_remaining = |Q| − |intro_queue|
 ```
 
@@ -161,14 +170,16 @@ trình thì bỏ cạnh gây chu trình, log cảnh báo, và chạy tiếp — 
 
 ### 7.3 Ô phải có test
 
-| Trạng thái trẻ \ Hàng đợi | Rỗng vì không kỹ năng nào có bài | Rỗng vì đã đi hết | 1 bài | 3 bài (cắt còn 2) |
+| Trạng thái trẻ \ Hàng đợi | Rỗng vì không kỹ năng nào có bài | Rỗng vì đã đi hết | 1 bài | 3 bài (cắt còn 1) |
 |---|:--:|:--:|:--:|:--:|
-| Khách (`guest_device_id`) | 200 | 200 | **428** | **428** + `intro_remaining = 1` |
-| Trẻ đã chọn hồ sơ | 200 | 200 | **428** | **428** + `intro_remaining = 1` |
+| Khách (`guest_device_id`) | 200 | 200 | **428** | **428** + `intro_remaining = 2` |
+| Trẻ đã chọn hồ sơ | 200 | 200 | **428** | **428** + `intro_remaining = 2` |
 
 Cộng bốn ca âm bắt buộc: preview **không** bị chặn và **không** ghi hoàn thành · level
 `kind = 'teach'` **không** bị chính nó chặn · phiên `abandoned` **không** mở cổng ·
-prerequisite bắc cầu hai tầng **có** vào hàng đợi.
+prerequisite bắc cầu hai tầng **có** vào hàng đợi. Cộng ca của `BR-CIG-19`: level free với bài
+làm quen premium **không** chặn khách · và của `BR-CIG-16`: đi xong một bài thì lượt vào đó mở,
+lượt vào sau đòi bài kế.
 
 ### 7.4 Cổng bậc thang độ phủ
 
@@ -230,7 +241,7 @@ khi có số đo.
 theo đúng `IntroQueueItem` trong
 [`packages/shared/src/access-gating.ts`](../../../packages/shared/src/access-gating.ts).
 
-Route này tồn tại để danh mục hiện nhãn "Học trước — 2 bài" **mà không phải ăn một 428**. Nó
+Route này tồn tại để danh mục hiện nhãn "Học trước — 1 bài" **mà không phải ăn một 428**. Nó
 Cấm — **NEVER** là nơi cưỡng chế; cưỡng chế ở bước 8 của `assertContentAccess` (`BR-CIG-05`).
 
 ### `GET /api/guest/levels/{code}/readiness`
@@ -315,11 +326,22 @@ Scenario: BR-CIG-15 — nền đứng trước
   When cổng dựng hàng đợi
   Then bài của Z đứng trước bài của Y
 
-Scenario: BR-CIG-16 — tối đa hai bài một lần vào
+Scenario: BR-CIG-16 — tối đa một bài một lượt vào
   Given hàng đợi có 5 bài dạy còn thiếu
   When client xin config
-  Then intro_queue có đúng 2 phần tử
-  And intro_remaining bằng 3
+  Then intro_queue có đúng 1 phần tử
+  And intro_remaining bằng 4
+
+Scenario: BR-CIG-16 — đi xong bài được đòi thì lượt vào đó mở
+  Given hàng đợi có 3 bài dạy còn thiếu và trẻ vừa đi hết bài đầu
+  When client xin lại config của level đang chờ
+  Then trả 200
+  And lần vào sau (đã có phiên mới của level) trả 428 với intro_remaining bằng 0
+
+Scenario: BR-CIG-19 — bài làm quen bậc cao không chặn trò chơi free
+  Given level free gắn kỹ năng X, bài làm quen duy nhất của X có access_tier premium
+  When khách xin config
+  Then trả 200
 
 Scenario: BR-CIG-04 — kỹ năng chưa có bài làm quen thì không chặn
   Given mọi kỹ năng trong tập đều chưa có bài làm quen published
@@ -380,7 +402,7 @@ Scenario: Bảy bước cũ không đổi trạng thái
 - Luôn chụp danh sách `trạng-thái | tên-test` của 20 ô cũ trước và sau khi thêm bước 8, và đòi **trùng khít**.
 
 **Ask first**
-- Đổi trần 2 bài mỗi lần vào của `BR-CIG-16`, hoặc đòi hết hàng đợi trong một lần.
+- Đổi trần 1 bài mỗi lượt vào của `BR-CIG-16`, hoặc đòi hết hàng đợi trong một lần.
 - Miễn cổng cho một kỹ năng cụ thể (`BR-CIG-14` cấm làm việc này để kịp phát hành).
 - Đổi `BR-CIG-02` sang đòi trả lời đúng ở `recall`.
 - Denormalise trạng thái làm quen thành bảng riêng (cần số đo hiệu năng trước).

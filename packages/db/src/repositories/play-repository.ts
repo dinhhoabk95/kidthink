@@ -337,6 +337,36 @@ export class PlaySessionsRepository extends BaseRepository {
     return uniq(rows.map((row) => row.gameLevel.code));
   }
 
+  /**
+   * Id phiên không-preview mới nhất của chủ thể trên một tập mã level
+   * (`BR-CIG-16`: so thứ tự phiên bằng `id` tự tăng, không so đồng hồ).
+   */
+  async findLatestSessionIdForLevelCodes(
+    childProfileId: number | null,
+    guestDeviceId: string | undefined,
+    levelCodes: readonly string[],
+    options: { readonly completedOnly?: boolean } = {}
+  ): Promise<number | null> {
+    const owner = resolveOwnerFilter(childProfileId, guestDeviceId);
+    const codes = uniq(levelCodes);
+    if (!owner || codes.length === 0) {
+      return null;
+    }
+    const row = await this.db.query.playSessions.findFirst({
+      columns: { id: true },
+      where: {
+        isPreview: false,
+        ...owner,
+        ...(options.completedOnly
+          ? { completionStatus: PLAY_COMPLETION_STATUS.COMPLETED }
+          : {}),
+        gameLevel: { code: { in: codes } },
+      },
+      orderBy: { id: "desc" },
+    });
+    return row?.id ?? null;
+  }
+
   async listLevelStatusesForChild(
     childProfileId: number
   ): Promise<PlaySessionWithGameLevelEntity[]> {

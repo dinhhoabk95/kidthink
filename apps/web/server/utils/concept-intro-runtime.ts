@@ -1,4 +1,5 @@
 import {
+  ACCESS_TIER_CODEC,
   CONTENT_ENTITY_TYPE,
   type JsonRecord,
   type OwnerDb,
@@ -8,12 +9,19 @@ import {
   type MindKidRepositories,
 } from "@mindkid/db/repositories";
 import { ALL_TEMPLATES, getGameTemplate } from "@mindkid/game-engine/registry";
-import type {
-  CallerIdentity,
-  IntroCheckResult,
-  IntroQueueItem,
+import {
+  type AccessTier,
+  allowedTiers,
+  type CallerIdentity,
+  type EntitlementKey,
+  type IntroCheckResult,
+  type IntroQueueItem,
 } from "@mindkid/shared";
+import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 import { useOwnerRepositories } from "#server/utils/repositories";
+
+/** `BR-CIG-16`: một lượt vào đòi tối đa một bài làm quen. */
+export const MAX_INTROS_PER_ENTRY = 1;
 
 interface TopologicalSkill {
   id: number;
@@ -47,6 +55,8 @@ export interface CheckLevelIntroOptions {
   guestDeviceId?: string;
   isManagerPreview?: boolean;
   resolvedChildId?: number | null;
+  /** Entitlement đang hiệu lực của người gọi; vắng thì tự tra (`BR-CIG-19`). */
+  activeKeys?: EntitlementKey[];
 }
 
 export interface ResolveIntroResumeParams {
@@ -193,6 +203,30 @@ export async function findCompletedLevelCodes(
   );
 }
 
+/**
+ * `BR-CIG-19`: bậc mà người gọi mở được ở bước 4–5 của cùng thứ tự kiểm quyền.
+ * Khách và người dùng chưa chọn hồ sơ trẻ chỉ vào được `free` (bậc khác trả
+ * 403 `TIER_LOCKED` hoặc 428 `NO_ACTIVE_CHILD`).
+ */
+async function resolvePlayableIntroTiers(
+  caller: CallerIdentity,
+  activeKeys: EntitlementKey[] | undefined
+): Promise<ReadonlySet<AccessTier>> {
+  if (caller.kind === "manager") {
+    return new Set(await allowedTiers(caller, activeKeys ?? []));
+  }
+  if (caller.kind !== "user" || !caller.active_child_id) {
+    return new Set<AccessTier>(["free"]);
+  }
+  const userId = Number(caller.user_id);
+  const keys =
+    activeKeys ??
+    (Number.isInteger(userId) && userId > 0
+      ? await resolveUserActiveEntitlements(userId)
+      : []);
+  return new Set(await allowedTiers(caller, keys));
+}
+
 async function sortIntroLevelsTopologically(
   repos: MindKidRepositories,
   uncompletedLevels: IntroLevelRow[]
@@ -299,7 +333,15 @@ export async function checkLevelIntroRequired(
     teachTemplateCodes,
     transitiveSkillIds
   );
-  const introLevels: IntroLevelRow[] = rawIntroLevels.flatMap((lvl) =>
+  // BR-CIG-19: bài làm quen trẻ không mở được thì không đòi.
+  const playableTiers = await resolvePlayableIntroTiers(
+    caller,
+    options.activeKeys
+  );
+  const playableIntroLevels = rawIntroLevels.filter((lvl) =>
+    playableTiers.has(ACCESS_TIER_CODEC.toLabel(lvl.accessTier))
+  );
+  const introLevels: IntroLevelRow[] = playableIntroLevels.flatMap((lvl) =>
     lvl.skillMaps.map((sm) => ({
       levelId: lvl.id,
       levelCode: lvl.code,
@@ -333,11 +375,33 @@ export async function checkLevelIntroRequired(
     return { intro_required: false };
   }
 
+  // BR-CIG-16: đã đi hết một bài làm quen kể từ phiên gần nhất của level này
+  // → lượt vào này đã trả bài, mở.
+  const [lastIntroCompletedId, lastEntryId] = await Promise.all([
+    repos.playSessions.findLatestSessionIdForLevelCodes(
+      childProfileId,
+      options.guestDeviceId,
+      playableIntroLevels.map((l) => l.code),
+      { completedOnly: true }
+    ),
+    repos.playSessions.findLatestSessionIdForLevelCodes(
+      childProfileId,
+      options.guestDeviceId,
+      [level.code]
+    ),
+  ]);
+  if (
+    lastIntroCompletedId !== null &&
+    (lastEntryId === null || lastIntroCompletedId > lastEntryId)
+  ) {
+    return { intro_required: false };
+  }
+
   const fullQueue = await sortIntroLevelsTopologically(
     repos,
     uncompletedLevels
   );
-  const introQueue = fullQueue.slice(0, 2);
+  const introQueue = fullQueue.slice(0, MAX_INTROS_PER_ENTRY);
   const introRemaining = fullQueue.length - introQueue.length;
 
   return {
