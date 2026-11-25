@@ -28,7 +28,7 @@
     "db:migrate": "pnpm --filter @mindkid/db run migrate",
     "db:seed": "pnpm --filter @mindkid/db run seed && pnpm --filter @mindkid/content-build run seed:all",
     "db:local:init": "pnpm --filter @mindkid/db run sqlite:init",
-    "db:local:seed": "pnpm --filter @mindkid/db run sqlite:seed && DB_CONNECTION=sqlite MINDKID_SEED_MASTER_ONLY=1 pnpm --filter @mindkid/content-build run seed:all",
+    "db:local:seed": "pnpm --filter @mindkid/db run sqlite:seed && DB_CONNECTION=sqlite pnpm --filter @mindkid/content-build run seed:all",
     "verify:cf-budget": "tsx scripts/deploy/verify-cf-budget.ts"
   },
   "devDependencies": {

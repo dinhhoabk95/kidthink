@@ -162,6 +162,23 @@ function assembleFromGroup(
     rng
   ).slice(0, distractorCount);
 
+  // Dataset có ký hiệu thì bàn chơi phải cho trẻ thấy ký hiệu đó (`BR-SDS-03`).
+  // Chỉ đổi khi vòng đã chọn chưa có ký hiệu nào, nên vòng đạt giữ nguyên.
+  const showsGlyph = [...targetSources, ...distractorSources].some((i) =>
+    Boolean(i.glyph)
+  );
+  if (!showsGlyph) {
+    const glyphTarget = group.distinctTargets.find((i) => Boolean(i.glyph));
+    const glyphDistractor = group.distinctDistractors.find((i) =>
+      Boolean(i.glyph)
+    );
+    if (glyphTarget && targetSources.length > 0) {
+      targetSources[targetSources.length - 1] = glyphTarget;
+    } else if (glyphDistractor && distractorSources.length > 0) {
+      distractorSources[distractorSources.length - 1] = glyphDistractor;
+    }
+  }
+
   const chosenTargets = targetSources.map((src, idx) =>
     buildRichGT002Item(src, `${src.id}_t${idx + 1}`, true, skillCode, opts)
   );

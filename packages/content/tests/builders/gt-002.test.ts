@@ -7,8 +7,35 @@ import { assetKey, countPromptWords } from "#src/builders/utils";
 import { ALL_SKILL_SEEDS } from "#src/skills/index";
 
 const REGEX_BR_E002_04 = /\[BR-E002-04\]/;
+const ITEM_SUFFIX_RE = /_[td]\d+$/;
 
 describe("GT-002 Builder — Đa cá thể cùng thuộc tính & Biểu diễn tư duy (Task #318)", () => {
+  it("BR-SDS-03: dataset có glyph thì vòng nhóm theo category.type vẫn hiện ít nhất một vật mang glyph (C1.MEAS.12)", () => {
+    const seed = ALL_SKILL_SEEDS.find(
+      (s) => s.dataset.skill_code === "C1.MEAS.12"
+    );
+    expect(seed).toBeDefined();
+    if (!seed) {
+      return;
+    }
+    const glyphItemIds = new Set(
+      seed.dataset.items.filter((i) => i.glyph).map((i) => i.id)
+    );
+    expect(glyphItemIds.size).toBeGreaterThan(0);
+    for (let s = 1; s <= 40; s++) {
+      const pack = projectGT002.project(seed.dataset, {
+        band: "4-5",
+        difficulty: 1,
+        theme: "school",
+        seed: s,
+      });
+      const shown = pack.content_pack.items.some((it) =>
+        glyphItemIds.has(it.item_id.replace(ITEM_SUFFIX_RE, ""))
+      );
+      expect(shown).toBe(true);
+    }
+  });
+
   it("ca âm [BR-E002-04]: dataset toàn asset trùng lặp ném lỗi rõ ràng", () => {
     const identicalDataset: SkillDataset = {
       skill_code: "C1.TEST.SAME",
