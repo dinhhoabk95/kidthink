@@ -44,7 +44,6 @@ export const C1_PAT_03_DATASET: SkillDataset = {
     {
       id: "pat_a1",
       label: "trái tim đỏ",
-      glyph: "A1",
       value: 1,
       image: {
         kind: "emoji",
@@ -59,7 +58,6 @@ export const C1_PAT_03_DATASET: SkillDataset = {
     {
       id: "pat_b1",
       label: "viên kim cương",
-      glyph: "B1",
       value: 2,
       image: {
         kind: "emoji",
@@ -74,7 +72,6 @@ export const C1_PAT_03_DATASET: SkillDataset = {
     {
       id: "pat_a2",
       label: "trái tim hồng",
-      glyph: "A2",
       value: 3,
       image: {
         kind: "emoji",
@@ -89,7 +86,6 @@ export const C1_PAT_03_DATASET: SkillDataset = {
     {
       id: "pat_a3",
       label: "trái tim cam",
-      glyph: "A3",
       value: 4,
       image: {
         kind: "emoji",
@@ -104,7 +100,6 @@ export const C1_PAT_03_DATASET: SkillDataset = {
     {
       id: "pat_b2",
       label: "chiếc nhẫn ngọc",
-      glyph: "B2",
       value: 5,
       image: {
         kind: "emoji",
@@ -119,7 +114,6 @@ export const C1_PAT_03_DATASET: SkillDataset = {
     {
       id: "pat_a4",
       label: "trái tim vàng",
-      glyph: "A4",
       value: 6,
       image: {
         kind: "emoji",

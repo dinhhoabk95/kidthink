@@ -5,7 +5,12 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
-import { createRng, resolveItemAsset, shuffleDeterministic } from "./utils.js";
+import {
+  assetKey,
+  createRng,
+  resolveItemAsset,
+  shuffleDeterministic,
+} from "./utils.js";
 
 export const projectGT036: Projection<"GT-036"> = {
   template: "GT-036",
@@ -19,19 +24,25 @@ export const projectGT036: Projection<"GT-036"> = {
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const params = getEngineDifficultyParams("GT-036", opts.difficulty);
-    const paletteCount = Math.min(
-      params.palette_size ?? 2,
-      dataset.items.length
-    );
-    const chosenItems = shuffleDeterministic(dataset.items, rng).slice(
-      0,
-      paletteCount
-    );
-
-    const palette = chosenItems.map((item) => ({
-      id: item.id,
-      asset: resolveItemAsset(item, true),
-    }));
+    // Mỗi ô của chuỗi lặp phải nhìn ra là ô nào (`BR-E036-15`): hai vật cùng
+    // hình thì chuỗi "A B A B" đọc thành "A A A A".
+    const seen = new Set<string>();
+    const distinct = shuffleDeterministic(dataset.items, rng)
+      .map((item) => ({ id: item.id, asset: resolveItemAsset(item, true) }))
+      .filter((entry) => {
+        const key = assetKey(entry.asset);
+        if (seen.has(key)) {
+          return false;
+        }
+        seen.add(key);
+        return true;
+      });
+    if (distinct.length < 2) {
+      throw new Error(
+        `[BR-E036-15] Dataset ${dataset.skill_code} có ít hơn 2 vật khác hình cho GT-036`
+      );
+    }
+    const palette = distinct.slice(0, params.palette_size ?? 2);
 
     return {
       content_pack: {

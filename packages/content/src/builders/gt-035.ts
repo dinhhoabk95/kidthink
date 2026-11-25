@@ -5,10 +5,20 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
-import { createRng, resolveItemAsset, safeGetItem } from "./utils.js";
+import {
+  assetKey,
+  createRng,
+  resolveItemAsset,
+  shuffleDeterministic,
+} from "./utils.js";
 
 /** Bậc độ khó cao nhất còn dùng lệnh tuyệt đối (`BR-E035-15`). */
 export const GT035_ABSOLUTE_MAX_DIFFICULTY = 2;
+
+/** Đích luôn là lá cờ (`BR-E035-18`, nhịp `N2`: "`goal` có cờ"). */
+export const GT035_GOAL_ASSET = { kind: "emoji", ref: "🏁" } as const;
+/** Vật nhặt dự phòng khi mọi vật của dataset trùng hình lá cờ đích. */
+const GT035_FALLBACK_COLLECTIBLE = { kind: "emoji", ref: "⭐" } as const;
 
 export const projectGT035: Projection<"GT-035"> = {
   template: "GT-035",
@@ -22,10 +32,14 @@ export const projectGT035: Projection<"GT-035"> = {
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const params = getEngineDifficultyParams("GT-035", opts.difficulty);
-    const baseItem = safeGetItem(
-      dataset.items,
-      rng.nextInt(dataset.items.length)
-    );
+    // Vật nhặt là vật của dataset nhưng không được trùng hình lá cờ đích
+    // (`BR-E035-18`): đích và vật nhặt giống nhau thì trẻ không biết đâu là đích.
+    const goalKey = assetKey(GT035_GOAL_ASSET);
+    const collectibleAsset =
+      shuffleDeterministic(dataset.items, rng)
+        .map((item) => resolveItemAsset(item, true))
+        .find((asset) => assetKey(asset) !== goalKey) ??
+      GT035_FALLBACK_COLLECTIBLE;
 
     const collectibleCount = params.collectible_count ?? 1;
     const obstacleCount = params.obstacle_count ?? 0;
@@ -46,19 +60,19 @@ export const projectGT035: Projection<"GT-035"> = {
       ? {
           col: Math.min(cols - 1, Math.max(collectibleCount, maxCommands - 2)),
           row: 1,
-          asset: resolveItemAsset(baseItem, true),
+          asset: GT035_GOAL_ASSET,
         }
       : {
           col: cols - 1,
           row: 0,
-          asset: resolveItemAsset(baseItem, true),
+          asset: GT035_GOAL_ASSET,
         };
 
     const collectibles = Array.from({ length: collectibleCount }, (_, i) => ({
       id: `c_${i + 1}`,
       col: i + 1,
       row: 0,
-      asset: resolveItemAsset(baseItem, true),
+      asset: collectibleAsset,
     }));
 
     const obstacles = Array.from(

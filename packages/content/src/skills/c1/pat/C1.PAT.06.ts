@@ -219,22 +219,6 @@ export const C1_PAT_06_SEED: SkillSeed = {
   dataset: C1_PAT_06_DATASET,
   levels: [
     {
-      code: "GL-C1-PAT-WEAVE-0006",
-      template: "GT-033",
-      band: "5-6",
-      difficulty: 3,
-      theme: "home",
-      rounds: 3,
-    },
-    {
-      code: "GL-C1-PAT-WEAVE-0007",
-      template: "GT-033",
-      band: "5-6",
-      difficulty: 4,
-      theme: "nature",
-      rounds: 3,
-    },
-    {
       code: "GL-C3-GAP-SLOT-0001",
       template: "GT-008",
       band: "3-4",
@@ -248,6 +232,25 @@ export const C1_PAT_06_SEED: SkillSeed = {
       band: "3-4",
       difficulty: 2,
       theme: "farm",
+      rounds: 3,
+    },
+    // Quy luật tăng dần là bài sắp thứ tự (GT-006). Hai level dệt GT-033 cũ
+    // (WEAVE-0006/0007) bị gỡ: khung dệt dạy quy luật màu, số trên cuộn len
+    // không dạy được "tăng dần" (`BR-E033-09`, review 2026-11-25).
+    {
+      code: "GL-C1-PAT-ORD-0601",
+      template: "GT-006",
+      band: "5-6",
+      difficulty: 3,
+      theme: "home",
+      rounds: 3,
+    },
+    {
+      code: "GL-C1-PAT-ORD-0602",
+      template: "GT-006",
+      band: "5-6",
+      difficulty: 4,
+      theme: "nature",
       rounds: 3,
     },
   ],

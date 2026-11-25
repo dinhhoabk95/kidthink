@@ -5,12 +5,20 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
-import {
-  createRng,
-  resolveItemAsset,
-  safeGetItem,
-  shuffleDeterministic,
-} from "./utils.js";
+import { createRng, shuffleDeterministic } from "./utils.js";
+
+/**
+ * Màu len thật của khung dệt (`BR-E033-09`): `color_id` là khoá màu engine vẽ
+ * được, chấm màu cùng màu, tên đọc là tên màu. Cấm — NEVER lấy tên vật của
+ * dataset làm tên cuộn len: "xe taxi vàng" dưới cuộn len đỏ là đề nói dối.
+ */
+export const GT033_YARN_COLORS = [
+  { color_id: "red", ref: "🔴", name_vi: "len đỏ" },
+  { color_id: "blue", ref: "🔵", name_vi: "len xanh dương" },
+  { color_id: "yellow", ref: "🟡", name_vi: "len vàng" },
+  { color_id: "green", ref: "🟢", name_vi: "len xanh lá" },
+  { color_id: "purple", ref: "🟣", name_vi: "len tím" },
+] as const;
 
 function buildWeaveCells(
   gridSize: number,
@@ -47,16 +55,13 @@ export const projectGT033: Projection<"GT-033"> = {
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const params = getEngineDifficultyParams("GT-033", opts.difficulty);
-    const shuffled = shuffleDeterministic(dataset.items, rng);
-
-    const palette = Array.from({ length: params.item_count }, (_, i) => {
-      const item = safeGetItem(shuffled, i % shuffled.length);
-      return {
-        color_id: `col_${item.id}_${i + 1}`,
-        asset: resolveItemAsset(item, true),
-        name_vi: item.label,
-      };
-    });
+    const palette = shuffleDeterministic(GT033_YARN_COLORS, rng)
+      .slice(0, params.item_count)
+      .map((c) => ({
+        color_id: c.color_id,
+        asset: { kind: "emoji" as const, ref: c.ref },
+        name_vi: c.name_vi,
+      }));
 
     const gridSize = params.grid_size ?? 3;
     const blankCount = params.blank_count ?? 1;

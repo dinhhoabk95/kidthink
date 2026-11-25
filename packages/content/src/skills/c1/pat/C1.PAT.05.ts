@@ -44,7 +44,6 @@ export const C1_PAT_05_DATASET: SkillDataset = {
     {
       id: "pat_a1",
       label: "ô tô đỏ",
-      glyph: "A1",
       value: 1,
       image: {
         kind: "emoji",
@@ -59,7 +58,6 @@ export const C1_PAT_05_DATASET: SkillDataset = {
     {
       id: "pat_a2",
       label: "xe taxi vàng",
-      glyph: "A2",
       value: 2,
       image: {
         kind: "emoji",
@@ -74,7 +72,6 @@ export const C1_PAT_05_DATASET: SkillDataset = {
     {
       id: "pat_b1",
       label: "xe buýt lớn",
-      glyph: "B1",
       value: 3,
       image: {
         kind: "emoji",
@@ -89,7 +86,6 @@ export const C1_PAT_05_DATASET: SkillDataset = {
     {
       id: "pat_b2",
       label: "xe tải hàng",
-      glyph: "B2",
       value: 4,
       image: {
         kind: "emoji",
@@ -104,7 +100,6 @@ export const C1_PAT_05_DATASET: SkillDataset = {
     {
       id: "pat_a3",
       label: "xe cảnh sát",
-      glyph: "A3",
       value: 5,
       image: {
         kind: "emoji",
@@ -119,7 +114,6 @@ export const C1_PAT_05_DATASET: SkillDataset = {
     {
       id: "pat_b3",
       label: "xe cứu hoả",
-      glyph: "B3",
       value: 6,
       image: {
         kind: "emoji",
