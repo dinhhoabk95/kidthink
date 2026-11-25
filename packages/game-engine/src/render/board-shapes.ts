@@ -597,7 +597,8 @@ interface IsometricFit {
 function fitIsometric(
   box: SceneBox,
   ordered: readonly CubeCoord[],
-  baseSize: number
+  baseSize: number,
+  anchor: "center" | "bottom" = "center"
 ): IsometricFit {
   const unit = ordered.map((cube) => projectIsometric(cube, 0, 0, 1));
   const minX = Math.min(...unit.map((p) => p.screenX)) - 1;
@@ -615,7 +616,11 @@ function fitIsometric(
   return {
     size,
     cx: box.x + box.w / 2 - ((minX + maxX) / 2) * size,
-    cy: box.y + box.h / 2 - ((minY + maxY) / 2) * size,
+    // `bottom`: đáy mô hình chạm đáy khung (đứng trên mặt bàn, không lơ lửng).
+    cy:
+      anchor === "bottom"
+        ? box.y + box.h - CUBE_STROKE_PAD_PX - maxY * size
+        : box.y + box.h / 2 - ((minY + maxY) / 2) * size,
   };
 }
 
@@ -646,15 +651,25 @@ export function drawIsometricModel(
   box: SceneBox,
   model: readonly CubeCoord[],
   rotation: RotationAngle,
-  /** Có thì co và căn mô hình vào trọn `box` (`BR-PSZ-01`); không thì giữ bố cục cũ. */
-  fit = false
+  /**
+   * Có thì co và căn mô hình vào trọn `box` (`BR-PSZ-01`); `"bottom"` thì neo đáy
+   * mô hình vào đáy khung; không thì giữ bố cục cũ.
+   */
+  fit: boolean | "bottom" = false
 ): void {
   if (model.length === 0) {
     return;
   }
   const ordered = getCachedSortedCubes(model, rotation);
   const baseSize = Math.min(box.w, box.h) / 6;
-  const fitted = fit ? fitIsometric(box, ordered, baseSize) : undefined;
+  const fitted = fit
+    ? fitIsometric(
+        box,
+        ordered,
+        baseSize,
+        fit === "bottom" ? "bottom" : "center"
+      )
+    : undefined;
   const size = fitted?.size ?? baseSize;
   const cx = fitted?.cx ?? box.x + box.w / 2;
   const cy = fitted?.cy ?? box.y + box.h * 0.62;

@@ -51,17 +51,21 @@ const projectedModelCache = new WeakMap<
   Map<string, GT017ProjectedModel>
 >();
 
+/** Phần bán kính chiều sâu (`ry`) dưới tâm bàn xoay mà đáy mô hình chạm tới. */
+export const MODEL_BASE_DEPTH = 0.35;
+
 export function computeGT017HeroLayout(heroBox: SceneBox): GT017HeroLayout {
   const minDim = Math.min(heroBox.w, heroBox.h);
   const pad = Math.max(4, Math.round(minDim * 0.04));
   const badgeSize = Math.max(22, Math.min(40, Math.round(minDim * 0.16)));
   const mw = Math.round(heroBox.w * 0.78);
-  const mh = Math.round(heroBox.h * 0.74);
   const mx = Math.round(heroBox.x + (heroBox.w - mw) * 0.5);
   const my = Math.round(heroBox.y + heroBox.h * 0.05);
   const rimH = Math.max(5, Math.round(heroBox.h * 0.042));
   const ry = Math.max(12, Math.round(heroBox.h * 0.135));
   const cy = Math.round(heroBox.y + heroBox.h - pad - rimH - ry);
+  // Đáy khung mô hình chạm mặt bàn xoay: khối đứng trên bàn, không lơ lửng.
+  const mh = Math.max(1, cy + Math.round(ry * MODEL_BASE_DEPTH) - my);
   const cx = Math.round(heroBox.x + heroBox.w * 0.5);
   const knobR = Math.max(9, Math.min(16, Math.round(minDim * 0.07)));
   const maxRx = Math.max(24, Math.round(heroBox.w * 0.5 - pad - knobR * 2.4));
@@ -127,7 +131,8 @@ export function computeGT017ProjectedModel(
     )
   );
   const cx = box.x + box.w / 2 - ((minX + maxX) / 2) * size;
-  const cy = box.y + box.h / 2 - ((minY + maxY) / 2) * size;
+  // Neo đáy mô hình vào đáy khung (mặt bàn xoay), khớp `drawIsometricModel(..., "bottom")`.
+  const cy = box.y + box.h - 2 - maxY * size;
   const projected: GT017ProjectedModel = {
     size,
     cubes: ordered.map((c) => {

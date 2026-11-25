@@ -4,6 +4,10 @@ import {
   SAMPLE_LEVEL_2,
   SAMPLE_LEVEL_3,
 } from "#src/templates/GT-017/fixtures";
+import {
+  computeGT017HeroLayout,
+  computeGT017ProjectedModel,
+} from "#src/templates/GT-017/layout";
 import { BlockStackSession } from "#src/templates/GT-017/session";
 import template, {
   GT017BaseSchema,
@@ -174,6 +178,35 @@ describe("GT-017: Đếm khối lập phương 3D (block-stack)", () => {
         });
         expect(verdict?.valid).toBe(true);
         expect(session.checkWinCondition()).toBe(true);
+      }
+    });
+  });
+
+  describe("Khối đứng trên bàn xoay, không lơ lửng", () => {
+    it("đáy mô hình nằm trong mặt elip bàn xoay ở mọi góc xoay", () => {
+      const hero = computeGT017HeroLayout({ x: 30, y: 260, w: 420, h: 480 });
+      const { cx, cy, rx, ry } = hero.turntable;
+      const model = SAMPLE_LEVEL_1.content_pack.model;
+      for (const rotation of [0, 90, 180, 270] as const) {
+        const projected = computeGT017ProjectedModel(
+          hero.modelBox,
+          model,
+          rotation
+        );
+        // sy là đỉnh mặt trên; đáy khối thấp nhất = sy + 1,5 cạnh.
+        const bottom = Math.max(
+          ...projected.cubes.map((c) => c.sy + projected.size * 1.5)
+        );
+        expect(bottom).toBeGreaterThan(cy - ry);
+        expect(bottom).toBeLessThanOrEqual(cy + ry);
+        const left = Math.min(
+          ...projected.cubes.map((c) => c.sx - projected.size)
+        );
+        const right = Math.max(
+          ...projected.cubes.map((c) => c.sx + projected.size)
+        );
+        expect(left).toBeGreaterThanOrEqual(cx - rx);
+        expect(right).toBeLessThanOrEqual(cx + rx);
       }
     });
   });

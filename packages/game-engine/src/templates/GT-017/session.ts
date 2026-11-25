@@ -529,7 +529,7 @@ export class BlockStackSession extends TemplateGameSession<
       heroLayout.modelBox,
       this.content.model,
       this.currentRotation,
-      true
+      "bottom"
     );
 
     const projected = computeGT017ProjectedModel(
