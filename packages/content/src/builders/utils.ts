@@ -214,3 +214,25 @@ export function pickSingleObjectToken(
   }
   return null;
 }
+
+const DIGITS_ONLY = /^\p{N}+$/u;
+const SINGLE_LETTER = /^\p{L}$/u;
+
+/**
+ * Tên của thứ **hiện trên màn**: asset là chữ số "1" thì gọi "số 1", chữ "a"
+ * thì "chữ a"; còn lại là `label` của vật. Đề gọi tên thứ trẻ nhìn thấy, không
+ * gọi tên vật minh hoạ đã bị glyph che (`BR-E018-08`).
+ */
+export function shownName(item: DatasetItem, asset: DatasetAsset): string {
+  if (asset.kind !== "text") {
+    return item.label;
+  }
+  const t = asset.text.trim();
+  if (DIGITS_ONLY.test(t)) {
+    return `số ${t}`;
+  }
+  if (SINGLE_LETTER.test(t)) {
+    return `chữ ${t}`;
+  }
+  return item.label;
+}

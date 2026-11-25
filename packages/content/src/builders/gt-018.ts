@@ -10,7 +10,9 @@ import {
   resolveItemAsset,
   safeGetItem,
   sanitizeChildPrompt,
+  shownName,
   shuffleDeterministic,
+  visualAssetKey,
 } from "./utils.js";
 
 export const projectGT018: Projection<"GT-018"> = {
@@ -27,7 +29,31 @@ export const projectGT018: Projection<"GT-018"> = {
     const targetIdx = rng.nextInt(dataset.items.length);
     const targetItem = safeGetItem(dataset.items, targetIdx);
 
-    const distractorPool = dataset.items.filter((_, idx) => idx !== targetIdx);
+    const targetAsset = resolveItemAsset(targetItem, true);
+    const targetName = shownName(targetItem, targetAsset);
+    // Phương án nhiễu khác hình **và** khác tên với đáp án, khác nhau từng đôi
+    // (`BR-E018-08`): hai thẻ "1" mà đề gọi "quả bí ngô" thì trẻ không thể đúng.
+    const seenKeys = new Set([visualAssetKey(targetAsset)]);
+    const seenNames = new Set([targetName]);
+    const distractorPool = shuffleDeterministic(
+      dataset.items.filter((_, idx) => idx !== targetIdx),
+      rng
+    ).flatMap((item) => {
+      const asset = resolveItemAsset(item, true);
+      const key = visualAssetKey(asset);
+      const name = shownName(item, asset);
+      if (seenKeys.has(key) || seenNames.has(name)) {
+        return [];
+      }
+      seenKeys.add(key);
+      seenNames.add(name);
+      return [{ item, asset }];
+    });
+    if (distractorPool.length < 1) {
+      throw new Error(
+        `[BR-E018-08] Dataset ${dataset.skill_code} không có vật nhiễu khác hình với ${targetName}`
+      );
+    }
     const params = getEngineDifficultyParams("GT-018", opts.difficulty);
     // Cơ chế nghe-chọn chỉ có MỘT đáp án đúng, nên `target_count` của bảng tra
     // không diễn đạt được ở đây. Giữ đúng thứ bảng tra định nghĩa độ khó — tổng
@@ -37,26 +63,23 @@ export const projectGT018: Projection<"GT-018"> = {
       distractorPool.length
     );
 
-    const shuffledDistractors = shuffleDeterministic(distractorPool, rng).slice(
-      0,
-      distractorCount
-    );
+    const shuffledDistractors = distractorPool.slice(0, distractorCount);
 
     const options = [
       {
         item_id: targetItem.id,
-        asset: resolveItemAsset(targetItem, true),
+        asset: targetAsset,
         is_correct: true,
       },
       ...shuffledDistractors.map((d) => ({
-        item_id: d.id,
-        asset: resolveItemAsset(d, true),
+        item_id: d.item.id,
+        asset: d.asset,
         is_correct: false,
       })),
     ];
 
     const audioText = sanitizeChildPrompt(
-      `Bé lắng tai nghe rồi tìm ${targetItem.label} nhé!`,
+      `Bé lắng tai nghe rồi tìm ${targetName} nhé!`,
       "Bé lắng tai nghe rồi chạm đúng hình nhé!"
     );
 
