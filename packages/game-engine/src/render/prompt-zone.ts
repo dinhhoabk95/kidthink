@@ -68,7 +68,9 @@ function drawPromptContainer(
 
 /** Cạnh ô vuông của mascot: chiều cao dải (`top`) hoặc bề rộng cột (`side`). */
 function mascotSize(zones: StageZones): number {
-  return zones.promptPlacement === "side" ? zones.prompt.w : zones.prompt.h;
+  return zones.promptPlacement === "side"
+    ? zones.prompt.w
+    : zones.promptSpeaker.x - zones.prompt.x;
 }
 
 function drawPromptMascot(
@@ -174,7 +176,11 @@ function drawPromptSpeaker(
   ctx.restore();
 }
 
-const PROMPT_MAX_LINES = 2;
+/** Dải lời dẫn ngang: tối đa ba dòng nếu chiều cao dải chứa đủ (điện thoại 390 px). */
+const PROMPT_MAX_LINES = 3;
+/** Cột lời dẫn bên trái giữ hai dòng như trước. */
+const SIDE_PROMPT_MAX_LINES = 2;
+const PROMPT_LINE_PAD_PX = 8;
 const SIDE_PICTO_GAP_PX = 12;
 const SIDE_PICTO_MIN_PX = 40;
 const WHITESPACE_RUN = /\s+/;
@@ -183,6 +189,7 @@ interface PromptWrapCacheEntry {
   rawText: string;
   font: string;
   maxWidth: number;
+  maxLines: number;
   lines: readonly string[];
 }
 
@@ -200,7 +207,8 @@ const promptWrapCache = new WeakMap<
 function wrapPromptText(
   ctx: CanvasRenderingContext2D,
   rawText: string,
-  maxWidth: number
+  maxWidth: number,
+  maxLines: number
 ): readonly string[] {
   const font = ctx.font;
   const cached = promptWrapCache.get(ctx);
@@ -208,7 +216,8 @@ function wrapPromptText(
     cached &&
     cached.rawText === rawText &&
     cached.font === font &&
-    cached.maxWidth === maxWidth
+    cached.maxWidth === maxWidth &&
+    cached.maxLines === maxLines
   ) {
     return cached.lines;
   }
@@ -228,17 +237,18 @@ function wrapPromptText(
     lines.push(current);
   }
   let resolvedLines: readonly string[];
-  if (lines.length <= PROMPT_MAX_LINES) {
+  if (lines.length <= maxLines) {
     resolvedLines = lines;
   } else {
-    const kept = lines.slice(0, PROMPT_MAX_LINES - 1);
-    const rest = lines.slice(PROMPT_MAX_LINES - 1).join(" ");
+    const kept = lines.slice(0, maxLines - 1);
+    const rest = lines.slice(maxLines - 1).join(" ");
     resolvedLines = [...kept, truncateToWidth(ctx, rest, maxWidth)];
   }
   promptWrapCache.set(ctx, {
     rawText,
     font,
     maxWidth,
+    maxLines,
     lines: resolvedLines,
   });
   return resolvedLines;
@@ -320,7 +330,7 @@ function drawSidePromptContent(
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
 
-  const lines = wrapPromptText(ctx, trimmed, textW);
+  const lines = wrapPromptText(ctx, trimmed, textW, SIDE_PROMPT_MAX_LINES);
   const lineH = fontPx * 1.3;
   const centerX = zones.prompt.x + zones.prompt.w / 2;
   for (let i = 0; i < lines.length; i++) {
@@ -382,8 +392,10 @@ function drawPromptContent(
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
 
-    const lines = wrapPromptText(ctx, options.promptText, contentW);
     const lineH = fontPx * 1.3;
+    const fitLines = Math.floor((prompt.h - PROMPT_LINE_PAD_PX) / lineH);
+    const maxLines = Math.max(1, Math.min(PROMPT_MAX_LINES, fitLines));
+    const lines = wrapPromptText(ctx, options.promptText, contentW, maxLines);
     const firstY = prompt.y + prompt.h / 2 - ((lines.length - 1) * lineH) / 2;
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];

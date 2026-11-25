@@ -233,6 +233,15 @@ function findPopElapsed(
   );
 }
 
+/**
+ * Bán kính chấm vẽ: không nhỏ hơn nửa vùng chạm. Chấm vẽ 24 px trong khi vùng
+ * chạm 48 px làm trẻ thấy mục tiêu nhỏ hơn chỗ chạm được (phone 390x844).
+ */
+export function gt024WaypointBaseRadius(hitHalfPx: number): number {
+  const legible = Math.max(16, Math.ceil(legibleFontPx(14) * 0.75));
+  return Number.isFinite(hitHalfPx) ? Math.max(legible, hitHalfPx) : legible;
+}
+
 function buildOneRenderedWaypoint(
   host: GT024RenderHost,
   rs: RenderSystem,
@@ -244,7 +253,7 @@ function buildOneRenderedWaypoint(
   const wps = host.getScreenWaypoints();
   const cur = host.getCurrentOrderIndex();
   const b = host.getStageBounds();
-  const baseR = Math.max(16, Math.ceil(legibleFontPx(14) * 0.75));
+  const baseR = gt024WaypointBaseRadius(host.hitHalfPx);
   const same: number[] = [];
   wps.forEach((p, idx) => {
     if (p.x === w.x && p.y === w.y) {

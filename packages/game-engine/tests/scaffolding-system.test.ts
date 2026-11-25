@@ -181,10 +181,9 @@ describe("ScaffoldingSystem (BR-SCF-01..08 & SCAFFOLDING-AND-HINTS spec)", () =>
     // 1 miss in band 3-4 stays at L0; 10s timer then escalates to L1 with trigger "timer"
     engine.scaffolding?.onMiss();
     engine.advanceFrame(10_000);
-    // Advance +8s (18s total) -> L2
-    engine.advanceFrame(8000);
-    // Advance +7s (25s total) -> L3
-    engine.advanceFrame(7000);
+    // BR-SCF-11: fixture hint_after_ms=8s -> L1 8s, L2 12s, L3 16s.
+    engine.advanceFrame(3000); // 13s -> L2
+    engine.advanceFrame(4000); // 17s -> L3
 
     const escalations = emitted.filter(
       (e) => e.event_name === "scaffold_escalated"
@@ -200,13 +199,13 @@ describe("ScaffoldingSystem (BR-SCF-01..08 & SCAFFOLDING-AND-HINTS spec)", () =>
       round_index: 0,
       level: 2,
       trigger: "timer",
-      elapsed_ms: 18_000,
+      elapsed_ms: 13_000,
     });
     expect(escalations[2]?.data).toEqual({
       round_index: 0,
       level: 3,
       trigger: "timer",
-      elapsed_ms: 25_000,
+      elapsed_ms: 17_000,
     });
 
     const demos = emitted.filter((e) => e.event_name === "demo_shown");
@@ -243,17 +242,16 @@ describe("ScaffoldingSystem (BR-SCF-01..08 & SCAFFOLDING-AND-HINTS spec)", () =>
     expect(state.focusIndex).toBeNull();
   });
 
-  it("Task #301 S1: hint_after_ms overrides L1 timer while keeping age-band gaps for L2 and L3", () => {
-    // Band 4-5 default: L1=15s, L2=25s (+10s), L3=35s (+10s).
-    // With hint_after_ms = 6000 (6s): L1=6s, L2=16s, L3=26s.
+  it("Task #301 S1 / BR-SCF-11: hint_after_ms đặt L1=1x, L2=1,5x, L3=2x", () => {
+    // hint_after_ms = 6000: L1=6s, L2=9s, L3=12s.
     const system = new ScaffoldingSystem("4-5", 6000);
 
     expect(system.tick(5000)).toBe(0);
     expect(system.tick(1000)).toBe(1); // 6s -> L1
-    expect(system.tick(9000)).toBe(1); // 15s -> still L1
-    expect(system.tick(1000)).toBe(2); // 16s -> L2
-    expect(system.tick(9000)).toBe(2); // 25s -> still L2
-    expect(system.tick(1000)).toBe(3); // 26s -> L3
+    expect(system.tick(2000)).toBe(1); // 8s -> still L1
+    expect(system.tick(1000)).toBe(2); // 9s -> L2
+    expect(system.tick(2000)).toBe(2); // 11s -> still L2
+    expect(system.tick(1000)).toBe(3); // 12s -> L3
   });
 
   it("Regression: gợi ý kích hoạt sau khi trả lời sai ở câu 1 phải được xoá sạch khi trả lời đúng hoặc sang câu tiếp theo", () => {
@@ -358,5 +356,15 @@ describe("ScaffoldingSystem (BR-SCF-01..08 & SCAFFOLDING-AND-HINTS spec)", () =>
       scaffolding.resetOnSuccess();
       expect(scaffolding.tick(16)).toBe(0);
     });
+  });
+});
+
+describe("BR-SCF-11 — nhịp theo hint_after_ms", () => {
+  it("L1 ở 1x, L2 ở 1,5x, L3 ở 2x hint_after_ms (8 s -> 8/12/16 s)", () => {
+    const s = new ScaffoldingSystem("4-5", 8000);
+    expect(s.tick(7900)).toBe(0);
+    expect(s.tick(200)).toBe(1);
+    expect(s.tick(4000)).toBe(2);
+    expect(s.tick(4000)).toBe(3);
   });
 });

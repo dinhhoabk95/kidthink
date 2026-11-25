@@ -351,7 +351,13 @@
       if (gestureVisual) {
         drawActiveGestureOverlay(ctx, rs, gestureVisual, now);
       }
-      feedbackOverlay.drawMilestoneBanner(ctx, rs, now, zones.stage);
+      feedbackOverlay.drawMilestoneBanner(
+        ctx,
+        rs,
+        now,
+        zones.stage,
+        zones.promptPlacement === "top" ? zones.prompt : undefined
+      );
       drawFeedbackPulses(ctx, feedback.pulses);
     },
   });

@@ -236,3 +236,30 @@ describe("Task #315 Wave 2 — Live Gameplay Wiring (Ngũ cung + Cảnh Việt +
     expect(overlay.hasActiveMilestoneBanner(5020)).toBe(false);
   });
 });
+
+describe("BR-PSZ-15 — bảng khen ở vùng lời dẫn", () => {
+  it("có promptZone thì bảng khen nằm trong promptZone, không đè sân khấu", () => {
+    const overlay = new FeedbackOverlay();
+    const rs = new RenderSystem();
+    rs.reducedMotion = true;
+    const ctx = getStrictFakeContext(960, 540);
+    const rects: number[][] = [];
+    vi.spyOn(ctx, "roundRect").mockImplementation((x, y, w, h) => {
+      rects.push([x, y, w, h]);
+    });
+    overlay.triggerMilestone("praise", "3-4", 1000);
+    const prompt = { x: 8, y: 8, w: 944, h: 112 };
+    overlay.drawMilestoneBanner(
+      ctx,
+      rs,
+      1050,
+      { x: 8, y: 128, w: 944, h: 300 },
+      prompt
+    );
+    expect(rects.length).toBeGreaterThan(0);
+    for (const [, y, , h] of rects) {
+      expect(y).toBeGreaterThanOrEqual(prompt.y);
+      expect((y ?? 0) + (h ?? 0)).toBeLessThanOrEqual(prompt.y + prompt.h + 8);
+    }
+  });
+});

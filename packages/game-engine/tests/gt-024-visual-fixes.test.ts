@@ -10,6 +10,7 @@ import {
 } from "#src/render/craft-shapes";
 import { RenderSystem } from "#src/systems/render-system";
 import { GT024_FIXTURES } from "#src/templates/GT-024/fixtures.js";
+import { gt024WaypointBaseRadius } from "#src/templates/GT-024/layout";
 import { GT024Session } from "#src/templates/GT-024/session.js";
 import { createFakeCanvas } from "./gates/fake-canvas.ts";
 
@@ -259,5 +260,13 @@ describe("GT-024: kiến và tổ không đè điểm hay ô chạm (BR-E024-08)
         }
       }
     }
+  });
+});
+
+describe("GT-024: chấm vẽ không nhỏ hơn vùng chạm (phone 390x844)", () => {
+  it("bán kính chấm >= nửa vùng chạm, và giữ sàn đọc được khi vùng chạm nhỏ", () => {
+    expect(gt024WaypointBaseRadius(48)).toBeGreaterThanOrEqual(48);
+    expect(gt024WaypointBaseRadius(4)).toBeGreaterThanOrEqual(16);
+    expect(gt024WaypointBaseRadius(Number.NaN)).toBeGreaterThanOrEqual(16);
   });
 });

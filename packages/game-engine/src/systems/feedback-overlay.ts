@@ -214,7 +214,8 @@ export class FeedbackOverlay {
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
     nowMs: number,
-    stageZone?: ZoneRect
+    stageZone?: ZoneRect,
+    promptZone?: ZoneRect
   ): void {
     if (!this.hasActiveMilestoneBanner(nowMs)) {
       return;
@@ -230,7 +231,15 @@ export class FeedbackOverlay {
       }
     }
 
-    if (stageZone && stageZone.w > 0) {
+    if (promptZone && promptZone.w > 0 && promptZone.h > 0) {
+      // Dải lời dẫn không chứa vật tương tác; câu khen chỉ hiện sau khi trẻ đã
+      // làm xong nên che tạm câu đề là vô hại (không che thẻ mẫu, ô lưới, dải
+      // tín hiệu đổi luật của sân khấu).
+      this.bannerBox.x = promptZone.x;
+      this.bannerBox.y = promptZone.y;
+      this.bannerBox.w = promptZone.w;
+      this.bannerBox.h = promptZone.h;
+    } else if (stageZone && stageZone.w > 0) {
       this.bannerBox.x = stageZone.x;
       this.bannerBox.y = stageZone.y + 6;
       this.bannerBox.w = stageZone.w;

@@ -93,6 +93,9 @@ export interface StageZones {
   readonly action: ZoneRect;
 }
 
+/** Canvas hẹp hơn ngần này (logic px) thì mascot lời dẫn thu nhỏ. */
+const NARROW_PROMPT_CANVAS_W_PX = 480;
+
 /** Lề mép canvas và khoảng cách giữa hai vùng. */
 const ZONE_GAP_PX = SLOT_GAP_PX;
 
@@ -181,12 +184,15 @@ function placePrompt(
     w: canvas.w - 2 * ZONE_GAP_PX,
     h: promptH,
   };
-  // Mascot chiếm ô vuông đầu vùng lời dẫn, loa đứng ngay sau.
+  // Mascot chiếm ô vuông đầu vùng lời dẫn, loa đứng ngay sau. Điện thoại hẹp
+  // thu mascot lại để chữ đề có chỗ xuống dòng thay vì bị cắt "…".
+  const mascotW =
+    canvas.w < NARROW_PROMPT_CANVAS_W_PX ? promptH * 0.7 : promptH;
   return {
     placement: "top",
     prompt,
     promptSpeaker: {
-      x: prompt.x + promptH,
+      x: prompt.x + mascotW,
       y: prompt.y + (promptH - touchEdge) / 2,
       w: touchEdge,
       h: touchEdge,

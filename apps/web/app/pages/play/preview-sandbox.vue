@@ -318,7 +318,13 @@
     if (gestureVisual) {
       drawActiveGestureOverlay(ctx, rs, gestureVisual, now);
     }
-    feedbackOverlay.drawMilestoneBanner(ctx, rs, now, stageZones.stage);
+    feedbackOverlay.drawMilestoneBanner(
+        ctx,
+        rs,
+        now,
+        stageZones.stage,
+        stageZones.promptPlacement === "top" ? stageZones.prompt : undefined
+      );
     drawFeedbackPulses(ctx, feedback.pulses);
   }
 

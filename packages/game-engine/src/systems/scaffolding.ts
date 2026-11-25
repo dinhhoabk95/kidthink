@@ -98,11 +98,12 @@ export function resolveScaffoldingThresholds(
   ) {
     return base;
   }
+  // Nhịp theo `hint_after_ms` (`BR-SCF-11`): L1 đúng `hint_after_ms`, L2 ở 1,5×,
+  // L3 (bàn tay ma 0,5×) ở 2×. Khoảng cách cố định theo band cho nhịp quá dài
+  // (L3 tới 28 s dù `hint_after_ms` = 8 s).
   const l1TimeS = hintAfterMs / 1000;
-  const gapL1ToL2 = base.l2_time_s - base.l1_time_s;
-  const gapL2ToL3 = base.l3_time_s - base.l2_time_s;
-  const l2TimeS = l1TimeS + gapL1ToL2;
-  const l3TimeS = l2TimeS + gapL2ToL3;
+  const l2TimeS = l1TimeS * 1.5;
+  const l3TimeS = l1TimeS * 2;
   return {
     l1_misses: base.l1_misses,
     l1_time_s: l1TimeS,
