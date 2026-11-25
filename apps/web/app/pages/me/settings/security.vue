@@ -601,7 +601,8 @@
           userAgent: raw.userAgent ?? null,
           ipAddress: raw.ipAddress ?? null,
           authMethod:
-            (raw as { authMethod?: string | null }).authMethod ?? "password",
+            (raw as { authMethod?: string | number | null }).authMethod ??
+            "password",
           createdAt: raw.createdAt ? String(raw.createdAt) : null,
           lastUsedAt: raw.updatedAt ? String(raw.updatedAt) : null,
           isCurrent:

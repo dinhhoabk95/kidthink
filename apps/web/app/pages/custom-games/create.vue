@@ -373,7 +373,7 @@
       title: "Sắp xếp thứ tự",
       description:
         "Bé sắp xếp các thẻ vào những ô trống theo đúng trình tự tăng dần hoặc diễn tiến.",
-      pedagogy: "Tương duy thứ tự, chuỗi quy luật và trình tự",
+      pedagogy: "Tư duy thứ tự, chuỗi quy luật và trình tự",
       defaultTitle: "Xếp thứ tự các loài chim",
       defaultInstruction: "Bé hãy xếp các chú chim theo thứ tự",
       defaultPrompt: "Xếp các loài chim theo thứ tự đúng",

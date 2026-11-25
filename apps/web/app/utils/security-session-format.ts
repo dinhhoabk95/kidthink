@@ -8,8 +8,8 @@ export interface SecuritySessionItem {
   ip_address?: string | null;
   locationLabel?: string | null;
   location_label?: string | null;
-  authMethod?: string | null;
-  auth_method?: string | null;
+  authMethod?: string | number | null;
+  auth_method?: string | number | null;
   updatedAt?: string | Date | null;
   lastUsedAt?: string | null;
   last_used_at?: string | null;
@@ -53,10 +53,27 @@ export function isCurrentSecuritySession(sess: SecuritySessionItem): boolean {
   return Boolean(sess.isCurrent ?? sess.is_current);
 }
 
+/** Cột `auth_method` lưu enum số (`DB_AUTH_METHOD`): 1 password · 2 social · 3 passkey. */
+const AUTH_METHOD_CODES: Readonly<Record<number, string>> = {
+  1: "password",
+  2: "social",
+  3: "passkey",
+};
+
+function normalizeAuthMethod(
+  value: string | number | null | undefined
+): string {
+  if (typeof value === "number") {
+    return AUTH_METHOD_CODES[value] ?? "password";
+  }
+  if (typeof value === "string") {
+    return value.toLowerCase().trim();
+  }
+  return "password";
+}
+
 export function formatSecurityAuthMethod(sess: SecuritySessionItem): string {
-  const raw = (sess.authMethod ?? sess.auth_method ?? "password")
-    .toLowerCase()
-    .trim();
+  const raw = normalizeAuthMethod(sess.authMethod ?? sess.auth_method);
   if (raw === "google") {
     return "Google";
   }
