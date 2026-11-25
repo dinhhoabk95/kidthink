@@ -251,14 +251,5 @@ export const C5_WRD_02_SEED: SkillSeed = {
       rounds: 3,
       sequence_no: 61,
     },
-    {
-      code: "GL-C5-WRD-TRC-6005",
-      template: "GT-024",
-      band: "5-6",
-      difficulty: 4,
-      theme: "job",
-      rounds: 3,
-      sequence_no: 63,
-    },
   ],
 };

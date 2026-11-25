@@ -295,16 +295,6 @@ export const C5_DGR_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-DGR-TRC-6002",
-      template: "GT-024",
-      band: "5-6",
-      difficulty: 2,
-      access_tier: "standard",
-      theme: "ocean",
-      rounds: 3,
-      sequence_no: 61,
-    },
-    {
       code: "GL-C5-DGR-MATCH-6002",
       template: "GT-005",
       band: "4-5",
