@@ -99,6 +99,13 @@ cấm thêm bất kỳ framework auth song song nào khác (Supabase Auth, Sideb
    một giờ mới với `reauthAt=null`, rồi giữ nguyên mốc remember hết hạn tuyệt đối ban đầu.
 6. Client chỉ tự thử restore lúc bootstrap hoặc sau một request đọc/idempotent nhận 401. Không
    tự retry request đổi trạng thái để tránh thực thi hai lần.
+6b. Client phân biệt ba kết quả khi hỏi `get-session`: *đã đăng nhập*, *chưa đăng nhập* (200 rỗng hoặc
+   401) và *không xác định* (429, 5xx, lỗi mạng). Chỉ kết quả *chưa đăng nhập* mới xoá trạng thái
+   phiên; *không xác định* giữ nguyên trạng thái cũ, thử lại có backoff (tối đa 2 lần, 400ms rồi
+   1200ms) và không đá người dùng về `/login`. Client giữ gợi ý "đã đăng nhập" (không chứa token) ở
+   `sessionStorage` 12 giờ; bề mặt chơi dựa vào gợi ý đó để chọn endpoint `/api/users/*` khi
+   `get-session` không xác định, thay vì rơi về `/api/guest/*` (403 `TIER_LOCKED`). Hạn mức
+   `auth:refresh` (`rate-limiting.md` §7.1) giữ nguyên.
 7. Logout canonical kiểm CSRF, thu hồi Redis trước, xoá remember/session locator và cập nhật
    metadata D1/SQLite idempotently. Logout-all dùng Redis transaction thu hồi toàn bộ device
    index của account trước khi cập nhật generation/audit ở D1/SQLite.

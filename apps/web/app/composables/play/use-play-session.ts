@@ -15,6 +15,8 @@ import type { AgeBand } from "@mindkid/shared/client";
 import { nextTick, type Ref, ref } from "vue";
 import {
   type CompletionOutcome,
+  createOnceGuard,
+  finishWithSessionRefresh,
   presentCompletion,
 } from "~/composables/play/completion-outcome";
 import { isRereadPromptEscalation } from "~/composables/play/hint-narration";
@@ -94,6 +96,8 @@ export interface ConfigPayload {
 export interface UsePlaySessionOptions {
   readonly canvasRef: Ref<HTMLCanvasElement | null>;
   readonly loggedIn: Ref<boolean>;
+  /** Làm mới phiên khi `/complete` nhận 401; `true` nếu còn đăng nhập. */
+  readonly refreshSession?: () => Promise<boolean>;
   readonly syncView: () => void;
   readonly onFallbackCue?: () => void;
   /**
@@ -179,6 +183,8 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   const roundTimers = createTimerBag();
   let sessionStartGen = 0;
   let cachedPayload: ConfigPayload | null = null;
+  /** Chặn gọi `/complete` đôi cho cùng `session.uuid` (BR-FBK-19). */
+  const claimCompletion = createOnceGuard();
 
   const isLoading = ref(true);
   const displayTitle = ref("");
@@ -193,6 +199,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   const introStepIndex = ref(0);
 
   const showVictoryModal = ref(false);
+  const progressUnsaved = ref(false);
   const earnedCelebration = ref<CelebrationTier>("great");
   const earnedStars = ref<number | null>(null);
   const earnedSticker = ref<SessionCompleteSticker | null>(null);
@@ -269,7 +276,8 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   async function resolveCompletionOutcome(
     sessionUuid: string
   ): Promise<CompletionOutcome | null> {
-    if (!roundRunner) {
+    const runner = roundRunner;
+    if (!runner) {
       return null;
     }
     try {
@@ -280,10 +288,9 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       );
     }
 
-    const result = await finishSession(
-      sessionUuid,
-      roundRunner,
-      loggedIn.value
+    const result = await finishWithSessionRefresh(
+      () => finishSession(sessionUuid, runner, loggedIn.value),
+      options.refreshSession
     );
     if (result.ok) {
       return {
@@ -297,6 +304,10 @@ export function usePlaySession(options: UsePlaySessionOptions) {
 
   async function completeSessionOnFinish(): Promise<void> {
     const sessionUuid = cachedPayload?.session?.uuid;
+    // Một-lần mỗi session: engine có thể báo hết vòng nhiều lần (BR-FBK-19).
+    if (sessionUuid && !claimCompletion(sessionUuid)) {
+      return;
+    }
     if (!(sessionUuid && roundRunner)) {
       earnedCelebration.value = "nice_try";
       earnedStars.value = null;
@@ -317,6 +328,9 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         earnedCelebration.value = outcome.celebration;
         earnedStars.value = outcome.stars;
         earnedSticker.value = outcome.sticker ?? null;
+      },
+      unsaved: () => {
+        progressUnsaved.value = true;
       },
     });
   }
@@ -624,6 +638,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       ? `/api/users/levels/${levelCode}/config`
       : `/api/guest/levels/${levelCode}/config`;
 
+    progressUnsaved.value = false;
     const api = useApi();
     const payload = await api<ConfigPayload>(endpoint);
     cachedPayload = payload;
@@ -774,6 +789,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     isIntroCardStep,
     introStepIndex,
     showVictoryModal,
+    progressUnsaved,
     earnedCelebration,
     earnedStars,
     earnedSticker,

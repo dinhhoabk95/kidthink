@@ -1,6 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   type CompletionOutcome,
+  CompletionUnsavedError,
+  createOnceGuard,
+  finishWithSessionRefresh,
   presentCompletion,
 } from "~/composables/play/completion-outcome";
 
@@ -54,6 +57,64 @@ describe("Task #313 B4 — presentCompletion", () => {
       show: () => undefined,
       update: (o) => updates.push(o),
     });
+    expect(updates).toEqual([]);
+  });
+});
+
+describe("BR-FBK-19 — /complete một lần, 401 không mất tiến độ im lặng", () => {
+  const ok = { ok: true, data: {} } as const;
+  const unauth = { ok: false, statusCode: 401 } as const;
+
+  it("createOnceGuard chỉ cho lần đầu cùng một session uuid", () => {
+    const claim = createOnceGuard();
+    expect(claim("s1")).toBe(true);
+    expect(claim("s1")).toBe(false);
+    expect(claim("s2")).toBe(true);
+  });
+
+  it("401 rồi refresh thành công thì thử lại đúng một lần và thành công", async () => {
+    const finish = vi
+      .fn<() => Promise<typeof ok | typeof unauth>>()
+      .mockResolvedValueOnce(unauth)
+      .mockResolvedValueOnce(ok);
+    const refresh = vi.fn(() => Promise.resolve(true));
+    const result = await finishWithSessionRefresh(finish, refresh);
+    expect(result).toBe(ok);
+    expect(finish).toHaveBeenCalledTimes(2);
+    expect(refresh).toHaveBeenCalledTimes(1);
+  });
+
+  it("401 mà refresh thất bại thì ném CompletionUnsavedError, không gọi lại", async () => {
+    const finish = vi.fn(() => Promise.resolve(unauth));
+    await expect(
+      finishWithSessionRefresh(finish, () => Promise.resolve(false))
+    ).rejects.toBeInstanceOf(CompletionUnsavedError);
+    expect(finish).toHaveBeenCalledTimes(1);
+  });
+
+  it("lỗi khác 401 (vd 409) trả nguyên kết quả, không refresh", async () => {
+    const conflict = { ok: false, statusCode: 409 } as const;
+    const refresh = vi.fn(() => Promise.resolve(true));
+    const result = await finishWithSessionRefresh(
+      () => Promise.resolve(conflict),
+      refresh
+    );
+    expect(result).toBe(conflict);
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it("presentCompletion gọi unsaved và giữ tier tạm khi phiên hết hạn", async () => {
+    const shown: CompletionOutcome[] = [];
+    const updates: CompletionOutcome[] = [];
+    const unsaved = vi.fn();
+    await presentCompletion({
+      fetchOutcome: () => Promise.reject(new CompletionUnsavedError()),
+      show: (o) => shown.push(o),
+      update: (o) => updates.push(o),
+      unsaved,
+    });
+    expect(unsaved).toHaveBeenCalledTimes(1);
+    expect(shown[0]?.celebration).toBe("good");
     expect(updates).toEqual([]);
   });
 });

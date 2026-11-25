@@ -4,6 +4,14 @@ import {
 } from "@mindkid/auth/client";
 import { computed } from "vue";
 import { useRequestHeaders, useRuntimeConfig, useState } from "#imports";
+import {
+  classifySessionProbe,
+  hasAuthHint,
+  probeSessionWithBackoff,
+  type SessionProbeResponse,
+  type SessionProbeStatus,
+  writeAuthHint,
+} from "~/composables/auth-session-status";
 
 export interface AppUserSessionIdentity {
   id: string;
@@ -85,7 +93,12 @@ export function useUserSession() {
     })
   );
 
-  async function fetchSession(): Promise<boolean> {
+  function clearState(): void {
+    state.value = { user: null, sessionId: null, sessionToken: null };
+  }
+
+  /** Một lần hỏi `get-session`; `unavailable` KHÔNG đụng vào state cũ. */
+  async function probeSession(): Promise<SessionProbeStatus> {
     const client = useUserAuthClient();
     let cookieHeaders: Record<string, string> | undefined;
     if (typeof window === "undefined") {
@@ -94,53 +107,87 @@ export function useUserSession() {
         if (reqHeaders.cookie) {
           cookieHeaders = { cookie: reqHeaders.cookie };
         } else {
-          state.value = { user: null, sessionId: null, sessionToken: null };
-          return false;
+          clearState();
+          return "anonymous";
         }
       } catch {
         // Ignore when outside SSR request context
       }
     }
 
+    let res: SessionProbeResponse | null = null;
     try {
-      const res = await client.getSession({
+      res = (await client.getSession({
         fetchOptions: cookieHeaders ? { headers: cookieHeaders } : undefined,
-      });
-      const payload = (res?.data ?? null) as RawBetterAuthSessionPayload | null;
-      if (
-        !(payload?.user && payload.session) ||
-        payload.user.status === "suspended" ||
-        payload.user.status === "deleted"
-      ) {
-        state.value = { user: null, sessionId: null, sessionToken: null };
-        return false;
-      }
-
-      const displayName = payload.user.name || payload.user.email;
-      state.value = {
-        user: {
-          id: String(payload.user.id),
-          user_id: Number(payload.user.id),
-          uuid: payload.user.uuid,
-          email: payload.user.email,
-          name: displayName,
-          display_name: displayName,
-          status: payload.user.status,
-          email_verified: Boolean(payload.user.emailVerified),
-          two_factor_enabled: Boolean(payload.user.twoFactorEnabled),
-        },
-        sessionId: String(payload.session.id),
-        sessionToken: payload.session.token,
-      };
-      return true;
+      })) as SessionProbeResponse | null;
     } catch {
-      state.value = { user: null, sessionId: null, sessionToken: null };
-      return false;
+      return "unavailable";
     }
+    const status = classifySessionProbe(res);
+    if (status === "unavailable") {
+      return status;
+    }
+    const payload = (res?.data ?? null) as RawBetterAuthSessionPayload | null;
+    if (
+      status === "anonymous" ||
+      !(payload?.user && payload.session) ||
+      payload.user.status === "suspended" ||
+      payload.user.status === "deleted"
+    ) {
+      clearState();
+      return "anonymous";
+    }
+
+    const displayName = payload.user.name || payload.user.email;
+    state.value = {
+      user: {
+        id: String(payload.user.id),
+        user_id: Number(payload.user.id),
+        uuid: payload.user.uuid,
+        email: payload.user.email,
+        name: displayName,
+        display_name: displayName,
+        status: payload.user.status,
+        email_verified: Boolean(payload.user.emailVerified),
+        two_factor_enabled: Boolean(payload.user.twoFactorEnabled),
+      },
+      sessionId: String(payload.session.id),
+      sessionToken: payload.session.token,
+    };
+    return "authenticated";
+  }
+
+  /** Ba trạng thái + retry backoff; ghi/xoá hint đăng nhập ở client. */
+  async function fetchSessionStatus(): Promise<SessionProbeStatus> {
+    const status =
+      typeof window === "undefined"
+        ? await probeSession()
+        : await probeSessionWithBackoff(probeSession);
+    if (typeof window !== "undefined" && status !== "unavailable") {
+      writeAuthHint(status === "authenticated");
+    }
+    return status;
+  }
+
+  /** `true` nếu đã đăng nhập (kể cả khi get-session tạm không xác định mà state cũ còn). */
+  async function fetchSession(): Promise<boolean> {
+    const status = await fetchSessionStatus();
+    return (
+      status === "authenticated" ||
+      (status === "unavailable" && Boolean(state.value.user))
+    );
+  }
+
+  /** Có gợi ý đã đăng nhập gần đây (sessionStorage, không chứa token). */
+  function hasRecentAuthHint(): boolean {
+    return typeof window !== "undefined" && hasAuthHint();
   }
 
   function clearSession(): Promise<void> {
-    state.value = { user: null, sessionId: null, sessionToken: null };
+    clearState();
+    if (typeof window !== "undefined") {
+      writeAuthHint(false);
+    }
     return Promise.resolve();
   }
 
@@ -153,6 +200,8 @@ export function useUserSession() {
       token: state.value.sessionToken,
     })),
     fetch: fetchSession,
+    fetchStatus: fetchSessionStatus,
+    hasRecentAuthHint,
     clear: clearSession,
   };
 }

@@ -175,6 +175,7 @@
         :koguma-unit-code="queryKogumaCode"
         :level-code="levelCode"
         :moet-theme-id="queryMoetThemeId"
+        :progress-unsaved="progressUnsaved"
         :show="showVictoryModal"
         :skill-code="activeSkillCode"
         :stars="earnedStars"
@@ -251,7 +252,16 @@
   const levelCode = route.params.code as string;
 
   const nextDestination = (): string => resolveNextPlayDestination(route.query);
-  const { loggedIn, fetch: fetchSession } = useUserSession();
+  const {
+    loggedIn: sessionLoggedIn,
+    fetchStatus,
+    hasRecentAuthHint,
+  } = useUserSession();
+  // `get-session` 429/5xx: giữ trạng thái đăng nhập theo gợi ý, không rơi về guest.
+  const assumeLoggedIn = ref(false);
+  const loggedIn = computed(
+    () => sessionLoggedIn.value || assumeLoggedIn.value
+  );
 
   const canvasRef = ref<HTMLCanvasElement | null>(null);
   const showParentGate = ref(false);
@@ -313,6 +323,7 @@
   const playSession = usePlaySession({
     canvasRef,
     loggedIn,
+    refreshSession: async () => (await fetchStatus()) === "authenticated",
     syncView: () => gesture.syncView(),
     onFallbackCue: triggerVisualFallbackCue,
     refreshStageZones: updateStageZones,
@@ -373,6 +384,7 @@
     isIntroCardStep,
     introStepIndex,
     showVictoryModal,
+    progressUnsaved,
     earnedCelebration,
     earnedStars,
     earnedSticker,
@@ -699,10 +711,9 @@
     if (typeof document !== "undefined") {
       document.addEventListener("visibilitychange", handleVisibilityChange);
     }
-    if (!loggedIn.value) {
-      await fetchSession().catch(() => {
-        // guest session
-      });
+    if (!sessionLoggedIn.value) {
+      const status = await fetchStatus().catch(() => "unavailable" as const);
+      assumeLoggedIn.value = status === "unavailable" && hasRecentAuthHint();
     }
     try {
       isLoading.value = true;

@@ -112,6 +112,8 @@ vi.stubGlobal("useCookie", () => ref(null));
 vi.stubGlobal("useUserSession", () => ({
   loggedIn: ref(false),
   fetch: vi.fn(() => Promise.resolve()),
+  fetchStatus: vi.fn(() => Promise.resolve("anonymous")),
+  hasRecentAuthHint: () => false,
 }));
 
 const stubs = {

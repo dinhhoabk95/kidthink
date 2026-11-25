@@ -73,6 +73,16 @@
           <span class="victory-subtitle">{{ celebrationSubtitle }}</span>
         </h1>
 
+        <!-- Phiên hết hạn nên tiến độ chưa lưu: nói với ba mẹ, không đổ lỗi trẻ (`BR-FBK-19`). -->
+        <p
+          class="progress-unsaved"
+          data-testid="victory-progress-unsaved"
+          role="status"
+          v-if="progressUnsaved"
+        >
+          Ba mẹ đăng nhập lại để lưu tiến độ nhé
+        </p>
+
         <!-- Nút chỉ có icon, chữ ở aria-label (`BR-FBK-12`) -->
         <div class="action-buttons">
           <button
@@ -162,6 +172,7 @@
       isGuest?: boolean;
       celebration?: CelebrationTier;
       sticker?: VictorySticker | null;
+      progressUnsaved?: boolean;
       kogumaUnit?: KogumaUnitSummary | null;
       kogumaUnitCode?: string;
       skillCode?: string;
@@ -177,6 +188,7 @@
       isGuest: false,
       celebration: "great",
       sticker: null,
+      progressUnsaved: false,
       kogumaUnit: null,
     }
   );
@@ -366,7 +378,16 @@
     font-size: 3rem;
   }
 
-  .sticker-reward {
+  .progress-unsaved {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  color: inherit;
+  opacity: 0.85;
+}
+
+.sticker-reward {
     width: 6.5rem;
     height: 6.5rem;
     margin-bottom: 0.5rem;

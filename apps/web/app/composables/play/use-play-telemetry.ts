@@ -26,7 +26,11 @@ export interface SessionCompleteResponse {
 
 export type FinishSessionResult =
   | { readonly ok: true; readonly data: SessionCompleteResponse }
-  | { readonly ok: false; readonly error: string };
+  | {
+      readonly ok: false;
+      readonly error: string;
+      readonly statusCode?: number;
+    };
 
 export interface UsePlayTelemetryOptions {
   readonly storage?: OfflineBufferStorageAdapter;
@@ -159,6 +163,16 @@ export function resetInMemoryTelemetryBuffer(): void {
 
 interface StatusHolder {
   status: string | number;
+}
+
+function extractStatusCode(err: object | null): number | undefined {
+  if (err === null) {
+    return undefined;
+  }
+  const holder = err as { statusCode?: number; status?: number | string };
+  const raw = holder.statusCode ?? holder.status;
+  const code = Number(raw);
+  return Number.isFinite(code) && code > 0 ? code : undefined;
 }
 
 function extractErrorDetails(err: object | null): {
@@ -321,7 +335,11 @@ export function usePlayTelemetry(options?: UsePlayTelemetryOptions) {
       console.error(
         `[play-telemetry] finishSession thất bại — session: ${sessionUuid}, endpoint: ${endpoint}, status: ${status}, error: ${message}`
       );
-      return { ok: false, error: message };
+      return {
+        ok: false,
+        error: message,
+        statusCode: extractStatusCode(err instanceof Object ? err : null),
+      };
     }
   }
 
