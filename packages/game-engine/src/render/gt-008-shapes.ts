@@ -21,8 +21,10 @@ import { drawPlaceholderBox } from "./numeracy-primitives.js";
 import {
   detectSlotVisualComparisonCue,
   drawAssetInSlot,
+  drawGlyphInSlot,
   drawSlotVisualComparisonCue,
   drawTextInSlot,
+  isEmojiRun,
 } from "./shared-render.js";
 import type { SceneBox } from "./types.js";
 
@@ -108,6 +110,11 @@ function drawItemAsset(
     return;
   }
   if (a.kind === "text") {
+    if (isEmojiRun(a.text)) {
+      // Chuỗi nhiều emoji = số lượng vật: xếp lưới, không co thành một dòng tí hon.
+      drawGlyphInSlot(c2d, a.text, sl);
+      return;
+    }
     drawTextInSlot(c2d, a.text, sl);
     return;
   }
@@ -237,7 +244,7 @@ export function drawGT008TargetWell(
   drawStable(c2d, sl, o.breath);
   if (o.expectedItem) {
     c2d.save();
-    c2d.globalAlpha = active ? 0.48 : 0.35;
+    c2d.globalAlpha = active ? 0.62 : 0.5;
     const exp = o.expectedItem;
     drawItemAsset(c2d, sl, exp.asset, exp.item_id, exp.label);
     c2d.restore();

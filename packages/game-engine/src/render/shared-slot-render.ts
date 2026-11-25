@@ -186,6 +186,24 @@ function getGraphemeParts(drawable: string): readonly string[] {
   return parts;
 }
 
+/** Phần slot mà cụm emoji chiếm — đủ lớn để đếm được từng vật. */
+const MULTI_GLYPH_FILL = 0.92;
+
+const EMOJI_GRAPHEME_REGEX = /^\p{Extended_Pictographic}/u;
+
+/**
+ * Chuỗi chỉ gồm từ hai emoji trở lên (vd. "⚙️⚙️⚙️"): đại diện cho một số lượng
+ * vật, nên vẽ thành cụm lưới thay vì một dòng chữ co nhỏ.
+ */
+export function isEmojiRun(text: string): boolean {
+  const parts = graphemes(text).filter((p) => p.trim().length > 0);
+  return (
+    parts.length >= 2 &&
+    parts.length <= 12 &&
+    parts.every((p) => EMOJI_GRAPHEME_REGEX.test(p))
+  );
+}
+
 function resolveMultiGlyphCols(count: number): number {
   if (count <= 2) {
     return count;
@@ -207,9 +225,9 @@ function drawMultiGlyphClusterInSlot(
   const count = parts.length;
   const cols = resolveMultiGlyphCols(count);
   const rows = Math.ceil(count / cols);
-  const cellW = (slot.w * 0.72) / cols;
-  const cellH = (slot.h * 0.72) / rows;
-  const itemSize = Math.max(14, Math.floor(Math.min(cellW, cellH) * 0.86));
+  const cellW = (slot.w * MULTI_GLYPH_FILL) / cols;
+  const cellH = (slot.h * MULTI_GLYPH_FILL) / rows;
+  const itemSize = Math.max(14, Math.floor(Math.min(cellW, cellH) * 0.95));
   applyEmojiFont(ctx, itemSize);
   const totalH = (rows - 1) * cellH;
   const startY = slot.y - totalH / 2;
