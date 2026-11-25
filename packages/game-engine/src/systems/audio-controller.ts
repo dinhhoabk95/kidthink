@@ -1,7 +1,9 @@
 /**
- * AudioController — Master Web Audio API controller & Web Speech TTS coordinator.
+ * AudioController — Master Web Audio API controller & teacher-voice mp3 player.
  * Enforces BR-ENG-16: Master ceiling -16 LUFS, true peak <= -1 dBTP, ramp-in >= 20ms, ramp-out >= 40ms.
  * Enforces BR-ENG-10: Visual demonstration fallback when voice audio is unavailable.
+ * Giọng đọc chỉ từ kho mp3 cô giáo `teacher-v1` (`BR-PNR-05`, Task #316) —
+ * không còn Web Speech API của trình duyệt.
  * Pure Vanilla TS — ZERO Vue / Pinia / Reactivity dependencies (BR-ENG-01).
  * Zero microphone / recording permissions (BR-CDC-04, BR-AST-04).
  */
@@ -12,7 +14,13 @@ import {
   type SFXType,
   TRUE_PEAK_CEILING_LINEAR,
 } from "./sfx-engine";
-import { SpeechSynthesisAdapter } from "./speech-synthesis-adapter";
+import { type TeacherVoiceText, teacherVoiceClipPaths } from "./teacher-voice";
+
+/**
+ * Clip giọng chưa bắt đầu phát sau mốc này thì coi như hỏng và rơi xuống tín
+ * hiệu thị giác (`BR-PNR-06`, `play-narration.md` §7.2: "quá hạn 3 giây").
+ */
+export const VOICE_CLIP_START_TIMEOUT_MS = 3000;
 
 const PENTATONIC_NOTES: readonly SFXType[] = Object.freeze([
   "marimba_1",
@@ -25,16 +33,20 @@ const PENTATONIC_NOTES: readonly SFXType[] = Object.freeze([
 export class AudioController {
   private enabled: boolean;
   private readonly sfxEngine: SFXEngine;
-  private readonly speechAdapter: SpeechSynthesisAdapter;
   private readonly bufferCache: Map<string, AudioBuffer> = new Map();
   private readonly masterVolume = TRUE_PEAK_CEILING_LINEAR; // <= -1 dBTP ceiling (BR-ENG-16)
   private currentAudio: HTMLAudioElement | null = null;
+  /**
+   * Kết thúc lượt giọng đang phát khi bị cắt ngang. Lượt bị cắt báo `onEnd`,
+   * không báo lỗi — như giọng đọc cũ — để bên chờ settle không treo
+   * (`BR-PNR-11`).
+   */
+  private interruptVoice: (() => void) | null = null;
   private pentatonicStep = 0;
 
   constructor(enabled = true) {
     this.enabled = enabled;
     this.sfxEngine = new SFXEngine();
-    this.speechAdapter = new SpeechSynthesisAdapter();
   }
 
   /** Enable or disable all audio output */
@@ -53,29 +65,23 @@ export class AudioController {
     return this.enabled;
   }
 
-  /** Check if TTS voice for Vietnamese is available on this device */
+  /** Giọng cô giáo là mp3 tĩnh: luôn sẵn khi âm thanh đang bật. */
   isVoiceAvailable(): boolean {
-    return this.enabled && this.speechAdapter.hasVietnameseVoice();
-  }
-
-  /** Access speech adapter directly if needed */
-  getSpeechAdapter(): SpeechSynthesisAdapter {
-    return this.speechAdapter;
+    return this.enabled;
   }
 
   /**
-   * Speak narration or prompt with automatic fallback to visual cue.
-   * If speech is disabled or voice is missing, invokes fallbackVisualCue immediately.
-   * Returns true if audio started, false if fallback triggered.
+   * Đọc câu dẫn bằng mp3 giọng cô `teacher-v1` (`BR-PNR-05`). `text` là một câu
+   * hoặc các đoạn phát nối tiếp. Clip nào lỗi (thiếu file, giải mã hỏng, bị
+   * chặn tự phát) thì dừng chuỗi và rơi xuống tín hiệu thị giác
+   * `fallbackVisualCue` (`BR-PNR-06`). Tín hiệu thị giác và `onEnd` mỗi cái gọi
+   * đúng một lần (Task #274 S8). Trả `false` khi rơi xuống dự phòng ngay.
    */
   speakPrompt(
-    text: string,
+    text: TeacherVoiceText,
     onEnd?: () => void,
     fallbackVisualCue?: () => void
   ): boolean {
-    // Adapter báo lỗi bằng `onError` RỒI `onEnd`, và `speak()` ném thì báo
-    // `onError` rồi trả `false` — mỗi đường đều có thể chạm cả hai nhánh dưới
-    // đây. Tín hiệu thị giác và `onEnd` mỗi cái đúng một lần (Task #274 S8).
     let cued = false;
     const cueOnce = () => {
       if (!cued) {
@@ -91,55 +97,94 @@ export class AudioController {
       }
     };
 
-    if (!(this.enabled && this.speechAdapter.hasVietnameseVoice())) {
+    const clips = teacherVoiceClipPaths(text);
+    if (!this.enabled || clips.length === 0 || typeof Audio === "undefined") {
       cueOnce();
       endOnce();
       return false;
     }
 
-    const started = this.speechAdapter.speak(text, {
-      volume: this.masterVolume,
-      onEnd: endOnce,
-      onError: cueOnce,
-    });
-
-    if (!started) {
-      cueOnce();
+    this.endInterruptedVoice();
+    const finish = () => {
+      if (this.interruptVoice === finish) {
+        this.interruptVoice = null;
+      }
       endOnce();
-      return false;
-    }
-
-    return true;
+    };
+    this.interruptVoice = finish;
+    const playAt = (index: number): void => {
+      const ref = clips[index];
+      if (ref === undefined) {
+        finish();
+        return;
+      }
+      let failed = false;
+      this.startClip(
+        ref,
+        () => {
+          if (failed) {
+            finish();
+            return;
+          }
+          playAt(index + 1);
+        },
+        () => {
+          failed = true;
+          cueOnce();
+        }
+      );
+    };
+    playAt(0);
+    return !cued;
   }
 
   /**
-   * Câu khích lệ khi chưa đúng (`BR-FBK-13`): có giọng Việt thì TTS đọc `text`;
-   * không có giọng thì phát mp3 dự phòng `audioRef`. Một nguồn mỗi lần — không
-   * bao giờ cả hai. `onEnd` gọi đúng một lần khi xong (kể cả khi im).
+   * Câu khích lệ khi chưa đúng (`BR-FBK-13`): mp3 giọng cô đọc `clip.text`.
+   * Thiếu file thì im (một giọng duy nhất, `BR-PNR-05`). `onEnd` gọi đúng một
+   * lần khi xong (kể cả khi im).
    */
   speakEncouragement(clip: RetryEncouragementClip, onEnd?: () => void): void {
     if (!this.enabled) {
       onEnd?.();
       return;
     }
-    if (this.isVoiceAvailable()) {
-      this.speakPrompt(clip.text, onEnd);
-      return;
-    }
-    this.playPromptAudio(clip.audioRef, onEnd);
+    this.speakPrompt(clip.text, onEnd);
   }
 
-  /** Dừng mọi âm thanh và giải phóng `AudioContext` + listener giọng đọc. */
+  /** Tạm dừng clip giọng đang phát (Task #313 B5). */
+  pauseVoice(): void {
+    try {
+      this.currentAudio?.pause();
+    } catch {
+      // Safe ignore
+    }
+  }
+
+  /** Phát tiếp clip giọng đã tạm dừng. */
+  resumeVoice(): void {
+    this.currentAudio?.play().catch(() => undefined);
+  }
+
+  /** Dừng mọi âm thanh và giải phóng `AudioContext`. */
   dispose(): void {
     this.stopAll();
     this.sfxEngine.dispose();
-    this.speechAdapter.dispose();
     this.bufferCache.clear();
   }
 
   /** Cancel any ongoing speech or sounds */
   stopAll(): void {
-    this.speechAdapter.cancel();
+    this.endInterruptedVoice();
+    this.stopCurrentClip();
+  }
+
+  private endInterruptedVoice(): void {
+    const interrupted = this.interruptVoice;
+    this.interruptVoice = null;
+    interrupted?.();
+  }
+
+  private stopCurrentClip(): void {
     if (this.currentAudio) {
       try {
         this.currentAudio.pause();
@@ -195,8 +240,23 @@ export class AudioController {
       onEnd?.();
       return;
     }
+    this.endInterruptedVoice();
+    this.startClip(ref, onEnd, onError);
+  }
 
-    this.stopAll();
+  /** Phát một clip mp3, thay clip đang phát mà không kết thúc lượt giọng. */
+  private startClip(
+    ref: string | undefined,
+    onEnd?: () => void,
+    onError?: () => void
+  ): void {
+    if (!(this.enabled && ref)) {
+      onError?.();
+      onEnd?.();
+      return;
+    }
+
+    this.stopCurrentClip();
 
     if (typeof Audio !== "undefined") {
       try {
@@ -207,7 +267,15 @@ export class AudioController {
         // File hỏng phát CẢ `error` LẪN reject `play()`; một mp3 đã bị
         // `stopAll()` thay thì reject `AbortError`. Chỉ báo lỗi một lần, và
         // chỉ cho clip còn đang là clip hiện hành (Task #274, E3).
+        let startTimer: ReturnType<typeof setTimeout> | null = null;
+        const clearStartTimer = () => {
+          if (startTimer !== null) {
+            clearTimeout(startTimer);
+            startTimer = null;
+          }
+        };
         const failAndRelease = () => {
+          clearStartTimer();
           if (this.currentAudio !== audio) {
             return;
           }
@@ -217,6 +285,7 @@ export class AudioController {
         };
 
         audio.onended = () => {
+          clearStartTimer();
           if (this.currentAudio === audio) {
             this.currentAudio = null;
           }
@@ -225,7 +294,22 @@ export class AudioController {
 
         audio.onerror = failAndRelease;
 
-        audio.play().catch(failAndRelease);
+        // Mạng chậm hoặc file treo: quá hạn thì dừng clip và rơi xuống dự
+        // phòng, Cấm — NEVER treo lượt giọng (`BR-PNR-06`, `BR-PNR-09`).
+        startTimer = setTimeout(() => {
+          startTimer = null;
+          if (this.currentAudio !== audio) {
+            return;
+          }
+          try {
+            audio.pause();
+          } catch {
+            // Safe ignore
+          }
+          failAndRelease();
+        }, VOICE_CLIP_START_TIMEOUT_MS);
+
+        audio.play().then(clearStartTimer, failAndRelease);
         return;
       } catch {
         this.currentAudio = null;

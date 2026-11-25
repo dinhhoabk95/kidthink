@@ -176,9 +176,10 @@ describe("BR-FBK-16 — khung chuyện đọc một lần ở vòng đầu", () 
   it("vòng đầu, mở vòng: khung chuyện đứng trước câu dẫn", () => {
     const runner = runnerWith("Gấu Con đi chợ.", 2);
 
-    expect(runner.spokenPromptFor("Chọn quả táo", "round_open")).toBe(
-      "Gấu Con đi chợ. Chọn quả táo"
-    );
+    expect(runner.spokenPromptFor("Chọn quả táo", "round_open")).toEqual([
+      "Gấu Con đi chợ.",
+      "Chọn quả táo",
+    ]);
   });
 
   it("nghe lại chỉ đọc câu dẫn", () => {

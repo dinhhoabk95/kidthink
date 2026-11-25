@@ -520,7 +520,7 @@ describe("GT-000 — Chạm khám phá Ngũ cung ở present, Lật trang 340ms 
     });
     const spoken: string[] = [];
     vi.spyOn(session.audio, "speakPrompt").mockImplementation((text, onEnd) => {
-      spoken.push(text);
+      spoken.push(typeof text === "string" ? text : text.join(" "));
       // Giả lập bất đồng bộ: không gọi onEnd ngay để chứng minh replayStepAudio không khoá cổng!
       setTimeout(() => onEnd?.(), 50);
       return true;
@@ -549,7 +549,7 @@ describe("GT-000 — Chạm khám phá Ngũ cung ở present, Lật trang 340ms 
 
     // Sang recognise: hoàn tất câu hỏi đầu rồi bấm replayStepAudio -> không khoá isAcceptingInput
     vi.spyOn(session.audio, "speakPrompt").mockImplementation((text, onEnd) => {
-      spoken.push(text);
+      spoken.push(typeof text === "string" ? text : text.join(" "));
       onEnd?.();
       return true;
     });
@@ -558,7 +558,7 @@ describe("GT-000 — Chạm khám phá Ngũ cung ở present, Lật trang 340ms 
 
     // Chuyển lại sang mock bất đồng bộ (không gọi onEnd) rồi gọi replayStepAudio()
     vi.spyOn(session.audio, "speakPrompt").mockImplementation((text) => {
-      spoken.push(text);
+      spoken.push(typeof text === "string" ? text : text.join(" "));
       return true;
     });
     spoken.length = 0;
@@ -628,7 +628,7 @@ describe("GT-000 — Chạm khám phá Ngũ cung ở present, Lật trang 340ms 
     const session = new GT000Session(twoSegContent, BASE_DIFFICULTY);
     const spoken: string[] = [];
     vi.spyOn(session.audio, "speakPrompt").mockImplementation((text, onEnd) => {
-      spoken.push(text);
+      spoken.push(typeof text === "string" ? text : text.join(" "));
       onEnd?.();
       return true;
     });

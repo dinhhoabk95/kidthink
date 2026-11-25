@@ -378,10 +378,6 @@ export {
   VN_PENTATONIC_HZ,
 } from "./systems/sfx-engine";
 export {
-  type SpeechOptions,
-  SpeechSynthesisAdapter,
-} from "./systems/speech-synthesis-adapter";
-export {
   computeMagneticPull,
   computeSquashStretch,
   type MagneticPullResult,
@@ -389,6 +385,11 @@ export {
   sampleTactileSpring,
   type TactileMotionKind,
 } from "./systems/spring-physics";
+export {
+  type TeacherVoiceText,
+  teacherVoiceClipPaths,
+  voiceSegmentsWithLead,
+} from "./systems/teacher-voice";
 export {
   type TracePathResult,
   type TracePoint,

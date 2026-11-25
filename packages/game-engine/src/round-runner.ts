@@ -22,6 +22,7 @@ import {
 import type { LogicSpace } from "./layout/constants.js";
 import type { ZoneRect } from "./layout/stage-zones.js";
 import { AudioController } from "./systems/audio-controller";
+import type { TeacherVoiceText } from "./systems/teacher-voice";
 
 export interface RoundConfig {
   round_index: number;
@@ -65,12 +66,15 @@ export interface RoundRunnerOptions {
   gateOnPromptSettle?: boolean;
 }
 
-/** Ghép khung chuyện trước câu dẫn trong cùng một lượt phát. */
+/**
+ * Ghép khung chuyện trước câu dẫn trong cùng một lượt phát. Hai câu là hai clip
+ * mp3 riêng trong kho giọng cô (`BR-PNR-05`), nên trả các đoạn phát nối tiếp.
+ */
 export function withStoryLine(
   story: string | null | undefined,
   prompt: string
-): string {
-  return story ? `${story} ${prompt}` : prompt;
+): TeacherVoiceText {
+  return story ? [story, prompt] : prompt;
 }
 
 export interface RoundRunnerState {
@@ -227,7 +231,7 @@ export class RoundRunner {
    * chuyện của session (`storyLine()`) đứng trước câu dẫn trong cùng một lượt
    * phát; "nghe lại" và các vòng sau chỉ đọc câu dẫn (`BR-FBK-16`).
    */
-  spokenPromptFor(prompt: string, trigger: NarrationTrigger): string {
+  spokenPromptFor(prompt: string, trigger: NarrationTrigger): TeacherVoiceText {
     if (trigger !== "round_open" || this.currentRoundIndex !== 0) {
       return prompt;
     }

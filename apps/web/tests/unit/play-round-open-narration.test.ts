@@ -1,3 +1,4 @@
+import type { TeacherVoiceText } from "@mindkid/game-engine";
 import { describe, expect, it, vi } from "vitest";
 import {
   composeRoundOpenSpeech,
@@ -9,7 +10,7 @@ describe("round-open narration", () => {
   it("khung chuyện đứng trước câu dẫn", () => {
     expect(
       composeRoundOpenSpeech({ storyLine: () => "Có chú mèo." }, "Chọn táo")
-    ).toBe("Có chú mèo. Chọn táo");
+    ).toEqual(["Có chú mèo.", "Chọn táo"]);
   });
 
   it("không có chuyện: chỉ câu dẫn", () => {
@@ -20,7 +21,7 @@ describe("round-open narration", () => {
   });
 
   it("đọc câu dẫn rồi âm đề rồi settle", () => {
-    const spoken: string[] = [];
+    const spoken: TeacherVoiceText[] = [];
     const settle = vi.fn();
     playRoundOpenNarration(
       { storyLine: () => "Chuyện.", getOpeningAudioText: () => "Con mèo" },
@@ -31,12 +32,12 @@ describe("round-open narration", () => {
       },
       { settle }
     );
-    expect(spoken).toEqual(["Chuyện. Chọn", "Con mèo"]);
+    expect(spoken).toEqual([["Chuyện.", "Chọn"], "Con mèo"]);
     expect(settle).toHaveBeenCalledTimes(1);
   });
 
   it("tự chơi lại: không kể lại khung chuyện, vẫn đọc câu dẫn", () => {
-    const spoken: string[] = [];
+    const spoken: TeacherVoiceText[] = [];
     playRoundOpenNarration(
       { storyLine: () => "Chuyện." },
       "Chọn",
@@ -50,7 +51,7 @@ describe("round-open narration", () => {
   });
 
   it("câu dẫn báo onError rồi onEnd: âm đề chỉ đọc một lần", () => {
-    const spoken: string[] = [];
+    const spoken: TeacherVoiceText[] = [];
     const settle = vi.fn();
     playRoundOpenNarration(
       { getOpeningAudioText: () => "Con mèo" },

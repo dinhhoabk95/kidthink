@@ -235,8 +235,9 @@ export function playWoodClackHoverCue(engine: GameEngine | null): void {
 }
 
 /**
- * Đọc lại tên vật vừa chạm theo thang bậc của `play-narration.md` §7:
- * mp3 của asset → TTS từ `spokenLabel` → không có tên thì im (Task #274 S7b).
+ * Đọc lại tên vật vừa chạm (Task #274 S7b, Task #316): mp3 giọng cô băm từ
+ * `spokenLabel` (`BR-PNR-05`) → mp3 riêng của asset nếu giọng cô thiếu file →
+ * không có gì thì im.
  */
 export function speakEntityKeyword(
   engine: GameEngine,
@@ -245,28 +246,18 @@ export function speakEntityKeyword(
 ): void {
   const label = entity?.spokenLabel;
   const audioPath = entity?.spokenAudioPath;
-  if (!onDone) {
-    if (audioPath) {
-      engine.audio.playPromptAudio(audioPath, undefined, () => {
-        if (label) {
-          engine.audio.speakPrompt(label);
-        }
-      });
-      return;
-    }
-    if (label) {
-      engine.audio.speakPrompt(label);
-    }
-    return;
-  }
   let done = false;
   const finish = () => {
     if (!done) {
       done = true;
-      onDone();
+      onDone?.();
     }
   };
-  if (audioPath) {
+  const playAssetAudio = (): void => {
+    if (!audioPath) {
+      finish();
+      return;
+    }
     let fellBack = false;
     engine.audio.playPromptAudio(
       audioPath,
@@ -277,20 +268,27 @@ export function speakEntityKeyword(
       },
       () => {
         fellBack = true;
-        if (label) {
-          engine.audio.speakPrompt(label, finish);
-        } else {
-          finish();
-        }
+        finish();
       }
     );
+  };
+  if (!label) {
+    playAssetAudio();
     return;
   }
-  if (label) {
-    engine.audio.speakPrompt(label, finish);
-    return;
-  }
-  finish();
+  let teacherFailed = false;
+  engine.audio.speakPrompt(
+    label,
+    () => {
+      if (!teacherFailed) {
+        finish();
+      }
+    },
+    () => {
+      teacherFailed = true;
+      playAssetAudio();
+    }
+  );
 }
 
 /**

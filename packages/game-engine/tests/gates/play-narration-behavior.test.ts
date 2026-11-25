@@ -34,10 +34,8 @@ class StubSession extends BaseGameSession {
 describe("L5 — Dự phòng và hành vi chơi (BR-PNR-06..09 / Task #269)", () => {
   // T5.1: BR-PNR-06 — không có giọng Việt và mp3 hỏng → trợ giúp lên bậc bàn tay dẫn, khung yêu cầu nhấp nháy 1200 ms
   it("T5.1 (BR-PNR-06): không có giọng Việt và mp3 hỏng → kích hoạt visual fallback (bàn tay dẫn)", () => {
+    // Môi trường không có `Audio` = mp3 giọng cô không phát được.
     const audio = new AudioController(true);
-    vi.spyOn(audio.getSpeechAdapter(), "hasVietnameseVoice").mockReturnValue(
-      false
-    );
 
     const fallbackVisualCue = vi.fn();
     const onEnd = vi.fn();
@@ -72,10 +70,7 @@ describe("L5 — Dự phòng và hành vi chơi (BR-PNR-06..09 / Task #269)", ()
         onEnd?.();
       }
     );
-    // Bậc 2 hỏng: máy không có giọng Việt.
-    vi.spyOn(audio.getSpeechAdapter(), "hasVietnameseVoice").mockReturnValue(
-      false
-    );
+    // Bậc 2 hỏng: mp3 giọng cô băm từ câu dẫn cũng không phát được (không có `Audio`).
     const speakSpy = vi.spyOn(audio, "speakPrompt");
 
     const fallbackCue = vi.fn();
@@ -244,27 +239,36 @@ describe("L5 — Dự phòng và hành vi chơi (BR-PNR-06..09 / Task #269)", ()
   });
 
   // T5.5: Autoplay fallback — nếu autoplay bị chặn, hoãn câu dẫn tới lần chạm đầu
-  it("T5.5: autoplay bị chặn → không quăng lỗi, fallback mềm", () => {
-    const audio = new AudioController(true);
-    let fallbackCalled = false;
-
-    // Giả lập speakPrompt khi bị lỗi permission
-    vi.spyOn(audio.getSpeechAdapter(), "speak").mockImplementation(
-      (_text, options) => {
-        options?.onError?.(
-          new Error(
-            "NotAllowedError: play() failed because the user didn't interact"
-          )
-        );
-        return true;
+  it("T5.5: autoplay bị chặn → không quăng lỗi, fallback mềm", async () => {
+    // Giả lập trình duyệt chặn tự phát: `play()` reject `NotAllowedError`.
+    vi.stubGlobal(
+      "Audio",
+      class {
+        volume = 1;
+        currentTime = 0;
+        onended: (() => void) | null = null;
+        onerror: (() => void) | null = null;
+        readonly pause = vi.fn();
+        play(): Promise<void> {
+          return Promise.reject(
+            new Error(
+              "NotAllowedError: play() failed because the user didn't interact"
+            )
+          );
+        }
       }
     );
+    const audio = new AudioController(true);
+    let fallbackCalled = false;
 
     audio.speakPrompt("Chọn màu đỏ", undefined, () => {
       fallbackCalled = true;
     });
+    await Promise.resolve();
+    await Promise.resolve();
 
     expect(fallbackCalled).toBe(true);
+    vi.unstubAllGlobals();
   });
 
   // T5.6: Nút "Nghe lại" đọc sàn chạm theo band tuổi thật (BR-PSZ-04), không

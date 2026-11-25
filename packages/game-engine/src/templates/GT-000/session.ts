@@ -238,7 +238,7 @@ export class GT000Session extends TemplateGameSession<
     return this.content.assets.find((a) => a.asset_id === assetId);
   }
 
-  private consumeStepLeadInPrefix(): string | undefined {
+  private consumeStepLeadInPrefix(): readonly string[] | undefined {
     const parts: string[] = [];
     if (this.pendingMilestoneLine) {
       parts.push(this.pendingMilestoneLine);
@@ -259,7 +259,7 @@ export class GT000Session extends TemplateGameSession<
         parts.push(cue);
       }
     }
-    return parts.length > 0 ? parts.join(" ") : undefined;
+    return parts.length > 0 ? parts : undefined;
   }
 
   private updateCurrentStepLayout(): void {
@@ -389,7 +389,7 @@ export class GT000Session extends TemplateGameSession<
 
   private playStepPrompt(
     step: GT000Step & { action: "recognise" | "link" | "recall" },
-    leadInPrefix?: string
+    leadInPrefix?: readonly string[]
   ): void {
     this.audioPromptCalled = true;
     const token = this.stepPromptToken;
@@ -414,7 +414,7 @@ export class GT000Session extends TemplateGameSession<
 
   private playCardStepAudio(
     step: GT000Step & { action: "present" | "echo" },
-    leadInPrefix?: string
+    leadInPrefix?: readonly string[]
   ): GT000Asset | undefined {
     this.audioPromptCalled = true;
     const asset = this.getAsset(step.target_asset_id);
@@ -480,7 +480,7 @@ export class GT000Session extends TemplateGameSession<
 
   private playEchoModel(
     step: GT000Step & { action: "echo" },
-    leadInPrefix?: string
+    leadInPrefix?: readonly string[]
   ): void {
     const asset = this.playCardStepAudio(step, leadInPrefix);
     if (asset) {

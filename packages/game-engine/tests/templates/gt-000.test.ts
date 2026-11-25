@@ -143,8 +143,12 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
     session.prepareRound("3-4");
 
     expect(speakSpy).toHaveBeenCalledTimes(1);
-    expect(speakSpy.mock.calls[0]?.[0]).toContain("Cô Cú");
-    expect(speakSpy.mock.calls[0]?.[0]).toContain("Đây là số một.");
+    expect([speakSpy.mock.calls[0]?.[0] ?? ""].flat().join(" ")).toContain(
+      "Cô Cú"
+    );
+    expect([speakSpy.mock.calls[0]?.[0] ?? ""].flat().join(" ")).toContain(
+      "Đây là số một."
+    );
     expect(playPromptSpy).toHaveBeenCalledWith("/audio/numbers/num_1.mp3");
     expect(session.lastTtsUsed).toBe(true);
 

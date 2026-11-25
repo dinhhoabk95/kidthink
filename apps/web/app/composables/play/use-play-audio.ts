@@ -1,4 +1,4 @@
-import type { GameEngine } from "@mindkid/game-engine";
+import type { GameEngine, TeacherVoiceText } from "@mindkid/game-engine";
 
 export interface PlayAudioOptions {
   readonly getEngine: () => GameEngine | null;
@@ -67,7 +67,7 @@ export function usePlayAudio(options: PlayAudioOptions) {
    * `RoundRunner.notePromptSettled()` (`BR-PNR-11`).
    */
   function playInstructionNarration(
-    promptText?: string,
+    promptText?: TeacherVoiceText,
     onSettled?: () => void
   ): void {
     stopNarrationAudio();
@@ -140,7 +140,7 @@ export function usePlayAudio(options: PlayAudioOptions) {
     }
   }
 
-  /** Dừng lời dẫn đang phát (mp3 + TTS) và đồng hồ chờ settle (Task #313 B5). */
+  /** Dừng lời dẫn đang phát (mp3 giọng cô) và đồng hồ chờ settle (Task #313 B5). */
   function pauseNarration(): void {
     clearPendingSettleTimer();
     try {
@@ -148,16 +148,12 @@ export function usePlayAudio(options: PlayAudioOptions) {
     } catch {
       // Safe ignore
     }
-    if (typeof window !== "undefined") {
-      window.speechSynthesis?.pause();
-    }
+    getEngine()?.audio.pauseVoice();
   }
 
   /** Phát tiếp lời dẫn; settle còn chờ thì hẹn lại hạn dự phòng đầy đủ. */
   function resumeNarration(): void {
-    if (typeof window !== "undefined") {
-      window.speechSynthesis?.resume();
-    }
+    getEngine()?.audio.resumeVoice();
     activeNarrationAudio?.play().catch(() => undefined);
     const settle = pendingSettleCallback;
     if (settle) {

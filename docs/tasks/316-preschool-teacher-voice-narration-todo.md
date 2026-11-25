@@ -23,9 +23,10 @@
   - [ ] Chạy xanh toàn bộ suite test của `@mindkid/content` và `@mindkid/content-build`
 
 - [ ] **Pha 5 — Gỡ Bỏ Hoàn Toàn JS Web Speech API & Chuẩn Hoá UI Hiển Thị (`engine-web-tts-remover`)**
-  - [ ] Xoá toàn bộ nhánh gọi `window.speechSynthesis` / `SpeechSynthesisAdapter` khỏi `@mindkid/game-engine` (`AudioController`, `RoundRunner`) và `apps/web` (`use-play-audio.ts`, `/play/**`)
-  - [ ] Đấu nối tra cứu `resolveTeacherVoicePath` cho câu dẫn mở vòng, chạm đọc tên vật, câu khen và lời đọc pill Montessori (`takePillNarration`, `BR-PNR-12`)
-  - [ ] Bảo đảm khi file `.mp3` lỗi hoặc quá hạn `3s`, hệ thống rơi thẳng xuống bậc 2 tín hiệu thị giác (`ghostHand` + nhấp nháy khung yêu cầu `1200 ms`, `BR-PNR-06`) và mở cử chỉ đúng hạn không treo màn chơi (`BR-PNR-09`, `BR-PNR-11`)
+  - [x] Xoá toàn bộ nhánh gọi `window.speechSynthesis` / `SpeechSynthesisAdapter` khỏi `@mindkid/game-engine` (`AudioController`, `RoundRunner`) và `apps/web` (`use-play-audio.ts`, `/play/**`)
+  - [x] Đấu nối tra cứu `resolveTeacherVoicePath` cho câu dẫn mở vòng, chạm đọc tên vật, câu khen và lời đọc pill Montessori (`takePillNarration`, `BR-PNR-12`)
+  - [x] Bảo đảm khi file `.mp3` lỗi hoặc quá hạn `3s`, hệ thống rơi thẳng xuống bậc 2 tín hiệu thị giác (`ghostHand` + nhấp nháy khung yêu cầu `1200 ms`, `BR-PNR-06`) và mở cử chỉ đúng hạn không treo màn chơi (`BR-PNR-09`, `BR-PNR-11`)
+  - Ghi chú 2026-11-25: runtime tra `resolveTeacherVoicePath(text)` ở `AudioController.speakPrompt` (một điểm cho mọi câu dẫn, tên vật, khen, pill); câu ghép (khung chuyện + câu dẫn, lời dẫn GT-000) phát thành chuỗi clip `TeacherVoiceText`; clip chưa phát sau `VOICE_CLIP_START_TIMEOUT_MS = 3000` rơi xuống tín hiệu thị giác. Bề mặt ngoài màn chơi dùng `apps/web/app/composables/play/teacher-voice-player.ts`.
   - [ ] Đồng bộ câu chữ hiển thị trên HUD `/play/**` khớp chuẩn sư phạm với kịch bản giọng đọc cô giáo
 
 - [ ] **Pha 6 — Cổng Độ Phủ `check:narration-coverage` & Kiểm Định Cuối (`voice-qa-gatekeeper`)**

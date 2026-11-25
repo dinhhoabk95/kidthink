@@ -10,6 +10,7 @@ import {
   type RoundConfig,
   RoundRunner,
   type StageZones,
+  type TeacherVoiceText,
 } from "@mindkid/game-engine";
 import type { AgeBand } from "@mindkid/shared/client";
 import { nextTick, type Ref, ref } from "vue";
@@ -423,7 +424,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         const spokenPrompt = (
           text: string | undefined,
           when: NarrationTrigger
-        ): string | undefined =>
+        ): TeacherVoiceText | undefined =>
           text ? (roundRunner?.spokenPromptFor(text, when) ?? text) : text;
         const prompt =
           (roundConfig.content_pack as { prompt?: string })?.prompt ||

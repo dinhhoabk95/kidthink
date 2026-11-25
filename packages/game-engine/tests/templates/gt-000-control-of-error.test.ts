@@ -29,7 +29,7 @@ function makeSession(
   const session = new GT000Session(content, difficulty);
   const spoken: string[] = [];
   vi.spyOn(session.audio, "speakPrompt").mockImplementation((text, onEnd) => {
-    spoken.push(text);
+    spoken.push(typeof text === "string" ? text : text.join(" "));
     onEnd?.();
     return true;
   });

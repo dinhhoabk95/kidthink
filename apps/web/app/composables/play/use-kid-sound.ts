@@ -1,8 +1,5 @@
-import {
-  SFXEngine,
-  type SFXType,
-  SpeechSynthesisAdapter,
-} from "@mindkid/game-engine";
+import { SFXEngine, type SFXType } from "@mindkid/game-engine";
+import { playTeacherVoice } from "~/composables/play/teacher-voice-player";
 
 const MARIMBA_STEPS: readonly SFXType[] = [
   "marimba_1",
@@ -13,7 +10,6 @@ const MARIMBA_STEPS: readonly SFXType[] = [
 ];
 
 let sharedSfx: SFXEngine | null = null;
-let sharedSpeech: SpeechSynthesisAdapter | null = null;
 
 function getSfx(): SFXEngine | null {
   if (typeof window === "undefined") {
@@ -25,16 +21,6 @@ function getSfx(): SFXEngine | null {
   return sharedSfx;
 }
 
-function getSpeech(): SpeechSynthesisAdapter | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-  if (!sharedSpeech) {
-    sharedSpeech = new SpeechSynthesisAdapter();
-  }
-  return sharedSpeech;
-}
-
 export interface KidSoundControls {
   readonly playSfx: (type: SFXType) => void;
   readonly playMarimba: (stepIndex: number) => void;
@@ -42,7 +28,7 @@ export interface KidSoundControls {
 }
 
 /**
- * Âm thanh xúc giác & giọng đọc tiếng Việt dùng chung cho bề mặt ngoài của trẻ
+ * Âm thanh xúc giác & giọng cô giáo (mp3 `teacher-v1`) dùng chung cho bề mặt ngoài của trẻ
  * (`/play`, `/play/map`, `/play/stickers`, `/play/toybox`, `KidVictoryModal`).
  * Tự động im lặng an toàn trong môi trường SSR / happy-dom không có Web Audio.
  */
@@ -69,16 +55,15 @@ export function useKidSound(): KidSoundControls {
     if (!trimmed) {
       return;
     }
-    try {
-      const adapter = getSpeech();
-      const didSpeak = adapter?.speak(trimmed) ?? false;
-      if (!(didSpeak || chime)) {
-        playMarimba(0);
-      }
-    } catch {
+    // Giọng cô `teacher-v1` (`BR-PNR-05`); thiếu mp3 thì một nốt marimba
+    // thay lời để trẻ vẫn có phản hồi âm thanh.
+    const fallback = (): void => {
       if (!chime) {
         playMarimba(0);
       }
+    };
+    if (!playTeacherVoice(trimmed, fallback)) {
+      fallback();
     }
   }
 

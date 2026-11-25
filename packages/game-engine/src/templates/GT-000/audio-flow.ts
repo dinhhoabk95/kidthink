@@ -19,6 +19,7 @@ import { spawnParticlesAtSlot, updateParticles } from "#src/render/particles";
 import { computeBookTurnProgress } from "#src/render/storybook-frame.js";
 import type { AudioController } from "#src/systems/audio-controller";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { TeacherVoiceText } from "#src/systems/teacher-voice";
 import {
   computeGT000StepLayout,
   type GT000ComputedStepLayout,
@@ -261,15 +262,15 @@ export function startGT000StepPromptSpeech(
   step: GT000Step & { action: "recognise" | "link" | "recall" },
   onSettled: () => void,
   onTtsUnavailable: (assetId: string) => void,
-  leadInPrefix?: string
+  leadInPrefix?: readonly string[]
 ): { readonly pending: boolean; readonly spoke: boolean } {
   const baseLine = step.prompt_line?.trim();
   if (!(baseLine || leadInPrefix)) {
     return { pending: false, spoke: false };
   }
-  const textToSpeak =
+  const textToSpeak: TeacherVoiceText =
     leadInPrefix && baseLine
-      ? `${leadInPrefix} ${baseLine}`
+      ? [...leadInPrefix, baseLine]
       : (baseLine ?? leadInPrefix ?? "");
   let settledSync = false;
   const spoke = audio.speakPrompt(textToSpeak, () => {
@@ -492,20 +493,20 @@ function resolveCardChainedSpeech(
   step: GT000Step & { action: "present" | "echo" },
   asset: GT000Asset,
   speakAlong: SpeakAlongMode,
-  leadInPrefix: string | undefined
-): string | undefined {
+  leadInPrefix: readonly string[] | undefined
+): TeacherVoiceText | undefined {
   if (step.action === "present") {
     const explicit = step.narration_line?.trim();
     if (leadInPrefix && explicit) {
-      return `${leadInPrefix} ${explicit}`;
+      return [...leadInPrefix, explicit];
     }
     if (leadInPrefix) {
-      return `${leadInPrefix} ${getStepPromptText(step, asset, speakAlong)}`;
+      return [...leadInPrefix, getStepPromptText(step, asset, speakAlong)];
     }
     return explicit || undefined;
   }
   return leadInPrefix
-    ? `${leadInPrefix} ${getStepPromptText(step, asset, speakAlong)}`
+    ? [...leadInPrefix, getStepPromptText(step, asset, speakAlong)]
     : undefined;
 }
 
@@ -523,7 +524,7 @@ export function playGT000CardAudioWithFallback(
   step: GT000Step & { action: "present" | "echo" },
   asset: GT000Asset,
   speakAlong: SpeakAlongMode,
-  leadInPrefix: string | undefined,
+  leadInPrefix: readonly string[] | undefined,
   onSpeaking: () => void,
   onSpokeChange: (spoke: boolean) => void,
   onTtsUnavailable: (assetId: string) => void,

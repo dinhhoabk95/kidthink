@@ -1,11 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
+import { resolveTeacherVoicePath } from "@mindkid/shared/voice-path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  AudioController,
-  ScaffoldingSystem,
-  SpeechSynthesisAdapter,
-} from "#src/index";
+import { AudioController, ScaffoldingSystem } from "#src/index";
+import { VOICE_CLIP_START_TIMEOUT_MS } from "#src/systems/audio-controller";
 
 const FORBIDDEN_MIC_PATTERNS = [
   /getUserMedia/,
@@ -82,234 +80,157 @@ describe("Task #87 — Audio Runtime Delivery & Fallback (BR-ENG-10, BR-ENG-16, 
     });
   });
 
-  describe("WP87.2: SpeechSynthesisAdapter & Vietnamese Voice Detection", () => {
-    it("detects vi-VN voice when present in system voices", () => {
-      const mockVoices: Partial<SpeechSynthesisVoice>[] = [
-        { name: "Alex", lang: "en-US" },
-        { name: "Mai", lang: "vi-VN" },
-      ];
-
-      (globalThis as any).window = {
-        speechSynthesis: {
-          getVoices: vi.fn().mockReturnValue(mockVoices),
-          speak: vi.fn(),
-          cancel: vi.fn(),
-          onvoiceschanged: null,
-        },
-      };
-      (globalThis as any).SpeechSynthesisUtterance = class {
-        lang = "";
-        text = "";
-        rate = 1;
-        pitch = 1;
-        volume = 1;
-        voice = null;
-        onstart: (() => void) | null = null;
-        onend: (() => void) | null = null;
-        onerror: ((err: any) => void) | null = null;
-        constructor(text: string) {
-          this.text = text;
-        }
-      };
-
-      const adapter = new SpeechSynthesisAdapter();
-      expect(adapter.hasVietnameseVoice()).toBe(true);
-      expect(adapter.isSupported()).toBe(true);
+  describe("WP87.2: Giọng cô giáo teacher-v1 (BR-PNR-05)", () => {
+    afterEach(() => {
+      vi.unstubAllGlobals();
     });
 
-    it("returns false when device lacks vi-VN voice (Lenovo Tab M8 scenario)", () => {
-      const mockVoices: Partial<SpeechSynthesisVoice>[] = [
-        { name: "English Voice", lang: "en-US" },
-        { name: "French Voice", lang: "fr-FR" },
-      ];
+    it("phát mp3 băm tất định từ câu chữ, không gọi Web Speech", async () => {
+      const played: string[] = [];
+      vi.stubGlobal(
+        "Audio",
+        class {
+          volume = 1;
+          currentTime = 0;
+          onended: (() => void) | null = null;
+          onerror: (() => void) | null = null;
+          readonly pause = vi.fn();
+          constructor(src: string) {
+            played.push(src);
+          }
+          play(): Promise<void> {
+            queueMicrotask(() => this.onended?.());
+            return Promise.resolve();
+          }
+        }
+      );
+      const audio = new AudioController(true);
+      const onEnd = vi.fn();
+      const cue = vi.fn();
 
-      (globalThis as any).window = {
-        speechSynthesis: {
-          getVoices: vi.fn().mockReturnValue(mockVoices),
-          speak: vi.fn(),
-          cancel: vi.fn(),
-        },
-      };
+      expect(audio.speakPrompt("Tìm 3 chú gà", onEnd, cue)).toBe(true);
+      await Promise.resolve();
 
-      const adapter = new SpeechSynthesisAdapter();
-      expect(adapter.hasVietnameseVoice()).toBe(false);
-
-      const fallbackTriggered = adapter.speak("Đếm số quả táo");
-      expect(fallbackTriggered).toBe(false);
+      expect(played).toEqual([resolveTeacherVoicePath("Tìm 3 chú gà")]);
+      expect(onEnd).toHaveBeenCalledTimes(1);
+      expect(cue).not.toHaveBeenCalled();
     });
 
-    it("handles speech errors gracefully without throwing", () => {
-      const mockVoices: Partial<SpeechSynthesisVoice>[] = [
-        { name: "Linh", lang: "vi-VN" },
-      ];
-
-      let utteranceInstance: any = null;
-      (globalThis as any).SpeechSynthesisUtterance = class {
-        lang = "";
-        text = "";
-        onstart: (() => void) | null = null;
-        onend: (() => void) | null = null;
-        onerror: ((err: any) => void) | null = null;
-        constructor(text: string) {
-          this.text = text;
-          utteranceInstance = this;
+    it("các đoạn phát nối tiếp đúng thứ tự trong một lượt", async () => {
+      const played: string[] = [];
+      vi.stubGlobal(
+        "Audio",
+        class {
+          volume = 1;
+          currentTime = 0;
+          onended: (() => void) | null = null;
+          onerror: (() => void) | null = null;
+          readonly pause = vi.fn();
+          constructor(src: string) {
+            played.push(src);
+          }
+          play(): Promise<void> {
+            queueMicrotask(() => this.onended?.());
+            return Promise.resolve();
+          }
         }
-      };
-
-      (globalThis as any).window = {
-        speechSynthesis: {
-          getVoices: vi.fn().mockReturnValue(mockVoices),
-          speak: vi.fn().mockImplementation(() => {
-            setTimeout(() => {
-              utteranceInstance?.onerror?.({ error: "not-allowed" });
-            }, 10);
-          }),
-          cancel: vi.fn(),
-        },
-      };
-
-      const adapter = new SpeechSynthesisAdapter();
-      const onError = vi.fn();
+      );
+      const audio = new AudioController(true);
       const onEnd = vi.fn();
 
-      const started = adapter.speak("Hãy chọn hình vuông", { onError, onEnd });
-      expect(started).toBe(true);
+      audio.speakPrompt(["Gấu Con đi chợ.", "Chọn quả táo"], onEnd);
+      for (let i = 0; i < 4; i++) {
+        await Promise.resolve();
+      }
 
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          expect(onError).toHaveBeenCalled();
-          expect(onEnd).toHaveBeenCalled();
-          resolve();
-        }, 50);
-      });
+      expect(played).toEqual([
+        resolveTeacherVoicePath("Gấu Con đi chợ."),
+        resolveTeacherVoicePath("Chọn quả táo"),
+      ]);
+      expect(onEnd).toHaveBeenCalledTimes(1);
     });
 
-    it("safely handles timeout if onend event is dropped by browser", () => {
+    it("clip treo quá 3 giây thì rơi xuống tín hiệu thị giác (BR-PNR-06)", () => {
       vi.useFakeTimers();
-
-      const mockVoices: Partial<SpeechSynthesisVoice>[] = [
-        { name: "Linh", lang: "vi-VN" },
-      ];
-
-      (globalThis as any).SpeechSynthesisUtterance = class {
-        text = "";
-        constructor(text: string) {
-          this.text = text;
+      vi.stubGlobal(
+        "Audio",
+        class {
+          volume = 1;
+          currentTime = 0;
+          onended: (() => void) | null = null;
+          onerror: (() => void) | null = null;
+          readonly pause = vi.fn();
+          play(): Promise<void> {
+            return new Promise(() => undefined);
+          }
         }
-      };
-      (globalThis as any).window = {
-        speechSynthesis: {
-          getVoices: vi.fn().mockReturnValue(mockVoices),
-          speak: vi.fn(),
-          cancel: vi.fn(),
-        },
-      };
-
-      const adapter = new SpeechSynthesisAdapter();
+      );
+      const audio = new AudioController(true);
       const onEnd = vi.fn();
+      const cue = vi.fn();
 
-      adapter.speak("Chỉ dẫn dài", { onEnd, timeoutMs: 1000 });
-      expect(onEnd).not.toHaveBeenCalled();
+      audio.speakPrompt("Tìm 3 chú gà", onEnd, cue);
+      vi.advanceTimersByTime(VOICE_CLIP_START_TIMEOUT_MS - 1);
+      expect(cue).not.toHaveBeenCalled();
+      vi.advanceTimersByTime(1);
 
-      vi.advanceTimersByTime(1000);
-      expect(onEnd).toHaveBeenCalled();
-
+      expect(cue).toHaveBeenCalledTimes(1);
+      expect(onEnd).toHaveBeenCalledTimes(1);
       vi.useRealTimers();
     });
 
-    // Task #273: bậc dự phòng TTS phải đọc nhanh hơn tốc độ cũ 0,9 — người
-    // đặt việc yêu cầu "TTS API tốc độ nhanh hơn" khi mp3 không có.
-    it("mặc định rate 1.0 khi không truyền — nhanh hơn 0.9 cũ (Task #273)", () => {
-      const mockVoices: Partial<SpeechSynthesisVoice>[] = [
-        { name: "Linh", lang: "vi-VN" },
-      ];
-
-      let utteranceInstance: any = null;
-      (globalThis as any).SpeechSynthesisUtterance = class {
-        lang = "";
-        text = "";
-        rate = 1;
-        pitch = 1;
-        volume = 1;
-        voice = null;
-        onstart: (() => void) | null = null;
-        onend: (() => void) | null = null;
-        onerror: ((err: any) => void) | null = null;
-        constructor(text: string) {
-          this.text = text;
-          utteranceInstance = this;
+    it("lượt bị cắt ngang báo onEnd, không báo tín hiệu thị giác", () => {
+      vi.stubGlobal(
+        "Audio",
+        class {
+          volume = 1;
+          currentTime = 0;
+          onended: (() => void) | null = null;
+          onerror: (() => void) | null = null;
+          readonly pause = vi.fn();
+          play(): Promise<void> {
+            return new Promise(() => undefined);
+          }
         }
-      };
-      (globalThis as any).window = {
-        speechSynthesis: {
-          getVoices: vi.fn().mockReturnValue(mockVoices),
-          speak: vi.fn(),
-          cancel: vi.fn(),
-        },
-      };
+      );
+      const audio = new AudioController(true);
+      const onEnd = vi.fn();
+      const cue = vi.fn();
 
-      const adapter = new SpeechSynthesisAdapter();
-      adapter.speak("Bé tìm quả táo");
+      audio.speakPrompt("Tìm 3 chú gà", onEnd, cue);
+      audio.stopAll();
 
-      expect(utteranceInstance?.rate).toBe(1.0);
-    });
-
-    it("truyền rate riêng thì dùng đúng giá trị đó, không ép về mặc định", () => {
-      const mockVoices: Partial<SpeechSynthesisVoice>[] = [
-        { name: "Linh", lang: "vi-VN" },
-      ];
-
-      let utteranceInstance: any = null;
-      (globalThis as any).SpeechSynthesisUtterance = class {
-        lang = "";
-        text = "";
-        rate = 1;
-        pitch = 1;
-        volume = 1;
-        voice = null;
-        onstart: (() => void) | null = null;
-        onend: (() => void) | null = null;
-        onerror: ((err: any) => void) | null = null;
-        constructor(text: string) {
-          this.text = text;
-          utteranceInstance = this;
-        }
-      };
-      (globalThis as any).window = {
-        speechSynthesis: {
-          getVoices: vi.fn().mockReturnValue(mockVoices),
-          speak: vi.fn(),
-          cancel: vi.fn(),
-        },
-      };
-
-      const adapter = new SpeechSynthesisAdapter();
-      adapter.speak("Bé tìm quả táo", { rate: 1.15 });
-
-      expect(utteranceInstance?.rate).toBe(1.15);
+      expect(onEnd).toHaveBeenCalledTimes(1);
+      expect(cue).not.toHaveBeenCalled();
     });
   });
 
   describe("WP87.3 & WP87.4: Visual Fallback Integration & Scaffolding (BR-ENG-10, BR-A11-11)", () => {
-    it("triggers visual cue immediately when voice is unavailable", () => {
-      const audio = new AudioController(true);
-      vi.spyOn(audio, "isVoiceAvailable").mockReturnValue(false);
-      vi.spyOn(audio.getSpeechAdapter(), "hasVietnameseVoice").mockReturnValue(
-        false
+    it("triggers visual cue when the teacher mp3 is missing", async () => {
+      vi.stubGlobal(
+        "Audio",
+        class {
+          volume = 1;
+          currentTime = 0;
+          onended: (() => void) | null = null;
+          onerror: (() => void) | null = null;
+          readonly pause = vi.fn();
+          play(): Promise<void> {
+            return Promise.reject(new Error("NotSupportedError"));
+          }
+        }
       );
-
+      const audio = new AudioController(true);
       const fallbackVisualCue = vi.fn();
       const onEnd = vi.fn();
 
-      const result = audio.speakPrompt(
-        "Tìm 3 chú gà",
-        onEnd,
-        fallbackVisualCue
-      );
+      audio.speakPrompt("Tìm 3 chú gà", onEnd, fallbackVisualCue);
+      await Promise.resolve();
+      await Promise.resolve();
 
-      expect(result).toBe(false);
       expect(fallbackVisualCue).toHaveBeenCalledTimes(1);
       expect(onEnd).toHaveBeenCalledTimes(1);
+      vi.unstubAllGlobals();
     });
 
     it("triggers visual cue when audio is disabled", () => {

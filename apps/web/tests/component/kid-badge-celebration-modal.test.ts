@@ -4,6 +4,9 @@ import { describe, expect, it, vi } from "vitest";
 import KidBadgeCelebrationModal from "~/components/kid/badge-celebration-modal.vue";
 import { BADGE_DEFINITIONS } from "~/composables/play/use-badge-celebration";
 
+const TEACHER_VOICE_PATH_RE =
+  /^\/audio\/voice\/teacher-v1\/[0-9a-f]{2}\/[0-9a-f]{16}\.mp3$/;
+
 describe("KidBadgeCelebrationModal component (Task #287)", () => {
   const badgeSample = BADGE_DEFINITIONS.STRAND_FIRST_COMPLETE;
 
@@ -56,35 +59,22 @@ describe("KidBadgeCelebrationModal component (Task #287)", () => {
     expect(wrapper.emitted("confirm")?.length).toBe(1);
   });
 
-  it("bấm nút nghe lời chúc kích hoạt speechSynthesis", async () => {
-    const originalSpeechSynthesis = window.speechSynthesis;
-    const originalUtterance = globalThis.SpeechSynthesisUtterance;
-    const speakMock = vi.fn();
-    const cancelMock = vi.fn();
-
-    Object.defineProperty(window, "speechSynthesis", {
-      value: {
-        speak: speakMock,
-        cancel: cancelMock,
-      },
-      configurable: true,
-      writable: true,
-    });
-
-    class MockSpeechSynthesisUtterance {
-      text: string;
-      lang = "";
-      rate = 1;
-      constructor(text: string) {
-        this.text = text;
+  it("bấm nút nghe lời chúc phát mp3 giọng cô teacher-v1, không dùng speechSynthesis (BR-PNR-05)", async () => {
+    const played: string[] = [];
+    vi.stubGlobal(
+      "Audio",
+      class {
+        onended: (() => void) | null = null;
+        onerror: (() => void) | null = null;
+        readonly pause = vi.fn();
+        constructor(src: string) {
+          played.push(src);
+        }
+        play(): Promise<void> {
+          return Promise.resolve();
+        }
       }
-    }
-
-    Object.defineProperty(globalThis, "SpeechSynthesisUtterance", {
-      value: MockSpeechSynthesisUtterance,
-      configurable: true,
-      writable: true,
-    });
+    );
 
     try {
       const wrapper = mount(KidBadgeCelebrationModal, {
@@ -105,19 +95,10 @@ describe("KidBadgeCelebrationModal component (Task #287)", () => {
       expect(speakBtn.exists()).toBe(true);
 
       await speakBtn.trigger("click");
-      expect(cancelMock).toHaveBeenCalled();
-      expect(speakMock).toHaveBeenCalled();
+      expect(played).toHaveLength(1);
+      expect(played[0]).toMatch(TEACHER_VOICE_PATH_RE);
     } finally {
-      Object.defineProperty(window, "speechSynthesis", {
-        value: originalSpeechSynthesis,
-        configurable: true,
-        writable: true,
-      });
-      Object.defineProperty(globalThis, "SpeechSynthesisUtterance", {
-        value: originalUtterance,
-        configurable: true,
-        writable: true,
-      });
+      vi.unstubAllGlobals();
     }
   });
 });

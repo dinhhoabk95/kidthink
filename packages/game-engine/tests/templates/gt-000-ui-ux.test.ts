@@ -357,7 +357,7 @@ describe("GT-000 — Audio Fallback, PointerHover (x, y) & Bước Link", () => 
       }
     );
     vi.spyOn(session.audio, "speakPrompt").mockImplementation((text, onEnd) => {
-      spokenTexts.push(text);
+      spokenTexts.push(typeof text === "string" ? text : text.join(" "));
       onEnd?.();
       return true;
     });

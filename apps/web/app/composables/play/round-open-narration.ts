@@ -1,4 +1,4 @@
-import { withStoryLine } from "@mindkid/game-engine";
+import { type TeacherVoiceText, withStoryLine } from "@mindkid/game-engine";
 import {
   type OpeningAudioSource,
   playOpeningAudioThenSettle,
@@ -16,7 +16,7 @@ export interface RoundOpenSource extends OpeningAudioSource {
 }
 
 export type RoundOpenSpeaker = (
-  text: string,
+  text: TeacherVoiceText,
   onEnd: () => void,
   onError: () => void
 ) => void;
@@ -34,7 +34,7 @@ export function composeRoundOpenSpeech(
   source: RoundOpenSource | null | undefined,
   prompt: string,
   tellStory = true
-): string {
+): TeacherVoiceText {
   return withStoryLine(tellStory ? source?.storyLine?.() : null, prompt);
 }
 

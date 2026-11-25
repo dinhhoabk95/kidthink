@@ -285,7 +285,11 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     gesture.dispatchGesture({ type: "tap", x: 100, y: 100, timeMs: 0 });
 
     expect(session.dispatched).toHaveLength(0); // toAction chưa từng chạy
-    expect(speakPrompt).toHaveBeenCalledWith("nhãn-opt-1");
+    expect(speakPrompt).toHaveBeenCalledWith(
+      "nhãn-opt-1",
+      expect.any(Function),
+      expect.any(Function)
+    );
     expect(onMiss).not.toHaveBeenCalled();
     expect(onSuccess).not.toHaveBeenCalled();
   });
@@ -304,6 +308,7 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     // không cắt ngang tên (BR-FBK-13).
     expect(speakPrompt).toHaveBeenCalledWith(
       "nhãn-opt-2",
+      expect.any(Function),
       expect.any(Function)
     );
     expect(engine.audio.playSoftFeedbackSound).toHaveBeenCalledTimes(1);
@@ -320,7 +325,11 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     gesture.dispatchGesture({ type: "tap", x: 100, y: 100, timeMs: 0 });
 
     expect(session.dispatched).toHaveLength(1);
-    expect(speakPrompt).toHaveBeenCalledWith("nhãn-opt-1");
+    expect(speakPrompt).toHaveBeenCalledWith(
+      "nhãn-opt-1",
+      expect.any(Function),
+      expect.any(Function)
+    );
     expect(engine.audio.playSnapSound).toHaveBeenCalledTimes(1);
     expect(onSuccess).toHaveBeenCalledTimes(1);
   });
@@ -361,17 +370,12 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     expect(speakPrompt).not.toHaveBeenCalled();
   });
 
-  it("từ khoá có mp3: phát mp3 trước, TTS chỉ khi mp3 lỗi (Task #274 S7b)", () => {
+  it("từ khoá: giọng cô trước, mp3 riêng của asset chỉ khi giọng cô lỗi (Task #316)", () => {
     const { gesture, speakPrompt, engine } = makeTapSelectHarness([
       { id: "opt-1", role: "source" },
       { id: "opt-2", role: "source" },
     ]);
-    let failMp3: (() => void) | undefined;
-    const playPromptAudio = vi.fn(
-      (_ref: string, _onEnd?: () => void, onError?: () => void) => {
-        failMp3 = onError;
-      }
-    );
+    const playPromptAudio = vi.fn();
     Object.assign(engine.audio, { playPromptAudio });
     gesture.viewEntities.value = gesture.viewEntities.value.map((e) =>
       e.id === "opt-1" ? { ...e, spokenAudioPath: "/audio/opt-1.mp3" } : e
@@ -379,15 +383,20 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
 
     gesture.dispatchGesture({ type: "tap", x: 100, y: 100, timeMs: 0 });
 
-    expect(playPromptAudio).toHaveBeenCalledWith(
-      "/audio/opt-1.mp3",
-      undefined,
+    expect(speakPrompt).toHaveBeenCalledWith(
+      "nhãn-opt-1",
+      expect.any(Function),
       expect.any(Function)
     );
-    expect(speakPrompt).not.toHaveBeenCalled();
+    expect(playPromptAudio).not.toHaveBeenCalled();
 
-    failMp3?.();
-    expect(speakPrompt).toHaveBeenCalledWith("nhãn-opt-1");
+    const failTeacher = speakPrompt.mock.calls[0]?.[2];
+    failTeacher?.();
+    expect(playPromptAudio).toHaveBeenCalledWith(
+      "/audio/opt-1.mp3",
+      expect.any(Function),
+      expect.any(Function)
+    );
   });
 
   it("chạm lệch trong dung sai 24px của engine vẫn đọc lại từ khoá — cùng hình học chạm với toAction() (Task #274 S1d)", () => {
@@ -400,7 +409,11 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     // engine, ngoài 10px web từng tự chọn.
     gesture.dispatchGesture({ type: "tap", x: 160, y: 100, timeMs: 0 });
 
-    expect(speakPrompt).toHaveBeenCalledWith("nhãn-opt-1");
+    expect(speakPrompt).toHaveBeenCalledWith(
+      "nhãn-opt-1",
+      expect.any(Function),
+      expect.any(Function)
+    );
   });
 
   it("engine.acceptingInput = false (đang chờ câu dẫn đọc xong): chạm bị nuốt hoàn toàn, Cấm — NEVER tính điểm/sai (BR-PNR-11)", () => {
@@ -695,7 +708,11 @@ describe("usePlayGesture — đồng bộ view khi chọn/bỏ chọn (G4, Task 
 
     gesture.dispatchGesture(tap);
     expect(engine.audio.speakPrompt).toHaveBeenCalledTimes(1);
-    expect(engine.audio.speakPrompt).toHaveBeenCalledWith(target.spokenLabel);
+    expect(engine.audio.speakPrompt).toHaveBeenCalledWith(
+      target.spokenLabel,
+      expect.any(Function),
+      expect.any(Function)
+    );
 
     engine.audio.speakPrompt.mockClear();
     gesture.dispatchGesture(tap);
@@ -706,7 +723,9 @@ describe("usePlayGesture — đồng bộ view khi chọn/bỏ chọn (G4, Task 
 
     gesture.dispatchGesture(tap);
     expect(engine.audio.speakPrompt).toHaveBeenCalledExactlyOnceWith(
-      target.spokenLabel
+      target.spokenLabel,
+      expect.any(Function),
+      expect.any(Function)
     );
   });
 
