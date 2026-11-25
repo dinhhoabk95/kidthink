@@ -347,6 +347,14 @@ export class FlashRecallSession extends TemplateGameSession<
     return idx >= 0 ? idx : null;
   }
 
+  /** Bước "Chạm để mở nắp": trỏ vào đĩa che để trẻ biết bắt đầu từ đâu. */
+  override getHintTarget(): HintTarget | null {
+    if (this.awaitingStart && this.isAcceptingInput()) {
+      return { kind: "region", ids: ["cloche-plate"] };
+    }
+    return super.getHintTarget();
+  }
+
   override getHintTargetForLevel(level: HintLevel): HintTarget | null {
     if (!this.isAcceptingInput()) {
       return null;

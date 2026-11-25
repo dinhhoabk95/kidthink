@@ -61,4 +61,17 @@ describe("GT-012: khung chuyện đom đóm, tiếng mở nắp chuông, mascot 
     expect(session.checkWinCondition()).toBe(true);
     expect(session.mascotMood()).toBeNull();
   });
+
+  it("bước chạm để mở nắp: getHintTarget trỏ vào đĩa che, sau khi mở thì không còn", () => {
+    const session = openSession();
+
+    expect(session.getHintTarget()).toEqual({
+      kind: "region",
+      ids: ["cloche-plate"],
+    });
+
+    session.startFlash();
+
+    expect(session.getHintTarget()?.kind).not.toBe("region");
+  });
 });
