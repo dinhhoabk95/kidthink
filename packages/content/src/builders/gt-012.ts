@@ -8,10 +8,13 @@ import type {
 import {
   createRng,
   pickAgeBandPrompt,
-  resolveItemAsset,
+  pickSingleObjectToken,
   safeGetItem,
   shuffleDeterministic,
 } from "./utils.js";
+
+/** Vật chớp dự phòng khi dataset không có vật đơn nào (`BR-SDS-17`). */
+export const GT012_FALLBACK_TOKEN = { kind: "emoji", ref: "🍎" } as const;
 
 export const projectGT012: Projection<"GT-012"> = {
   template: "GT-012",
@@ -32,9 +35,13 @@ export const projectGT012: Projection<"GT-012"> = {
       dataset.items,
       rng.nextInt(dataset.items.length)
     );
+    // Đáp án engine là `flash_items.length` nên mỗi ô chớp phải là **một** vật
+    // (`BR-E012-10`): ô "🐦🐦🐦🐦" làm trẻ thấy 4 mà đáp án là 1.
+    const token = pickSingleObjectToken(dataset.items, baseItem, true);
+    const tokenId = token?.item.id ?? baseItem.id;
     const flashItems = Array.from({ length: targetCount }, (_, i) => ({
-      item_id: `${baseItem.id}-${i + 1}`,
-      asset: resolveItemAsset(baseItem, true),
+      item_id: `${tokenId}-${i + 1}`,
+      asset: token?.asset ?? GT012_FALLBACK_TOKEN,
     }));
 
     // Options: correct count + distractors

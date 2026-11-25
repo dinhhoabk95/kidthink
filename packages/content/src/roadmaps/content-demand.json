@@ -4568,8 +4568,8 @@
       "level_quota": 3,
       "filled_by": [
         "GL-C1-CNT-INTRO-5101",
-        "GL-C1-DOT-FLS-0010",
-        "GL-C1-DOT-FLS-0008"
+        "GL-C1-CDW-ORD-0009",
+        "GL-C1-CNT-SLOT-0121"
       ]
     },
     {
@@ -4714,7 +4714,7 @@
       ],
       "level_quota": 1,
       "filled_by": [
-        "GL-C1-CNT-SLOT-0121"
+        "GL-C1-CNT-STEP-0020"
       ]
     },
     {
@@ -5054,7 +5054,7 @@
       ],
       "level_quota": 1,
       "filled_by": [
-        "GL-C1-CDW-ORD-0009"
+        "GL-C1-CNT-STEP-0010"
       ]
     },
     {
@@ -12612,8 +12612,8 @@
       "level_quota": 3,
       "filled_by": [
         "GL-C1-CNT-INTRO-5101",
-        "GL-C1-DOT-FLS-0010",
-        "GL-C1-DOT-FLS-0008"
+        "GL-C1-CDW-ORD-0009",
+        "GL-C1-CNT-SLOT-0121"
       ]
     },
     {
@@ -12671,7 +12671,7 @@
       ],
       "level_quota": 1,
       "filled_by": [
-        "GL-C1-CDW-ORD-0009"
+        "GL-C1-CNT-STEP-0010"
       ]
     },
     {
@@ -12841,7 +12841,7 @@
       ],
       "level_quota": 1,
       "filled_by": [
-        "GL-C1-CNT-SLOT-0121"
+        "GL-C1-CNT-STEP-0020"
       ]
     },
     {
@@ -15314,7 +15314,7 @@
       ],
       "level_quota": 1,
       "filled_by": [
-        "GL-C1-CNT-STEP-0010"
+        "GL-C1-CNT-SLOT-0122"
       ]
     },
     {
@@ -28616,8 +28616,8 @@
       "level_quota": 3,
       "filled_by": [
         "GL-C1-CNT-INTRO-5101",
-        "GL-C1-DOT-FLS-0010",
-        "GL-C1-DOT-FLS-0008"
+        "GL-C1-CDW-ORD-0009",
+        "GL-C1-CNT-SLOT-0121"
       ]
     },
     {
@@ -28764,7 +28764,7 @@
       ],
       "level_quota": 1,
       "filled_by": [
-        "GL-C1-CNT-SLOT-0121"
+        "GL-C1-CNT-STEP-0020"
       ]
     },
     {
@@ -28939,7 +28939,7 @@
       ],
       "level_quota": 1,
       "filled_by": [
-        "GL-C1-CDW-ORD-0009"
+        "GL-C1-CNT-STEP-0010"
       ]
     },
     {
@@ -49558,8 +49558,8 @@
       "level_quota": 3,
       "filled_by": [
         "GL-C1-CNT-INTRO-5101",
-        "GL-C1-DOT-FLS-0010",
-        "GL-C1-DOT-FLS-0008"
+        "GL-C1-CDW-ORD-0009",
+        "GL-C1-CNT-SLOT-0121"
       ]
     },
     {
@@ -49780,7 +49780,7 @@
       ],
       "level_quota": 1,
       "filled_by": [
-        "GL-C1-CDW-ORD-0009"
+        "GL-C1-CNT-STEP-0010"
       ]
     },
     {
@@ -64208,8 +64208,8 @@
       "level_quota": 3,
       "filled_by": [
         "GL-C1-CNT-INTRO-5101",
-        "GL-C1-DOT-FLS-0010",
-        "GL-C1-DOT-FLS-0008"
+        "GL-C1-CDW-ORD-0009",
+        "GL-C1-CNT-SLOT-0121"
       ]
     },
     {
@@ -64425,7 +64425,7 @@
       ],
       "level_quota": 1,
       "filled_by": [
-        "GL-C1-CDW-ORD-0009"
+        "GL-C1-CNT-STEP-0010"
       ]
     },
     {

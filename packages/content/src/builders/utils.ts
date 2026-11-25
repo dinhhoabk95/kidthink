@@ -146,3 +146,71 @@ export function visualAssetKey(asset: DatasetAsset): string {
   const shown = asset.kind === "text" ? asset.text : asset.ref;
   return `shown:${shown.replace(VARIATION_SELECTOR_16, "").trim()}`;
 }
+
+const GRAPHEMES = new Intl.Segmenter("vi", { granularity: "grapheme" });
+const LETTER_OR_DIGIT = /[\p{L}\p{N}]/u;
+const DIGIT = /\p{N}/u;
+
+/**
+ * Chuỗi là đúng **một** hình (một grapheme) và không phải chữ/số. `allowLetters`
+ * nhận thêm một chữ cái đơn ("a") — vẫn là một vật để đếm, khác chữ số "7" là
+ * một con số đọc lên được.
+ */
+export function isSingleObjectText(
+  text: string,
+  allowLetters = false
+): boolean {
+  const t = text.trim();
+  return (
+    t.length > 0 &&
+    [...GRAPHEMES.segment(t)].length === 1 &&
+    !(allowLetters ? DIGIT : LETTER_OR_DIGIT).test(t)
+  );
+}
+
+function singleObjectImage(item: DatasetItem): DatasetAsset | null {
+  const img = item.image;
+  if (img?.kind === "image") {
+    return img;
+  }
+  if (img?.kind === "emoji" && isSingleObjectText(img.ref)) {
+    return img;
+  }
+  if (img?.kind === "text" && isSingleObjectText(img.text)) {
+    return { kind: "emoji", ref: img.text.trim() };
+  }
+  return null;
+}
+
+export interface SingleObjectToken {
+  readonly item: DatasetItem;
+  readonly asset: DatasetAsset;
+}
+
+/**
+ * Vật đếm: một vật đơn để trẻ đếm từng cái (`BR-E028-13`, `BR-E012-10`). Ưu
+ * tiên glyph một-vật ("🍎", giữ `text` để khái niệm hiện ra, `BR-SDS-03`), rồi
+ * ảnh một-vật; `preferred` được xét trước các vật khác. Không có thì `null`.
+ */
+export function pickSingleObjectToken(
+  items: readonly DatasetItem[],
+  preferred?: DatasetItem,
+  allowLetters = false
+): SingleObjectToken | null {
+  const ordered = preferred
+    ? [preferred, ...items.filter((i) => i !== preferred)]
+    : [...items];
+  const singleObjectGlyph = (item: DatasetItem): DatasetAsset | null =>
+    item.glyph && isSingleObjectText(item.glyph, allowLetters)
+      ? { kind: "text", text: item.glyph.trim() }
+      : null;
+  for (const pick of [singleObjectGlyph, singleObjectImage]) {
+    for (const item of ordered) {
+      const asset = pick(item);
+      if (asset) {
+        return { item, asset };
+      }
+    }
+  }
+  return null;
+}
