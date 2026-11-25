@@ -220,13 +220,8 @@ describe("GT-015 SudokuMiniSession — nâng cấp toàn diện", () => {
     s.onHintCleared();
     expect(getGT015Clock(s).scaffoldHintLevel).toBe(0);
     expect(l1).toEqual({ kind: "region", ids: ["cell-0-0"] });
-    expect(l2?.kind).toBe("region");
-    if (l1?.kind === "region" && l2?.kind === "region") {
-      expect(l2.ids.length).toBeGreaterThan(l1.ids.length);
-      expect(l2.ids).toContain("cell-0-0");
-      expect(l2.ids).toContain("cell-0-2");
-      expect(l2.ids).toContain("cell-1-0");
-    }
+    // BR-SCF-12: mỗi bậc chỉ khoanh một đích, không tô cả hàng/cột.
+    expect(l2).toEqual({ kind: "region", ids: ["cell-0-0"] });
     expect(l3).toEqual({
       kind: "slot",
       index: 9,

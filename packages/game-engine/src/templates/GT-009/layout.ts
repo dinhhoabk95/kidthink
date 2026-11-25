@@ -739,8 +739,13 @@ export function resolveGT009HintTargetForLevel(params: {
   if (params.level === 2) {
     const fallbackCand = params.eliminatedIds.has(answerId) ? [answerId] : [];
     const candPart =
-      contradictedAliveIds.length > 0 ? contradictedAliveIds : fallbackCand;
-    return { kind: "region", ids: [...cluePart, ...candPart] };
+      contradictedAliveIds.length > 0
+        ? contradictedAliveIds.slice(0, 1)
+        : fallbackCand;
+    // Một đích duy nhất (`BR-SCF-12`): tô cả dải thẻ làm trẻ không biết nhìn đâu.
+    return candPart.length > 0
+      ? { kind: "region", ids: candPart }
+      : { kind: "region", ids: cluePart };
   }
   return params.fallbackTarget();
 }

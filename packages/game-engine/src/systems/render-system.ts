@@ -81,6 +81,10 @@ export function deriveCanvasViewport(
   };
 }
 
+/** Độ lệch bàn tay ma khỏi điểm đích (px CSS) — tay không che nhãn ở tâm (`BR-SCF-12`). */
+export const GHOST_HAND_OFFSET_X = 18;
+export const GHOST_HAND_OFFSET_Y = 30;
+
 export class RenderSystem {
   logicSpace: LogicSpace = DEFAULT_LOGIC_SPACE;
 
@@ -430,29 +434,32 @@ export class RenderSystem {
       ctx.stroke();
     }
 
+    // Tay đặt lệch xuống-phải khỏi điểm đích để không che số/nhãn ở tâm (`BR-SCF-12`).
+    const hx = x + GHOST_HAND_OFFSET_X;
+    const hy = y + GHOST_HAND_OFFSET_Y;
     ctx.globalAlpha *= 0.92;
     ctx.fillStyle = designTokens.colors.montessori.pawCream;
     ctx.strokeStyle = designTokens.colors.montessori.amberDark;
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(x, y + 22, 26, 0, Math.PI * 2);
+    ctx.arc(hx, hy + 22, 26, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = alpha(designTokens.colors.montessori.pawPad, 0.35);
     ctx.beginPath();
-    ctx.arc(x, y + 24, 14, 0, Math.PI * 2);
+    ctx.arc(hx, hy + 24, 14, 0, Math.PI * 2);
     ctx.fill();
 
     const handSprite = getEmojiSprite("\u{1F446}");
     if (handSprite) {
-      ctx.drawImage(handSprite, x - 22, y, 44, 44);
+      ctx.drawImage(handSprite, hx - 22, hy, 44, 44);
       return;
     }
     ctx.font = `44px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.fillText("\u{1F446}", x, y);
+    ctx.fillText("\u{1F446}", hx, hy);
   }
 
   /**

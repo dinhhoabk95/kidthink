@@ -212,7 +212,7 @@ describe("GT-009 — loại trừ theo manh mối (clue-deduction): hit-test, sp
     });
     expect(session.getHintTargetForLevel(2)).toEqual({
       kind: "region",
-      ids: ["k1", "c5", "c6"],
+      ids: ["c5"],
     });
     for (const clue of f2.content.clues) {
       session.onClueRevealed(clue.clue_id);
@@ -223,7 +223,7 @@ describe("GT-009 — loại trừ theo manh mối (clue-deduction): hit-test, sp
     });
     expect(session.getHintTargetForLevel(2)).toEqual({
       kind: "region",
-      ids: ["k3", "c1", "c2"],
+      ids: ["c1"],
     });
     const l3Target = session.getHintTargetForLevel(3);
     expect(l3Target).toEqual({

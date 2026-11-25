@@ -378,11 +378,11 @@ export class SudokuMiniSession extends TemplateGameSession<
     }
     const n = this.content.grid_size;
     if (level === 1 || level === 2) {
-      const ids =
-        level === 1
-          ? [`cell-${Math.floor(cell / n)}-${cell % n}`]
-          : L.hintL2(this.content, cell, this.cellStates);
-      return { kind: "region", ids };
+      // Một ô đích duy nhất ở L1 và L2 (`BR-SCF-12`): tô cả hàng/cột/hộp làm sáng nhiều ô một lúc.
+      return {
+        kind: "region",
+        ids: [`cell-${Math.floor(cell / n)}-${cell % n}`],
+      };
     }
     return this.getHintTarget();
   }

@@ -189,24 +189,6 @@ function hintSym(h: GT015HintInput, idx: number): string | null {
   );
 }
 
-function hintL2(c: C, idx: number, st: StateMap): string[] {
-  const n = c.grid_size;
-  const [hr, hc] = [Math.floor(idx / n), idx % n];
-  const peers = [...st.values()].filter((s) => {
-    const box =
-      c.regions === "row_col_box" &&
-      n === 4 &&
-      Math.floor(s.row / 2) === Math.floor(hr / 2) &&
-      Math.floor(s.col / 2) === Math.floor(hc / 2);
-    return (
-      (s.row !== hr || s.col !== hc) && (s.row === hr || s.col === hc || box)
-    );
-  });
-  const filled = peers.filter((s) => s.value !== null);
-  const pick = filled.length > 0 ? filled : peers;
-  return [`cell-${hr}-${hc}`, ...pick.map((s) => `cell-${s.row}-${s.col}`)];
-}
-
 const hitPal = (ss: Slots, cells: number, x: number, y: number) => {
   const i = findHitSlotIndex(ss.slice(cells), x, y, "circle", TAP_TOLERANCE_PX);
   return i >= 0 ? i : null;
@@ -445,5 +427,5 @@ function drawCellAt(ctx: Ctx, rs: Sys, v: V, i: number, s0: Slot): void {
 }
 
 const l1 = { PRESS_MS, resetClk, getClk: getGT015Clock, dispSyms, gridOf };
-const l2 = { solveGivens, pickHint, hintSym, hintL2, hitAt, parsePt };
+const l2 = { solveGivens, pickHint, hintSym, hitAt, parsePt };
 export const L = { ...l1, ...l2, actFields, viewEnts, onGesture, drawCellAt };
