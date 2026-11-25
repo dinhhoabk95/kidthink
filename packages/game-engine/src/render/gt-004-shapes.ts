@@ -131,6 +131,27 @@ function resolveTrayBodyRim(
     : theme.rim;
 }
 
+const RIBBON_DOT_START = 8;
+const RIBBON_DOT_STEP = 5.5;
+const RIBBON_DOT_GAP = 5;
+
+/**
+ * Vùng chữ của ruy-băng nhãn khay: nằm bên phải dải chấm theme để chấm không
+ * bao giờ đè lên chữ đầu của nhãn.
+ * `centerX` tính từ mép trái ruy-băng.
+ */
+export function gt004RibbonTextBox(
+  ribbonW: number,
+  dotCount: number
+): { readonly centerX: number; readonly maxWidth: number } {
+  const dotsEnd =
+    dotCount > 0
+      ? RIBBON_DOT_START + (dotCount - 1) * RIBBON_DOT_STEP + 2 + RIBBON_DOT_GAP
+      : 0;
+  const width = Math.max(0, ribbonW - dotsEnd);
+  return { centerX: dotsEnd + width / 2, maxWidth: width * 0.94 };
+}
+
 function drawTrayFrontAndCard(
   ctx: CanvasRenderingContext2D,
   slot: Slot,
@@ -178,13 +199,14 @@ function drawTrayFrontAndCard(
   const dotCy = ribbon.y + ribbon.h / 2;
   const rx = ribbon.x + shakeX;
   for (let d = 0; d < theme.dotCount; d++) {
-    fillCircle(ctx, rx + 8 + d * 5.5, dotCy, 2, fg);
+    fillCircle(ctx, rx + RIBBON_DOT_START + d * RIBBON_DOT_STEP, dotCy, 2, fg);
   }
   ctx.fillStyle = fg;
   applyCanvasFontAtSize(ctx, legibleFontPx(15), "heading", "bold");
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(options.label, rx + ribbon.w / 2, dotCy, ribbon.w * 0.88);
+  const textBox = gt004RibbonTextBox(ribbon.w, theme.dotCount);
+  ctx.fillText(options.label, rx + textBox.centerX, dotCy, textBox.maxWidth);
 }
 
 /** Vẽ khay phân loại Montessori 3D có phân màu nhóm, thẻ kiểm tra và ngăn chứa vật đã xếp (GT-004). */

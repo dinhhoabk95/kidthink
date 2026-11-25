@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import type { Slot } from "#src/layout/types";
 import { sortTrayGeometry } from "#src/render/container-shapes";
+import { gt004RibbonTextBox } from "#src/render/gt-004-shapes";
 import { RenderSystem } from "#src/systems/render-system";
 import { GT004_FIXTURES } from "#src/templates/GT-004/fixtures";
 import { GT004Session } from "#src/templates/GT-004/session";
@@ -105,5 +106,20 @@ describe("GT-004: session vẽ khay phân loại (BR-E004-05)", () => {
       expect(texts).toContain(group.label_emoji);
     }
     expect(session.targetSlots).toEqual(before);
+  });
+});
+
+describe("gt004RibbonTextBox (hàm thuần)", () => {
+  it("vùng chữ nằm bên phải dải chấm theme, không đè chữ đầu của nhãn", () => {
+    const g = sortTrayGeometry(SLOT);
+    for (const dots of [0, 1, 2, 3, 4]) {
+      const box = gt004RibbonTextBox(g.label.w, dots);
+      const left = box.centerX - box.maxWidth / 2;
+      // chấm cuối: tâm = 8 + (dots - 1) * 5.5, bán kính 2
+      const lastDotRight = dots > 0 ? 8 + (dots - 1) * 5.5 + 2 : 0;
+      expect(left).toBeGreaterThanOrEqual(lastDotRight);
+      expect(box.centerX + box.maxWidth / 2).toBeLessThanOrEqual(g.label.w);
+      expect(box.maxWidth).toBeGreaterThan(0);
+    }
   });
 });
