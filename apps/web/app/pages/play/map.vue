@@ -72,7 +72,12 @@
     <main
       class="max-w-4xl mx-auto w-full flex-1 flex flex-col justify-start pb-8"
     >
-      <div class="text-center py-16" v-if="isLoading">
+      <KidChildSelectGate
+        v-if="needsChildSelect"
+        @selected="loadMap"
+      />
+
+      <div class="text-center py-16" v-else-if="isLoading">
         <KidMascot pose="idle" :size="72" />
         <p
           class="font-heading text-surface-600 text-lg mt-4 animate-pulse leading-relaxed"
@@ -138,12 +143,14 @@
     type KogumaMoetThemePublic,
   } from "@mindkid/taxonomy";
   import { computed, onMounted, ref } from "vue";
+  import KidChildSelectGate from "~/components/kid/child-select-gate.vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
   import KidWindingThemeMap, {
     type WindingThemeWeek,
   } from "~/components/kid/winding-theme-map.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
+  import { isNoActiveChildError } from "~/composables/play/no-active-child";
   import { useKidSound } from "~/composables/play/use-kid-sound";
   import { useApi } from "~/composables/use-api";
 
@@ -168,6 +175,7 @@
   definePageMeta({ layout: "kid" });
 
   const STAR_SLOT_COUNT = 5;
+  const needsChildSelect = ref(false);
 
   const router = useRouter();
   const apiFetch = useApi();
@@ -221,18 +229,25 @@
     router.push(`/play/${lessonCode}`);
   }
 
-  onMounted(async () => {
+  async function loadMap(): Promise<void> {
+    isLoading.value = true;
+    needsChildSelect.value = false;
     try {
-      isLoading.value = true;
       mapData.value = await apiFetch<ChildThemeMapResponse>(
         "/api/users/play/theme-map"
       );
-    } catch {
+    } catch (err) {
       mapData.value = null;
+      // Phụ huynh đăng nhập chưa chọn bé (428): chọn hồ sơ, không hiện "chưa có lộ trình".
+      needsChildSelect.value = isNoActiveChildError(
+        err instanceof Object ? err : null
+      );
     } finally {
       isLoading.value = false;
     }
-  });
+  }
+
+  onMounted(loadMap);
 </script>
 
 <style scoped></style>

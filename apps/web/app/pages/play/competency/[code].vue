@@ -163,12 +163,15 @@
             </div>
           </NuxtLink>
 
-          <!-- Trò chơi bị khoá trung tính (BR-PEN-04, BR-PEN-06, BR-CCE-04) -->
-          <div
-            class="flex flex-col items-center justify-between p-4 sm:p-5 rounded-3xl border-4 border-surface-200 bg-surface-50/80 min-h-24 min-w-16 opacity-75 cursor-not-allowed select-none"
+          <!-- Trò chơi bị khoá trung tính (BR-PEN-04, BR-PEN-06, BR-CCE-04): chạm rung nhẹ + Gấu Con nhắc nhờ ba mẹ, không dẫn tới trang mua. -->
+          <button
+            class="flex flex-col items-center justify-between p-4 sm:p-5 rounded-3xl border-4 border-surface-200 bg-surface-50/80 min-h-24 min-w-16 opacity-75 cursor-pointer select-none"
             data-testid="competency-game-item-locked"
+            type="button"
             v-else
             :aria-label="`${game.title} (Chưa mở khoá)`"
+            :class="{ 'locked-shake': shakingCode === game.code }"
+            @click="handleLockedTap(game.code)"
           >
             <div
               class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-surface-200/50 flex items-center justify-center mb-3"
@@ -191,7 +194,7 @@
             >
               <UIcon class="w-5 h-5" name="i-lucide-lock" />
             </div>
-          </div>
+          </button>
         </template>
       </div>
     </main>
@@ -370,6 +373,24 @@
     speak(`${comp.name}. ${comp.tagline}`);
   }
 
+  const LOCKED_HINT_VI = "Nhờ ba mẹ mở nhé!";
+  const SHAKE_MS = 450;
+  const VIBRATE_MS = 60;
+  const shakingCode = ref<string | null>(null);
+
+  function handleLockedTap(gameCode: string): void {
+    shakingCode.value = gameCode;
+    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+      navigator.vibrate(VIBRATE_MS);
+    }
+    speak(LOCKED_HINT_VI);
+    setTimeout(() => {
+      if (shakingCode.value === gameCode) {
+        shakingCode.value = null;
+      }
+    }, SHAKE_MS);
+  }
+
   function leaveToHome(): void {
     showParentGate.value = false;
     router.push("/");
@@ -447,6 +468,29 @@
 </script>
 
 <style scoped>
+  .locked-shake {
+    animation: lockedShake 420ms ease-in-out;
+  }
+
+  @keyframes lockedShake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-6px);
+    }
+    75% {
+      transform: translateX(6px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .locked-shake {
+      animation: none;
+    }
+  }
+
   .back-to-play-btn {
     width: var(--hud-touch-floor, 4rem);
     height: var(--hud-touch-floor, 4rem);

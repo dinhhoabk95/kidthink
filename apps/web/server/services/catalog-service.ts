@@ -50,6 +50,7 @@ import {
   GUEST_SEO_TTL,
   withGuestSeoCache,
 } from "#server/utils/guest-seo-cache";
+import { resolveLevelThumbnailEmoji } from "#server/utils/level-thumbnail";
 import { useOwnerRepositories } from "#server/utils/repositories";
 import { RUNTIME_SCORING_MODE } from "#server/utils/round-set-runtime";
 
@@ -368,7 +369,7 @@ export async function getPublicLevelDetail(code: string, event: H3Event) {
           competency: taxonomyMeta.competency,
           strand_code: taxonomyMeta.strand_code,
           strand_name: taxonomyMeta.strand_name,
-          thumbnail_emoji: level.thumbnailEmoji ?? undefined,
+          thumbnail_emoji: resolveLevelThumbnailEmoji(level),
           age_min: level.ageMin,
           age_max: level.ageMax,
           age_band: `${level.ageMin}-${level.ageMax}`,
@@ -542,7 +543,7 @@ export async function getCatalogGuestRecommendations(options: {
     candidatePool.push({
       level_code: gl.code,
       title: gl.title,
-      thumbnail_emoji: gl.thumbnailEmoji || "🎮",
+      thumbnail_emoji: resolveLevelThumbnailEmoji(gl),
       reason_code: "explore",
       access_tier: "free",
       age_min: gl.ageMin,
@@ -557,7 +558,7 @@ export async function getCatalogGuestRecommendations(options: {
     candidatePool.push({
       level_code: gl.code,
       title: gl.title,
-      thumbnail_emoji: gl.thumbnailEmoji || "🎮",
+      thumbnail_emoji: resolveLevelThumbnailEmoji(gl),
       reason_code: "popular",
       access_tier: "free",
       age_min: gl.ageMin,

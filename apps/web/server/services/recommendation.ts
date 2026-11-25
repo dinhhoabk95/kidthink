@@ -26,6 +26,7 @@ import {
   getEffectiveTier,
   resolveNextStep,
 } from "@mindkid/shared";
+import { resolveLevelThumbnailEmoji } from "#server/utils/level-thumbnail";
 import { useRepositories } from "#server/utils/repositories";
 
 export interface GetChildRecommendationsOptions {
@@ -110,7 +111,7 @@ function mapLevelIdsToCandidates(
       results.push({
         level_code: gl.code,
         title: gl.title,
-        thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
+        thumbnail_emoji: resolveLevelThumbnailEmoji(gl),
         reason_code: reasonCode,
         access_tier: ACCESS_TIER_CODEC.toLabel(gl.accessTier),
         age_min: gl.ageMin,
@@ -200,7 +201,7 @@ async function resolveTier1CurriculumCandidate(
   return {
     level_code: matchedLevel.code,
     title: matchedLevel.title,
-    thumbnail_emoji: resolveThumbnailEmoji(matchedLevel.thumbnailEmoji),
+    thumbnail_emoji: resolveLevelThumbnailEmoji(matchedLevel),
     reason_code: "curriculum_next",
     access_tier: getEffectiveTier(
       ACCESS_TIER_CODEC.toLabel(matchedLevel.accessTier),
@@ -360,7 +361,7 @@ async function resolvePopularCandidates(
   return unplayedForPopular.map((gl) => ({
     level_code: gl.code,
     title: gl.title,
-    thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
+    thumbnail_emoji: resolveLevelThumbnailEmoji(gl),
     reason_code: "popular" as const,
     access_tier: ACCESS_TIER_CODEC.toLabel(gl.accessTier),
     age_min: gl.ageMin,
@@ -489,7 +490,7 @@ export async function getRecommendationsForChild(
     candidatePool.push({
       level_code: gl.code,
       title: gl.title,
-      thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
+      thumbnail_emoji: resolveLevelThumbnailEmoji(gl),
       reason_code: "explore",
       access_tier: ACCESS_TIER_CODEC.toLabel(gl.accessTier),
       age_min: gl.ageMin,
@@ -517,7 +518,7 @@ export async function getRecommendationsForChild(
     candidatePool.push({
       level_code: gl.code,
       title: gl.title,
-      thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
+      thumbnail_emoji: resolveLevelThumbnailEmoji(gl),
       reason_code: "revision",
       access_tier: ACCESS_TIER_CODEC.toLabel(gl.accessTier),
       age_min: gl.ageMin,
@@ -531,7 +532,7 @@ export async function getRecommendationsForChild(
       candidatePool.push({
         level_code: gl.code,
         title: gl.title,
-        thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
+        thumbnail_emoji: resolveLevelThumbnailEmoji(gl),
         reason_code: "revision",
         access_tier: ACCESS_TIER_CODEC.toLabel(gl.accessTier),
         age_min: gl.ageMin,
@@ -563,7 +564,7 @@ export async function getRecommendationsForChild(
       {
         level_code: fallbackLevel.code,
         title: fallbackLevel.title,
-        thumbnail_emoji: resolveThumbnailEmoji(fallbackLevel.thumbnailEmoji),
+        thumbnail_emoji: resolveLevelThumbnailEmoji(fallbackLevel),
         reason_code: "revision",
         access_tier: fallbackTier,
       },
@@ -622,7 +623,7 @@ export async function getGuestRecommendations(
     candidatePool.push({
       level_code: gl.code,
       title: gl.title,
-      thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
+      thumbnail_emoji: resolveLevelThumbnailEmoji(gl),
       reason_code: "explore",
       access_tier: "free",
       age_min: gl.ageMin,
@@ -640,7 +641,7 @@ export async function getGuestRecommendations(
     candidatePool.push({
       level_code: gl.code,
       title: gl.title,
-      thumbnail_emoji: resolveThumbnailEmoji(gl.thumbnailEmoji),
+      thumbnail_emoji: resolveLevelThumbnailEmoji(gl),
       reason_code: "popular",
       access_tier: "free",
       age_min: gl.ageMin,

@@ -15,6 +15,7 @@ import {
   type StickerDioramaResponse,
 } from "@mindkid/shared";
 import { checkLevelIntroRequired } from "#server/utils/concept-intro-runtime";
+import { resolveLevelThumbnailEmoji } from "#server/utils/level-thumbnail";
 import { useOwnerRepositories } from "#server/utils/repositories";
 import {
   getRecommendationsForChild,
@@ -72,7 +73,7 @@ async function prependRequiredIntroStep(
     step_index: 0,
     level_code: introLevel.code,
     title: introLevel.title,
-    thumbnail_emoji: resolveThumbnailEmoji(introLevel.thumbnailEmoji),
+    thumbnail_emoji: resolveLevelThumbnailEmoji(introLevel),
     kind: "intro",
   };
 }

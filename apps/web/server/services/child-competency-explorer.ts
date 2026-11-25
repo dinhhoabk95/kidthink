@@ -10,6 +10,7 @@ import {
   deriveAgeBand,
   getEffectiveTier,
 } from "@mindkid/shared";
+import { resolveLevelThumbnailEmoji } from "#server/utils/level-thumbnail";
 import { useOwnerRepositories } from "#server/utils/repositories";
 
 export interface CompetencyGameItem {
@@ -181,7 +182,7 @@ export function buildCompetencyGames(
     return {
       code: lvl.code,
       title: lvl.title,
-      thumbnail_emoji: lvl.thumbnailEmoji ?? "🎮",
+      thumbnail_emoji: resolveLevelThumbnailEmoji(lvl),
       theme_id: lvl.themeId ?? "",
       access_tier: lvl.accessTier,
       is_locked: isLocked,

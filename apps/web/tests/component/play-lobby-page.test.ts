@@ -64,6 +64,9 @@ const stubs = {
     template: '<a :href="to"><slot /></a>',
   },
   ParentGateModal: ParentGateStub,
+  KidChildSelectGate: {
+    template: '<div data-testid="kid-child-select-gate" />',
+  },
   KidProfileBadge: {
     props: ["activeChild", "hasMultipleChildren"],
     template: '<div data-testid="kid-profile-badge-stub">ProfileBadge</div>',
@@ -230,6 +233,17 @@ describe("Sảnh chơi của trẻ /play (BR-PSZ-11, BR-CLF-05, BR-PEN-07)", () 
     const requestedUrls: string[] = [];
     const fetchMock = vi.fn().mockImplementation((url: string) => {
       requestedUrls.push(url);
+      if (
+        url === "/api/users/play/recommendations" &&
+        !mockActiveChildUuid.value
+      ) {
+        // Guest thật sự: endpoint phụ huynh trả 401 rồi mới rơi về guest.
+        return Promise.reject({
+          code: "UNAUTHENTICATED",
+          message: "x",
+          statusCode: 401,
+        });
+      }
       if (url === "/api/users/play/recommendations") {
         return Promise.resolve({
           primary: {
@@ -293,5 +307,39 @@ describe("Sảnh chơi của trẻ /play (BR-PSZ-11, BR-CLF-05, BR-PEN-07)", () 
     expect(guestRecStub.exists()).toBe(true);
     expect(guestRecStub.attributes("data-primary")).toBe("GL-FREE-001");
     expect(requestedUrls).toContain("/api/guest/play/recommendations");
+  });
+
+  it("P1-a: phụ huynh đăng nhập chưa chọn bé (428) thấy màn chọn hồ sơ, không rơi về guest", async () => {
+    const requestedUrls: string[] = [];
+    vi.stubGlobal(
+      "$fetch",
+      vi.fn().mockImplementation((url: string) => {
+        requestedUrls.push(url);
+        return Promise.reject({
+          code: "NO_ACTIVE_CHILD",
+          message: "x",
+          statusCode: 428,
+        });
+      })
+    );
+    mockActiveChildUuid.value = "";
+    const page = await mountLobbyPage();
+    await flushPromises();
+
+    expect(page.find('[data-testid="kid-child-select-gate"]').exists()).toBe(
+      true
+    );
+    expect(requestedUrls).not.toContain("/api/guest/play/recommendations");
+  });
+
+  it("lỗi mạng khi tải gợi ý hiện nút thử lại thân thiện", async () => {
+    vi.stubGlobal(
+      "$fetch",
+      vi.fn().mockRejectedValue({ message: "net", statusCode: 500 })
+    );
+    const page = await mountLobbyPage();
+    await flushPromises();
+
+    expect(page.find('[data-testid="play-load-retry"]').exists()).toBe(true);
   });
 });

@@ -72,7 +72,16 @@
       </div>
     </header>
 
-    <main class="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-center">
+    <!-- Phụ huynh đã đăng nhập nhưng chưa chọn bé (API 428): chọn hồ sơ, không rơi về guest. -->
+    <KidChildSelectGate
+      v-if="needsChildSelect"
+      @selected="handleChildSelected"
+    />
+
+    <main
+      class="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-center"
+      v-else
+    >
       <!-- Khu trung tâm: Phòng chơi Gấu Con + Khởi động Phiêu lưu 1 chạm -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6">
         <KidPlayroomStage
@@ -99,6 +108,24 @@
 
       <div class="mb-6">
         <KidRecommendationsRow :recommendations="recommendations" />
+
+        <!-- Lỗi tải gợi ý: Gấu Con + nút thử lại chỉ icon, không chữ (BR-PEN-03). -->
+        <div
+          class="flex items-center justify-center gap-4"
+          data-testid="play-load-error"
+          v-if="loadError && !recommendations"
+        >
+          <KidMascot pose="encourage" :size="96" />
+          <button
+            aria-label="Thử tải lại sảnh chơi"
+            class="min-h-16 min-w-16 rounded-2xl bg-white border-[3px] border-brand-300 shadow-[0_4px_0_var(--color-brand-300)] active:shadow-[0_1px_0_var(--color-brand-300)] active:translate-y-0.5 flex items-center justify-center cursor-pointer transition-all"
+            data-testid="play-load-retry"
+            type="button"
+            @click="handleRetryLoad"
+          >
+            <UIcon class="w-8 h-8 text-brand-600" name="i-lucide-rotate-ccw" />
+          </button>
+        </div>
       </div>
 
       <!-- Kệ 6 Đảo Năng Lực C1–C6 kèm nút nghe tên đảo -->
@@ -226,12 +253,18 @@
   import CurriculumProgressCard from "~/components/curriculum-progress-card.vue";
   import KidAdventureLauncher from "~/components/kid/adventure-launcher.vue";
   import KidBadgeCelebrationModal from "~/components/kid/badge-celebration-modal.vue";
+  import KidChildSelectGate from "~/components/kid/child-select-gate.vue";
+  import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
   import KidPlayroomStage from "~/components/kid/playroom-stage.vue";
   import KidProfileBadge from "~/components/kid/profile-badge.vue";
   import KidProfileSwitcherModal from "~/components/kid/profile-switcher-modal.vue";
   import KidRecommendationsRow from "~/components/kid-recommendations-row.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
+  import {
+    isNoActiveChildError,
+    isUnauthenticatedError,
+  } from "~/composables/play/no-active-child";
   import { useBadgeCelebration } from "~/composables/play/use-badge-celebration";
   import { useKidProfile } from "~/composables/play/use-kid-profile";
   import { useKidSound } from "~/composables/play/use-kid-sound";
@@ -408,19 +441,57 @@
     return matched?.moet_theme_title ?? MOET_PRESCHOOL_THEMES[0]?.title_vi;
   });
 
+  const needsChildSelect = ref(false);
+  const loadError = ref(false);
+
+  function requireChildSelection(): void {
+    activeChildUuid.value = null;
+    needsChildSelect.value = true;
+    recommendations.value = null;
+    serverAdventure.value = null;
+  }
+
+  async function fetchUserRecommendations(): Promise<void> {
+    const res = await apiFetch<RecommendationsPayload>(
+      "/api/users/play/recommendations"
+    );
+    recommendations.value = res ?? null;
+  }
+
+  async function fetchGuestRecommendations(): Promise<void> {
+    const res = await apiFetch<RecommendationsPayload>(
+      "/api/guest/play/recommendations"
+    );
+    recommendations.value = res ?? null;
+  }
+
   async function loadRecommendations(): Promise<void> {
     if (isLoadingRecommendations) {
       return;
     }
     isLoadingRecommendations = true;
-    const endpoint = activeChildUuid.value
-      ? "/api/users/play/recommendations"
-      : "/api/guest/play/recommendations";
+    loadError.value = false;
     try {
-      const res = await apiFetch<RecommendationsPayload>(endpoint);
-      recommendations.value = res ?? null;
+      // Không có cookie bé: thử endpoint phụ huynh trước — 428 = đã đăng nhập chưa chọn bé,
+      // 401 = guest thật sự (`play-entry-and-profile-select.md` §5).
+      try {
+        await fetchUserRecommendations();
+        needsChildSelect.value = false;
+      } catch (err) {
+        if (isNoActiveChildError(err instanceof Object ? err : null)) {
+          requireChildSelection();
+        } else if (
+          !activeChildUuid.value &&
+          isUnauthenticatedError(err instanceof Object ? err : null)
+        ) {
+          await fetchGuestRecommendations();
+        } else {
+          throw err;
+        }
+      }
     } catch {
       recommendations.value = null;
+      loadError.value = true;
     } finally {
       isLoadingRecommendations = false;
     }
@@ -449,6 +520,18 @@
     } catch {
       // Giữ trạng thái mặc định khi mạng gián đoạn
     }
+  }
+
+  function handleRetryLoad(): void {
+    loadRecommendations();
+    loadKidPlayroomData();
+  }
+
+  function handleChildSelected(): void {
+    needsChildSelect.value = false;
+    checkBadgesForActiveChild();
+    loadRecommendations();
+    loadKidPlayroomData();
   }
 
   async function handleEquipMascotGear(nextCode: string | null): Promise<void> {

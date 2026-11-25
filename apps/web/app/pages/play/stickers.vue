@@ -19,7 +19,12 @@
     </header>
 
     <main class="album-main">
-      <div class="album-state" v-if="isLoading">
+      <KidChildSelectGate
+        v-if="needsChildSelect"
+        @selected="loadAlbum"
+      />
+
+      <div class="album-state" v-else-if="isLoading">
         <KidMascot pose="listen" :size="120" />
       </div>
 
@@ -42,7 +47,25 @@
         data-testid="album-empty"
         v-else-if="themes.length === 0"
       >
-        <KidMascot pose="idle" :size="160" />
+        <!-- Gấu Con mời chơi: chạm để nghe, nút icon dẫn về sảnh; không ô trống (`BR-STK-03`). -->
+        <button
+          aria-label="Gấu Con mời bé chơi để nhận sticker"
+          class="empty-mascot"
+          data-testid="album-empty-mascot"
+          type="button"
+          @click="inviteToPlay"
+        >
+          <KidMascot pose="idle" :size="160" />
+        </button>
+        <button
+          aria-label="Đi chơi để nhận sticker"
+          class="retry-button"
+          data-testid="album-empty-play"
+          type="button"
+          @click="goPlayroom"
+        >
+          <UIcon class="w-8 h-8" name="i-lucide-play" />
+        </button>
       </div>
 
       <template v-else>
@@ -121,12 +144,14 @@
   } from "@mindkid/shared/client";
   import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, onMounted, onUnmounted, ref } from "vue";
+  import KidChildSelectGate from "~/components/kid/child-select-gate.vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
   import KidStickerDioramaCanvas, {
     type PendingTraySticker,
   } from "~/components/kid/sticker-diorama-canvas.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
+  import { isNoActiveChildError } from "~/composables/play/no-active-child";
   import { useKidSound } from "~/composables/play/use-kid-sound";
   import { useApi } from "~/composables/use-api";
 
@@ -168,6 +193,7 @@
   const isLoading = ref(true);
   const hasError = ref(false);
   const showParentGate = ref(false);
+  const needsChildSelect = ref(false);
   let saveTimer: ReturnType<typeof setTimeout> | null = null;
 
   const activeScenePlacements = computed<
@@ -266,17 +292,21 @@
     return normalized;
   }
 
-  function isGuestOrMissingChildError(err: Error | object | null): boolean {
+  function isGuestError(err: Error | object | null): boolean {
     if (typeof err !== "object" || err === null || !("code" in err)) {
       return false;
     }
-    const code = Reflect.get(err, "code");
-    return code === "UNAUTHENTICATED" || code === "NO_ACTIVE_CHILD";
+    return Reflect.get(err, "code") === "UNAUTHENTICATED";
+  }
+
+  function inviteToPlay(): void {
+    speakVi("Chơi để nhận sticker nhé!", "wood_pickup");
   }
 
   async function loadAlbum(): Promise<void> {
     isLoading.value = true;
     hasError.value = false;
+    needsChildSelect.value = false;
     try {
       const album = await api<StickerAlbum>("/api/users/play/stickers");
       themes.value = Array.isArray(album?.themes) ? album.themes : [];
@@ -288,7 +318,12 @@
         placementsByTheme.value = await fetchSavedDiorama();
       }
     } catch (err) {
-      if (isGuestOrMissingChildError(err instanceof Object ? err : null)) {
+      const error = err instanceof Object ? err : null;
+      if (isNoActiveChildError(error)) {
+        // Phụ huynh đăng nhập chưa chọn bé (428): chọn hồ sơ, không hiện album trống.
+        themes.value = [];
+        needsChildSelect.value = true;
+      } else if (isGuestError(error)) {
         themes.value = [];
       } else {
         hasError.value = true;
@@ -332,9 +367,16 @@
     align-items: center;
     justify-content: flex-start;
     gap: 0.75rem;
-    max-width: 48rem;
+    max-width: 64rem;
     width: 100%;
     margin-inline: auto;
+  }
+
+  .empty-mascot {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
   }
 
   .home-button {

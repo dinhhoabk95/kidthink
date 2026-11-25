@@ -8,12 +8,13 @@
           <div class="header-content">
             <div class="header-badge">
               <UIcon class="w-4 h-4 text-brand-600" name="i-lucide-sparkles" />
-              <span>Thư viện {{ totalCount }} trò chơi tương tác</span>
+              <span>{{ headerCountLabel }}</span>
             </div>
             <h1 class="catalog-title">Thư viện trò chơi tư duy</h1>
             <p class="catalog-subtitle">
-              Khám phá {{ totalCount }} trò chơi tư duy phát triển toàn diện 6
-              nhóm năng lực nền tảng cho trẻ mầm non (3–6 tuổi).
+              Khám phá {{ headerTotal > 0 ? `${headerTotal} ` : "" }}trò chơi tư
+              duy phát triển toàn diện 6 nhóm năng lực nền tảng cho trẻ mầm non
+              (3–6 tuổi).
             </p>
           </div>
           <div class="search-bar-wrap">
@@ -311,7 +312,7 @@
                 class="w-12 h-12 text-surface-400 block mx-auto mb-2"
                 name="i-lucide-search"
               />
-              <h3 class="empty-title">Không tìm thấy trò chơi phù hợp</h3>
+              <h3 class="empty-title">Chưa thấy trò nào phù hợp</h3>
               <p class="empty-text">
                 Rất tiếc không có trò chơi nào khớp với bộ lọc bạn vừa chọn. Hãy
                 thử xoá bớt bộ lọc hoặc tìm kiếm từ khoá khác nhé!
@@ -599,6 +600,26 @@
   });
 
   const totalCount = computed(() => data.value?.total ?? 0);
+
+  // Tổng cả thư viện (lúc không lọc): tiêu đề không được tụt về "0 trò chơi" khi tìm không ra.
+  const libraryTotal = ref<number | null>(null);
+  watch(
+    [data, hasActiveFilters],
+    () => {
+      if (!hasActiveFilters.value && (data.value?.total ?? 0) > 0) {
+        libraryTotal.value = data.value?.total ?? null;
+      }
+    },
+    { immediate: true }
+  );
+  const headerTotal = computed(() =>
+    hasActiveFilters.value ? (libraryTotal.value ?? 0) : totalCount.value
+  );
+  const headerCountLabel = computed(() =>
+    headerTotal.value > 0
+      ? `Thư viện ${headerTotal.value} trò chơi tương tác`
+      : "Thư viện trò chơi tương tác"
+  );
   const facets = computed<CatalogFacets | null>(
     () => data.value?.facets ?? null
   );
