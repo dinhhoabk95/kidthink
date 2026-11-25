@@ -144,13 +144,13 @@ describe("GT-007 — tách gộp số (number-bond): hit-test, spokenLabel, retr
 
     session.onPartFilled("o1", "p2");
     expect(session.getControlOfError()?.reasonVi).toBe(
-      "Gộp 3 và 1 được 4 (cần 5)"
+      "Hai phần này chưa vừa, bé thử lại nhé!"
     );
     expect(session.isMicroSandboxActive()).toBe(false);
 
     session.onPartFilled("o3", "p2");
     expect(session.getControlOfError()?.reasonVi).toBe(
-      "Gộp 3 và 4 được 7 (cần 5)"
+      "Hai phần này chưa vừa, bé thử lại nhé!"
     );
     expect(session.isMicroSandboxActive()).toBe(true);
 
