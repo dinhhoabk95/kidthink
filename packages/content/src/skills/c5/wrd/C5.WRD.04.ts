@@ -227,5 +227,23 @@ export const C5_WRD_04_SEED: SkillSeed = {
       theme: "nature",
       rounds: 3,
     },
+    // Thay GL-C5-WRD-MEAS-0001/0002 (GT-028): đếm cách 2 không dạy được tiếng,
+    // và glyph là chữ nên không lên ô đếm được (`BR-E028-13`, review 2026-11-25).
+    {
+      code: "GL-C5-WRD-TAP-6041",
+      template: "GT-001",
+      band: "5-6",
+      difficulty: 4,
+      theme: "home",
+      rounds: 3,
+    },
+    {
+      code: "GL-C5-WRD-TAP-6042",
+      template: "GT-001",
+      band: "5-6",
+      difficulty: 5,
+      theme: "animal",
+      rounds: 3,
+    },
   ],
 };

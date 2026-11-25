@@ -261,5 +261,17 @@ export const C5_WRD_01_SEED: SkillSeed = {
       rounds: 3,
       sequence_no: 65,
     },
+    // Thay GL-C5-WRD-TRC-6004: một từ không nối chấm được bằng một nét
+    // (`BR-E024-09`, review 2026-11-25).
+    {
+      code: "GL-C5-WRD-SLOT-6004",
+      template: "GT-008",
+      band: "5-6",
+      difficulty: 3,
+      access_tier: "standard",
+      theme: "body",
+      rounds: 3,
+      sequence_no: 63,
+    },
   ],
 };

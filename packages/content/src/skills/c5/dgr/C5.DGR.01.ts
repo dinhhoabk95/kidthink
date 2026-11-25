@@ -339,5 +339,17 @@ export const C5_DGR_01_SEED: SkillSeed = {
       rounds: 3,
       sequence_no: 69,
     },
+    // Thay GL-C5-DGR-TRC-6002: chữ ghép không nối chấm được bằng một nét
+    // (`BR-E024-09`, review 2026-11-25).
+    {
+      code: "GL-C5-DGR-TAP-6012",
+      template: "GT-001",
+      band: "5-6",
+      difficulty: 2,
+      access_tier: "standard",
+      theme: "ocean",
+      rounds: 3,
+      sequence_no: 61,
+    },
   ],
 };

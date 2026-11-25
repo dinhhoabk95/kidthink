@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { GT024_STROKES } from "#src/builders/gt-024";
+import { GT024_MIN_DOT_GAP, GT024_STROKES } from "#src/builders/gt-024";
 import {
   asArray,
   asObject,
@@ -17,16 +17,17 @@ const SHAPE_REFS: Readonly<Record<string, string>> = {
   "⭐": "ngôi sao",
 };
 
-/** Các chấm đều cách một tâm — dấu hiệu của đa giác đều dùng sai chỗ. */
-function isRegularPolygon(pack: PackObject): boolean {
-  const pts = asArray(pack.waypoints).map((w) => {
+/**
+ * Đa giác đều của bộ chiếu cũ: mọi chấm cách tâm (480, 270) đúng 160 px, bất kể
+ * đề gọi tên hình gì.
+ */
+function isLegacyPolygon(pack: PackObject): boolean {
+  return asArray(pack.waypoints).every((w) => {
     const o = asObject(w);
-    return { x: Number(o.x), y: Number(o.y) };
+    return (
+      Math.abs(Math.hypot(Number(o.x) - 480, Number(o.y) - 270) - 160) <= 2
+    );
   });
-  const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
-  const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
-  const d = pts.map((p) => Math.hypot(p.x - cx, p.y - cy));
-  return Math.max(...d) - Math.min(...d) <= 3;
 }
 
 /** Vi phạm `BR-E024-09`: đề/hình mẫu nói một đằng, các chấm vẽ một nẻo. */
@@ -39,7 +40,7 @@ function traceViolations(pack: PackObject): string[] {
     if (!Object.hasOwn(GT024_STROKES, glyph)) {
       out.push(`ký hiệu "${glyph}" không có nét nối chấm`);
     }
-    if (isRegularPolygon(pack)) {
+    if (isLegacyPolygon(pack)) {
       out.push(`"${prompt}" nhưng chấm là đa giác đều`);
     }
     return out;
@@ -98,5 +99,49 @@ describe("GT-024 — đề gọi tên ký hiệu đang nối (BR-E024-09)", () =
       })
       .map(({ levelCode, pack }) => `${levelCode}: ${asString(pack.prompt)}`);
     expect(bad).toEqual([]);
+  });
+});
+
+/** Cặp chấm khác toạ độ gần hơn `GT024_MIN_DOT_GAP` cạnh lớn của hộp bao chấm. */
+function crowdedPairs(pack: PackObject): string[] {
+  const pts = asArray(pack.waypoints).map((w) => {
+    const o = asObject(w);
+    return { x: Number(o.x), y: Number(o.y) };
+  });
+  const xs = pts.map((p) => p.x);
+  const ys = pts.map((p) => p.y);
+  const span = Math.max(
+    Math.max(...xs) - Math.min(...xs),
+    Math.max(...ys) - Math.min(...ys)
+  );
+  const out: string[] = [];
+  pts.forEach((a, i) => {
+    pts.slice(i + 1).forEach((b, k) => {
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d > 0 && d < GT024_MIN_DOT_GAP * span - 1) {
+        out.push(`chấm ${i} và ${i + 1 + k} cách ${Math.round(d)}`);
+      }
+    });
+  });
+  return out;
+}
+
+describe("GT-024 — chấm đủ thưa để vùng chạm không chồng (BR-LAY-05)", () => {
+  it("corpus thật: mọi cặp chấm khác toạ độ cách ≥ GT024_MIN_DOT_GAP cạnh hộp", () => {
+    const bad = realPacks("GT-024").flatMap(({ levelCode, roundIndex, pack }) =>
+      crowdedPairs(pack).map((v) => `${levelCode}#${roundIndex}: ${v}`)
+    );
+    expect(bad).toEqual([]);
+  });
+
+  it("ca âm: chấm dày theo nét chữ bị bắt", () => {
+    const crowded = toPack({
+      waypoints: [
+        { x: 400, y: 100 },
+        { x: 420, y: 120 },
+        { x: 400, y: 420 },
+      ],
+    });
+    expect(crowdedPairs(crowded).length).toBeGreaterThan(0);
   });
 });

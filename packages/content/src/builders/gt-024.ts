@@ -17,65 +17,62 @@ type UnitPoint = readonly [number, number];
  * khai ký hiệu viết được bằng **một** nét không đè chấm: chữ cần hai nét (t, x)
  * hoặc dấu phụ (ă, ê, đ) không có ở đây, bộ chiếu không giả hình cho chúng.
  */
+/**
+ * Nét nối chấm một nét liền của chữ số và chữ cái thường (`BR-E024-09`), toạ độ
+ * trong hộp đơn vị (x sang phải, y xuống dưới), điểm đầu là chỗ đặt bút. Chấm
+ * thưa có chủ đích: mọi cặp chấm cách nhau ít nhất `GT024_MIN_DOT_GAP` cạnh hộp
+ * để vùng chạm không chồng trên màn hẹp (`BR-LAY-05`); điểm lặp lại đúng toạ độ
+ * cũ (vòng của 6, 8, 9, e) được engine vẽ một lần (`BR-E024-07`). Chữ không vẽ
+ * được bằng một nét thưa như vậy (a, g, t, x, chữ có dấu phụ) không có ở đây.
+ */
 export const GT024_STROKES: Readonly<Record<string, readonly UnitPoint[]>> = {
   "0": [
     [0.5, 0],
-    [0.15, 0.2],
-    [0.1, 0.5],
-    [0.15, 0.8],
+    [0.125, 0.28],
+    [0.125, 0.72],
     [0.5, 1],
-    [0.85, 0.8],
-    [0.9, 0.5],
-    [0.85, 0.2],
+    [0.875, 0.72],
+    [0.875, 0.28],
     [0.5, 0],
   ],
   "1": [
-    [0.25, 0.2],
-    [0.55, 0],
-    [0.55, 0.5],
-    [0.55, 1],
+    [0.2, 0.3],
+    [0.6, 0],
+    [0.6, 1],
   ],
   "2": [
-    [0.15, 0.2],
+    [0.1, 0.25],
     [0.5, 0],
-    [0.85, 0.2],
-    [0.8, 0.45],
-    [0.15, 1],
+    [0.9, 0.3],
+    [0.1, 1],
     [0.9, 1],
   ],
   "3": [
-    [0.15, 0.1],
-    [0.6, 0],
-    [0.85, 0.2],
-    [0.5, 0.45],
-    [0.85, 0.7],
-    [0.6, 1],
-    [0.15, 0.9],
+    [0.1, 0],
+    [0.85, 0.12],
+    [0.35, 0.5],
+    [0.9, 0.8],
+    [0.1, 0.95],
   ],
   "4": [
     [0.65, 1],
     [0.65, 0],
     [0.1, 0.7],
-    [0.95, 0.7],
+    [1, 0.65],
   ],
   "5": [
     [0.85, 0],
-    [0.2, 0],
+    [0.15, 0],
     [0.15, 0.45],
-    [0.6, 0.4],
     [0.85, 0.65],
-    [0.6, 1],
-    [0.15, 0.9],
+    [0.15, 1],
   ],
   "6": [
-    [0.75, 0],
-    [0.3, 0.25],
-    [0.15, 0.65],
-    [0.4, 1],
-    [0.8, 0.85],
-    [0.75, 0.55],
-    [0.4, 0.5],
-    [0.17, 0.68],
+    [0.8, 0],
+    [0.15, 0.6],
+    [0.5, 1],
+    [0.85, 0.65],
+    [0.15, 0.6],
   ],
   "7": [
     [0.1, 0],
@@ -83,106 +80,85 @@ export const GT024_STROKES: Readonly<Record<string, readonly UnitPoint[]>> = {
     [0.4, 1],
   ],
   "8": [
+    [0.5, 0.5],
+    [0.9, 0.25],
     [0.5, 0],
-    [0.2, 0.22],
-    [0.82, 0.75],
+    [0.1, 0.25],
+    [0.5, 0.5],
+    [0.1, 0.75],
     [0.5, 1],
-    [0.18, 0.75],
-    [0.8, 0.22],
-    [0.5, 0],
+    [0.9, 0.75],
+    [0.5, 0.5],
   ],
   "9": [
-    [0.82, 0.18],
-    [0.5, 0],
-    [0.18, 0.22],
-    [0.35, 0.48],
-    [0.82, 0.4],
-    [0.82, 1],
-  ],
-  a: [
     [0.85, 0.45],
-    [0.5, 0.3],
-    [0.15, 0.65],
-    [0.5, 1],
-    [0.85, 0.8],
-    [0.85, 0.3],
-    [0.9, 1],
-  ],
-  b: [
-    [0.2, 0],
-    [0.2, 1],
-    [0.6, 0.95],
-    [0.85, 0.65],
-    [0.55, 0.35],
-    [0.2, 0.55],
-  ],
-  c: [
-    [0.85, 0.4],
-    [0.5, 0.3],
-    [0.15, 0.65],
-    [0.5, 1],
-    [0.85, 0.9],
-  ],
-  d: [
-    [0.8, 0.45],
-    [0.45, 0.35],
-    [0.15, 0.65],
-    [0.45, 1],
-    [0.8, 0.8],
-    [0.8, 0],
+    [0.5, 0],
+    [0.15, 0.3],
+    [0.85, 0.45],
     [0.85, 1],
   ],
-  e: [
-    [0.15, 0.65],
-    [0.85, 0.65],
-    [0.6, 0.3],
-    [0.2, 0.45],
-    [0.3, 0.9],
-    [0.85, 0.9],
+  b: [
+    [0, 0],
+    [0, 1],
+    [0.75, 0.95],
+    [0.85, 0.5],
+    [0, 0.55],
   ],
-  g: [
-    [0.8, 0.2],
-    [0.45, 0.05],
-    [0.15, 0.3],
-    [0.45, 0.55],
-    [0.8, 0.4],
-    [0.8, 0.05],
-    [0.8, 0.85],
+  c: [
+    [0.9, 0.15],
+    [0.4, 0],
+    [0, 0.5],
+    [0.4, 1],
+    [0.9, 0.85],
+  ],
+  d: [
+    [1, 0.55],
+    [0.15, 0.5],
+    [0.25, 0.95],
+    [1, 1],
+    [1, 0],
+  ],
+  e: [
+    [0, 0.5],
+    [1, 0.5],
+    [0.5, 0],
+    [0, 0.5],
     [0.5, 1],
-    [0.2, 0.9],
+    [1, 0.95],
   ],
   l: [
     [0.5, 0],
     [0.5, 1],
   ],
   o: [
-    [0.5, 0.3],
-    [0.15, 0.65],
+    [0.5, 0],
+    [0.125, 0.28],
+    [0.125, 0.72],
     [0.5, 1],
-    [0.85, 0.65],
-    [0.5, 0.3],
+    [0.875, 0.72],
+    [0.875, 0.28],
+    [0.5, 0],
   ],
   s: [
-    [0.85, 0.35],
-    [0.5, 0.3],
-    [0.15, 0.45],
-    [0.5, 0.65],
-    [0.85, 0.82],
-    [0.5, 1],
-    [0.15, 0.9],
+    [0.95, 0.12],
+    [0.45, 0],
+    [0, 0.25],
+    [0.5, 0.5],
+    [1, 0.75],
+    [0.55, 1],
+    [0.05, 0.88],
   ],
   u: [
-    [0.15, 0.3],
-    [0.2, 0.85],
+    [0, 0],
+    [0.05, 0.75],
     [0.5, 1],
-    [0.8, 0.85],
-    [0.85, 0.3],
-    [0.85, 1],
+    [0.95, 0.75],
+    [1, 0],
   ],
   v: [
-    [0.1, 0.3],
+    [0, 0],
     [0.5, 1],
-    [0.9, 0.3],
+    [1, 0],
   ],
 };
 
@@ -190,22 +166,6 @@ interface ShapeOutline {
   readonly name: string;
   readonly ref: string;
   readonly points: readonly UnitPoint[];
-}
-
-function regularOutline(count: number): UnitPoint[] {
-  return Array.from({ length: count + 1 }, (_, i) => {
-    const angle = (2 * Math.PI * (i % count)) / count - Math.PI / 2;
-    return [0.5 + 0.5 * Math.cos(angle), 0.5 + 0.5 * Math.sin(angle)];
-  });
-}
-
-function starOutline(): UnitPoint[] {
-  return Array.from({ length: 11 }, (_, i) => {
-    const k = i % 10;
-    const r = k % 2 === 0 ? 0.5 : 0.21;
-    const angle = (2 * Math.PI * k) / 10 - Math.PI / 2;
-    return [0.5 + r * Math.cos(angle), 0.52 + r * Math.sin(angle)];
-  });
 }
 
 /**
@@ -238,50 +198,101 @@ function shapeForCount(count: number): ShapeOutline {
       ],
     };
   }
-  if (count <= 7) {
-    return {
-      name: "ngôi nhà",
-      ref: "🏠",
-      points: [
-        [0.1, 1],
-        [0.1, 0.45],
-        [0.5, 0],
-        [0.9, 0.45],
-        [0.9, 1],
-        [0.1, 1],
-      ],
-    };
-  }
-  if (count <= 10) {
-    return { name: "hình tròn", ref: "⭕", points: regularOutline(count) };
-  }
-  return { name: "ngôi sao", ref: "⭐", points: starOutline() };
+  return {
+    name: "ngôi nhà",
+    ref: "🏠",
+    points: [
+      [0.1, 1],
+      [0.1, 0.45],
+      [0.5, 0],
+      [0.9, 0.45],
+      [0.9, 1],
+      [0.1, 1],
+    ],
+  };
 }
 
-/** Chèn trung điểm vào đoạn dài nhất tới khi đủ `target` chấm (tối đa 12). */
-function densify(points: readonly UnitPoint[], target: number): UnitPoint[] {
+/**
+ * Khoảng cách tối thiểu giữa hai chấm khác toạ độ, tính theo cạnh lớn của hộp
+ * chấm: engine co hộp chấm đồng đều vào sân khấu, chấm gần hơn thì vùng chạm
+ * chồng nhau trên màn hẹp (`BR-PSZ-01`, `BR-LAY-05`).
+ */
+export const GT024_MIN_DOT_GAP = 0.42;
+
+/**
+ * Kéo nét về trọn hộp đơn vị, giữ tỉ lệ: engine co theo hộp bao các chấm nên
+ * khoảng cách thật là khoảng cách so với cạnh lớn của hộp bao.
+ */
+function normalizeStroke(points: readonly UnitPoint[]): UnitPoint[] {
+  const xs = points.map((p) => p[0]);
+  const ys = points.map((p) => p[1]);
+  const minX = Math.min(...xs);
+  const minY = Math.min(...ys);
+  const w = Math.max(...xs) - minX;
+  const h = Math.max(...ys) - minY;
+  const span = Math.max(1e-6, w, h);
+  return points.map(([x, y]) => [
+    (x - minX) / span + (1 - w / span) / 2,
+    (y - minY) / span + (1 - h / span) / 2,
+  ]);
+}
+
+/** Hai điểm trùng toạ độ là một chấm (`BR-E024-07`), không tính khoảng cách. */
+function samePoint(a: UnitPoint, b: UnitPoint): boolean {
+  return a[0] === b[0] && a[1] === b[1];
+}
+
+/** Mọi cặp chấm khác toạ độ cách nhau ≥ `GT024_MIN_DOT_GAP` cạnh hộp. */
+export function isWellSpaced(points: readonly UnitPoint[]): boolean {
+  for (let i = 0; i < points.length; i++) {
+    for (let j = i + 1; j < points.length; j++) {
+      const a = safeGetItem(points, i);
+      const b = safeGetItem(points, j);
+      if (
+        !samePoint(a, b) &&
+        Math.hypot(a[0] - b[0], a[1] - b[1]) < GT024_MIN_DOT_GAP
+      ) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+/** Chèn trung điểm vào đoạn dài nhất (nếu vẫn đủ thưa) tới khi đủ `target` chấm. */
+function spacedDots(points: readonly UnitPoint[], target: number): UnitPoint[] {
   const out: UnitPoint[] = [...points];
   const goal = Math.min(12, target);
+  const tried = new Set<string>();
   while (out.length < goal) {
-    let best = 0;
+    let best = -1;
     let bestLen = -1;
     for (let i = 0; i < out.length - 1; i++) {
-      const [ax, ay] = safeGetItem(out, i);
-      const [bx, by] = safeGetItem(out, i + 1);
-      const len = Math.hypot(bx - ax, by - ay);
-      if (len > bestLen) {
+      const a = safeGetItem(out, i);
+      const b = safeGetItem(out, i + 1);
+      const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      if (!tried.has(`${a}|${b}`) && len > bestLen) {
         bestLen = len;
         best = i;
       }
     }
-    const [ax, ay] = safeGetItem(out, best);
-    const [bx, by] = safeGetItem(out, best + 1);
-    out.splice(best + 1, 0, [(ax + bx) / 2, (ay + by) / 2]);
+    if (best < 0) {
+      break;
+    }
+    const a = safeGetItem(out, best);
+    const b = safeGetItem(out, best + 1);
+    const mid: UnitPoint = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    const next = [...out.slice(0, best + 1), mid, ...out.slice(best + 1)];
+    if (isWellSpaced(next)) {
+      out.splice(best + 1, 0, mid);
+    } else {
+      tried.add(`${a}|${b}`);
+    }
   }
   return out;
 }
 
-const BOX = { x: 380, y: 110, w: 200, h: 320 } as const;
+const BOX = { x: 320, y: 110, w: 320, h: 320 } as const;
 const SHAPE_BOX = { x: 320, y: 110, w: 320, h: 320 } as const;
 
 function toWaypoints(
@@ -318,7 +329,8 @@ function glyphName(glyph: string, label: string): string {
 }
 
 export function isTraceableGlyph(glyph: string | undefined): boolean {
-  return glyph !== undefined && Object.hasOwn(GT024_STROKES, glyph);
+  const stroke = glyph === undefined ? undefined : GT024_STROKES[glyph];
+  return stroke !== undefined && isWellSpaced(normalizeStroke(stroke));
 }
 
 export const projectGT024: Projection<"GT-024"> = {
@@ -349,9 +361,9 @@ export const projectGT024: Projection<"GT-024"> = {
     if (traceable.length > 0) {
       const item = safeGetItem(traceable, rng.nextInt(traceable.length));
       const glyph = item.glyph ?? "";
-      const stroke = GT024_STROKES[glyph] ?? [];
+      const stroke = normalizeStroke(GT024_STROKES[glyph] ?? []);
       waypoints = toWaypoints(
-        densify(stroke, Math.max(3, Math.min(params.item_count, 12))),
+        spacedDots(stroke, Math.max(3, Math.min(params.item_count, 12))),
         BOX
       );
       // Đề gọi tên **ký hiệu** đang nối, không gọi tên vật minh hoạ: "tạo quả
