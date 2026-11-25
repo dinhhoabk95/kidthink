@@ -7,6 +7,52 @@ import type {
 } from "@mindkid/shared";
 import { pickAgeBandPrompt, resolveItemAsset, safeGetItem } from "./utils.js";
 
+type Direction = "up" | "down" | null;
+
+/** Dãy giá trị tăng hẳn / giảm hẳn; thiếu giá trị số hoặc lẫn lộn thì `null`. */
+function sequenceDirection(values: readonly (number | undefined)[]): Direction {
+  const nums = values.filter((v): v is number => typeof v === "number");
+  if (nums.length !== values.length || nums.length < 2) {
+    return null;
+  }
+  const pairs = nums.slice(1).map((v, i) => v - (nums[i] ?? v));
+  if (pairs.every((d) => d > 0)) {
+    return "up";
+  }
+  if (pairs.every((d) => d < 0)) {
+    return "down";
+  }
+  return null;
+}
+
+/**
+ * Đề nói rõ chiều của dãy số (`BR-E006-08`): đáp án 10, 9, 8 mà đề chỉ nói
+ * "theo đúng trình tự" thì trẻ xếp 8, 9, 10 cũng hợp lý mà bị chấm sai.
+ */
+function sequencePrompt(band: ProjectOptions["band"], dir: Direction): string {
+  if (dir === null) {
+    return pickAgeBandPrompt(
+      band,
+      {
+        mam: "Bé xếp hàng lần lượt từ đầu nhé!",
+        choi: "Bé thử xếp nối đuôi đúng thứ tự nhé!",
+        la: "Đố bé sắp xếp dãy theo đúng trình tự!",
+      },
+      "Bé sắp xếp theo đúng thứ tự nhé!"
+    );
+  }
+  const way = dir === "up" ? "từ bé đến lớn" : "từ lớn đến bé";
+  return pickAgeBandPrompt(
+    band,
+    {
+      mam: `Bé xếp ${way} nhé!`,
+      choi: `Bé thử xếp ${way} nhé!`,
+      la: `Đố bé xếp dãy ${way}!`,
+    },
+    `Bé sắp xếp ${way} nhé!`
+  );
+}
+
 export const projectGT006: Projection<"GT-006"> = {
   template: "GT-006",
   requires: { min_items: 3, max_items: 5 },
@@ -85,14 +131,9 @@ export const projectGT006: Projection<"GT-006"> = {
     const rep =
       opts.representation === "number-line" ? "number-line" : undefined;
 
-    const prompt = pickAgeBandPrompt(
+    const prompt = sequencePrompt(
       opts.band,
-      {
-        mam: "Bé xếp hàng lần lượt từ đầu nhé!",
-        choi: "Bé thử xếp nối đuôi đúng thứ tự nhé!",
-        la: "Đố bé sắp xếp dãy theo đúng trình tự!",
-      },
-      "Bé sắp xếp theo đúng thứ tự nhé!"
+      sequenceDirection(selectedIds.map((id) => itemMap.get(id)?.value))
     );
 
     return {
