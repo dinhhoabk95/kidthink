@@ -176,12 +176,16 @@ export function selectTeachingItems(
   if (mode !== "part_whole") {
     return ordered.slice(0, MAX_GT000_ASSETS);
   }
+  // Bảng tách-gộp chỉ dạy được vật mang số lượng: chìa khoá, kim cương không
+  // có `value` thì bảng tự bịa "1 thêm 4" — lạc đề phép tính (`BR-E000-18`).
+  const valued = ordered.filter((i) => typeof i.value === "number");
+  const pool = valued.length >= 2 ? valued : ordered;
   const targetWhole = inferPartWholeTarget(dataset);
   if (targetWhole === null) {
-    return ordered.slice(0, MAX_GT000_ASSETS);
+    return pool.slice(0, MAX_GT000_ASSETS);
   }
-  const filtered = filterPartWholeItems(ordered, dataset, targetWhole);
-  return (filtered.length >= 2 ? filtered : ordered).slice(0, MAX_GT000_ASSETS);
+  const filtered = filterPartWholeItems(pool, dataset, targetWhole);
+  return (filtered.length >= 2 ? filtered : pool).slice(0, MAX_GT000_ASSETS);
 }
 
 export function chunkItemsBalanced<T>(

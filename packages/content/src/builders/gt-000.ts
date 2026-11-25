@@ -1,6 +1,7 @@
 import type {
   GT000Content,
   GT000Difficulty,
+  GT000SceneBoard,
   GT000Segment,
   GT000Step,
 } from "@mindkid/game-engine/contracts";
@@ -105,6 +106,46 @@ function recallOptions(
   return shuffleDeterministic(picked, rng);
 }
 
+// Số 0 đọc "số 0": chữ "không" bị lọc như từ phủ định trong câu cho trẻ.
+const NUMBER_WORDS = [
+  "số 0",
+  "một",
+  "hai",
+  "ba",
+  "bốn",
+  "năm",
+  "sáu",
+  "bảy",
+  "tám",
+  "chín",
+  "mười",
+] as const;
+
+function numberWord(n: number): string {
+  return NUMBER_WORDS[n] ?? String(n);
+}
+
+/**
+ * Lời dẫn của bảng tách-gộp nói đúng phép tính đang hiện (`BR-E000-18`): bảng
+ * vẽ 1 + 4 = 5 mà lời dẫn chỉ nói "Đây là một quả táo đỏ" thì lạc đề cộng.
+ */
+function partWholeNarration(board: GT000SceneBoard): string | null {
+  if (board.mode !== "part_whole") {
+    return null;
+  }
+  const a = numberWord(board.part_a_count);
+  const b = numberWord(board.part_b_count);
+  const whole = numberWord(board.whole_count);
+  switch (board.operation) {
+    case "combine":
+      return `${a} thêm ${b} là ${whole}`;
+    case "take_away":
+      return `${whole} bớt ${a} còn ${b}`;
+    default:
+      return `${whole} tách thành ${a} và ${b}`;
+  }
+}
+
 function buildTeachingSegmentSteps(params: {
   readonly chunk: readonly DatasetItem[];
   readonly segIdx: number;
@@ -146,7 +187,7 @@ function buildTeachingSegmentSteps(params: {
       action: "present",
       target_asset_id: `asset_${item.id}`,
       narration_line: sanitizeChildPrompt(
-        `Đây là ${pLabel}`,
+        partWholeNarration(board) ?? `Đây là ${pLabel}`,
         "Cùng ngắm hình mới với Cô Cú nhé!"
       ),
       interaction_hint: interactionHint,
