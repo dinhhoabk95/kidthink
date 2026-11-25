@@ -398,14 +398,6 @@ export const C1_NCOMP_12_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-NCOMP-SWT-0001",
-      template: "GT-027",
-      band: "5-6",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-    },
-    {
       code: "GL-C1-NCOMP-BOND-0188",
       template: "GT-007",
       band: "4-5",

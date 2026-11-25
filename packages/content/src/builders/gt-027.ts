@@ -5,29 +5,49 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
-import {
-  createRng,
-  resolveItemAsset,
-  safeGetItem,
-  shuffleDeterministic,
-} from "./utils.js";
+import { createRng, safeGetItem, shuffleDeterministic } from "./utils.js";
+
+type CardShape = "circle" | "square";
+
+interface ColorCards {
+  readonly color: string;
+  readonly name_vi: string;
+  readonly circle: string;
+  readonly square: string;
+}
+
+/**
+ * Thẻ đổi luật (`BR-E027-08`, vật khung `BR-SDS-17`): mỗi thẻ là hình **mang
+ * sẵn màu** trong chính asset (🔴 là tròn đỏ, 🟦 là vuông xanh). Cấm — NEVER
+ * gán màu tuỳ ý cho ảnh không mang màu (🎁 "màu xanh" chỉ là chấm 10 px).
+ */
+export const GT027_COLOR_CARDS: readonly ColorCards[] = [
+  { color: "red", name_vi: "màu đỏ", circle: "🔴", square: "🟥" },
+  { color: "blue", name_vi: "màu xanh biển", circle: "🔵", square: "🟦" },
+  { color: "yellow", name_vi: "màu vàng", circle: "🟡", square: "🟨" },
+  { color: "green", name_vi: "màu xanh lá", circle: "🟢", square: "🟩" },
+  { color: "orange", name_vi: "màu cam", circle: "🟠", square: "🟧" },
+  { color: "purple", name_vi: "màu tím", circle: "🟣", square: "🟪" },
+];
+
+const SHAPE_NAME_VI: Readonly<Record<CardShape, string>> = {
+  circle: "hình tròn",
+  square: "hình vuông",
+};
 
 function buildRuleSwitchItems(
   itemCount: number,
-  item1: SkillDataset["items"][number],
-  item2: SkillDataset["items"][number]
+  colors: readonly [ColorCards, ColorCards]
 ) {
-  const colors = ["red", "blue"];
-  const shapes = [item1, item2];
-
+  const shapes: readonly CardShape[] = ["circle", "square"];
   return Array.from({ length: itemCount }, (_, i) => {
-    const color = colors[i % 2] ?? "red";
-    const shapeItem = shapes[Math.floor(i / 2) % 2] ?? item1;
+    const color = colors[i % 2] ?? colors[0];
+    const shape = shapes[Math.floor(i / 2) % 2] ?? "circle";
     return {
-      id: `${shapeItem.id}_${color}_${i + 1}`,
-      asset: resolveItemAsset(shapeItem, true),
-      color,
-      shape: shapeItem.label,
+      id: `${shape}_${color.color}_${i + 1}`,
+      asset: { kind: "emoji" as const, ref: color[shape] },
+      color: color.color,
+      shape,
       size: "medium",
     };
   });
@@ -45,30 +65,32 @@ export const projectGT027: Projection<"GT-027"> = {
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const params = getEngineDifficultyParams("GT-027", opts.difficulty);
-    const shuffled = shuffleDeterministic(dataset.items, rng);
-    const item1 = safeGetItem(shuffled, 0);
-    const item2 = safeGetItem(shuffled, 1);
+    const pickedColors = shuffleDeterministic(GT027_COLOR_CARDS, rng);
+    const colorA = safeGetItem(pickedColors, 0);
+    const colorB = safeGetItem(pickedColors, 1);
+    const targetShape: CardShape = rng.nextInt(2) === 0 ? "circle" : "square";
+    const shapeVi = SHAPE_NAME_VI[targetShape];
 
     const rules = [
       {
         id: "rule_shape",
         name: "Theo hình dạng",
-        description: `Chọn hình ${item1.label}`,
+        description: `Chọn ${shapeVi}`,
         dimension: "shape" as const,
-        target_value: item1.label,
-        signal_text: `Hãy chọn hình ${item1.label}`,
+        target_value: targetShape,
+        signal_text: `Hãy chọn ${shapeVi}`,
       },
       {
         id: "rule_color",
         name: "Theo màu sắc",
-        description: "Chọn màu đỏ",
+        description: `Chọn ${colorA.name_vi}`,
         dimension: "color" as const,
-        target_value: "red",
-        signal_text: "Đổi quy luật: hãy chọn màu đỏ",
+        target_value: colorA.color,
+        signal_text: `Đổi quy luật: hãy chọn ${colorA.name_vi}`,
       },
     ];
 
-    const rawItems = buildRuleSwitchItems(params.item_count, item1, item2);
+    const rawItems = buildRuleSwitchItems(params.item_count, [colorA, colorB]);
     const items = shuffleDeterministic(rawItems, rng);
 
     return {
