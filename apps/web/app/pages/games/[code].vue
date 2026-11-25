@@ -414,7 +414,13 @@
   } from "@mindkid/shared/client";
   import BrandEmoji from "@mindkid/ui/brand-emoji";
   import { computed, onMounted, ref } from "vue";
-  import { definePageMeta, useFetch, useRoute, useUserSession } from "#imports";
+  import {
+    createError,
+    definePageMeta,
+    useFetch,
+    useRoute,
+    useUserSession,
+  } from "#imports";
   import PublicNavbar from "~/components/public-navbar.vue";
   import { useApi } from "~/composables/use-api";
   import {
@@ -454,6 +460,14 @@
       transform: trimGameDetailPayload,
     }
   );
+
+  if (error.value?.statusCode === 404) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Không tìm thấy trò chơi",
+      fatal: true,
+    });
+  }
 
   const hasError = computed(() => Boolean(error.value));
 
