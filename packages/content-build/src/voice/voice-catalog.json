@@ -1,10 +1,10 @@
 {
   "format": "mindkid-voice-catalog-v1",
   "profile": "teacher-v1",
-  "generated_at": "2026-11-25T18:37:01.092Z",
+  "generated_at": "2026-11-26T12:08:02.699Z",
   "total_entries": 10546,
-  "cached_entries": 10493,
-  "missing_entries": 53,
+  "cached_entries": 10546,
+  "missing_entries": 0,
   "by_category": {
     "round_instruction": {
       "total": 2325,
@@ -28,8 +28,8 @@
     },
     "koguma_guide": {
       "total": 300,
-      "cached": 247,
-      "missing": 53
+      "cached": 300,
+      "missing": 0
     },
     "kid_ui": {
       "total": 114,

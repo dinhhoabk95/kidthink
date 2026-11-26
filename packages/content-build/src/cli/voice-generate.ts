@@ -107,7 +107,7 @@ export function parseVoiceGenerateArgs(
     return hit ? hit.slice(prefix.length) : undefined;
   };
 
-  const rawEngine = getArg("--engine=") ?? "edge-hoaimy-teacher";
+  const rawEngine = getArg("--engine=") ?? "vieneu-myduyen";
   if (!isVoiceEngineId(rawEngine)) {
     throw new Error(`Engine không hợp lệ: ${rawEngine}`);
   }

@@ -58,6 +58,11 @@ Trước khi sinh hàng loạt `~6.700` file, CLI chạy chế độ `--audition
 
 Kết quả Pha 0 xuất ra thư mục audition kèm bảng so sánh thời lượng, LUFS và độ tự nhiên để chốt engine mặc định cho profile `teacher-v1` (và cho phép cắm đa adapter trong CLI).
 
+**Chốt 2026-11-26:** engine duy nhất là `vieneu-myduyen` (Cấu hình A, giọng Mỹ Duyên). Toàn bộ `10.546` câu
+`teacher-v1` render lại ở speed `0.94`; riêng `koguma_guide` quá `30s` render ở `1.15` (`157` câu) và `1.3`
+(`42` câu) — không còn câu `missing`. `742` file kho cũ `d1–d6`, `common/numbers` cũng render lại cùng giọng,
+giữ nguyên path: text lấy theo mẫu tên file (`589`), sửa tay (`49`), còn lại từ transcript Whisper đã soát (`104`).
+
 ### 3.2 Kiến Trúc CLI Sinh Giọng Lâu Dài (`voice-cli`)
 
 - ** Trích xuất toàn diện (Corpus Extractor):**
