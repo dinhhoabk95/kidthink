@@ -47,7 +47,7 @@ export const C1_NREC_01_DATASET: SkillDataset = {
       label: "số 0",
       glyph: "0",
       value: 0,
-      audio_path: "/audio/voice/common/numbers/0.mp3",
+      audio_path: "/audio/voice/số-0.mp3",
       image: {
         kind: "emoji",
         ref: "🧺",
@@ -63,7 +63,7 @@ export const C1_NREC_01_DATASET: SkillDataset = {
       label: "số một",
       glyph: "1",
       value: 1,
-      audio_path: "/audio/voice/common/numbers/1.mp3",
+      audio_path: "/audio/voice/số-một.mp3",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -79,7 +79,7 @@ export const C1_NREC_01_DATASET: SkillDataset = {
       label: "số hai",
       glyph: "2",
       value: 2,
-      audio_path: "/audio/voice/common/numbers/2.mp3",
+      audio_path: "/audio/voice/số-hai.mp3",
       image: {
         kind: "emoji",
         ref: "🍊",
@@ -95,7 +95,7 @@ export const C1_NREC_01_DATASET: SkillDataset = {
       label: "số ba",
       glyph: "3",
       value: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
+      audio_path: "/audio/voice/số-ba.mp3",
       image: {
         kind: "emoji",
         ref: "🍓",

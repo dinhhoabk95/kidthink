@@ -103,9 +103,8 @@ Xoay vòng, không lặp liên tiếp: "Giỏi quá!" · "Đúng rồi!" · "Bé
 "Tuyệt vời!" · "Bé thật chăm chỉ!"
 
 Khi chưa đúng: "Thử lại nhé!" · "Gần đúng rồi!" · "Bé thử chỗ khác xem?"
-(`BR-FBK-13`). mp3 dự phòng cùng thứ tự tại
-`apps/web/public/audio/voice/common/feedback/retry-thu-lai-nhe.mp3`,
-`retry-gan-dung-roi.mp3`, `retry-be-thu-cho-khac.mp3` — file do người thu; thiếu
+(`BR-FBK-13`). mp3 của từng câu lấy từ kho giọng cô chung tại
+`resolveTeacherVoicePath(câu)` (vd. `/audio/voice/thử-lại-nhé.mp3`, `BR-PNR-05`); thiếu
 file thì phát im và nhịp hổ phách vẫn là kênh thị giác.
 
 Cấm — **NEVER**: "Sai rồi", "Không đúng", "Bé chưa giỏi", bất kỳ so sánh nào.

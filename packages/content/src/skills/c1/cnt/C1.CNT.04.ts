@@ -48,7 +48,7 @@ export const C1_CNT_04_DATASET: SkillDataset = {
       value: 1,
       contrast_group: "quantity",
       ordering: 1,
-      audio_path: "/audio/voice/common/numbers/1.mp3",
+      audio_path: "/audio/voice/số-một.mp3",
       category: {
         type: "chuỗi đếm ngược",
       },
@@ -64,7 +64,7 @@ export const C1_CNT_04_DATASET: SkillDataset = {
       value: 2,
       contrast_group: "quantity",
       ordering: 2,
-      audio_path: "/audio/voice/common/numbers/2.mp3",
+      audio_path: "/audio/voice/số-hai.mp3",
       category: {
         type: "chuỗi đếm ngược",
       },
@@ -80,7 +80,7 @@ export const C1_CNT_04_DATASET: SkillDataset = {
       value: 3,
       contrast_group: "quantity",
       ordering: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
+      audio_path: "/audio/voice/số-ba.mp3",
       category: {
         type: "chuỗi đếm ngược",
       },
@@ -96,7 +96,7 @@ export const C1_CNT_04_DATASET: SkillDataset = {
       value: 4,
       contrast_group: "quantity",
       ordering: 4,
-      audio_path: "/audio/voice/common/numbers/4.mp3",
+      audio_path: "/audio/voice/số-bốn.mp3",
       category: {
         type: "chuỗi đếm ngược",
       },
@@ -112,7 +112,7 @@ export const C1_CNT_04_DATASET: SkillDataset = {
       value: 5,
       contrast_group: "quantity",
       ordering: 5,
-      audio_path: "/audio/voice/common/numbers/5.mp3",
+      audio_path: "/audio/voice/số-năm.mp3",
       category: {
         type: "chuỗi đếm ngược",
       },
@@ -128,7 +128,7 @@ export const C1_CNT_04_DATASET: SkillDataset = {
       value: 6,
       contrast_group: "quantity",
       ordering: 6,
-      audio_path: "/audio/voice/common/numbers/6.mp3",
+      audio_path: "/audio/voice/số-sáu.mp3",
       category: {
         type: "chuỗi đếm ngược",
       },
@@ -144,7 +144,7 @@ export const C1_CNT_04_DATASET: SkillDataset = {
       value: 7,
       contrast_group: "quantity",
       ordering: 7,
-      audio_path: "/audio/voice/common/numbers/7.mp3",
+      audio_path: "/audio/voice/số-bảy.mp3",
       category: {
         type: "chuỗi đếm ngược",
       },
@@ -160,7 +160,7 @@ export const C1_CNT_04_DATASET: SkillDataset = {
       value: 8,
       contrast_group: "quantity",
       ordering: 8,
-      audio_path: "/audio/voice/common/numbers/8.mp3",
+      audio_path: "/audio/voice/số-tám.mp3",
       category: {
         type: "chuỗi đếm ngược",
       },
@@ -176,7 +176,7 @@ export const C1_CNT_04_DATASET: SkillDataset = {
       value: 9,
       contrast_group: "quantity",
       ordering: 9,
-      audio_path: "/audio/voice/common/numbers/9.mp3",
+      audio_path: "/audio/voice/số-chín.mp3",
       category: {
         type: "chuỗi đếm ngược",
       },
@@ -192,7 +192,7 @@ export const C1_CNT_04_DATASET: SkillDataset = {
       value: 10,
       contrast_group: "quantity",
       ordering: 10,
-      audio_path: "/audio/voice/common/numbers/10.mp3",
+      audio_path: "/audio/voice/số-mười.mp3",
       category: {
         type: "chuỗi đếm ngược",
       },

@@ -119,8 +119,8 @@ Cùng hình dạng với kho C5: một `interface` khai `id` `label` `group`, v�
 | `c1-measure-dimension.ts` | 6 cặp | `pole_more` `pole_less` `unit_kind` | `C1.MEAS` `C1.CMP` |
 | `c1-pattern-unit.ts` | 6 | `signature` `period` | `C1.PAT` |
 
-**`c1-numeral.ts`** — 0–20. `audio_path` trỏ tài sản đã có sẵn trong repo:
-`/audio/voice/common/numbers/{value}.mp3` (31 file, đã kiểm ngày 2026-09-11). Nhãn tiếng Việt
+**`c1-numeral.ts`** — 0–20. `audio_path` trỏ clip giọng cô của chính nhãn:
+`resolveTeacherVoicePath(label)` (vd. `/audio/voice/số-ba.mp3`, `BR-PNR-05`). Nhãn tiếng Việt
 viết nguyên văn: `"số không"` … `"số hai mươi"`. `required: true` cho 0–10 theo `BR-SVI-07`.
 
 **`c1-ordinal.ts`** — `thứ nhất` … `thứ mười`. `glyph` dùng dạng viết tắt trẻ đọc được trên thẻ

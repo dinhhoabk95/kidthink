@@ -46,7 +46,7 @@ export const C1_PAT_08_DATASET: SkillDataset = {
       label: "hai chú gà con",
       glyph: "2",
       value: 2,
-      audio_path: "/audio/voice/common/numbers/2.mp3",
+      audio_path: "/audio/voice/hai-chú-gà-con.mp3",
       image: {
         kind: "emoji",
         ref: "🐣",
@@ -62,7 +62,7 @@ export const C1_PAT_08_DATASET: SkillDataset = {
       label: "bốn chú thỏ trắng",
       glyph: "4",
       value: 4,
-      audio_path: "/audio/voice/common/numbers/4.mp3",
+      audio_path: "/audio/voice/bốn-chú-thỏ-trắng.mp3",
       image: {
         kind: "emoji",
         ref: "🐰",
@@ -78,7 +78,7 @@ export const C1_PAT_08_DATASET: SkillDataset = {
       label: "sáu chú cún con",
       glyph: "6",
       value: 6,
-      audio_path: "/audio/voice/common/numbers/6.mp3",
+      audio_path: "/audio/voice/sáu-chú-cún-con.mp3",
       image: {
         kind: "emoji",
         ref: "🐶",
@@ -94,7 +94,7 @@ export const C1_PAT_08_DATASET: SkillDataset = {
       label: "tám chú mèo nhỏ",
       glyph: "8",
       value: 8,
-      audio_path: "/audio/voice/common/numbers/8.mp3",
+      audio_path: "/audio/voice/tám-chú-mèo-nhỏ.mp3",
       image: {
         kind: "emoji",
         ref: "🐱",
@@ -110,7 +110,7 @@ export const C1_PAT_08_DATASET: SkillDataset = {
       label: "mười chú lợn hồng",
       glyph: "10",
       value: 10,
-      audio_path: "/audio/voice/common/numbers/10.mp3",
+      audio_path: "/audio/voice/mười-chú-lợn-hồng.mp3",
       image: {
         kind: "emoji",
         ref: "🐷",
@@ -126,7 +126,7 @@ export const C1_PAT_08_DATASET: SkillDataset = {
       label: "mười hai chú cừu",
       glyph: "12",
       value: 12,
-      audio_path: "/audio/voice/common/numbers/12.mp3",
+      audio_path: "/audio/voice/mười-hai-chú-cừu.mp3",
       image: {
         kind: "emoji",
         ref: "🐑",

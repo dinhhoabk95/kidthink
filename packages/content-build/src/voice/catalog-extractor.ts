@@ -153,12 +153,13 @@ class CatalogCollector {
     }
     const lookupKey = normalizeVoiceLookupKey(trimmed);
     const hash = computeVoiceHash(trimmed, this.profile);
-    const relativeAudioPath = resolveTeacherVoicePath(trimmed, this.profile);
+    const relativeAudioPath = resolveTeacherVoicePath(trimmed);
     if (!(lookupKey && hash && relativeAudioPath)) {
       return;
     }
 
-    const existing = this.records.get(hash);
+    // Khoá theo file đích: câu chỉ khác dấu câu/hoa thường dùng chung một mp3 (BR-PNR-05).
+    const existing = this.records.get(relativeAudioPath);
     if (existing) {
       existing.occurrenceCount += 1;
       if (
@@ -170,7 +171,7 @@ class CatalogCollector {
       return;
     }
 
-    this.records.set(hash, {
+    this.records.set(relativeAudioPath, {
       hash,
       lookupKey,
       rawText: trimmed,
@@ -695,7 +696,7 @@ export function readCatalogDocumentFromDisk(
     const category = resolvePackedCategory(parts[0] ?? "si");
     const occurrenceCount = Number(parts[1] ?? "1") || 1;
     const rawText = parts.slice(2).join("\t");
-    const relativeAudioPath = `/audio/voice/${profile}/${hash.slice(0, 2)}/${hash}.mp3`;
+    const relativeAudioPath = resolveTeacherVoicePath(rawText) ?? "";
     const diskPath = path.join(
       publicWebDir,
       relativeAudioPath.replace(LEADING_SLASH_RE, "")

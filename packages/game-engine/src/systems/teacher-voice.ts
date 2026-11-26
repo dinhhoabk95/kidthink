@@ -1,8 +1,8 @@
 /**
- * Giọng cô giáo mầm non `teacher-v1` — nguồn giọng đọc duy nhất ở runtime
- * (`BR-PNR-05`, Task #316). Mỗi câu thoại là một file mp3 tất định
- * `/audio/voice/teacher-v1/{2-hex}/{16-hex}.mp3`, băm từ chính câu chữ bằng
- * `resolveTeacherVoicePath` — cùng hàm CLI `voice:generate` dùng lúc build.
+ * Giọng cô giáo mầm non — nguồn giọng đọc duy nhất ở runtime (`BR-PNR-05`,
+ * Task #316). Mỗi câu thoại là một file mp3 trong kho phẳng `/audio/voice/{stem}.mp3`,
+ * tên file suy từ chính câu chữ bằng `resolveTeacherVoicePath` — cùng hàm CLI
+ * `voice:generate` dùng lúc build; câu giống nhau ở mọi nơi dùng chung một file.
  *
  * Câu ghép lúc chạy (khung chuyện + câu dẫn, lời dẫn bước + câu hỏi) không có
  * trong kho như một câu liền; bên gọi truyền các đoạn riêng để phát nối tiếp.

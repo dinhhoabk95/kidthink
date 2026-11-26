@@ -16,6 +16,8 @@ const SPACE_BEFORE_PUNCT_RE = /\s+([,.?!;:])/g;
 const PUNCT_TIGHT_SPACING_RE = /([,:;])\s*/g;
 const LEADING_COMMA_RE = /^,\s*/;
 const DUPLICATE_COMMA_RE = /,\s*,+/g;
+const NON_WORD_RUN_RE = /[^\p{L}\p{N}]+/gu;
+const EDGE_DASH_RE = /^-+|-+$/g;
 
 const TWO_POW_32 = 4_294_967_296;
 const UINT32_MAX = 4_294_967_295;
@@ -254,15 +256,40 @@ export function computeVoiceHash(
   return sha256HexSync(`${profile}:${key}`).slice(0, 16);
 }
 
-export function resolveTeacherVoicePath(
-  text: string,
-  profile: string = TEACHER_VOICE_PROFILE
-): string | null {
-  const hash = computeVoiceHash(text, profile);
-  if (hash.length === 0) {
+/** Stem dài hơn ngưỡng này bị cắt ở ranh giới từ và nối `-{hash8}` (giữ tên file < 255 byte). */
+export const VOICE_FILE_STEM_MAX_CHARS = 60;
+
+/**
+ * Tên file (không đuôi) của câu trong kho giọng phẳng `/audio/voice/` (`BR-PNR-05`):
+ * lookup key giữ nguyên dấu tiếng Việt, mọi cụm ký tự không phải chữ/số thành `-`.
+ * Hai câu chỉ khác hoa/thường, khoảng trắng hay dấu câu dùng chung một file.
+ */
+export function voiceFileStem(text: string): string {
+  const key = normalizeVoiceLookupKey(text);
+  if (key.length === 0) {
+    return "";
+  }
+  const slug = key.replace(NON_WORD_RUN_RE, "-").replace(EDGE_DASH_RE, "");
+  const hash8 = computeVoiceHash(text).slice(0, 8);
+  if (slug.length === 0) {
+    return hash8;
+  }
+  const chars = Array.from(slug);
+  if (chars.length <= VOICE_FILE_STEM_MAX_CHARS) {
+    return slug;
+  }
+  const head = chars.slice(0, VOICE_FILE_STEM_MAX_CHARS).join("");
+  const cut = head.lastIndexOf("-");
+  const trimmed = cut > 0 ? head.slice(0, cut) : head;
+  return `${trimmed}-${hash8}`;
+}
+
+export function resolveTeacherVoicePath(text: string): string | null {
+  const stem = voiceFileStem(text);
+  if (stem.length === 0) {
     return null;
   }
-  return `/audio/voice/${profile}/${hash.slice(0, 2)}/${hash}.mp3`;
+  return `/audio/voice/${stem}.mp3`;
 }
 
 function formatTwoDigitVietnamese(n: number): string {

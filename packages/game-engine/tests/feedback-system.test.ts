@@ -1,3 +1,4 @@
+import { resolveTeacherVoicePath } from "@mindkid/shared/voice-path";
 import { describe, expect, it } from "vitest";
 import {
   COMPLIMENTS,
@@ -88,8 +89,6 @@ describe("FeedbackSystem (BR-FBK-01..10 & FEEDBACK-AND-CELEBRATION spec)", () =>
   });
 });
 
-const RETRY_AUDIO_PATH = /^\/audio\/voice\/common\/feedback\/.+\.mp3$/;
-
 describe("FeedbackSystem — clip khích lệ khi chưa đúng (Task #313 BR-FBK-13)", () => {
   it("mỗi câu khích lệ có mp3 dự phòng cùng chỉ số và xoay vòng không lặp liên tiếp", () => {
     expect(RETRY_ENCOURAGEMENT_AUDIO).toHaveLength(RETRY_ENCOURAGEMENTS.length);
@@ -102,7 +101,8 @@ describe("FeedbackSystem — clip khích lệ khi chưa đúng (Task #313 BR-FBK
       );
       expect(index).toBeGreaterThanOrEqual(0);
       expect(clip.audioRef).toBe(RETRY_ENCOURAGEMENT_AUDIO[index]);
-      expect(clip.audioRef).toMatch(RETRY_AUDIO_PATH);
+      // Kho giọng phẳng chung: path suy từ chính câu chữ (BR-PNR-05).
+      expect(clip.audioRef).toBe(resolveTeacherVoicePath(clip.text));
       seen.push(clip.text);
     }
     for (let i = 1; i < seen.length; i++) {

@@ -48,7 +48,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 1,
       contrast_group: "quantity",
       ordering: 1,
-      audio_path: "/audio/voice/common/numbers/1.mp3",
+      audio_path: "/audio/voice/số-một.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -64,7 +64,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 2,
       contrast_group: "quantity",
       ordering: 2,
-      audio_path: "/audio/voice/common/numbers/2.mp3",
+      audio_path: "/audio/voice/số-hai.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -80,7 +80,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 3,
       contrast_group: "quantity",
       ordering: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
+      audio_path: "/audio/voice/số-ba.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -96,7 +96,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 4,
       contrast_group: "quantity",
       ordering: 4,
-      audio_path: "/audio/voice/common/numbers/4.mp3",
+      audio_path: "/audio/voice/số-bốn.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -112,7 +112,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 5,
       contrast_group: "quantity",
       ordering: 5,
-      audio_path: "/audio/voice/common/numbers/5.mp3",
+      audio_path: "/audio/voice/số-năm.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -128,7 +128,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 6,
       contrast_group: "quantity",
       ordering: 6,
-      audio_path: "/audio/voice/common/numbers/6.mp3",
+      audio_path: "/audio/voice/số-sáu.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -144,7 +144,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 7,
       contrast_group: "quantity",
       ordering: 7,
-      audio_path: "/audio/voice/common/numbers/7.mp3",
+      audio_path: "/audio/voice/số-bảy.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -160,7 +160,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 8,
       contrast_group: "quantity",
       ordering: 8,
-      audio_path: "/audio/voice/common/numbers/8.mp3",
+      audio_path: "/audio/voice/số-tám.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -176,7 +176,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 9,
       contrast_group: "quantity",
       ordering: 9,
-      audio_path: "/audio/voice/common/numbers/9.mp3",
+      audio_path: "/audio/voice/số-chín.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -192,7 +192,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 10,
       contrast_group: "quantity",
       ordering: 10,
-      audio_path: "/audio/voice/common/numbers/10.mp3",
+      audio_path: "/audio/voice/số-mười.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -208,7 +208,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 11,
       contrast_group: "quantity",
       ordering: 11,
-      audio_path: "/audio/voice/common/numbers/11.mp3",
+      audio_path: "/audio/voice/số-mười-một.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -224,7 +224,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 12,
       contrast_group: "quantity",
       ordering: 12,
-      audio_path: "/audio/voice/common/numbers/12.mp3",
+      audio_path: "/audio/voice/số-mười-hai.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -240,7 +240,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 13,
       contrast_group: "quantity",
       ordering: 13,
-      audio_path: "/audio/voice/common/numbers/13.mp3",
+      audio_path: "/audio/voice/số-mười-ba.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -256,7 +256,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 14,
       contrast_group: "quantity",
       ordering: 14,
-      audio_path: "/audio/voice/common/numbers/14.mp3",
+      audio_path: "/audio/voice/số-mười-bốn.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -272,7 +272,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 15,
       contrast_group: "quantity",
       ordering: 15,
-      audio_path: "/audio/voice/common/numbers/15.mp3",
+      audio_path: "/audio/voice/số-mười-lăm.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -288,7 +288,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 16,
       contrast_group: "quantity",
       ordering: 16,
-      audio_path: "/audio/voice/common/numbers/16.mp3",
+      audio_path: "/audio/voice/số-mười-sáu.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -304,7 +304,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 17,
       contrast_group: "quantity",
       ordering: 17,
-      audio_path: "/audio/voice/common/numbers/17.mp3",
+      audio_path: "/audio/voice/số-mười-bảy.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -320,7 +320,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 18,
       contrast_group: "quantity",
       ordering: 18,
-      audio_path: "/audio/voice/common/numbers/18.mp3",
+      audio_path: "/audio/voice/số-mười-tám.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -336,7 +336,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 19,
       contrast_group: "quantity",
       ordering: 19,
-      audio_path: "/audio/voice/common/numbers/19.mp3",
+      audio_path: "/audio/voice/số-mười-chín.mp3",
       category: {
         type: "dãy số nhỏ",
       },
@@ -352,7 +352,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       value: 20,
       contrast_group: "quantity",
       ordering: 20,
-      audio_path: "/audio/voice/common/numbers/20.mp3",
+      audio_path: "/audio/voice/số-hai-mươi.mp3",
       category: {
         type: "dãy số nhỏ",
       },

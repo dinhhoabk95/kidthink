@@ -8,6 +8,8 @@ import {
   sha256HexSync,
   TEACHER_VOICE_PROFILE,
   toSpokenVietnameseScript,
+  VOICE_FILE_STEM_MAX_CHARS,
+  voiceFileStem,
 } from "#src/voice-path";
 
 function nodeSha256(input: string): string {
@@ -67,9 +69,7 @@ describe("voice-path — SHA-256, lookup key, deterministic path & spoken Vietna
 
       const expectedHash = nodeSha256("teacher-v1:chọn số 0").slice(0, 16);
       expect(computeVoiceHash("Chọn số không.")).toBe(expectedHash);
-      expect(pathWord).toBe(
-        `/audio/voice/teacher-v1/${expectedHash.slice(0, 2)}/${expectedHash}.mp3`
-      );
+      expect(pathWord).toBe("/audio/voice/chọn-số-0.mp3");
     });
 
     it("returns empty hash and null path for blank or whitespace-only text", () => {
@@ -79,12 +79,24 @@ describe("voice-path — SHA-256, lookup key, deterministic path & spoken Vietna
       expect(resolveTeacherVoicePath("...")).toBeNull();
     });
 
-    it("supports explicit voice profile override", () => {
-      const customPath = resolveTeacherVoicePath("Số ba", "teacher-v2");
-      const expectedHash = nodeSha256("teacher-v2:số ba").slice(0, 16);
-      expect(customPath).toBe(
-        `/audio/voice/teacher-v2/${expectedHash.slice(0, 2)}/${expectedHash}.mp3`
+    it("names the flat file after the text, keeping Vietnamese diacritics (BR-PNR-05)", () => {
+      expect(resolveTeacherVoicePath("Bớt 1 bạn ra nhé!")).toBe(
+        "/audio/voice/bớt-1-bạn-ra-nhé.mp3"
       );
+      expect(voiceFileStem("ba")).not.toBe(voiceFileStem("bà"));
+      expect(voiceFileStem("Xe ô-tô con")).toBe(voiceFileStem("xe ô tô con"));
+      expect(resolveTeacherVoicePath("Số ba")).not.toContain("teacher-v1");
+    });
+
+    it("truncates long stems at a word boundary and appends hash8", () => {
+      const long = "Góc ba mẹ chơi cùng bé. ".repeat(6);
+      const stem = voiceFileStem(long);
+      const hash8 = computeVoiceHash(long).slice(0, 8);
+      expect(stem.endsWith(`-${hash8}`)).toBe(true);
+      expect(Array.from(stem).length).toBeLessThanOrEqual(
+        VOICE_FILE_STEM_MAX_CHARS + 9
+      );
+      expect(stem.startsWith("góc-ba-mẹ-chơi-cùng-bé")).toBe(true);
     });
   });
 

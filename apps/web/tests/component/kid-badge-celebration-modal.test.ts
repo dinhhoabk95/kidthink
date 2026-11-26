@@ -4,8 +4,8 @@ import { describe, expect, it, vi } from "vitest";
 import KidBadgeCelebrationModal from "~/components/kid/badge-celebration-modal.vue";
 import { BADGE_DEFINITIONS } from "~/composables/play/use-badge-celebration";
 
-const TEACHER_VOICE_PATH_RE =
-  /^\/audio\/voice\/teacher-v1\/[0-9a-f]{2}\/[0-9a-f]{16}\.mp3$/;
+// Kho phẳng: /audio/voice/{stem}.mp3, stem là câu chữ (BR-PNR-05) — không thư mục con.
+const TEACHER_VOICE_PATH_RE = /^\/audio\/voice\/[\p{L}\p{N}-]+\.mp3$/u;
 
 describe("KidBadgeCelebrationModal component (Task #287)", () => {
   const badgeSample = BADGE_DEFINITIONS.STRAND_FIRST_COMPLETE;
@@ -59,7 +59,7 @@ describe("KidBadgeCelebrationModal component (Task #287)", () => {
     expect(wrapper.emitted("confirm")?.length).toBe(1);
   });
 
-  it("bấm nút nghe lời chúc phát mp3 giọng cô teacher-v1, không dùng speechSynthesis (BR-PNR-05)", async () => {
+  it("bấm nút nghe lời chúc phát mp3 giọng cô (kho phẳng), không dùng speechSynthesis (BR-PNR-05)", async () => {
     const played: string[] = [];
     vi.stubGlobal(
       "Audio",

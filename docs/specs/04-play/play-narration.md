@@ -23,7 +23,7 @@ depends_on:
 
 # Giọng đọc trên bề mặt trẻ
 
-> **Chưa hoàn thành** — Cổng `check:narration-coverage` xanh ở tầng gọi nhịp mở vòng (38/38 engine), nhưng toàn bộ kho âm thanh đang được chuyển sang một giọng cô giáo mầm non miền Bắc thống nhất `/audio/voice/teacher-v1/**` và gỡ bỏ hoàn toàn JS Web Speech API (`BR-PNR-05`, `BR-PNR-06`). Việc còn lại: [Task #316](../../tasks/316-preschool-teacher-voice-narration-plan.md).
+> **Chưa hoàn thành** — Cổng `check:narration-coverage` xanh ở tầng gọi nhịp mở vòng (38/38 engine), nhưng toàn bộ kho âm thanh đang được chuyển sang một giọng cô giáo mầm non miền Bắc thống nhất `/audio/voice/{stem}.mp3` và gỡ bỏ hoàn toàn JS Web Speech API (`BR-PNR-05`, `BR-PNR-06`). Việc còn lại: [Task #316](../../tasks/316-preschool-teacher-voice-narration-plan.md).
 
 ## 1. Objective
 
@@ -39,7 +39,7 @@ và gây hiện tượng hai giọng khác nhau trong cùng một bài học.
 Quyết định sản phẩm tại [Task #316](../../tasks/316-preschool-teacher-voice-narration-plan.md) chốt hai
 bất biến mới: (1) loại bỏ hoàn toàn JS Web Speech API khỏi runtime, và (2) chuẩn hoá toàn bộ câu dẫn
 vòng, thẻ khái niệm `GT-000`, tên số, tên vật, lời khen và lý do pill Montessori về **một kho giọng cô
-giáo mầm non miền Bắc duy nhất** tại `/audio/voice/teacher-v1/**`, tra cứu qua đường dẫn tường minh hoặc
+giáo mầm non miền Bắc duy nhất** tại `/audio/voice/{stem}.mp3`, tra cứu qua đường dẫn tường minh hoặc
 hàm băm tất định `resolveTeacherVoicePath(text)` của `@mindkid/shared/voice-path`.
 
 Spec này đặt hợp đồng: cái gì phải nói được, nói bằng nguồn nào, và điều gì xảy ra khi không nói
@@ -51,7 +51,7 @@ asset; spec này sở hữu hợp đồng **phát** trên bề mặt trẻ.
 | Actor | Quyền cần | Làm được gì ở đây |
 |---|---|---|
 | Trẻ 3–6 tuổi | không cần đăng nhập tới tier `free` | Nghe yêu cầu, nghe tên vật, bấm nghe lại |
-| Người biên soạn | `content_author` | Gắn `audio_path` / `instruction_audio_path` hoặc kiểm duyệt kho giọng `teacher-v1` |
+| Người biên soạn | `content_author` | Gắn `audio_path` / `instruction_audio_path` hoặc kiểm duyệt kho giọng `/audio/voice/` |
 | Dev engine | — | Gọi narration ở đúng nhịp của kịch bản lượt |
 | Cổng kiểm tra | — | `check:narration-coverage` (đã gỡ 2026-10-31 cùng `scripts/check.sh`; không còn cổng tự động) |
 
@@ -63,7 +63,7 @@ asset; spec này sở hữu hợp đồng **phát** trên bề mặt trẻ.
 | `packages/shared/src/voice-path.ts` | Dev / CLI | `TEACHER_VOICE_PROFILE`, `resolveTeacherVoicePath`, `toSpokenVietnameseScript` |
 | `apps/web/app/composables/play/use-play-audio.ts` | Dev | `playInstructionNarration`, `preloadPlayAssets` |
 | `packages/game-engine/src/systems/audio-controller.ts` | Dev | Phát file `.mp3` giọng cô giáo và kích hoạt dự phòng thị giác |
-| `apps/web/public/audio/voice/teacher-v1/**` | Dev / Nội dung | Kho `.mp3` giọng cô giáo mầm non miền Bắc thống nhất |
+| `apps/web/public/audio/voice/*.mp3` | Dev / Nội dung | Kho `.mp3` giọng cô giáo mầm non miền Bắc thống nhất |
 | `scripts/check-narration-coverage.ts` | CI / Dev | Script cổng đối chiếu độ phủ file `.mp3` |
 
 ## 4. Main flow
@@ -73,10 +73,10 @@ asset; spec này sở hữu hợp đồng **phát** trên bề mặt trẻ.
    chưa khai tường minh).
 2. `preloadPlayAssets` nạp trước file `.mp3` của vòng hiện tại, giới hạn 3 giây mỗi asset và 5 giây tổng.
 3. Vòng bắt đầu. Trước khi trẻ chạm được vào bất cứ thứ gì, engine phát câu dẫn `.mp3` của vòng.
-4. Trẻ chạm một vật. Engine phát tên vật đó từ file `.mp3` trong kho `/audio/voice/teacher-v1/**`.
+4. Trẻ chạm một vật. Engine phát tên vật đó từ file `.mp3` trong kho `/audio/voice/{stem}.mp3`.
 5. Trẻ bấm "Nghe lại" bất kỳ lúc nào. Engine phát lại câu dẫn của vòng, không phát lại tên vật.
 6. Hết vòng, engine phát câu phản hồi thuộc [`feedback-and-celebration.md`](feedback-and-celebration.md)
-   từ cùng profile giọng `teacher-v1`.
+   từ cùng kho giọng cô.
 
 ## 5. Alternative flows
 
@@ -97,38 +97,41 @@ asset; spec này sở hữu hợp đồng **phát** trên bề mặt trẻ.
 | `BR-PNR-02` (mọi vật có tên đọc được) | Mọi item của `content_pack` trên bề mặt trẻ BẮT BUỘC có `audio_path` hoặc `spokenLabel` ánh xạ tới file `.mp3` có thật trong kho giọng | Trẻ chạm một vật rồi không biết nó là gì thì bài mất một nửa giá trị dạy từ |
 | `BR-PNR-03` (một nguồn giọng cho một vòng) | Câu dẫn của vòng lấy từ đúng một trường cấu hình: `instruction_audio_path` (với dự phòng đường dẫn tất định `resolveTeacherVoicePath(prompt)` khi trống). Cấm — NEVER thêm trường giọng song song ở cấp vòng | Đã có ba trường từng cùng tồn tại (`prompt_audio_ref`, `audio_url`); cổng `one-narration-source` được dựng chính vì drift đó |
 | `BR-PNR-04` (mọi engine đều nói) | Cả 38 engine (`GT-000`…`GT-037`) BẮT BUỘC phát câu dẫn ở nhịp mở vòng, không chỉ `GT-000` | Một nền tảng mầm non mà chỉ bài làm quen biết nói thì phần chơi chính không dùng được cho trẻ ba tuổi |
-| `BR-PNR-05` (một giọng cô giáo miền Bắc thống nhất) | Toàn bộ câu dẫn vòng, tên số, tên vật, lời khen và lý do pill Montessori BẮT BUỘC dùng chung kho giọng cô giáo mầm non miền Bắc `/audio/voice/teacher-v1/**` (trỏ qua `instruction_audio_path` / `audio_path` hoặc `resolveTeacherVoicePath(text)`). Cấm — NEVER pha trộn kho giọng cũ (`/audio/voice/common/numbers/`, `/audio/voice/d1..d6/`) hoặc giọng khác trong cùng phiên học | Hai giọng người khác nhau giữa câu hỏi ("Chọn số ba") và lúc chạm vật ("Số ba") phá vỡ cảm giác có một cô giáo thật đang đồng hành cùng trẻ |
+| `BR-PNR-05` (một giọng cô giáo miền Bắc thống nhất) | Toàn bộ câu dẫn vòng, tên số, tên vật, lời khen và lý do pill Montessori BẮT BUỘC dùng chung một kho phẳng `/audio/voice/{stem}.mp3` (giọng `vieneu-myduyen`), trỏ qua `instruction_audio_path` / `audio_path` hoặc `resolveTeacherVoicePath(text)`. Tên file suy tất định từ chính câu chữ (mục 7.1) nên một câu chỉ có một file, mọi nơi nói câu đó dùng chung. Cấm — NEVER tạo thư mục con theo domain/kỹ năng, Cấm — NEVER trộn giọng khác trong cùng phiên học | Hai giọng người khác nhau giữa câu hỏi ("Chọn số ba") và lúc chạm vật ("Số ba") phá vỡ cảm giác có một cô giáo thật đang đồng hành cùng trẻ |
 | `BR-PNR-06` (dự phòng thị giác, cấm im lặng và cấm giọng robot) | Khi không phát được file `.mp3`, hệ thống BẮT BUỘC rơi xuống bậc 2 của mục 7.2: nâng trợ giúp lên bàn tay dẫn (`ghostHand`) và nhấp nháy khung yêu cầu 1200 ms. Cấm — NEVER gọi `window.speechSynthesis`, Cấm — NEVER kết thúc bằng im lặng | Giọng tổng hợp trình duyệt đọc sai thanh điệu và ngắt nghỉ cơ học gây phản cảm sư phạm; còn im lặng với trẻ ba tuổi là bế tắc hoàn toàn |
 | `BR-PNR-07` (nghe lại luôn có) | Nút "Nghe lại" BẮT BUỘC có mặt và bấm được ở mọi vòng, mọi engine, kể cả khi câu dẫn đang phát | Trẻ nghe sót là chuyện thường; bắt trẻ chờ hết câu mới được nghe lại là bắt trẻ đoán |
 | `BR-PNR-08` (nghe lại không phạt) | Bấm "Nghe lại" BẮT BUỘC không tính là lượt sai, không làm leo bậc trợ giúp, không trừ điểm | Phạt việc hỏi lại dạy trẻ đoán bừa thay vì hỏi |
 | `BR-PNR-09` (không chặn màn chơi) | Narration BẮT BUỘC bất đồng bộ với vòng đời vòng chơi; quá hạn nạp thì vòng vẫn bắt đầu | Một vòng treo chờ file mp3 trên mạng yếu là một vòng hỏng |
 | `BR-PNR-10` (độ phủ có ratchet) | `scripts/narration-coverage-baseline.json` ghi số dataset có `audio_path`, số vòng có file `.mp3` hợp lệ và số engine phát narration; các chỉ số độ phủ chỉ được tăng | Không có ratchet thì độ phủ thu âm dễ tụt lùi khi biên soạn thêm bài mới |
 | `BR-PNR-11` (đồng hồ chờ câu dẫn đọc xong) | Cử chỉ của trẻ, `hint_after_ms`, và `duration_ms` của vòng BẮT BUỘC chỉ tính từ lúc câu dẫn **đọc xong** (thành công, rơi xuống bậc dự phòng thị giác, hay quá hạn — không bao giờ quá `NARRATION_SETTLE_TIMEOUT_MS = 12s`), không phải từ lúc mở vòng. Cử chỉ chạm trong lúc đang đọc bị nuốt hoàn toàn — Cấm — NEVER tính là lượt trả lời, Cấm — NEVER tính miss | Người đặt việc yêu cầu 2026-09-17: "tính thời gian, tính điểm chỉ bắt đầu khi máy đọc xong câu hỏi". Trước đó đồng hồ trợ giúp và bộ đếm giờ chạy song song với câu dẫn, nên câu dẫn dài ăn mất phần "thời gian trẻ thật sự có để nghĩ" trong ngưỡng leo thang |
-| `BR-PNR-12` (pill Montessori nghe được) | Chữ trên pill Montessori (lý do control-of-error, tiến độ khám phá) BẮT BUỘC có lời đọc `.mp3` đi kèm từ kho `teacher-v1`: engine trả lời qua `takePillNarration()` đúng một lần cho mỗi nội dung mới, bề mặt chơi phát file tại `resolveTeacherVoicePath(pillText)` sau mỗi verdict sai. Tiến độ đọc bằng lời ("hai trên năm"), Cấm — NEVER đọc ký hiệu "(2/5)". Lời pill thay câu khích lệ chung của quy tắc `BR-FBK-13` — khích lệ nhẹ khi thử lại trong [`feedback-and-celebration.md`](feedback-and-celebration.md), không đọc cả hai | `BR-PNR-01` — pill là chữ, trẻ chưa đọc thì lý do cụ thể ("Toa thứ 2 chưa đúng nhịp") không tới được |
+| `BR-PNR-12` (pill Montessori nghe được) | Chữ trên pill Montessori (lý do control-of-error, tiến độ khám phá) BẮT BUỘC có lời đọc `.mp3` đi kèm từ kho giọng cô: engine trả lời qua `takePillNarration()` đúng một lần cho mỗi nội dung mới, bề mặt chơi phát file tại `resolveTeacherVoicePath(pillText)` sau mỗi verdict sai. Tiến độ đọc bằng lời ("hai trên năm"), Cấm — NEVER đọc ký hiệu "(2/5)". Lời pill thay câu khích lệ chung của quy tắc `BR-FBK-13` — khích lệ nhẹ khi thử lại trong [`feedback-and-celebration.md`](feedback-and-celebration.md), không đọc cả hai | `BR-PNR-01` — pill là chữ, trẻ chưa đọc thì lý do cụ thể ("Toa thứ 2 chưa đúng nhịp") không tới được |
 
 ## 7. Data
 
 **Đọc:** `content_pack.items[].audio_path`; `audio_path` tuỳ chọn trên asset `emoji`/`text` của
 engine chạm-chọn (`assetSchema` chung, Task `#274` — tên vật đọc lại khi trẻ chạm lại hình minh
-hoạ); `instruction_audio_path` của vòng; đường dẫn băm tất định
-`resolveTeacherVoicePath(text, "teacher-v1")` từ `@mindkid/shared/voice-path`; file dưới
-`apps/web/public/audio/voice/teacher-v1/**`.
-**Ghi:** `scripts/narration-coverage-baseline.json` và `apps/web/public/audio/voice/teacher-v1/manifest.json`.
+hoạ); `instruction_audio_path` của vòng; đường dẫn tất định `resolveTeacherVoicePath(text)` từ
+`@mindkid/shared/voice-path`; file `apps/web/public/audio/voice/{stem}.mp3`.
+**Ghi:** `packages/content-build/src/voice/voice-manifest.json` và `voice-catalog.json`.
 
 Chạm lại một hình minh hoạ đọc tên vật theo cùng thang bậc của mục 7.2: `audio_path` của asset →
 file `.mp3` tại `resolveTeacherVoicePath(spokenLabel)` → không phát được file thì không phát âm thanh
 rác (Cấm — NEVER gọi JS Web Speech API, Cấm — NEVER đưa glyph thô đi băm đường dẫn giọng).
 
-### 7.1 Tài sản âm thanh — từ kho rời rạc sang profile thống nhất `teacher-v1`
+### 7.1 Tài sản âm thanh — một kho phẳng, tên file là câu chữ
 
 Trước Task `#316` (đo ngày 2026-09-11), repo có `742` file `.mp3` rời rạc dưới `voice/common/numbers/`
-(`31` file) và `voice/d1/`…`voice/d6/` (`489` file theo mã domain cũ). Từ Task `#316`, toàn bộ tài sản
-phát ở runtime hợp nhất về cấu trúc nội dung-định-địa-chỉ (content-addressed) một giọng duy nhất:
+(`31` file) và `voice/d1/`…`voice/d6/` (`489` file theo mã domain cũ). Từ 2026-11-26 các file đó đã bị
+xoá; toàn bộ tài sản phát ở runtime nằm phẳng trong một thư mục, tên file đọc được và suy từ câu chữ:
 
-| Đường dẫn | Vai trò | Quy ước băm / định danh |
+| Đường dẫn | Vai trò | Quy ước định danh |
 |---|---|---|
-| `/audio/voice/teacher-v1/{h0..h1}/{hash16}.mp3` | Kho `.mp3` chuẩn hoá giọng cô giáo mầm non miền Bắc cho toàn bộ `2.135` level (`6.192` vòng), `106` bài `GT-000`, tên số, tên vật, lời khen và pill Montessori | `hash16 = sha256("teacher-v1:" + normalizeVoiceLookupKey(text)).slice(0, 16)` |
-| `/audio/voice/teacher-v1/manifest.json` | Sổ cái đối chiếu câu gốc, kịch bản đọc `toSpokenVietnameseScript`, thời lượng, LUFS và SHA-256 | CLI cập nhật idempotent khi thêm bài mới |
+| `/audio/voice/{stem}.mp3` | Kho `.mp3` giọng cô giáo cho toàn bộ level, bài `GT-000`, tên số, tên vật, lời khen, pill Montessori và lời ba mẹ | `stem = voiceFileStem(text)`: `normalizeVoiceLookupKey(text)` (NFC, chữ thường, gộp khoảng trắng, bỏ dấu chấm cuối) giữ nguyên dấu tiếng Việt, mọi cụm ký tự không phải chữ/số thay bằng `-`. Quá `60` ký tự thì cắt ở ranh giới từ và nối `-{hash8}` với `hash8 = sha256("teacher-v1:" + key).slice(0, 8)` |
+| `packages/content-build/src/voice/voice-manifest.json` | Sổ cái đối chiếu câu gốc, kịch bản đọc `toSpokenVietnameseScript`, engine, tốc độ, thời lượng | CLI `voice:generate` cập nhật idempotent khi thêm bài mới |
+
+Hai câu chỉ khác chữ hoa/thường, khoảng trắng hay dấu câu (vd. "xe ô tô con" / "Xe ô-tô con") cùng một
+`stem` nên dùng chung một file — đó là chủ đích. URL tới file là chuỗi Unicode NFC; trình duyệt tự
+percent-encode khi tải.
 
 Quy trình chuẩn hoá LUFS, bitrate và lưu trữ tuân theo mục 7 của
 [`audio-storage.md`](../01-platform/audio-storage.md).
@@ -137,7 +140,7 @@ Quy trình chuẩn hoá LUFS, bitrate và lưu trữ tuân theo mục 7 của
 
 | Bậc | Nguồn | Điều kiện chuyển xuống bậc dưới |
 |---|---|---|
-| 1 | File `.mp3` giọng cô giáo mầm non thật thống nhất (`/audio/voice/teacher-v1/**`), trỏ bởi `instruction_audio_path`, `audio_path` hoặc đường dẫn băm tất định `resolveTeacherVoicePath(text)` | File không có, tải hỏng, trình duyệt chặn phát, hoặc quá hạn 3 giây |
+| 1 | File `.mp3` giọng cô giáo mầm non thật thống nhất (`/audio/voice/{stem}.mp3`), trỏ bởi `instruction_audio_path`, `audio_path` hoặc đường dẫn tất định `resolveTeacherVoicePath(text)` | File không có, tải hỏng, trình duyệt chặn phát, hoặc quá hạn 3 giây |
 | 2 | Tín hiệu thị giác: nâng trợ giúp lên bậc bàn tay dẫn (`ghostHand`) và nhấp nháy khung yêu cầu `1200 ms` (`BR-PNR-06`) | Không có — đây là bậc cuối, luôn chạy được |
 
 Không còn bậc tổng hợp giọng trình duyệt (`window.speechSynthesis`) và không có bậc im lặng
@@ -180,8 +183,8 @@ Không có route mới. `audio_path` và `instruction_audio_path` đi theo paylo
 `GET /api/guest/levels/{code}/config` và `GET /api/users/levels/{code}/config`; hình dạng payload
 do [`game-config-delivery.md`](game-config-delivery.md) sở hữu.
 
-File mp3 phục vụ tĩnh từ `apps/web/public/audio/voice/teacher-v1/**` theo đường dẫn tuyệt đối bắt đầu
-bằng `/audio/voice/teacher-v1/`.
+File mp3 phục vụ tĩnh từ `apps/web/public/audio/voice/*.mp3` (một cấp, không thư mục con) theo đường
+dẫn tuyệt đối `/audio/voice/{stem}.mp3`.
 
 ## 9. Acceptance criteria
 
@@ -205,10 +208,10 @@ Scenario: BR-PNR-04 — engine không phát câu dẫn ở nhịp mở vòng th�
   Then AudioController nhận đúng một lệnh phát câu dẫn
 
 Scenario: BR-PNR-05 — trộn file ngoài kho giọng cô giáo thống nhất thì cổng đỏ
-  Given một vòng hoặc item khai audio_path trỏ về kho cũ ngoài /audio/voice/teacher-v1/
+  Given một vòng hoặc item khai audio_path trỏ vào thư mục con dưới /audio/voice/ (vd. /audio/voice/common/numbers/1.mp3)
   When chạy pnpm check:narration-coverage
   Then cổng thoát khác 0
-  And báo cáo nêu đường dẫn lệch profile giọng teacher-v1
+  And báo cáo nêu đường dẫn nằm ngoài kho phẳng /audio/voice/{stem}.mp3
 
 Scenario: BR-PNR-06 — file mp3 tải hỏng thì rơi thẳng xuống tín hiệu thị giác, không gọi giọng robot
   Given file mp3 tại instruction_audio_path và resolveTeacherVoicePath đều tải lỗi

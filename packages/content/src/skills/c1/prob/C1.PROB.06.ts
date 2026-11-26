@@ -63,7 +63,7 @@ export const C1_PROB_06_DATASET: SkillDataset = {
       id: "answer_three",
       label: "số ba",
       value: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
+      audio_path: "/audio/voice/số-ba.mp3",
       image: {
         kind: "emoji",
         ref: "3️⃣",
@@ -78,7 +78,7 @@ export const C1_PROB_06_DATASET: SkillDataset = {
       id: "distractor_four",
       label: "số bốn",
       value: 4,
-      audio_path: "/audio/voice/common/numbers/4.mp3",
+      audio_path: "/audio/voice/số-bốn.mp3",
       image: {
         kind: "emoji",
         ref: "4️⃣",
@@ -93,7 +93,7 @@ export const C1_PROB_06_DATASET: SkillDataset = {
       id: "distractor_seven",
       label: "số bảy",
       value: 7,
-      audio_path: "/audio/voice/common/numbers/7.mp3",
+      audio_path: "/audio/voice/số-bảy.mp3",
       image: {
         kind: "emoji",
         ref: "7️⃣",

@@ -2,7 +2,6 @@
  * Barrel exports for all skill value inventories (Task #255 / Task #265 / BR-SVI-01..11).
  */
 
-export * from "./audio-legacy-map.js";
 export * from "./c1-measure-dimension.js";
 export * from "./c1-number-bond.js";
 export * from "./c1-numeral.js";

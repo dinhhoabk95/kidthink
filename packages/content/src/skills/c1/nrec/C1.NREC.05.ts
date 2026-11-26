@@ -46,7 +46,7 @@ export const C1_NREC_05_DATASET: SkillDataset = {
       label: "nhóm 1 mặt trời rực rỡ",
       glyph: "1",
       value: 1,
-      audio_path: "/audio/voice/common/numbers/1.mp3",
+      audio_path: "/audio/voice/nhóm-1-mặt-trời-rực-rỡ.mp3",
       image: {
         kind: "emoji",
         ref: "☀️",
@@ -61,7 +61,7 @@ export const C1_NREC_05_DATASET: SkillDataset = {
       label: "nhóm 2 đám mây trắng",
       glyph: "2",
       value: 2,
-      audio_path: "/audio/voice/common/numbers/2.mp3",
+      audio_path: "/audio/voice/nhóm-2-đám-mây-trắng.mp3",
       image: {
         kind: "emoji",
         ref: "☁️",
@@ -76,7 +76,7 @@ export const C1_NREC_05_DATASET: SkillDataset = {
       label: "nhóm 3 hành tinh xanh",
       glyph: "3",
       value: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
+      audio_path: "/audio/voice/nhóm-3-hành-tinh-xanh.mp3",
       image: {
         kind: "emoji",
         ref: "🪐",
@@ -91,7 +91,7 @@ export const C1_NREC_05_DATASET: SkillDataset = {
       label: "nhóm 4 tên lửa vũ trụ",
       glyph: "4",
       value: 4,
-      audio_path: "/audio/voice/common/numbers/4.mp3",
+      audio_path: "/audio/voice/nhóm-4-tên-lửa-vũ-trụ.mp3",
       image: {
         kind: "emoji",
         ref: "🚀",
@@ -106,7 +106,7 @@ export const C1_NREC_05_DATASET: SkillDataset = {
       label: "nhóm 5 ngôi sao vàng",
       glyph: "5",
       value: 5,
-      audio_path: "/audio/voice/common/numbers/5.mp3",
+      audio_path: "/audio/voice/nhóm-5-ngôi-sao-vàng.mp3",
       image: {
         kind: "emoji",
         ref: "⭐",
@@ -121,7 +121,7 @@ export const C1_NREC_05_DATASET: SkillDataset = {
       label: "nhóm 6 quả bóng bay đỏ",
       glyph: "6",
       value: 6,
-      audio_path: "/audio/voice/common/numbers/6.mp3",
+      audio_path: "/audio/voice/nhóm-6-quả-bóng-bay-đỏ.mp3",
       image: {
         kind: "emoji",
         ref: "🎈",
@@ -136,7 +136,7 @@ export const C1_NREC_05_DATASET: SkillDataset = {
       label: "nhóm 7 chiếc lá xanh",
       glyph: "7",
       value: 7,
-      audio_path: "/audio/voice/common/numbers/7.mp3",
+      audio_path: "/audio/voice/nhóm-7-chiếc-lá-xanh.mp3",
       image: {
         kind: "emoji",
         ref: "🍃",
@@ -151,7 +151,7 @@ export const C1_NREC_05_DATASET: SkillDataset = {
       label: "nhóm 8 chú cá sắc màu",
       glyph: "8",
       value: 8,
-      audio_path: "/audio/voice/common/numbers/8.mp3",
+      audio_path: "/audio/voice/nhóm-8-chú-cá-sắc-màu.mp3",
       image: {
         kind: "emoji",
         ref: "🐟",
@@ -166,7 +166,7 @@ export const C1_NREC_05_DATASET: SkillDataset = {
       label: "nhóm 9 bông hoa nở",
       glyph: "9",
       value: 9,
-      audio_path: "/audio/voice/common/numbers/9.mp3",
+      audio_path: "/audio/voice/nhóm-9-bông-hoa-nở.mp3",
       image: {
         kind: "emoji",
         ref: "🌸",
@@ -181,7 +181,7 @@ export const C1_NREC_05_DATASET: SkillDataset = {
       label: "nhóm 10 quả cam mọng",
       glyph: "10",
       value: 10,
-      audio_path: "/audio/voice/common/numbers/10.mp3",
+      audio_path: "/audio/voice/nhóm-10-quả-cam-mọng.mp3",
       image: {
         kind: "emoji",
         ref: "🍊",

@@ -3,6 +3,7 @@
  * Implements BR-FBK-01..10 & spec FEEDBACK-AND-CELEBRATION.
  */
 
+import { resolveTeacherVoicePath } from "@mindkid/shared/voice-path";
 import type { Rng } from "#src/rng/types";
 
 export type FeedbackState = "lift" | "success" | "retry" | "celebrate_level";
@@ -88,19 +89,13 @@ export const RETRY_ENCOURAGEMENTS = [
 ] as const;
 
 /**
- * mp3 dự phòng cho từng câu của `RETRY_ENCOURAGEMENTS` (cùng chỉ số), phát khi
- * máy không có giọng Việt (`BR-FBK-13`). File do người thu đặt dưới
- * `apps/web/public/audio/voice/common/feedback/`; thiếu file thì phát im —
- * vòng pop/nhịp hổ phách của bề mặt chơi vẫn là kênh thị giác (`BR-FBK-02`).
+ * mp3 giọng cô cho từng câu của `RETRY_ENCOURAGEMENTS` (cùng chỉ số), suy từ chính
+ * câu chữ qua `resolveTeacherVoicePath` — kho giọng phẳng chung (`BR-PNR-05`,
+ * `BR-FBK-13`). Thiếu file thì phát im — vòng pop/nhịp hổ phách của bề mặt chơi
+ * vẫn là kênh thị giác (`BR-FBK-02`).
  */
-export const RETRY_ENCOURAGEMENT_AUDIO = [
-  "/audio/voice/common/feedback/retry-thu-lai-nhe.mp3",
-  "/audio/voice/common/feedback/retry-gan-dung-roi.mp3",
-  "/audio/voice/common/feedback/retry-be-thu-cho-khac.mp3",
-  "/audio/voice/common/feedback/retry-cham-rai-thu-lai-nha.mp3",
-  "/audio/voice/common/feedback/retry-binh-tinh-nhin-ky-nhe.mp3",
-  "/audio/voice/common/feedback/retry-co-len-nao-be-oi.mp3",
-] as const;
+export const RETRY_ENCOURAGEMENT_AUDIO: readonly string[] =
+  RETRY_ENCOURAGEMENTS.map((line) => resolveTeacherVoicePath(line) ?? "");
 
 export interface RetryEncouragementClip {
   readonly text: string;
@@ -174,7 +169,7 @@ export class FeedbackSystem {
     const audioRef = RETRY_ENCOURAGEMENT_AUDIO[this.lastRetryIndex];
     return {
       text: text ?? RETRY_ENCOURAGEMENTS[0],
-      audioRef: audioRef ?? RETRY_ENCOURAGEMENT_AUDIO[0],
+      audioRef: audioRef ?? RETRY_ENCOURAGEMENT_AUDIO[0] ?? "",
     };
   }
 

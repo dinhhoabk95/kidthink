@@ -47,7 +47,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "số mười một",
       glyph: "11",
       value: 11,
-      audio_path: "/audio/voice/common/numbers/11.mp3",
+      audio_path: "/audio/voice/số-mười-một.mp3",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -63,7 +63,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "số mười hai",
       glyph: "12",
       value: 12,
-      audio_path: "/audio/voice/common/numbers/12.mp3",
+      audio_path: "/audio/voice/số-mười-hai.mp3",
       image: {
         kind: "emoji",
         ref: "🍊",
@@ -79,7 +79,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "số mười ba",
       glyph: "13",
       value: 13,
-      audio_path: "/audio/voice/common/numbers/13.mp3",
+      audio_path: "/audio/voice/số-mười-ba.mp3",
       image: {
         kind: "emoji",
         ref: "🍋",
@@ -95,7 +95,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "số mười bốn",
       glyph: "14",
       value: 14,
-      audio_path: "/audio/voice/common/numbers/14.mp3",
+      audio_path: "/audio/voice/số-mười-bốn.mp3",
       image: {
         kind: "emoji",
         ref: "🍌",
@@ -111,7 +111,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "số mười lăm",
       glyph: "15",
       value: 15,
-      audio_path: "/audio/voice/common/numbers/15.mp3",
+      audio_path: "/audio/voice/số-mười-lăm.mp3",
       image: {
         kind: "emoji",
         ref: "🍉",
@@ -127,7 +127,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "số mười sáu",
       glyph: "16",
       value: 16,
-      audio_path: "/audio/voice/common/numbers/16.mp3",
+      audio_path: "/audio/voice/số-mười-sáu.mp3",
       image: {
         kind: "emoji",
         ref: "🍇",
@@ -143,7 +143,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "số mười bảy",
       glyph: "17",
       value: 17,
-      audio_path: "/audio/voice/common/numbers/17.mp3",
+      audio_path: "/audio/voice/số-mười-bảy.mp3",
       image: {
         kind: "emoji",
         ref: "🍓",
@@ -159,7 +159,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "số mười tám",
       glyph: "18",
       value: 18,
-      audio_path: "/audio/voice/common/numbers/18.mp3",
+      audio_path: "/audio/voice/số-mười-tám.mp3",
       image: {
         kind: "emoji",
         ref: "🍒",
@@ -175,7 +175,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "số mười chín",
       glyph: "19",
       value: 19,
-      audio_path: "/audio/voice/common/numbers/19.mp3",
+      audio_path: "/audio/voice/số-mười-chín.mp3",
       image: {
         kind: "emoji",
         ref: "🍑",
@@ -191,7 +191,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "số hai mươi",
       glyph: "20",
       value: 20,
-      audio_path: "/audio/voice/common/numbers/20.mp3",
+      audio_path: "/audio/voice/số-hai-mươi.mp3",
       image: {
         kind: "emoji",
         ref: "🍍",
