@@ -63,6 +63,12 @@ Kết quả Pha 0 xuất ra thư mục audition kèm bảng so sánh thời lư�
 (`42` câu) — không còn câu `missing`. `742` file kho cũ `d1–d6`, `common/numbers` cũng render lại cùng giọng,
 giữ nguyên path: text lấy theo mẫu tên file (`589`), sửa tay (`49`), còn lại từ transcript Whisper đã soát (`104`).
 
+**Chốt 2026-11-26 (lần 2):** bỏ cấu trúc `teacher-v1/{2-hex}/{16-hex}.mp3`. Kho giờ phẳng
+`/audio/voice/{stem}.mp3`, `stem = voiceFileStem(text)` — câu chữ giữ dấu, nối bằng `-`, quá `60` ký tự
+thì cắt + `hash8` (`play-narration.md` §7.1). `10.546` dòng catalog gộp còn `10.540` file (6 cặp chỉ khác
+dấu câu/gạch nối dùng chung). Đã xoá `742` file legacy `d1–d6`, `common/numbers` cùng inventory
+`audio-legacy-map.ts`, và `audio/audition/`; `audio_path` số của C1 trỏ clip giọng cô của nhãn.
+
 ### 3.2 Kiến Trúc CLI Sinh Giọng Lâu Dài (`voice-cli`)
 
 - ** Trích xuất toàn diện (Corpus Extractor):**
