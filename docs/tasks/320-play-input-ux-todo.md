@@ -1,0 +1,23 @@
+# Task #320 — Sửa UX event play surface theo loại game
+
+- [x] **S1 — Verb một nguồn, chặn kéo vô nghĩa** (`BR-EIC-07`, `BR-EIC-08`)
+  - [x] Sửa `input.verbs` của 14 template cho khớp `toAction`; GT-000 `requires_tap_fallback: true`
+  - [x] `TemplateGameSession.acceptedVerbs()` + `setDeclaredVerbs()`; override theo mode ở GT-016/018/032/037
+  - [x] Web: `sessionAcceptsDrag` — không âm nhấc, bóng kéo, ô đích khi phiên không nhận kéo hoặc cổng đóng
+  - [x] Gộp `dragSlopCssPx` về một bản
+  - [x] Cổng `tests/gates/verb-declaration.test.ts` (quét nguồn + ca âm `fixtures/verb-drift`)
+- [x] **S2 — Kéo thành tap / thả hụt** (`BR-EIC-09`)
+  - [x] `buildDragGesture` chọn verb theo `acceptedVerbs`; không `adjust` cho nét bắt đầu trên vật nguồn
+  - [x] Nhả trên chính vật vừa nhấn thì là `tap`
+  - [x] GT-007: thả lại khay đã khoá là noop
+- [x] **S3 — Commit / Next** (`BR-EIC-10`, `BR-EPL-04`)
+  - [x] Đóng `acceptingInput` khi thắng vòng
+  - [x] GT-034 nghe mẫu / gợi ý / xoá dãy, và `reorder_step` (GT-006/018) trả `ACTION_QUIET_OK`
+  - [x] `pressActionButton` tôn trọng `canCommit` khi không có vùng bàn chơi
+  - [x] `isTwoStepSurface` chỉ đúng khi phiên nhận `drop`
+- [x] **S4 — Voice** (`BR-PNR-13`)
+  - [x] Không đọc tên khi trả lời đúng; không lặp cùng vật trong 1,5 s
+  - [x] Câu khích lệ / pill đang chờ không bị tên vật mới cắt
+  - [x] Câu dẫn dừng kênh giọng engine và huỷ chuỗi nối; tên vật dừng mp3 "Nghe lại"
+  - [x] Bỏ instance `usePlayAudio` thứ hai ở `[code].vue`
+- [ ] Kiểm tay trên trình duyệt (GT-009/026/003/019/034/006)

@@ -4,7 +4,13 @@ import type {
   GameAction,
   TelemetryEventData,
 } from "./contracts/types.js";
-import type { EngineView, Gesture, SystemBeat } from "./interaction.js";
+import {
+  type EngineView,
+  type Gesture,
+  PLAY_VERBS,
+  type PlayVerb,
+  type SystemBeat,
+} from "./interaction.js";
 import { DEFAULT_LOGIC_SPACE, type LogicSpace } from "./layout/constants.js";
 import type { ZoneRect } from "./layout/stage-zones.js";
 import type { Slot } from "./layout/types";
@@ -43,6 +49,15 @@ export const ACTION_IGNORED: ActionResult = Object.freeze({
 export const ACTION_CORRECT: ActionResult = Object.freeze({
   valid: true,
   feedback: "pop_celebrate",
+});
+
+/**
+ * Hành động hợp lệ nhưng không phải câu trả lời (nghe mẫu, một bước sắp xếp
+ * trước khi nộp): không pop, không ghi `answer_correct` (`BR-EIC-10`).
+ */
+export const ACTION_QUIET_OK: ActionResult = Object.freeze({
+  valid: true,
+  feedback: "none",
 });
 
 /** Wrong answer — amber nudge, never punitive, never silent (BR-ENG-07). */
@@ -464,6 +479,23 @@ export abstract class TemplateGameSession<
 
   /** Phiên có cần nút nộp bài không (`BR-PSZ-05`). Mặc định false. */
   readonly needsCommit: boolean = false;
+
+  /** Verb template khai trong `input.verbs`; `createGameSessionSync` gán. */
+  private declaredVerbs: readonly PlayVerb[] | null = null;
+
+  setDeclaredVerbs(verbs: readonly PlayVerb[] | undefined): void {
+    this.declaredVerbs = verbs ?? null;
+  }
+
+  /**
+   * Verb phiên nhận ở lượt này (`BR-EIC-08`). Shell chỉ bật kéo — bóng bay
+   * theo tay, âm nhấc, ô đích nhấp nháy — khi có `drop`/`stroke`/`adjust`.
+   * Mặc định là verb template khai; engine đổi verb theo mode thì ghi đè.
+   * Chưa ai gán (phiên dựng tay trong test) thì nhận đủ sáu verb.
+   */
+  acceptedVerbs(): readonly PlayVerb[] {
+    return this.declaredVerbs ?? PLAY_VERBS;
+  }
 
   /** Trạng thái sáng/mờ của nút nộp bài (`BR-PSZ-05`). Mặc định true khi needsCommit là true. */
   canCommit(): boolean {

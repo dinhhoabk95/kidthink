@@ -31,7 +31,7 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
       expect(template.requires_tap_fallback).toBe(true);
       expect(template.input).toEqual({
         family: "tap",
-        verbs: ["tap"],
+        verbs: ["tap", "drop"],
         tolerance_px: 24,
       });
       expect(template.events).toEqual([

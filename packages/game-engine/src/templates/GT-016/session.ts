@@ -7,7 +7,12 @@ import {
   type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
-import type { EngineView, Gesture } from "#src/interaction";
+import {
+  type EngineView,
+  type Gesture,
+  type PlayVerb,
+  TAP_ONLY_VERBS,
+} from "#src/interaction";
 import type { Slot } from "#src/layout/types";
 import {
   drawClippedToZone,
@@ -80,6 +85,11 @@ export const GT016_SKY_RISE_MS = 1200;
 export class ClockHandsSession extends TemplateGameSession<C, D> {
   override readonly usesPromptZone = true;
   override readonly needsCommit: boolean;
+
+  /** Chỉ `set` xoay kim (kéo/adjust) và nộp; `read`/`match` chạm chọn đáp án. (`BR-EIC-08`) */
+  override acceptedVerbs(): readonly PlayVerb[] {
+    return this.needsCommit ? super.acceptedVerbs() : TAP_ONLY_VERBS;
+  }
   degradation: DegradationState | null = null;
 
   private currentTime: ClockTime;

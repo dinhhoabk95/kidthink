@@ -66,6 +66,7 @@ export {
   type VocabularyEntry,
 } from "./generators/index.js";
 export {
+  acceptsDragVerb,
   type Beat,
   type ClientPoint,
   type ElementRect,
@@ -76,7 +77,9 @@ export {
   getMinTouchTargetSize,
   InteractionManager,
   LIFECYCLE,
+  PLAY_VERBS,
   type PlayVerb,
+  TAP_ONLY_VERBS,
   toLogicPoint,
   type ViewEntity,
 } from "./interaction";

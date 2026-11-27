@@ -50,7 +50,7 @@ export default defineTemplate({
   requires_tap_fallback: false,
   input: {
     family: "stroke",
-    verbs: ["stroke", "tap"],
+    verbs: ["stroke", "tap", "drop"],
     tolerance_px: 40,
   },
   asset_kinds: ["emoji", "image"],

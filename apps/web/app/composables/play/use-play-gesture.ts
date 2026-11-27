@@ -10,6 +10,7 @@ import {
   type GestureTransitionFlight,
   isPointInZone,
   type OverlayFeedbackKind,
+  type PlayVerb,
   type StageZones,
   TemplateGameSession,
   toLogicPoint,
@@ -24,11 +25,15 @@ import {
   buildDragFlight,
   buildTapFlight,
   dispatchSessionGesture,
+  dragSlopCssPx,
+  ENTITY_NAME_REPEAT_MS,
   feedbackPointOf,
   findDropTargetsInEntities,
   HIDDEN_ACTION_BUTTON,
   playWoodClackHoverCue,
   playWoodPickupCue,
+  sessionAcceptsDrag,
+  sessionVerbs,
   speakEntityKeyword,
   speakSessionRetryVoice,
   WRONG_COOLDOWN_MS,
@@ -55,17 +60,6 @@ function acceptsTouchingItem(
   return typeof fn === "function" && fn.length <= 1;
 }
 
-/**
- * Ngưỡng (px CSS) để một cử động thành kéo thay vì chạm. Ngón tay trẻ 3 tuổi
- * rung nhiều nên rộng hơn trẻ lớn (Task #313 B9).
- */
-export function dragSlopCssPx(band: AgeBand): number {
-  if (band === "3-4") {
-    return 28;
-  }
-  return band === "4-5" ? 20 : 14;
-}
-
 export interface GestureOptions {
   readonly getEngine: () => GameEngine | null;
   /** Band tuổi để chọn ngưỡng kéo (`dragSlopCssPx`); thiếu thì dùng 4-5. */
@@ -87,6 +81,11 @@ export interface GestureOptions {
   readonly getStageZones?: () => StageZones | null;
   /** Chạm vào loa trong vùng lời dẫn (`zones.promptSpeaker`) phát lại lời dẫn (`BR-PSZ-08`). */
   readonly onPromptSpeakerTap?: () => void;
+  /**
+   * Giọng tên vật / khích lệ sắp phát — shell dừng mp3 "Nghe lại" đang đọc để
+   * một lúc chỉ một giọng (`BR-PNR-13`).
+   */
+  readonly onVoiceStart?: () => void;
   /**
    * Verdict đúng/sai tại điểm trẻ chạm hoặc thả — shell đẩy vào lớp phủ phản
    * hồi chung và đổi dáng mascot (`BR-FBK-05`, `BR-FBK-11`).
@@ -115,12 +114,27 @@ export function usePlayGesture(options: GestureOptions) {
   let currentLogicX = 0;
   let currentLogicY = 0;
   let isDragging = false;
+  /**
+   * Phiên nhận nét kéo không (`BR-EIC-08`), chốt lúc nhấn. Trò chỉ chạm thì
+   * không có bóng bay theo tay, âm nhấc hay ô đích — cử động chỉ là chạm.
+   */
+  let dragEnabled = true;
   let activeDragEntity: ViewEntity | null = null;
   let hoveredTargetEntity: ViewEntity | null = null;
   /** Lúc verdict sai gần nhất (ms epoch) — cửa sổ cooldown `WRONG_COOLDOWN_MS`. */
   let lastWrongAtMs = Number.NEGATIVE_INFINITY;
   /** Xoay vòng câu khích lệ xuyên suốt phiên chơi (không lặp liên tiếp). */
   const retryVoice = new FeedbackSystem();
+  /** Lúc đọc tên gần nhất theo id vật — chặn đọc lặp (`ENTITY_NAME_REPEAT_MS`). */
+  const spokenNameAt = new Map<string, number>();
+  let nameSession: GameSession | null = null;
+  /**
+   * Câu khích lệ / pill của lần sai đang chờ hoặc đang đọc. Lúc này tên vật
+   * của lần chạm mới nhường — câu đã `takePillNarration()` Cấm bị cắt mất.
+   */
+  let retryPending = false;
+  /** Tăng khi lời dẫn chiếm kênh giọng: chuỗi nối của giọng cũ tự huỷ. */
+  let voiceEpoch = 0;
   let trailPoints: { readonly x: number; readonly y: number }[] = [];
   let lastMazeCellId: string | null = null;
   let didLiveMazeStep = false;
@@ -155,7 +169,10 @@ export function usePlayGesture(options: GestureOptions) {
    * dùng bàn phím. Template chạm-chọn (không có ô đích) thì tap CHÍNH là đáp án.
    */
   function isTwoStepSurface(): boolean {
-    return viewEntities.value.some((entity) => entity.role === "target");
+    return (
+      sessionVerbs(getEngine()?.activeSession).includes("drop") &&
+      viewEntities.value.some((entity) => entity.role === "target")
+    );
   }
 
   function syncView(): void {
@@ -231,6 +248,72 @@ export function usePlayGesture(options: GestureOptions) {
     }
   }
 
+  /**
+   * Đọc tên vật vừa chạm (`BR-PNR-02`, `BR-PNR-13`): bỏ qua khi vừa đọc chính
+   * vật đó trong `ENTITY_NAME_REPEAT_MS`, hoặc khi câu khích lệ đang chờ (trừ
+   * khi chính lượt này mở chuỗi khích lệ — `opensRetry`). `onDone` luôn gọi.
+   */
+  function speakName(
+    engine: GameEngine,
+    entity: ViewEntity | null,
+    onDone?: () => void,
+    opensRetry = false
+  ): void {
+    if (engine.activeSession !== nameSession) {
+      nameSession = engine.activeSession ?? null;
+      spokenNameAt.clear();
+    }
+    const now = Date.now();
+    const lastAt = entity ? spokenNameAt.get(entity.id) : undefined;
+    const isRepeat =
+      lastAt !== undefined && now - lastAt < ENTITY_NAME_REPEAT_MS;
+    const hasVoice = Boolean(entity?.spokenLabel || entity?.spokenAudioPath);
+    if (!(entity && hasVoice) || isRepeat || (retryPending && !opensRetry)) {
+      onDone?.();
+      return;
+    }
+    spokenNameAt.set(entity.id, now);
+    options.onVoiceStart?.();
+    speakEntityKeyword(engine, entity, onDone);
+  }
+
+  /** Lần sai: tên vật (nếu cần) rồi khích lệ / pill, đúng một chuỗi mỗi lúc. */
+  function speakWrongVoice(
+    engine: GameEngine,
+    session: GameSession,
+    tapped: ViewEntity | null,
+    speaksRetry: boolean
+  ): void {
+    if (!speaksRetry || retryPending) {
+      speakName(engine, tapped);
+      return;
+    }
+    retryPending = true;
+    const epoch = voiceEpoch;
+    options.onVoiceStart?.();
+    speakName(
+      engine,
+      tapped,
+      () => {
+        if (epoch !== voiceEpoch) {
+          return;
+        }
+        speakSessionRetryVoice(engine, session, retryVoice, () => {
+          if (epoch === voiceEpoch) {
+            retryPending = false;
+          }
+        });
+      },
+      true
+    );
+  }
+
+  /** Lời dẫn chiếm kênh giọng: huỷ chuỗi tên → khích lệ đang chờ (`BR-PNR-13`). */
+  function cancelPendingVoice(): void {
+    voiceEpoch++;
+    retryPending = false;
+  }
+
   function handleSilentVerdict(
     engine: GameEngine,
     session: GameSession,
@@ -243,7 +326,7 @@ export function usePlayGesture(options: GestureOptions) {
       tapped !== null &&
       viewEntities.value.find((e) => e.id === tapped.id)?.state === "idle";
     if (!isQuietUnselect) {
-      speakEntityKeyword(engine, tapped);
+      speakName(engine, tapped);
     }
     speakInvitation(engine, session);
   }
@@ -260,15 +343,11 @@ export function usePlayGesture(options: GestureOptions) {
       return;
     }
 
-    const speaksRetry =
-      !verdict.valid && Date.now() - lastWrongAtMs >= WRONG_COOLDOWN_MS;
-    speakEntityKeyword(
-      engine,
-      tapped,
-      speaksRetry
-        ? () => speakSessionRetryVoice(engine, session, retryVoice)
-        : undefined
-    );
+    // Đúng thì chỉ pop/snap — đọc tên lúc này chồng lên âm ăn mừng (`BR-PNR-13`).
+    if (!verdict.valid) {
+      const speaksRetry = Date.now() - lastWrongAtMs >= WRONG_COOLDOWN_MS;
+      speakWrongVoice(engine, session, tapped, speaksRetry);
+    }
 
     onVerdict?.(verdict.valid);
 
@@ -385,6 +464,9 @@ export function usePlayGesture(options: GestureOptions) {
   function findDropTargetsFor(
     dragged: ViewEntity | null
   ): readonly ViewEntity[] {
+    if (!sessionVerbs(getEngine()?.activeSession).includes("drop")) {
+      return [];
+    }
     return findDropTargetsInEntities(viewEntities.value, dragged);
   }
 
@@ -453,11 +535,16 @@ export function usePlayGesture(options: GestureOptions) {
     activeDragEntity = findHitEntity(viewEntities.value, pt.x, pt.y);
     syncTouchingItem(activeDragEntity?.id ?? null);
     hoveredTargetEntity = null;
+    const engine = getEngine();
+    const openSession = engine ? getActiveSession(engine) : null;
+    dragEnabled = sessionAcceptsDrag(engine?.activeSession);
     if (
+      openSession &&
+      dragEnabled &&
       activeDragEntity?.role === "source" &&
       activeDragEntity.state !== "correct"
     ) {
-      playWoodPickupCue(getEngine());
+      playWoodPickupCue(engine);
     }
     trailPoints = [{ x: pt.x, y: pt.y }];
     lastMazeCellId = activeDragEntity?.id.startsWith("cell_")
@@ -474,7 +561,12 @@ export function usePlayGesture(options: GestureOptions) {
     const candidates = findDropTargetsFor(activeDragEntity);
     const prevHoveredId = hoveredTargetEntity?.id ?? null;
     hoveredTargetEntity = findHitEntity(candidates, pt.x, pt.y);
-    if (hoveredTargetEntity && hoveredTargetEntity.id !== prevHoveredId) {
+    const inputOpen = Boolean(getEngine()?.acceptingInput);
+    if (
+      inputOpen &&
+      hoveredTargetEntity &&
+      hoveredTargetEntity.id !== prevHoveredId
+    ) {
       playWoodClackHoverCue(getEngine());
     }
 
@@ -482,13 +574,15 @@ export function usePlayGesture(options: GestureOptions) {
       stepLiveMazeCellIfLegal(pt);
     }
 
-    const session = getEngine()?.activeSession;
-    if (session && acceptsPointerOver(session)) {
+    const engine = getEngine();
+    const session = engine ? getActiveSession(engine) : null;
+    if (!session) {
+      return;
+    }
+    if (acceptsPointerOver(session)) {
       session.setPointerOver(pt.x, pt.y);
     }
-    if (session instanceof TemplateGameSession) {
-      session.onPointerMove(pt, { x: startLogicX, y: startLogicY });
-    }
+    session.onPointerMove(pt, { x: startLogicX, y: startLogicY });
   }
 
   function handlePointerMove(e: PointerEvent): void {
@@ -505,7 +599,7 @@ export function usePlayGesture(options: GestureOptions) {
       syncTouchingItem(null);
     }
     const dist = Math.hypot(e.clientX - startClientX, e.clientY - startClientY);
-    if (dist > currentSlop()) {
+    if (dragEnabled && dist > currentSlop()) {
       isDragging = true;
     }
     if (!isDragging) {
@@ -556,6 +650,7 @@ export function usePlayGesture(options: GestureOptions) {
     activePointerId = null;
     cachedCanvasRect = null;
     isDragging = false;
+    dragEnabled = true;
     activeDragEntity = null;
     hoveredTargetEntity = null;
     trailPoints = [];
@@ -564,15 +659,20 @@ export function usePlayGesture(options: GestureOptions) {
   }
 
   /**
-   * Nét kéo → một gesture mà session đọc được, theo thứ tự `stroke` (từ
-   * `trailPoints`) → `drop` from→to → `adjust`; không ai đọc thì giữ `drop`.
+   * Nét kéo → một gesture mà session đọc được, chỉ trong số verb phiên nhận
+   * (`BR-EIC-08`): `stroke` (từ `trailPoints`) → `drop` from→to → `adjust`
+   * (không bao giờ cho nét bắt đầu trên vật nguồn — thả hụt Cấm xoay vật,
+   * `BR-EIC-09`) → nhả lại trên chính vật vừa nhấn thì là `tap`. Không gì
+   * khớp: `drop` nếu phiên nhận (vật bay về), không thì `null`.
+   * Probe `toAction` chỉ với stroke/drop/adjust — các nhánh này của mọi
+   * template không đổi trạng thái (`BR-EIC-04`).
    */
   function buildDragGesture(
     from: { x: number; y: number },
     to: { x: number; y: number },
     timeMs: number
-  ): Gesture {
-    const drop: Gesture = {
+  ): Gesture | null {
+    const drop: Extract<Gesture, { type: "drop" }> = {
       type: "drop",
       fromX: from.x,
       fromY: from.y,
@@ -585,25 +685,66 @@ export function usePlayGesture(options: GestureOptions) {
     if (!session?.toAction) {
       return drop;
     }
-    if (trailPoints.length >= 2) {
-      const stroke: Gesture = {
+    const verbs = sessionVerbs(session);
+    const accepted = acceptedDragGesture(session, verbs, drop);
+    if (accepted) {
+      return accepted;
+    }
+    const tap = releaseAsTap(to, timeMs);
+    if (tap) {
+      return tap;
+    }
+    return verbs.includes("drop") ? drop : null;
+  }
+
+  /** Verb kéo đầu tiên (`stroke` → `drop` → `adjust`) mà phiên đọc được. */
+  function acceptedDragGesture(
+    session: TemplateGameSession,
+    verbs: readonly PlayVerb[],
+    drop: Extract<Gesture, { type: "drop" }>
+  ): Gesture | null {
+    const to = { x: drop.toX, y: drop.toY };
+    const candidates: Gesture[] = [];
+    if (verbs.includes("stroke") && trailPoints.length >= 2) {
+      candidates.push({
         type: "stroke",
-        points: [...trailPoints, { x: to.x, y: to.y }],
-        timeMs,
-      };
-      if (session.toAction(stroke)) {
-        return stroke;
-      }
+        points: [...trailPoints, to],
+        timeMs: drop.timeMs,
+      });
     }
-    if (session.toAction(drop)) {
-      return drop;
+    if (verbs.includes("drop")) {
+      candidates.push(drop);
     }
-    const adjust: Gesture = {
-      type: "adjust",
-      delta: adjustDeltaOf(from, to),
-      timeMs,
-    };
-    return session.toAction(adjust) ? adjust : drop;
+    if (verbs.includes("adjust") && activeDragEntity?.role !== "source") {
+      candidates.push({
+        type: "adjust",
+        delta: adjustDeltaOf({ x: drop.fromX, y: drop.fromY }, to),
+        timeMs: drop.timeMs,
+      });
+    }
+    return candidates.find((g) => session.toAction?.(g)) ?? null;
+  }
+
+  /**
+   * Nhả trên chính vật vừa nhấn → chạm tại điểm nhấn (`BR-EIC-09`): ngón trẻ
+   * trượt quá ngưỡng kéo vẫn là một lần chạm có nghĩa, không bị nuốt.
+   */
+  function releaseAsTap(
+    to: { x: number; y: number },
+    timeMs: number
+  ): Gesture | null {
+    const pressed = activeDragEntity;
+    if (!pressed) {
+      return null;
+    }
+    if (!sessionVerbs(getEngine()?.activeSession).includes("tap")) {
+      return null;
+    }
+    const released = findHitEntity(viewEntities.value, to.x, to.y);
+    if (released?.id !== pressed.id) {
+      return null;
+    }
+    return { type: "tap", x: startLogicX, y: startLogicY, timeMs };
   }
 
   function handlePointerUp(e: PointerEvent): void {
@@ -629,11 +770,27 @@ export function usePlayGesture(options: GestureOptions) {
         timeMs,
       });
       triggerPostReleaseFlight(true, prevSelected, dragged, endPt);
+    } else if (!dragEnabled) {
+      const tap = releaseAsTap(endPt, timeMs);
+      if (tap) {
+        dispatchGesture(tap);
+        triggerPostReleaseFlight(true, prevSelected, dragged, endPt);
+      }
     } else if (!didLiveMazeStep && (isDragging || dist > currentSlop())) {
-      dispatchGesture(
-        buildDragGesture({ x: startLogicX, y: startLogicY }, endPt, timeMs)
+      const gesture = buildDragGesture(
+        { x: startLogicX, y: startLogicY },
+        endPt,
+        timeMs
       );
-      triggerPostReleaseFlight(false, prevSelected, dragged, endPt);
+      if (gesture) {
+        dispatchGesture(gesture);
+        triggerPostReleaseFlight(
+          gesture.type === "tap",
+          prevSelected,
+          dragged,
+          endPt
+        );
+      }
     }
 
     releasePointerFeedback();
@@ -654,10 +811,14 @@ export function usePlayGesture(options: GestureOptions) {
     ) {
       activeFlight = null;
     }
-    const staged =
-      viewEntities.value.find(
-        (ent) => ent.role === "source" && ent.state === "selected"
-      ) ?? stagedSourceEntity.value;
+    const acceptsDrop = sessionVerbs(getEngine()?.activeSession).includes(
+      "drop"
+    );
+    const staged = acceptsDrop
+      ? (viewEntities.value.find(
+          (ent) => ent.role === "source" && ent.state === "selected"
+        ) ?? stagedSourceEntity.value)
+      : null;
     const targetEntities = findDropTargetsFor(activeDragEntity ?? staged);
 
     return {
@@ -739,6 +900,11 @@ export function usePlayGesture(options: GestureOptions) {
       });
       return;
     }
+    const engine = getEngine();
+    const session = engine ? getActiveSession(engine) : null;
+    if (!session?.needsCommit || session.canCommit?.() === false) {
+      return;
+    }
     dispatchGesture({ type: "commit", timeMs });
   }
 
@@ -761,6 +927,7 @@ export function usePlayGesture(options: GestureOptions) {
     handlePointerCancel,
     handleAccessibleEntityTap,
     getGestureVisualState,
+    cancelPendingVoice,
     destroy,
   };
 }

@@ -3,6 +3,12 @@ import type { GameEngine, TeacherVoiceText } from "@mindkid/game-engine";
 export interface PlayAudioOptions {
   readonly getEngine: () => GameEngine | null;
   readonly onFallbackCue: () => void;
+  /**
+   * Lời dẫn sắp phát: giọng tên vật / khích lệ đang chờ phải huỷ trước khi
+   * kênh giọng của engine bị dừng, để chuỗi nối của nó không bật lại đè lên
+   * lời dẫn (`BR-PNR-13`).
+   */
+  readonly onNarrationStart?: () => void;
 }
 
 /**
@@ -72,6 +78,9 @@ export function usePlayAudio(options: PlayAudioOptions) {
   ): void {
     stopNarrationAudio();
     const engine = getEngine();
+    // Một kênh giọng (`BR-PNR-13`): lời dẫn cắt tên vật / khích lệ đang đọc.
+    options.onNarrationStart?.();
+    engine?.audio.stopAll?.();
 
     let settled = false;
     const settleOnce = () => {
@@ -140,6 +149,23 @@ export function usePlayAudio(options: PlayAudioOptions) {
     }
   }
 
+  /**
+   * Giọng khác (tên vật, khích lệ) sắp phát: dừng mp3 "Nghe lại" đang đọc để
+   * hai giọng Cấm chồng nhau (`BR-PNR-13`). Lời dẫn mở vòng còn chờ settle thì
+   * không đụng — lúc đó cổng cử chỉ đang đóng (`BR-PNR-11`).
+   */
+  function yieldNarrationToVoice(): void {
+    if (pendingSettleCallback || !activeNarrationAudio) {
+      return;
+    }
+    try {
+      activeNarrationAudio.pause();
+    } catch {
+      // Safe ignore
+    }
+    activeNarrationAudio = null;
+  }
+
   /** Dừng lời dẫn đang phát (mp3 giọng cô) và đồng hồ chờ settle (Task #313 B5). */
   function pauseNarration(): void {
     clearPendingSettleTimer();
@@ -175,6 +201,7 @@ export function usePlayAudio(options: PlayAudioOptions) {
   return {
     setInstructionAudio,
     stopNarrationAudio,
+    yieldNarrationToVoice,
     playInstructionNarration,
     pauseNarration,
     resumeNarration,

@@ -160,7 +160,7 @@ export default defineTemplate({
   ],
   input: {
     family: "tap",
-    verbs: ["stroke", "tap"],
+    verbs: ["stroke", "tap", "drop"],
     tolerance_px: 24,
   },
   engine_session: "MazeRouteSession",

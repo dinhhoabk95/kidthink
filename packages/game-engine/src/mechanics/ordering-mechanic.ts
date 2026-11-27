@@ -1,6 +1,7 @@
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
+  ACTION_QUIET_OK,
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
@@ -117,7 +118,8 @@ export class OrderingMechanic {
       ) {
         return ACTION_IGNORED;
       }
-      return ACTION_CORRECT;
+      // Một bước sắp xếp chưa phải câu trả lời — chỉ nộp mới chấm (`BR-EIC-10`).
+      return ACTION_QUIET_OK;
     }
 
     if (

@@ -101,6 +101,8 @@ export interface UsePlaySessionOptions {
   readonly refreshSession?: () => Promise<boolean>;
   readonly syncView: () => void;
   readonly onFallbackCue?: () => void;
+  /** Lời dẫn sắp phát — xem `PlayAudioOptions.onNarrationStart`. */
+  readonly onNarrationStart?: () => void;
   /**
    * Tính lại vùng bàn chơi cho session đang chạy (`BR-PSZ-13`): số vật khay
    * đổi theo vòng nên khay đổi cao. Trả `null` khi chưa có viewport.
@@ -216,10 +218,12 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     setInstructionAudio,
     playInstructionNarration,
     stopNarrationAudio,
+    yieldNarrationToVoice,
     pauseNarration,
     resumeNarration,
   } = usePlayAudio({
     getEngine: () => engine,
+    onNarrationStart: () => options.onNarrationStart?.(),
     onFallbackCue:
       onFallbackCue ??
       (() => {
@@ -339,6 +343,12 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   function handleRoundWonInternal(): void {
     if (!roundRunner) {
       return;
+    }
+    // Vòng đã thắng: đóng cổng cử chỉ suốt nhịp ăn mừng — chạm lúc này Cấm
+    // đọc tên vật hay lời mời đè lên chuyển vòng (`BR-EPL-04`). Vòng sau mở
+    // lại khi câu dẫn đọc xong (`onNarrationSettled`).
+    if (engine) {
+      engine.acceptingInput = false;
     }
     engine?.resetScaffolding();
     const sessionUuid = cachedPayload?.session?.uuid;
@@ -805,5 +815,6 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     completeSessionOnFinish,
     setPaused,
     cleanupSession,
+    yieldNarrationToVoice,
   };
 }

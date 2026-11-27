@@ -315,7 +315,7 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     expect(onMiss).toHaveBeenCalledTimes(1);
   });
 
-  it("chạm trúng thẻ đúng vẫn đọc tên và báo thành công", () => {
+  it("chạm trúng thẻ đúng chỉ phát âm thành công, không đọc tên đè âm ăn mừng (BR-PNR-13)", () => {
     const { gesture, session, onSuccess, speakPrompt, engine } =
       makeTapSelectHarness([
         { id: "opt-1", role: "source" },
@@ -325,11 +325,7 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     gesture.dispatchGesture({ type: "tap", x: 100, y: 100, timeMs: 0 });
 
     expect(session.dispatched).toHaveLength(1);
-    expect(speakPrompt).toHaveBeenCalledWith(
-      "nhãn-opt-1",
-      expect.any(Function),
-      expect.any(Function)
-    );
+    expect(speakPrompt).not.toHaveBeenCalled();
     expect(engine.audio.playSnapSound).toHaveBeenCalledTimes(1);
     expect(onSuccess).toHaveBeenCalledTimes(1);
   });
@@ -378,13 +374,13 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     const playPromptAudio = vi.fn();
     Object.assign(engine.audio, { playPromptAudio });
     gesture.viewEntities.value = gesture.viewEntities.value.map((e) =>
-      e.id === "opt-1" ? { ...e, spokenAudioPath: "/audio/opt-1.mp3" } : e
+      e.id === "opt-2" ? { ...e, spokenAudioPath: "/audio/opt-2.mp3" } : e
     );
 
-    gesture.dispatchGesture({ type: "tap", x: 100, y: 100, timeMs: 0 });
+    gesture.dispatchGesture({ type: "tap", x: 300, y: 100, timeMs: 0 });
 
     expect(speakPrompt).toHaveBeenCalledWith(
-      "nhãn-opt-1",
+      "nhãn-opt-2",
       expect.any(Function),
       expect.any(Function)
     );
@@ -393,7 +389,7 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     const failTeacher = speakPrompt.mock.calls[0]?.[2];
     failTeacher?.();
     expect(playPromptAudio).toHaveBeenCalledWith(
-      "/audio/opt-1.mp3",
+      "/audio/opt-2.mp3",
       expect.any(Function),
       expect.any(Function)
     );
@@ -701,7 +697,7 @@ describe("usePlayGesture — đồng bộ view khi chọn/bỏ chọn (G4, Task 
     expect(engine.scaffolding.onMiss).not.toHaveBeenCalled();
   });
 
-  it("đa chọn GT-002: chọn (idle -> selected) đọc từ khoá, bỏ chọn (selected -> idle) im lặng", () => {
+  it("đa chọn GT-002: chọn (idle -> selected) đọc từ khoá, bỏ chọn (selected -> idle) im lặng, chọn lại ngay không đọc lặp (BR-PNR-13)", () => {
     const { gesture, entityById, engine } = makeGt002Harness();
     const target = entityById("banana");
     const tap = { type: "tap" as const, x: target.x, y: target.y, timeMs: 0 };
@@ -722,11 +718,7 @@ describe("usePlayGesture — đồng bộ view khi chọn/bỏ chọn (G4, Task 
     expect(engine.audio.speakPrompt).not.toHaveBeenCalled();
 
     gesture.dispatchGesture(tap);
-    expect(engine.audio.speakPrompt).toHaveBeenCalledExactlyOnceWith(
-      target.spokenLabel,
-      expect.any(Function),
-      expect.any(Function)
-    );
+    expect(engine.audio.speakPrompt).not.toHaveBeenCalled();
   });
 
   it("lún xúc giác setTouchingItem: pointerdown bật id, pointerup / pointercancel / rời vùng chạm trả null", () => {

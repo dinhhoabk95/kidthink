@@ -10,7 +10,12 @@ import {
   type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
-import type { EngineView, Gesture } from "#src/interaction";
+import {
+  type EngineView,
+  type Gesture,
+  type PlayVerb,
+  TAP_ONLY_VERBS,
+} from "#src/interaction";
 import {
   findHitSlotIndex,
   isPointInSlot,
@@ -67,6 +72,11 @@ export class GT032Session
 {
   override readonly usesPromptZone = true;
   override readonly needsCommit: boolean;
+
+  /** Chỉ `pour_to_mark` rót (adjust) và nộp; dạng còn lại chạm chọn cốc. (`BR-EIC-08`) */
+  override acceptedVerbs(): readonly PlayVerb[] {
+    return this.needsCommit ? super.acceptedVerbs() : TAP_ONLY_VERBS;
+  }
 
   degradation: DegradationState | null = null;
   displayCups: GT032Cup[];

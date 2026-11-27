@@ -100,7 +100,7 @@ export default defineTemplate({
   scoring: STANDARD_SCORING,
   input: {
     family: "tap",
-    verbs: ["tap"],
+    verbs: ["tap", "commit"],
     tolerance_px: 24,
   },
   events: [

@@ -100,7 +100,7 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
     expect(GT034Template.age_max).toBe(6);
     expect(GT034Template.input).toEqual({
       family: "tap",
-      verbs: ["tap"],
+      verbs: ["tap", "commit"],
       tolerance_px: 24,
     });
   });

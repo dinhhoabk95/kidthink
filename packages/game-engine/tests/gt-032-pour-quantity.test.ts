@@ -33,7 +33,7 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
       expect(template.requires_tap_fallback).toBe(false);
       expect(template.input).toEqual({
         family: "tap",
-        verbs: ["tap", "adjust"],
+        verbs: ["tap", "adjust", "commit"],
         tolerance_px: 24,
       });
       expect(template.events).toEqual([

@@ -420,16 +420,16 @@ export class GT034Session extends TemplateGameSession<
       return ACTION_IGNORED;
     }
     switch (action.type) {
+      // Nghe mẫu, gợi ý, xoá dãy là thao tác, không phải câu trả lời — Cấm
+      // pop hay ghi `answer_correct` (`BR-EIC-10`).
       case "play_pattern":
       case "replay_pattern":
       case "listen":
-        return this.replaysUsed >= this.replayLimit
-          ? ACTION_IGNORED
-          : ACTION_CORRECT;
+        return this.replaysUsed >= this.replayLimit ? ACTION_IGNORED : QUIET_OK;
       case "show_hint":
       case "clear_sequence":
       case "reset":
-        return ACTION_CORRECT;
+        return QUIET_OK;
       case "tap_instrument":
       case "play_instrument":
       case "tap_item":

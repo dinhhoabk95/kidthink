@@ -5,7 +5,13 @@ import {
   type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
-import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import {
+  type EngineView,
+  type Gesture,
+  type PlayVerb,
+  TAP_ONLY_VERBS,
+  type ViewEntity,
+} from "#src/interaction";
 import { dockRectAroundSlots, splitCaption } from "#src/layout/slot-fit";
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
@@ -43,6 +49,11 @@ export class GT018Session extends TemplateGameSession<Cnt, Diff> {
   private readonly wrongFlash = new WrongFlash();
   override readonly usesPromptZone = true;
   override readonly needsCommit: boolean;
+
+  /** Chỉ `sequence` kéo sắp xếp và nộp; `choice` chạm chọn đáp án. (`BR-EIC-08`) */
+  override acceptedVerbs(): readonly PlayVerb[] {
+    return this.needsCommit ? super.acceptedVerbs() : TAP_ONLY_VERBS;
+  }
 
   constructor(c: Cnt, d: Diff, layoutSeed = 0, themeId?: string) {
     super(c, d, layoutSeed, themeId);

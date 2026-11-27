@@ -9,10 +9,8 @@ import {
 } from "@mindkid/game-engine";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
-import {
-  dragSlopCssPx,
-  usePlayGesture,
-} from "~/composables/play/use-play-gesture";
+import { dragSlopCssPx } from "~/composables/play/play-gesture-helpers";
+import { usePlayGesture } from "~/composables/play/use-play-gesture";
 
 /** Task #313 B9 — ngưỡng kéo theo band tuổi: ngón rung của trẻ 3 tuổi vẫn là chạm. */
 const CONTENT: GT001Content = {
@@ -112,7 +110,16 @@ describe("Task #313 B9 — ngón rung là tap", () => {
       gesture.handlePointerMove(pointer(bad.x + 10, bad.y, 1));
       gesture.handlePointerUp(pointer(bad.x + 20, bad.y, 2));
     };
-    return { onMiss, wobbleTap };
+    const other = session.getView().entities.find((e) => e.id === "bad2");
+    if (!other) {
+      throw new Error("Thiếu bad2");
+    }
+    const slideOff = () => {
+      gesture.handlePointerDown(pointer(bad.x, bad.y, 0));
+      gesture.handlePointerMove(pointer(other.x, other.y, 1));
+      gesture.handlePointerUp(pointer(other.x, other.y, 2));
+    };
+    return { onMiss, wobbleTap, slideOff };
   }
 
   it("3-4: rung 20px vẫn là tap, chấm là một lần sai", () => {
@@ -121,9 +128,15 @@ describe("Task #313 B9 — ngón rung là tap", () => {
     expect(onMiss).toHaveBeenCalledTimes(1);
   });
 
-  it("5-6: cùng cử động 20px là kéo, không phải tap", () => {
+  it("5-6: trò chỉ chạm — trượt 20px rồi nhả trên chính vật vẫn là tap (BR-EIC-09)", () => {
     const { onMiss, wobbleTap } = build("5-6");
     wobbleTap();
+    expect(onMiss).toHaveBeenCalledTimes(1);
+  });
+
+  it("5-6: trò chỉ chạm — nhấn vật rồi trượt sang vật khác nhả: không có gì (BR-EIC-09)", () => {
+    const { onMiss, slideOff } = build("5-6");
+    slideOff();
     expect(onMiss).not.toHaveBeenCalled();
   });
 });

@@ -87,7 +87,7 @@ export default defineTemplate({
   ],
   input: {
     family: "tap",
-    verbs: ["tap"],
+    verbs: ["tap", "drop"],
     tolerance_px: 24,
   },
 });

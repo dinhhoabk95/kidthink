@@ -140,7 +140,7 @@ export default defineTemplate({
   ],
   input: {
     family: "tap",
-    verbs: ["tap", "drop"],
+    verbs: ["tap", "drop", "commit"],
     tolerance_px: 24,
   },
 });

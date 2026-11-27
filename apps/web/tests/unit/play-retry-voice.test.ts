@@ -150,11 +150,15 @@ describe("Task #313 Phase 2 — giọng khi chưa đúng", () => {
 
   it("hai lần sai cách nhau quá cooldown xoay sang câu khác", () => {
     const { speakEncouragement, speakPrompt, tap } = build();
+    // Tên đọc xong → câu khích lệ đọc xong: kênh giọng rảnh cho lần sai sau.
     const flush = () => {
       for (const call of speakPrompt.mock.calls) {
         (call[1] as (() => void) | undefined)?.();
       }
       speakPrompt.mockClear();
+      for (const call of speakEncouragement.mock.calls) {
+        (call[1] as (() => void) | undefined)?.();
+      }
     };
     tap("bad1");
     flush();
@@ -188,7 +192,28 @@ describe("Task #313 Phase 2 — giọng khi chưa đúng", () => {
     for (const call of [...speakPrompt.mock.calls]) {
       (call[1] as (() => void) | undefined)?.();
     }
-    expect(speakPrompt).toHaveBeenCalledWith("Toa thứ 2 chưa đúng");
+    expect(speakPrompt).toHaveBeenCalledWith(
+      "Toa thứ 2 chưa đúng",
+      expect.any(Function)
+    );
     expect(speakEncouragement).not.toHaveBeenCalled();
+  });
+
+  it("chạm vật khác khi lời pill còn chờ: không đọc tên đè, lời pill vẫn được đọc (BR-PNR-13)", () => {
+    const { session, speakPrompt, tap } = build();
+    vi.spyOn(session, "takePillNarration").mockReturnValue(
+      "Toa thứ 2 chưa đúng"
+    );
+    tap("bad1");
+    expect(speakPrompt).toHaveBeenCalledTimes(1);
+    vi.advanceTimersByTime(100);
+    tap("bad2");
+    // Tên bad2 nhường: lời khích lệ của bad1 còn chờ.
+    expect(speakPrompt).toHaveBeenCalledTimes(1);
+    (speakPrompt.mock.calls[0]?.[1] as (() => void) | undefined)?.();
+    expect(speakPrompt).toHaveBeenLastCalledWith(
+      "Toa thứ 2 chưa đúng",
+      expect.any(Function)
+    );
   });
 });

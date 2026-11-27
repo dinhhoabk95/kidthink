@@ -1,5 +1,6 @@
 import {
   type ActionResult,
+  acceptsDragVerb,
   type CommitIcon,
   type FeedbackPoint,
   type FeedbackSystem,
@@ -8,6 +9,8 @@ import {
   type GameSession,
   type Gesture,
   type GestureTransitionFlight,
+  PLAY_VERBS,
+  type PlayVerb,
   TemplateGameSession,
   type ViewEntity,
 } from "@mindkid/game-engine";
@@ -53,6 +56,12 @@ export const HIDDEN_ACTION_BUTTON: ActionButtonState = {
  */
 export const WRONG_COOLDOWN_MS = 400;
 
+/**
+ * Chạm lại cùng một vật trong khoảng này không đọc lại tên (`BR-PNR-13`):
+ * trẻ chạm dồn dập không làm giọng cô lặp chồng.
+ */
+export const ENTITY_NAME_REPEAT_MS = 1500;
+
 /** Số logic px kéo tương ứng một bậc `adjust`. */
 export const ADJUST_STEP_PX = 48;
 
@@ -66,6 +75,29 @@ export function dragSlopCssPx(band: AgeBand): number {
     return 28;
   }
   return band === "4-5" ? 20 : 14;
+}
+
+/**
+ * Verb phiên đang nhận (`BR-EIC-08`). Phiên không khai (mock, phiên ngoài
+ * template) coi như nhận đủ sáu verb — giữ hành vi cũ.
+ */
+export function sessionVerbs(
+  session: GameSession | null | undefined
+): readonly PlayVerb[] {
+  if (
+    session instanceof TemplateGameSession &&
+    typeof session.acceptedVerbs === "function"
+  ) {
+    return session.acceptedVerbs();
+  }
+  return PLAY_VERBS;
+}
+
+/** Nét kéo có nghĩa với phiên này không — không thì shell coi mọi cử động là chạm. */
+export function sessionAcceptsDrag(
+  session: GameSession | null | undefined
+): boolean {
+  return acceptsDragVerb(sessionVerbs(session));
 }
 
 export function actionButtonOf(
@@ -298,13 +330,17 @@ export function speakEntityKeyword(
 export function speakSessionRetryVoice(
   engine: GameEngine,
   session: GameSession,
-  retryVoice: FeedbackSystem
+  retryVoice: FeedbackSystem,
+  onEnd?: () => void
 ): void {
   const pillLine =
     session instanceof TemplateGameSession ? session.takePillNarration() : null;
   if (pillLine) {
-    engine.audio.speakPrompt(pillLine);
+    engine.audio.speakPrompt(pillLine, onEnd);
     return;
   }
-  engine.audio.speakEncouragement(retryVoice.getRetryEncouragementClip());
+  engine.audio.speakEncouragement(
+    retryVoice.getRetryEncouragementClip(),
+    onEnd
+  );
 }

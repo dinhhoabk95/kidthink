@@ -130,7 +130,7 @@ export default defineTemplate({
   requires_tap_fallback: true,
   input: {
     family: "tap",
-    verbs: ["tap", "adjust", "commit"],
+    verbs: ["tap", "adjust", "drop", "commit"],
     tolerance_px: 24,
   },
   asset_kinds: ["emoji", "image", "audio"],

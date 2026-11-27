@@ -14,6 +14,20 @@ export const PLAY_VERBS = [
 
 export type PlayVerb = (typeof PLAY_VERBS)[number];
 
+/** Verb của phiên chỉ chạm chọn (`BR-EIC-08`). */
+export const TAP_ONLY_VERBS: readonly PlayVerb[] = Object.freeze(["tap"]);
+
+/** Verb làm nét kéo có nghĩa: chỉ khi phiên nhận một trong số này shell mới bật kéo. */
+export const DRAG_VERBS: readonly PlayVerb[] = Object.freeze([
+  "drop",
+  "stroke",
+  "adjust",
+]);
+
+export function acceptsDragVerb(verbs: readonly PlayVerb[]): boolean {
+  return verbs.some((verb) => DRAG_VERBS.includes(verb));
+}
+
 export const SYSTEM_BEATS = ["reveal", "hint", "timeout"] as const;
 
 export type SystemBeat = (typeof SYSTEM_BEATS)[number];

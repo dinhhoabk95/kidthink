@@ -69,7 +69,7 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
       expect(template.requires_tap_fallback).toBe(true);
       expect(template.input).toEqual({
         family: "tap",
-        verbs: ["tap", "drop"],
+        verbs: ["tap", "drop", "commit"],
         tolerance_px: 24,
       });
     });

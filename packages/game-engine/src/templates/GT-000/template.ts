@@ -637,7 +637,7 @@ export default defineTemplate({
   },
   age_min: 3,
   age_max: 6,
-  requires_tap_fallback: false,
+  requires_tap_fallback: true,
   asset_kinds: ["emoji", "image", "audio"],
   kind: "teach",
   scoring: INTRO_SCORING,
@@ -659,7 +659,7 @@ export default defineTemplate({
   version: 1,
   input: {
     family: "tap",
-    verbs: ["tap"],
+    verbs: ["tap", "drop", "commit"],
     tolerance_px: 24,
   },
 });

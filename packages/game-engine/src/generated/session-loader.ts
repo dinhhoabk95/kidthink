@@ -2,6 +2,7 @@
 
 import type { EngineConfig } from "#src/core.js";
 import { type GameSession, TemplateGameSession } from "#src/game-session.js";
+import { getTemplateInput } from "#src/generated/input-registry";
 
 export type GameSessionConstructor = new (
   content: never,
@@ -211,6 +212,7 @@ export function createGameSessionSync(
   // âm thanh khi tắt tiếng (`BR-E018-06`).
   if (session instanceof TemplateGameSession) {
     session.setAudioEnabled(cfg.audio_enabled);
+    session.setDeclaredVerbs(getTemplateInput(templateCode)?.verbs);
   }
   return session;
 }

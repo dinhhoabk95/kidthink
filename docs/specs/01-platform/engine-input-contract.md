@@ -58,6 +58,8 @@ Spec này chuẩn hoá **hợp đồng nhập**:
 - **Cử chỉ không trúng thực thể**: `InteractionManager` bỏ qua cử chỉ, không gửi action tới session.
 - **Hành động không hợp lệ**: `validateAction` trả về `{ valid: false, feedback: "retry" }`, session kích hoạt nhịp hổ phách tại chỗ và trả thực thể về vị trí ban đầu.
 - **Con trỏ trượt ra ngoài vùng canvas**: Con trỏ bị huỷ (`pointercancel`), trạng thái kéo thả được reset về an toàn.
+- **Trò chỉ chạm, ngón trượt quá ngưỡng kéo**: không có bóng kéo hay ô đích. Nhả trên chính vật vừa nhấn thì là một lần chạm tại điểm nhấn; nhả chỗ khác thì không có gì xảy ra (`BR-EIC-09`).
+- **Trò kéo-thả, thả hụt**: vật bay về chỗ cũ. Cấm đổi nét kéo bắt đầu trên vật nguồn thành `adjust` (`BR-EIC-09`).
 
 ## 6. Business rules
 
@@ -69,6 +71,10 @@ Spec này chuẩn hoá **hợp đồng nhập**:
 | `BR-EIC-04` | Phương thức `validateAction` và `previewGesture` phải là hàm thuần: cấm thay đổi trạng thái phiên, cấm phát sinh sự kiện telemetry | Tránh làm sai lệch dữ liệu học tập khi hover hoặc kiểm tra tạm thời |
 | `BR-EIC-05` | Cấm gọi `this.resolveSlots` trong `setupEntities`. Bố cục ô bắt buộc tính qua `prepareRound(band)` | Tránh tính đúp ô hoặc gán cứng band tuổi của vòng chơi |
 | `BR-EIC-06` | Toạ độ con trỏ bắt buộc phải chuẩn hoá qua `toLogicPoint` trước khi so khớp hit box | Ngăn ngừa lỗi lệch hệ toạ độ 20% trên màn hình khác tỷ lệ |
+| `BR-EIC-07` | `input.verbs` của template BẮT BUỘC khớp verb mà session thật sự đọc (`drop`, `stroke`, `adjust`, `commit`). Cổng `packages/game-engine/tests/gates/verb-declaration.test.ts` | Shell dựa vào danh sách này để bật/tắt kéo; khai lệch là kéo vô nghĩa hoặc mất thao tác (Task #320) |
+| `BR-EIC-08` | Shell chỉ bật kéo — âm nhấc, bóng bay theo tay, ô đích nhấp nháy, `onPointerMove`/`setPointerOver` — khi `session.acceptedVerbs()` có `drop`, `stroke` hoặc `adjust`, và cổng cử chỉ đang mở. Engine đổi verb theo mode (GT-016, GT-018, GT-032, GT-037) ghi đè `acceptedVerbs()` | Trò chạm-chọn mà hiện bóng kéo khiến trẻ tưởng phải kéo, rồi thả ra không có gì (Task #320) |
+| `BR-EIC-09` | Nét kéo chỉ đổi thành verb phiên nhận, theo thứ tự `stroke` → `drop` → `adjust` (Cấm cho nét bắt đầu trên vật nguồn) → `tap` nếu nhả trên chính vật vừa nhấn. Không verb nào khớp: trò có `drop` thì vật bay về, trò không có `drop` thì không gửi gì | Tap rung của trẻ không bị nuốt; thả hụt mảnh ghép không làm mảnh xoay (Task #320) |
+| `BR-EIC-10` | Thao tác không phải câu trả lời (nghe mẫu GT-034, một bước sắp xếp GT-006/GT-018 trước khi nộp) trả `ACTION_QUIET_OK` (`valid: true, feedback: "none"`): không pop, không ghi `answer_correct`, không reset trợ giúp | Trước đây mỗi lần bấm "Nghe mẫu" bị tính là trả lời đúng (Task #320) |
 
 ## 7. Data
 
@@ -111,6 +117,23 @@ Scenario: BR-EIC-04 — validateAction giữ nguyên tính thuần
   When gọi validateAction với action hợp lệ
   Then trạng thái session không đổi
   And độ dài mảng telemetry events bằng 0
+
+Scenario: BR-EIC-08 — trò chỉ chạm không có bóng kéo
+  Given phiên GT-001 có acceptedVerbs là ["tap"]
+  When trẻ nhấn một thẻ rồi kéo ngón tay sang thẻ khác
+  Then không có âm nhấc, không có bóng kéo, không ô nào nhấp nháy
+  And session không nhận gesture nào
+
+Scenario: BR-EIC-09 — tap rung vẫn là tap
+  Given phiên chỉ nhận "tap"
+  When trẻ nhấn một thẻ, trượt 20px và nhả trên chính thẻ đó
+  Then session nhận đúng một gesture tap tại điểm nhấn
+
+Scenario: BR-EIC-10 — nghe mẫu không phải câu trả lời
+  Given phiên GT-034 còn lượt nghe mẫu
+  When trẻ bấm nút "Nghe mẫu"
+  Then verdict là ACTION_QUIET_OK
+  And không ghi answer_correct, không phát âm pop
 
 Scenario: BR-EIC-06 — chuyển đổi toạ độ logic chính xác
   Given canvas có kích thước client 1200x675

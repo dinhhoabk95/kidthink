@@ -9,7 +9,12 @@ import {
   type GameActionValue,
   TemplateGameSession,
 } from "#src/game-session";
-import type { EngineView, Gesture } from "#src/interaction";
+import {
+  type EngineView,
+  type Gesture,
+  type PlayVerb,
+  TAP_ONLY_VERBS,
+} from "#src/interaction";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import type { Slot } from "#src/layout/types";
 import {
@@ -87,6 +92,11 @@ export class GT037Session extends TemplateGameSession<
 > {
   override readonly usesPromptZone = true;
   override readonly needsCommit: boolean;
+
+  /** Chỉ `declare` có nút nộp; `auto` chạm tìm là đủ. (`BR-EIC-08`) */
+  override acceptedVerbs(): readonly PlayVerb[] {
+    return this.needsCommit ? super.acceptedVerbs() : TAP_ONLY_VERBS;
+  }
 
   boardSymbols: GT037Symbol[] = [];
   rotations: number[] = [];

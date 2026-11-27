@@ -120,11 +120,13 @@ export class CandySplit {
     if (from.kind === "plate" && to.kind === "plate") {
       return "noop";
     }
-    if (this.isLocked(from) || this.isLocked(to)) {
-      return "locked";
-    }
+    // Thả lại đúng khay vừa nhấc là không làm gì, kể cả khay đã khoá —
+    // Cấm tính một lần sai.
     if (from.kind === "tray" && to.kind === "tray" && from.index === to.index) {
       return "noop";
+    }
+    if (this.isLocked(from) || this.isLocked(to)) {
+      return "locked";
     }
     if (from.kind === "plate") {
       if (this.remaining === 0) {

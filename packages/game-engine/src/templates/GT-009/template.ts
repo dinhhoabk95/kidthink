@@ -96,7 +96,7 @@ export default defineTemplate({
   mechanic: "clue-deduction",
   input: {
     family: "tap",
-    verbs: ["tap"],
+    verbs: ["tap", "commit"],
     tolerance_px: 24,
   },
   layouts: ["clue-board"],

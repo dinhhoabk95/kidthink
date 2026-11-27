@@ -326,6 +326,7 @@
     refreshSession: async () => (await fetchStatus()) === "authenticated",
     syncView: () => gesture.syncView(),
     onFallbackCue: triggerVisualFallbackCue,
+    onNarrationStart: () => gesture.cancelPendingVoice(),
     refreshStageZones: updateStageZones,
     onAfterRender: (ctx, rs, now) => {
       const zones = stageZones.value ?? updateStageZones();
@@ -476,6 +477,7 @@
     onVerdict: playSession.handleAnswerVerdict,
     getStageZones: () => stageZones.value ?? updateStageZones(),
     onPromptSpeakerTap: replayInstructionAudio,
+    onVoiceStart: playSession.yieldNarrationToVoice,
     onFeedback: (kind, point) =>
       feedbackOverlay.trigger(kind, point, performance.now()),
   });
@@ -493,7 +495,7 @@
     pressActionButton,
   } = gesture;
 
-  const { stopNarrationAudio, speakErrorPrompt } = usePlayAudio({
+  const { speakErrorPrompt } = usePlayAudio({
     getEngine,
     onFallbackCue: triggerVisualFallbackCue,
   });
@@ -745,7 +747,6 @@
     if (orientationEnv) {
       releaseOrientationLock(orientationEnv);
     }
-    stopNarrationAudio();
     cleanupSession();
   });
 </script>

@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
+  ACTION_QUIET_OK,
   ACTION_RETRY,
 } from "#src/game-session";
 import { GT018Generator } from "#src/generators/gt018";
@@ -160,7 +161,8 @@ describe("GT-018: Nghe rồi làm — kiểm thử toàn diện UI/UX & cơ ch�
       data: { from_index: 1, to_index: 0 },
     });
     if (actSwap) {
-      expect(session.validateAction(actSwap)).toEqual(ACTION_CORRECT);
+      // Một bước sắp xếp chưa phải câu trả lời — không chấm (BR-EIC-10).
+      expect(session.validateAction(actSwap)).toEqual(ACTION_QUIET_OK);
       session.commit(actSwap);
     }
     expect(session.mascotMood()).toBe("happy");
