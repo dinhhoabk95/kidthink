@@ -41,6 +41,7 @@ import {
 import { KOGUMA_100_UNITS } from "@mindkid/taxonomy";
 import { z } from "zod";
 import { SHIPPABLE_SEED_LEVELS } from "#src/catalog";
+import { collectSeedSpokenLabels } from "#src/voice/seed-spoken-labels";
 import {
   VOICE_CATEGORIES,
   type VoiceCatalogDocument,
@@ -357,6 +358,40 @@ function collectGt000Pack(
   }
 }
 
+const Gt027VoiceExtractSchema = z.object({
+  prompt: z.string().optional(),
+  rules: z
+    .array(z.object({ signal_audio_text: z.string().optional() }))
+    .optional(),
+});
+
+/**
+ * GT-027 đọc luật bằng giọng (`BR-E027-09`): câu mở vòng nói luật đầu và lời đọc
+ * luật mới sau còi. Gom trước `collectLevelsAndGt000` để câu thuộc `kid_ui`.
+ */
+function collectGt027RuleLines(collector: CatalogCollector): void {
+  for (const level of SHIPPABLE_SEED_LEVELS) {
+    if (level.header.template_code !== "GT-027") {
+      continue;
+    }
+    const packs = [
+      level.content_pack,
+      ...(level.rounds ?? []).map((round) => round.content_pack),
+    ];
+    for (const [idx, raw] of packs.entries()) {
+      const parsed = Gt027VoiceExtractSchema.safeParse(raw);
+      if (!parsed.success) {
+        continue;
+      }
+      const ref = `${level.header.code}:gt027:${idx}`;
+      collector.add(parsed.data.prompt ?? "", "kid_ui", `${ref}:prompt`);
+      for (const rule of parsed.data.rules ?? []) {
+        collector.add(rule.signal_audio_text ?? "", "kid_ui", `${ref}:rule`);
+      }
+    }
+  }
+}
+
 function collectLevelsAndGt000(collector: CatalogCollector): void {
   for (const level of SHIPPABLE_SEED_LEVELS) {
     const code = level.header.code;
@@ -559,6 +594,9 @@ function collectSharedKidUiConstants(collector: CatalogCollector): void {
   for (const theme of CONTENT_THEMES) {
     collector.add(`Chủ đề ${theme.label_vi}`, "kid_ui", `theme:${theme.code}`);
   }
+  for (const seed of collectSeedSpokenLabels()) {
+    collector.add(seed.label, "kid_ui", `spoken_label:${seed.source}`);
+  }
   collector.add(GT001_STORY_LINE, "kid_ui", "gt001:story:default");
   for (const [themeCode, storyText] of Object.entries(GT001_THEME_STORIES)) {
     collector.add(storyText, "kid_ui", `gt001:story:${themeCode}`);
@@ -756,6 +794,7 @@ export function extractVoiceCatalog(options?: {
   const collector = new CatalogCollector(
     options?.profile ?? TEACHER_VOICE_PROFILE
   );
+  collectGt027RuleLines(collector);
   collectLevelsAndGt000(collector);
   collectSkillItemsAndNumbers(collector);
   collectEncouragementAndKoguma(collector);
