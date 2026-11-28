@@ -175,13 +175,15 @@
   box-shadow: 0 2px 0 var(--color-warning-600);
 }
 
-/* Bỏ qua câu này — chỗ tạm ngoài HUD, góc dưới trái sân khấu (D-277-7: nút
-   hành động tương lai sống ở góc dưới phải, cấm chồng lên nhau). */
-.btn-skip-floating {
-  position: absolute;
-  left: 1rem;
-  bottom: 1rem;
-  z-index: 20;
+/* Bỏ qua câu này — nút trên thanh HUD cạnh khoá phụ huynh (`BR-PSZ-07`), không
+   nổi đè canvas nên không che vật trong khay. */
+.hud-lead {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-skip-hud {
   min-height: var(--hud-touch-floor, 4rem);
   min-width: var(--hud-touch-floor, 4rem);
   padding: 0.75rem 1.25rem;
@@ -201,7 +203,7 @@
   box-shadow: 0 4px 0 var(--color-surface-400);
 }
 
-.btn-skip-floating:active {
+.btn-skip-hud:active {
   transform: translateY(2px);
   box-shadow: 0 2px 0 var(--color-surface-400);
 }
@@ -264,13 +266,22 @@
       "intro-prev arena intro-next";
   }
 
-  .top-hud-bar {
+  .top-hud-bar,
+  .hud-lead {
     display: contents;
   }
 
   .btn-parent-lock {
     grid-area: lock;
     align-self: start;
+    margin: 0.5rem 0 0 0.5rem;
+  }
+
+  /* Cùng ô với hạt tiến độ nhưng bám đầu ô, ngay dưới khoá phụ huynh. */
+  .btn-skip-hud {
+    grid-area: beads;
+    align-self: start;
+    justify-self: center;
     margin: 0.5rem 0 0 0.5rem;
   }
 

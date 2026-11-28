@@ -266,11 +266,13 @@ interface TrayAndStage {
  * 60 logic px, thẻ mẫu của GT-001 không vừa (`D-277-7`, QA 2026-10-03).
  */
 function computeStageWithoutTray(input: PlaceInput): ZoneRect {
-  const { orientation, canvas, frame, action } = input;
+  const { orientation, canvas, frame, action, reserved } = input;
   const isLandscape = orientation === "landscape";
+  // Portrait: `reserved` là ô hành động khi cần nộp, là điểm đáy canvas khi
+  // không — nên needsCommit=false trả hàng nút cho sân khấu (`BR-PSZ-03`).
   const stageBottom = isLandscape
     ? canvas.h - ZONE_GAP_PX
-    : action.y - ZONE_GAP_PX;
+    : reserved.y - ZONE_GAP_PX;
   const stageRight = isLandscape
     ? action.x - ZONE_GAP_PX
     : canvas.w - ZONE_GAP_PX;

@@ -1,7 +1,7 @@
 import { TOUCH_FLOORS } from "@mindkid/shared/touch-floors";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AgeBand } from "#src/contracts/types";
-import { deriveLogicSpace } from "#src/layout/constants";
+import { deriveLogicSpace, SLOT_GAP_PX } from "#src/layout/constants";
 import {
   computeStageZones,
   type StageZones,
@@ -187,6 +187,26 @@ describe("computeStageZones — BR-PSZ-01 thứ tự năm vùng", () => {
     );
 
     expect(withoutCommit.action).toEqual(withCommit.action);
+  });
+
+  it("BR-PSZ-03 portrait không khay, needsCommit=false: sân khấu kéo tới đáy canvas trừ lề", () => {
+    const input = inputFor(330, 697, "4-5", {
+      needsTray: false,
+      needsCommit: false,
+    });
+    const zones = computeStageZones(input);
+
+    expect(zones.orientation).toBe("portrait");
+    expect(bottom(zones.stage)).toBe(input.logicH - SLOT_GAP_PX);
+    expect(bottom(zones.stage)).toBeGreaterThan(zones.action.y);
+  });
+
+  it("BR-PSZ-03 portrait không khay, needsCommit=true: sân khấu vẫn dừng trên action.y", () => {
+    const zones = computeStageZones(
+      inputFor(330, 697, "4-5", { needsTray: false, needsCommit: true })
+    );
+
+    expect(bottom(zones.stage)).toBeLessThanOrEqual(zones.action.y);
   });
 });
 

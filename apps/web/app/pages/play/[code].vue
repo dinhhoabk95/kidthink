@@ -51,43 +51,54 @@
         :class="{ 'ring-4 ring-brand-400 animate-pulse': isPromptPillPulsing }"
         :style="{ '--hud-touch-floor': `${hudTouchFloorPx}px` }"
       >
-        <button
-          aria-label="Cổng phụ huynh / Thoát (nhấn giữ 1 giây)"
-          class="btn-parent-lock min-h-16 min-w-16"
-          type="button"
-          @pointercancel="cancelParentLockHold"
-          @pointerdown="startParentLockHold"
-          @pointerleave="cancelParentLockHold"
-          @pointerup="cancelParentLockHold"
-        >
-          <div class="relative flex items-center justify-center">
-            <svg
-              aria-hidden="true"
-              class="absolute -inset-1 w-14 h-14 -rotate-90 pointer-events-none"
-              viewBox="0 0 36 36"
-              v-if="parentLockHoldProgress > 0"
-            >
-              <path
-                class="text-surface-300"
-                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3.5"
-              />
-              <path
-                class="text-brand-600 transition-all duration-75"
-                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-width="3.5"
-                :stroke-dasharray="100"
-                :stroke-dashoffset="100 - parentLockHoldProgress"
-              />
-            </svg>
-            <UIcon class="w-6 h-6 text-surface-600" name="i-lucide-lock" />
-          </div>
-        </button>
+        <div class="hud-lead">
+          <button
+            aria-label="Cổng phụ huynh / Thoát (nhấn giữ 1 giây)"
+            class="btn-parent-lock min-h-16 min-w-16"
+            type="button"
+            @pointercancel="cancelParentLockHold"
+            @pointerdown="startParentLockHold"
+            @pointerleave="cancelParentLockHold"
+            @pointerup="cancelParentLockHold"
+          >
+            <div class="relative flex items-center justify-center">
+              <svg
+                aria-hidden="true"
+                class="absolute -inset-1 w-14 h-14 -rotate-90 pointer-events-none"
+                viewBox="0 0 36 36"
+                v-if="parentLockHoldProgress > 0"
+              >
+                <path
+                  class="text-surface-300"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3.5"
+                />
+                <path
+                  class="text-brand-600 transition-all duration-75"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-width="3.5"
+                  :stroke-dasharray="100"
+                  :stroke-dashoffset="100 - parentLockHoldProgress"
+                />
+              </svg>
+              <UIcon class="w-6 h-6 text-surface-600" name="i-lucide-lock" />
+            </div>
+          </button>
+          <button
+            aria-label="Bỏ qua câu này"
+            class="btn-skip-hud clay-button min-h-16 min-w-16"
+            type="button"
+            v-if="canSkipRound"
+            @click="handleSkipRound"
+          >
+            <UIcon class="w-6 h-6 shrink-0" name="i-lucide-forward" />
+          </button>
+        </div>
         <div class="progress-container">
           <KidRoundProgressIndicator
             :current="currentRound"
@@ -148,15 +159,6 @@
             @action-press="pressActionButton"
             @entity-tap="handleAccessibleEntityTap"
           />
-          <button
-            aria-label="Bỏ qua câu này"
-            class="btn-skip-floating clay-button min-h-16 min-w-16"
-            type="button"
-            v-if="canSkipRound"
-            @click="handleSkipRound"
-          >
-            <UIcon class="w-6 h-6 shrink-0" name="i-lucide-forward" />
-          </button>
         </div>
       </main>
       <KidPlayIntroControls

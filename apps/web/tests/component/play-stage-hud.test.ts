@@ -169,7 +169,7 @@ describe("Task #277 S2 — layout kid và HUD ba nút", () => {
     expect(hud.findAll(".btn-audio-replay")).toHaveLength(1);
 
     const children = Array.from(hud.element.children);
-    expect(children[0]?.classList.contains("btn-parent-lock")).toBe(true);
+    expect(children[0]?.querySelector(".btn-parent-lock")).not.toBeNull();
     expect(children.at(-1)?.classList.contains("btn-audio-replay")).toBe(true);
   });
 
@@ -181,16 +181,32 @@ describe("Task #277 S2 — layout kid và HUD ba nút", () => {
     expect(replay.find(".btn-label").exists()).toBe(false);
   });
 
-  it("Bỏ qua chuyển ra khỏi HUD nhưng vẫn chạm được khi canSkipRound (chỗ tạm trước khi #277 S4 dựng zones.action)", async () => {
+  it("BR-PSZ-07 — Bỏ qua nằm trên thanh HUD ngay sau khoá phụ huynh, không nổi đè canvas, giữ aria-label", async () => {
     canSkipRound.value = true;
     const wrapper = await mountPlaySurface();
 
-    expect(wrapper.find(".top-hud-bar .btn-skip-round").exists()).toBe(false);
-    const skip = wrapper.find(".btn-skip-floating");
+    expect(wrapper.find(".btn-skip-floating").exists()).toBe(false);
+    expect(wrapper.find(".wooden-tray-container .btn-skip-hud").exists()).toBe(
+      false
+    );
+    const skip = wrapper.find(".top-hud-bar .btn-skip-hud");
     expect(skip.exists()).toBe(true);
+    expect(skip.attributes("aria-label")).toBe("Bỏ qua câu này");
+    const lead = Array.from(
+      wrapper.find(".top-hud-bar .hud-lead").element.children
+    );
+    expect(lead[0]?.classList.contains("btn-parent-lock")).toBe(true);
+    expect(lead[1]).toBe(skip.element);
 
     await skip.trigger("click");
     expect(handleSkipRoundMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("BR-PSZ-07 — không canSkipRound thì không có nút Bỏ qua", async () => {
+    canSkipRound.value = false;
+    const wrapper = await mountPlaySurface();
+
+    expect(wrapper.find(".btn-skip-hud").exists()).toBe(false);
   });
 
   it("BR-PSZ-12 — đổi viewport gọi lại syncView() cùng nhịp với tính lại logic space (H11)", async () => {

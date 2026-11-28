@@ -46,7 +46,6 @@ const KNOWN_SHELL_OVERFLOW: Readonly<
   // phẩm cho từng engine; chỉ đóng băng, không nới. Số đếm gồm từng vòng của
   // level seed (`rounds[]`), không chỉ `content_pack` cấp level.
   preview: {
-    "GT-005": { "3-4@360x640": 149 },
     "GT-015": { "3-4@360x640": 12, "3-4@390x844": 12 },
     "GT-021": { "3-4@360x640": 12 },
   },

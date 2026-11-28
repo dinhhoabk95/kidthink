@@ -1,4 +1,5 @@
 // biome-ignore lint/performance/noBarrelFile: contracts entry barrel
+export * from "#src/layout/cell-ceilings.js";
 export {
   type GT000Asset,
   type GT000AssetRepresentation,

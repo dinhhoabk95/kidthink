@@ -348,8 +348,24 @@ export function computeGT022Layout(s: SV, ageBand: AgeBand): GT022LayoutResult {
       return { slots: all, referenceSlots: strip[0], layers: null };
     }
   }
-  const slots = layoutIn(s.stageRect, Math.max(fl, 84));
+  const slots = keepHitInStage(
+    layoutIn(s.stageRect, Math.max(fl, 84)),
+    s.stageRect
+  );
   return { slots, referenceSlots: [], layers: null };
+}
+/**
+ * Nhánh dự phòng chia đều ô theo bước hàng; khi bước nhỏ hơn vùng chạm, ô hàng
+ * cuối thò quá đáy sân khấu (có khi quá đáy canvas). Kẹp tâm ô để vùng chạm
+ * nằm trong sân khấu, không thu ô dưới sàn chạm (`BR-LAY-04`, `BR-LAY-12`).
+ */
+function keepHitInStage(slots: Slot[], st: ZoneRect): Slot[] {
+  return slots.map((sl) => {
+    const [hx, hy] = [sl.hitW / 2, sl.hitH / 2];
+    const x = Math.max(st.x + hx, Math.min(st.x + st.w - hx, sl.x));
+    const y = Math.max(st.y + hy, Math.min(st.y + st.h - hy, sl.y));
+    return { ...sl, x: Math.round(x), y: Math.round(y) };
+  });
 }
 export function buildGT022View(s: SV): EngineView {
   const [clock, assets] = [getGT022Clock(s), s.resolveAssetById()];
