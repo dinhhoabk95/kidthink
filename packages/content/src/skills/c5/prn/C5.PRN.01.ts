@@ -49,7 +49,7 @@ export const C5_PRN_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🛑",
       },
-      audio_path: "/audio/vi/c5/prn/bien_dung_lai.mp3",
+      audio_path: "/audio/voice/biển-dừng-lại.mp3",
       category: {
         type: "biển chỉ dẫn",
       },
@@ -63,7 +63,7 @@ export const C5_PRN_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🚪",
       },
-      audio_path: "/audio/vi/c5/prn/bien_loi_thoat.mp3",
+      audio_path: "/audio/voice/biển-lối-thoát.mp3",
       category: {
         type: "biển chỉ dẫn",
       },
@@ -77,7 +77,7 @@ export const C5_PRN_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "⛔",
       },
-      audio_path: "/audio/vi/c5/prn/bien_cam_vao.mp3",
+      audio_path: "/audio/voice/biển-cấm-vào.mp3",
       category: {
         type: "biển chỉ dẫn",
       },
@@ -91,7 +91,7 @@ export const C5_PRN_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "📖",
       },
-      audio_path: "/audio/vi/c5/prn/ky_hieu_sach.mp3",
+      audio_path: "/audio/voice/ký-hiệu-thư-viện.mp3",
       category: {
         type: "ký hiệu quen",
       },
@@ -105,7 +105,7 @@ export const C5_PRN_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🏥",
       },
-      audio_path: "/audio/vi/c5/prn/ky_hieu_y_te.mp3",
+      audio_path: "/audio/voice/ký-hiệu-bệnh-viện.mp3",
       category: {
         type: "ký hiệu quen",
       },
@@ -119,7 +119,7 @@ export const C5_PRN_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🚻",
       },
-      audio_path: "/audio/vi/c5/prn/ky_hieu_ve_sinh.mp3",
+      audio_path: "/audio/voice/ký-hiệu-vệ-sinh.mp3",
       category: {
         type: "ký hiệu quen",
       },

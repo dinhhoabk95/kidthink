@@ -50,7 +50,7 @@ export const C5_QUE_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🌅",
       },
-      audio_path: "/audio/vi/c5/que/buoi_sang.mp3",
+      audio_path: "/audio/voice/sáng-sớm-thức-dậy.mp3",
       category: {
         type: "buổi ban ngày",
       },
@@ -65,7 +65,7 @@ export const C5_QUE_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🎒",
       },
-      audio_path: "/audio/vi/c5/que/buoi_sang.mp3",
+      audio_path: "/audio/voice/buổi-sáng-đi-học.mp3",
       category: {
         type: "buổi ban ngày",
       },
@@ -80,7 +80,7 @@ export const C5_QUE_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "☀️",
       },
-      audio_path: "/audio/vi/c5/que/buoi_trua.mp3",
+      audio_path: "/audio/voice/buổi-trưa-ăn-cơm.mp3",
       category: {
         type: "buổi ban ngày",
       },
@@ -95,7 +95,7 @@ export const C5_QUE_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🌇",
       },
-      audio_path: "/audio/vi/c5/que/buoi_chieu.mp3",
+      audio_path: "/audio/voice/buổi-chiều-tan-trường.mp3",
       category: {
         type: "buổi chiều tối",
       },
@@ -110,7 +110,7 @@ export const C5_QUE_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🍲",
       },
-      audio_path: "/audio/vi/c5/que/buoi_toi.mp3",
+      audio_path: "/audio/voice/buổi-tối-ăn-cơm.mp3",
       category: {
         type: "buổi chiều tối",
       },
@@ -125,7 +125,7 @@ export const C5_QUE_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🌙",
       },
-      audio_path: "/audio/vi/c5/que/buoi_toi.mp3",
+      audio_path: "/audio/voice/ban-đêm-đi-ngủ.mp3",
       category: {
         type: "buổi chiều tối",
       },

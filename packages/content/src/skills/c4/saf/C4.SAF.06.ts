@@ -57,7 +57,7 @@ export const C4_SAF_06_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "family",
-      audio_path: "/audio/vi/c4/mother.mp3",
+      audio_path: "/audio/voice/mẹ-yêu-thương.mp3",
     },
     {
       id: "father",
@@ -72,7 +72,7 @@ export const C4_SAF_06_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "family",
-      audio_path: "/audio/vi/c4/father.mp3",
+      audio_path: "/audio/voice/bố-chở-che.mp3",
     },
     {
       id: "grandmother",
@@ -87,7 +87,7 @@ export const C4_SAF_06_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "family",
-      audio_path: "/audio/vi/c4/grandmother.mp3",
+      audio_path: "/audio/voice/bà-dịu-hiền.mp3",
     },
     {
       id: "doctor_parent",
@@ -102,7 +102,7 @@ export const C4_SAF_06_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "family",
-      audio_path: "/audio/vi/c4/doctor_parent.mp3",
+      audio_path: "/audio/voice/bác-sĩ-quen.mp3",
     },
     {
       id: "stranger_candy",
@@ -117,7 +117,7 @@ export const C4_SAF_06_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "stranger",
-      audio_path: "/audio/vi/c4/stranger_candy.mp3",
+      audio_path: "/audio/voice/người-xa-lạ.mp3",
     },
     {
       id: "stranger_invite",
@@ -132,7 +132,7 @@ export const C4_SAF_06_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "stranger",
-      audio_path: "/audio/vi/c4/stranger_invite.mp3",
+      audio_path: "/audio/voice/xe-người-lạ.mp3",
     },
     {
       id: "stranger_touch",
@@ -147,7 +147,7 @@ export const C4_SAF_06_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "stranger",
-      audio_path: "/audio/vi/c4/stranger_touch.mp3",
+      audio_path: "/audio/voice/biển-dừng-lại.mp3",
     },
     {
       id: "stranger_camera",
@@ -162,7 +162,7 @@ export const C4_SAF_06_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "stranger",
-      audio_path: "/audio/vi/c4/stranger_camera.mp3",
+      audio_path: "/audio/voice/còi-báo-động.mp3",
     },
   ],
   axes: {

@@ -54,7 +54,7 @@ export const C4_MEM_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "bird",
-      audio_path: "/audio/vi/c4/sparrow.mp3",
+      audio_path: "/audio/voice/tiếng-chim-hót.mp3",
     },
     {
       id: "rooster",
@@ -69,7 +69,7 @@ export const C4_MEM_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "bird",
-      audio_path: "/audio/vi/c4/rooster.mp3",
+      audio_path: "/audio/voice/tiếng-gà-gáy.mp3",
     },
     {
       id: "duck",
@@ -84,7 +84,7 @@ export const C4_MEM_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "bird",
-      audio_path: "/audio/vi/c4/duck.mp3",
+      audio_path: "/audio/voice/tiếng-vịt-kêu.mp3",
     },
     {
       id: "owl",
@@ -99,7 +99,7 @@ export const C4_MEM_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "bird",
-      audio_path: "/audio/vi/c4/owl.mp3",
+      audio_path: "/audio/voice/tiếng-chim-cú.mp3",
     },
     {
       id: "violin",
@@ -114,7 +114,7 @@ export const C4_MEM_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "instrument",
-      audio_path: "/audio/vi/c4/violin.mp3",
+      audio_path: "/audio/voice/tiếng-đàn-vĩ.mp3",
     },
     {
       id: "drum",
@@ -129,7 +129,7 @@ export const C4_MEM_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "instrument",
-      audio_path: "/audio/vi/c4/drum.mp3",
+      audio_path: "/audio/voice/tiếng-trống-vang.mp3",
     },
     {
       id: "trumpet",
@@ -144,7 +144,7 @@ export const C4_MEM_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "instrument",
-      audio_path: "/audio/vi/c4/trumpet.mp3",
+      audio_path: "/audio/voice/tiếng-kèn-tây.mp3",
     },
     {
       id: "guitar",
@@ -159,7 +159,7 @@ export const C4_MEM_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "instrument",
-      audio_path: "/audio/vi/c4/guitar.mp3",
+      audio_path: "/audio/voice/tiếng-đàn-gảy.mp3",
     },
   ],
   axes: {

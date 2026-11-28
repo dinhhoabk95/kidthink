@@ -54,7 +54,7 @@ export const C4_LIV_01_DATASET: SkillDataset = {
       contrast_group: "top",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/plt_leaf.mp3",
+      audio_path: "/audio/voice/lá-xanh-tươi.mp3",
     },
     {
       id: "plt_flower",
@@ -69,7 +69,7 @@ export const C4_LIV_01_DATASET: SkillDataset = {
       contrast_group: "top",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/plt_flower.mp3",
+      audio_path: "/audio/voice/bông-hoa-nở.mp3",
     },
     {
       id: "plt_fruit",
@@ -84,7 +84,7 @@ export const C4_LIV_01_DATASET: SkillDataset = {
       contrast_group: "top",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/plt_fruit.mp3",
+      audio_path: "/audio/voice/quả-táo-chín.mp3",
     },
     {
       id: "plt_branch",
@@ -99,7 +99,7 @@ export const C4_LIV_01_DATASET: SkillDataset = {
       contrast_group: "top",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/plt_branch.mp3",
+      audio_path: "/audio/voice/cành-cây-cao.mp3",
     },
     {
       id: "plt_root",
@@ -114,7 +114,7 @@ export const C4_LIV_01_DATASET: SkillDataset = {
       contrast_group: "bottom",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/plt_root.mp3",
+      audio_path: "/audio/voice/củ-cà-rốt-dưới-đất.mp3",
     },
     {
       id: "plt_seed",
@@ -129,7 +129,7 @@ export const C4_LIV_01_DATASET: SkillDataset = {
       contrast_group: "bottom",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/plt_seed.mp3",
+      audio_path: "/audio/voice/hạt-dẻ-nhỏ.mp3",
     },
     {
       id: "plt_tuber",
@@ -144,7 +144,7 @@ export const C4_LIV_01_DATASET: SkillDataset = {
       contrast_group: "bottom",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/plt_tuber.mp3",
+      audio_path: "/audio/voice/củ-khoai-tây.mp3",
     },
     {
       id: "plt_onion",
@@ -159,7 +159,7 @@ export const C4_LIV_01_DATASET: SkillDataset = {
       contrast_group: "bottom",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/plt_onion.mp3",
+      audio_path: "/audio/voice/củ-hành-trắng.mp3",
     },
   ],
   relations: [

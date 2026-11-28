@@ -54,7 +54,7 @@ export const C4_TAC_01_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "smooth",
-      audio_path: "/audio/vi/c4/mirror.mp3",
+      audio_path: "/audio/voice/mặt-gương-nhẵn.mp3",
     },
     {
       id: "apple",
@@ -69,7 +69,7 @@ export const C4_TAC_01_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "smooth",
-      audio_path: "/audio/vi/c4/apple.mp3",
+      audio_path: "/audio/voice/quả-táo-bóng.mp3",
     },
     {
       id: "ceramic_bowl",
@@ -84,7 +84,7 @@ export const C4_TAC_01_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "smooth",
-      audio_path: "/audio/vi/c4/ceramic_bowl.mp3",
+      audio_path: "/audio/voice/bát-sứ-nhẵn.mp3",
     },
     {
       id: "plastic_ball",
@@ -99,7 +99,7 @@ export const C4_TAC_01_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "smooth",
-      audio_path: "/audio/vi/c4/plastic_ball.mp3",
+      audio_path: "/audio/voice/bóng-nhựa-láng.mp3",
     },
     {
       id: "pineapple",
@@ -114,7 +114,7 @@ export const C4_TAC_01_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "rough",
-      audio_path: "/audio/vi/c4/pineapple.mp3",
+      audio_path: "/audio/voice/vỏ-dứa-gai.mp3",
     },
     {
       id: "rough_stone",
@@ -129,7 +129,7 @@ export const C4_TAC_01_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "rough",
-      audio_path: "/audio/vi/c4/rough_stone.mp3",
+      audio_path: "/audio/voice/hòn-đá-ráp.mp3",
     },
     {
       id: "scallop_shell",
@@ -144,7 +144,7 @@ export const C4_TAC_01_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "rough",
-      audio_path: "/audio/vi/c4/scallop_shell.mp3",
+      audio_path: "/audio/voice/vỏ-sò-khía.mp3",
     },
     {
       id: "tree_bark",
@@ -159,7 +159,7 @@ export const C4_TAC_01_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "rough",
-      audio_path: "/audio/vi/c4/tree_bark.mp3",
+      audio_path: "/audio/voice/vỏ-cây-sần.mp3",
     },
   ],
   axes: {

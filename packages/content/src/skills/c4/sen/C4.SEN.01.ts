@@ -55,7 +55,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "light",
-      audio_path: "/audio/vi/c4/pure_white.mp3",
+      audio_path: "/audio/voice/màu-trắng-tinh.mp3",
     },
     {
       id: "bright_yellow",
@@ -70,7 +70,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "light",
-      audio_path: "/audio/vi/c4/bright_yellow.mp3",
+      audio_path: "/audio/voice/màu-vàng-tươi.mp3",
     },
     {
       id: "bright_green",
@@ -85,7 +85,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "light",
-      audio_path: "/audio/vi/c4/bright_green.mp3",
+      audio_path: "/audio/voice/màu-xanh-tươi.mp3",
     },
     {
       id: "bright_red",
@@ -100,7 +100,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "light",
-      audio_path: "/audio/vi/c4/bright_red.mp3",
+      audio_path: "/audio/voice/màu-đỏ-tươi.mp3",
     },
     {
       id: "bright_blue",
@@ -115,7 +115,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
       value: 5,
       ordering: 5,
       contrast_group: "dark",
-      audio_path: "/audio/vi/c4/bright_blue.mp3",
+      audio_path: "/audio/voice/màu-xanh-dương.mp3",
     },
     {
       id: "deep_purple",
@@ -130,7 +130,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
       value: 6,
       ordering: 6,
       contrast_group: "dark",
-      audio_path: "/audio/vi/c4/deep_purple.mp3",
+      audio_path: "/audio/voice/màu-tím-sẫm.mp3",
     },
     {
       id: "dark_brown",
@@ -145,7 +145,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
       value: 7,
       ordering: 7,
       contrast_group: "dark",
-      audio_path: "/audio/vi/c4/dark_brown.mp3",
+      audio_path: "/audio/voice/màu-nâu-sẫm.mp3",
     },
     {
       id: "pure_black",
@@ -160,7 +160,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
       value: 8,
       ordering: 8,
       contrast_group: "dark",
-      audio_path: "/audio/vi/c4/pure_black.mp3",
+      audio_path: "/audio/voice/màu-đen-tuyền.mp3",
     },
     {
       id: "wind_kite",
@@ -175,7 +175,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
       value: 9,
       ordering: 9,
       contrast_group: "kite",
-      audio_path: "/audio/vi/c4/wind_kite.mp3",
+      audio_path: "/audio/voice/những-cánh-diều-no-gió.mp3",
     },
     {
       id: "crystal_butterfly",
@@ -190,7 +190,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
       value: 10,
       ordering: 10,
       contrast_group: "triplet_item",
-      audio_path: "/audio/vi/c4/crystal_butterfly.mp3",
+      audio_path: "/audio/voice/chú-bướm-xinh.mp3",
     },
     {
       id: "hot_air_balloon",
@@ -205,7 +205,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
       value: 11,
       ordering: 11,
       contrast_group: "triplet_item",
-      audio_path: "/audio/vi/c4/hot_air_balloon.mp3",
+      audio_path: "/audio/voice/quả-bóng-bay-đỏ.mp3",
     },
     {
       id: "fairy_lantern",
@@ -220,7 +220,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
       value: 12,
       ordering: 12,
       contrast_group: "triplet_item",
-      audio_path: "/audio/vi/c4/fairy_lantern.mp3",
+      audio_path: "/audio/voice/chiếc-đèn-lồng-đỏ.mp3",
     },
     {
       id: "rainbow_gem_crystal",
@@ -235,7 +235,7 @@ export const C4_SEN_01_DATASET: SkillDataset = {
       value: 13,
       ordering: 13,
       contrast_group: "gem",
-      audio_path: "/audio/vi/c4/rainbow_gem_crystal.mp3",
+      audio_path: "/audio/voice/viên-kim-cương-xanh.mp3",
     },
   ],
   axes: {

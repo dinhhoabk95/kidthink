@@ -54,7 +54,7 @@ export const C4_EXP_02_DATASET: SkillDataset = {
       contrast_group: "float",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/float_duck.mp3",
+      audio_path: "/audio/voice/con-vịt-nhựa-nổi.mp3",
     },
     {
       id: "float_boat",
@@ -69,7 +69,7 @@ export const C4_EXP_02_DATASET: SkillDataset = {
       contrast_group: "float",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/float_boat.mp3",
+      audio_path: "/audio/voice/thuyền-gỗ-nổi.mp3",
     },
     {
       id: "float_leaf",
@@ -84,7 +84,7 @@ export const C4_EXP_02_DATASET: SkillDataset = {
       contrast_group: "float",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/float_leaf.mp3",
+      audio_path: "/audio/voice/lá-xanh-nổi.mp3",
     },
     {
       id: "float_ball",
@@ -99,7 +99,7 @@ export const C4_EXP_02_DATASET: SkillDataset = {
       contrast_group: "float",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/float_ball.mp3",
+      audio_path: "/audio/voice/quả-bóng-nổi.mp3",
     },
     {
       id: "sink_rock",
@@ -114,7 +114,7 @@ export const C4_EXP_02_DATASET: SkillDataset = {
       contrast_group: "sink",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/sink_rock.mp3",
+      audio_path: "/audio/voice/viên-đá-chìm.mp3",
     },
     {
       id: "sink_key",
@@ -129,7 +129,7 @@ export const C4_EXP_02_DATASET: SkillDataset = {
       contrast_group: "sink",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/sink_key.mp3",
+      audio_path: "/audio/voice/chìa-khóa-sắt-chìm.mp3",
     },
     {
       id: "sink_hammer",
@@ -144,7 +144,7 @@ export const C4_EXP_02_DATASET: SkillDataset = {
       contrast_group: "sink",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/sink_hammer.mp3",
+      audio_path: "/audio/voice/cái-búa-sắt-chìm.mp3",
     },
     {
       id: "sink_coin",
@@ -159,7 +159,7 @@ export const C4_EXP_02_DATASET: SkillDataset = {
       contrast_group: "sink",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/sink_coin.mp3",
+      audio_path: "/audio/voice/đồng-xu-kim-loại.mp3",
     },
   ],
   relations: [

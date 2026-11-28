@@ -49,7 +49,7 @@ export const C5_PRN_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🎒",
       },
-      audio_path: "/audio/vi/c5/prn/be_di_hoc_cham.mp3",
+      audio_path: "/audio/voice/bé-đi-học.mp3",
       category: {
         type: "dấu chấm câu",
       },
@@ -63,7 +63,7 @@ export const C5_PRN_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🌧️",
       },
-      audio_path: "/audio/vi/c5/prn/troi_dang_mua_cham.mp3",
+      audio_path: "/audio/voice/trời-đang-mưa.mp3",
       category: {
         type: "dấu chấm câu",
       },
@@ -77,7 +77,7 @@ export const C5_PRN_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🌸",
       },
-      audio_path: "/audio/vi/c5/prn/hoa_no_dep_cham.mp3",
+      audio_path: "/audio/voice/hoa-nở-đẹp.mp3",
       category: {
         type: "dấu chấm câu",
       },
@@ -91,7 +91,7 @@ export const C5_PRN_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "❓",
       },
-      audio_path: "/audio/vi/c5/prn/ai_goi_do_hoi.mp3",
+      audio_path: "/audio/voice/ai-đang-gọi-đó.mp3",
       category: {
         type: "dấu hỏi câu",
       },
@@ -105,7 +105,7 @@ export const C5_PRN_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "❔",
       },
-      audio_path: "/audio/vi/c5/prn/cai_gi_day_hoi.mp3",
+      audio_path: "/audio/voice/cái-gì-đây.mp3",
       category: {
         type: "dấu hỏi câu",
       },
@@ -119,7 +119,7 @@ export const C5_PRN_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🙋",
       },
-      audio_path: "/audio/vi/c5/prn/me_di_dau_hoi.mp3",
+      audio_path: "/audio/voice/mẹ-đi-đâu-thế.mp3",
       category: {
         type: "dấu hỏi câu",
       },

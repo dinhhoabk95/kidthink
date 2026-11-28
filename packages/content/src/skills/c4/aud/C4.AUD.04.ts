@@ -55,7 +55,7 @@ export const C4_AUD_04_DATASET: SkillDataset = {
       contrast_group: "appliance",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/aud_doorbell.mp3",
+      audio_path: "/audio/voice/tiếng-chuông-cửa.mp3",
     },
     {
       id: "aud_alarm",
@@ -70,7 +70,7 @@ export const C4_AUD_04_DATASET: SkillDataset = {
       contrast_group: "appliance",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/aud_alarm.mp3",
+      audio_path: "/audio/voice/tiếng-chuông-reo.mp3",
     },
     {
       id: "aud_phone",
@@ -85,7 +85,7 @@ export const C4_AUD_04_DATASET: SkillDataset = {
       contrast_group: "appliance",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/aud_phone.mp3",
+      audio_path: "/audio/voice/tiếng-điện-thoại.mp3",
     },
     {
       id: "aud_kettle",
@@ -100,7 +100,7 @@ export const C4_AUD_04_DATASET: SkillDataset = {
       contrast_group: "appliance",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/aud_kettle.mp3",
+      audio_path: "/audio/voice/tiếng-ấm-reo.mp3",
     },
     {
       id: "aud_toy_drum",
@@ -115,7 +115,7 @@ export const C4_AUD_04_DATASET: SkillDataset = {
       contrast_group: "toy",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/aud_toy_drum.mp3",
+      audio_path: "/audio/voice/tiếng-trống-đồ-chơi.mp3",
     },
     {
       id: "aud_rattle",
@@ -130,7 +130,7 @@ export const C4_AUD_04_DATASET: SkillDataset = {
       contrast_group: "toy",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/aud_rattle.mp3",
+      audio_path: "/audio/voice/tiếng-lục-lạc.mp3",
     },
     {
       id: "aud_toy_train",
@@ -145,7 +145,7 @@ export const C4_AUD_04_DATASET: SkillDataset = {
       contrast_group: "toy",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/aud_toy_train.mp3",
+      audio_path: "/audio/voice/tiếng-tàu-đồ-chơi.mp3",
     },
     {
       id: "aud_toy_whistle",
@@ -160,7 +160,7 @@ export const C4_AUD_04_DATASET: SkillDataset = {
       contrast_group: "toy",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/aud_toy_whistle.mp3",
+      audio_path: "/audio/voice/tiếng-còi-đồ-chơi.mp3",
     },
   ],
   relations: [

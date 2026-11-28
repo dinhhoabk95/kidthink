@@ -72,10 +72,12 @@ export class AudioController {
 
   /**
    * Đọc câu dẫn bằng mp3 giọng cô `teacher-v1` (`BR-PNR-05`). `text` là một câu
-   * hoặc các đoạn phát nối tiếp. Clip nào lỗi (thiếu file, giải mã hỏng, bị
-   * chặn tự phát) thì dừng chuỗi và rơi xuống tín hiệu thị giác
-   * `fallbackVisualCue` (`BR-PNR-06`). Tín hiệu thị giác và `onEnd` mỗi cái gọi
-   * đúng một lần (Task #274 S8). Trả `false` khi rơi xuống dự phòng ngay.
+   * hoặc các đoạn phát nối tiếp. Đoạn lỗi (thiếu file, giải mã hỏng, bị chặn
+   * tự phát) thì bỏ qua và phát đoạn kế; đoạn cuối là câu dẫn mang nội dung
+   * bắt buộc nên chỉ khi nó lỗi (kể cả khi mọi đoạn lỗi) mới rơi xuống tín
+   * hiệu thị giác `fallbackVisualCue` (`BR-PNR-06`). Tín hiệu thị giác và
+   * `onEnd` mỗi cái gọi đúng một lần (Task #274 S8). Trả `false` khi rơi
+   * xuống dự phòng ngay (chưa phát được gì).
    */
   speakPrompt(
     text: TeacherVoiceText,
@@ -118,19 +120,14 @@ export class AudioController {
         finish();
         return;
       }
-      let failed = false;
+      const isLast = index === clips.length - 1;
       this.startClip(
         ref,
+        () => playAt(index + 1),
         () => {
-          if (failed) {
-            finish();
-            return;
+          if (isLast) {
+            cueOnce();
           }
-          playAt(index + 1);
-        },
-        () => {
-          failed = true;
-          cueOnce();
         }
       );
     };

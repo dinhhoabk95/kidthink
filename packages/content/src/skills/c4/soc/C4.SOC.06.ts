@@ -57,7 +57,7 @@ export const C4_SOC_06_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "helper",
-      audio_path: "/audio/vi/c4/traffic_police.mp3",
+      audio_path: "/audio/voice/chú-cảnh-sát.mp3",
     },
     {
       id: "firefighter",
@@ -72,7 +72,7 @@ export const C4_SOC_06_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "helper",
-      audio_path: "/audio/vi/c4/firefighter.mp3",
+      audio_path: "/audio/voice/chú-cứu-hỏa.mp3",
     },
     {
       id: "doctor",
@@ -87,7 +87,7 @@ export const C4_SOC_06_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "helper",
-      audio_path: "/audio/vi/c4/doctor.mp3",
+      audio_path: "/audio/voice/cô-bác-sĩ.mp3",
     },
     {
       id: "teacher",
@@ -102,7 +102,7 @@ export const C4_SOC_06_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "helper",
-      audio_path: "/audio/vi/c4/teacher.mp3",
+      audio_path: "/audio/voice/cô-giáo-hiền.mp3",
     },
     {
       id: "police_car",
@@ -117,7 +117,7 @@ export const C4_SOC_06_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "facility",
-      audio_path: "/audio/vi/c4/police_car.mp3",
+      audio_path: "/audio/voice/xe-cảnh-sát.mp3",
     },
     {
       id: "fire_truck",
@@ -132,7 +132,7 @@ export const C4_SOC_06_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "facility",
-      audio_path: "/audio/vi/c4/fire_truck.mp3",
+      audio_path: "/audio/voice/xe-cứu-hỏa.mp3",
     },
     {
       id: "ambulance",
@@ -147,7 +147,7 @@ export const C4_SOC_06_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "facility",
-      audio_path: "/audio/vi/c4/ambulance.mp3",
+      audio_path: "/audio/voice/xe-cứu-thương.mp3",
     },
     {
       id: "school",
@@ -162,7 +162,7 @@ export const C4_SOC_06_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "facility",
-      audio_path: "/audio/vi/c4/school.mp3",
+      audio_path: "/audio/voice/trường-mầm-non.mp3",
     },
   ],
   axes: {

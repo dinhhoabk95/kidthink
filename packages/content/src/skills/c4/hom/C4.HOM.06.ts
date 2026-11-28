@@ -54,7 +54,7 @@ export const C4_HOM_06_DATASET: SkillDataset = {
       contrast_group: "activity",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/fes_boat.mp3",
+      audio_path: "/audio/voice/hội-đua-thuyền.mp3",
     },
     {
       id: "fes_drum",
@@ -69,7 +69,7 @@ export const C4_HOM_06_DATASET: SkillDataset = {
       contrast_group: "activity",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/fes_drum.mp3",
+      audio_path: "/audio/voice/tiếng-trống-hội.mp3",
     },
     {
       id: "fes_dragon",
@@ -84,7 +84,7 @@ export const C4_HOM_06_DATASET: SkillDataset = {
       contrast_group: "activity",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/fes_dragon.mp3",
+      audio_path: "/audio/voice/múa-rồng-vàng.mp3",
     },
     {
       id: "fes_rope",
@@ -99,7 +99,7 @@ export const C4_HOM_06_DATASET: SkillDataset = {
       contrast_group: "activity",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/fes_rope.mp3",
+      audio_path: "/audio/voice/trò-chơi-kéo-co.mp3",
     },
     {
       id: "fes_aodai",
@@ -114,7 +114,7 @@ export const C4_HOM_06_DATASET: SkillDataset = {
       contrast_group: "costume",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/fes_aodai.mp3",
+      audio_path: "/audio/voice/áo-dài-thướt-tha.mp3",
     },
     {
       id: "fes_hat",
@@ -129,7 +129,7 @@ export const C4_HOM_06_DATASET: SkillDataset = {
       contrast_group: "costume",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/fes_hat.mp3",
+      audio_path: "/audio/voice/nón-quai-thao.mp3",
     },
     {
       id: "fes_fan",
@@ -144,7 +144,7 @@ export const C4_HOM_06_DATASET: SkillDataset = {
       contrast_group: "costume",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/fes_fan.mp3",
+      audio_path: "/audio/voice/cái-quạt-lụa.mp3",
     },
     {
       id: "fes_flower",
@@ -159,7 +159,7 @@ export const C4_HOM_06_DATASET: SkillDataset = {
       contrast_group: "costume",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/fes_flower.mp3",
+      audio_path: "/audio/voice/vòng-hoa-cài.mp3",
     },
   ],
   relations: [

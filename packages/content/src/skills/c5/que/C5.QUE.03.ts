@@ -49,7 +49,7 @@ export const C5_QUE_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🌳",
       },
-      audio_path: "/audio/vi/c5/que/chim_tren_cay.mp3",
+      audio_path: "/audio/voice/cây-xanh-trong-vườn.mp3",
       category: {
         type: "ngoài thiên nhiên",
       },
@@ -63,7 +63,7 @@ export const C5_QUE_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🐟",
       },
-      audio_path: "/audio/vi/c5/que/ca_duoi_nuoc.mp3",
+      audio_path: "/audio/voice/con-cá-dưới-nước.mp3",
       category: {
         type: "ngoài thiên nhiên",
       },
@@ -77,7 +77,7 @@ export const C5_QUE_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "☁️",
       },
-      audio_path: "/audio/vi/c5/que/may_tren_troi.mp3",
+      audio_path: "/audio/voice/đám-mây-trên-trời.mp3",
       category: {
         type: "ngoài thiên nhiên",
       },
@@ -91,7 +91,7 @@ export const C5_QUE_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "📚",
       },
-      audio_path: "/audio/vi/c5/que/sach_tren_gia.mp3",
+      audio_path: "/audio/voice/sách-trên-giá.mp3",
       category: {
         type: "ở trong nhà",
       },
@@ -105,7 +105,7 @@ export const C5_QUE_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🛏️",
       },
-      audio_path: "/audio/vi/c5/que/be_tren_giuong.mp3",
+      audio_path: "/audio/voice/bé-ngủ-trên-giường.mp3",
       category: {
         type: "ở trong nhà",
       },
@@ -119,7 +119,7 @@ export const C5_QUE_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🏠",
       },
-      audio_path: "/audio/vi/c5/que/xe_trong_nha.mp3",
+      audio_path: "/audio/voice/xe-trong-nhà-xe.mp3",
       category: {
         type: "ở trong nhà",
       },

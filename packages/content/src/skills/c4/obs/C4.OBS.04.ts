@@ -55,7 +55,7 @@ export const C4_OBS_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "specimen",
-      audio_path: "/audio/vi/c4/leaf.mp3",
+      audio_path: "/audio/voice/chiếc-lá-xanh.mp3",
     },
     {
       id: "flower",
@@ -70,7 +70,7 @@ export const C4_OBS_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "specimen",
-      audio_path: "/audio/vi/c4/flower.mp3",
+      audio_path: "/audio/voice/bông-hoa-nở.mp3",
     },
     {
       id: "ladybug",
@@ -85,7 +85,7 @@ export const C4_OBS_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "specimen",
-      audio_path: "/audio/vi/c4/ladybug.mp3",
+      audio_path: "/audio/voice/chú-bọ-rùa.mp3",
     },
     {
       id: "shell",
@@ -100,7 +100,7 @@ export const C4_OBS_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "specimen",
-      audio_path: "/audio/vi/c4/shell.mp3",
+      audio_path: "/audio/voice/vỏ-sò-biển.mp3",
     },
     {
       id: "crayons",
@@ -115,7 +115,7 @@ export const C4_OBS_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "tool",
-      audio_path: "/audio/vi/c4/crayons.mp3",
+      audio_path: "/audio/voice/bút-sáp-màu.mp3",
     },
     {
       id: "pencil",
@@ -130,7 +130,7 @@ export const C4_OBS_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "tool",
-      audio_path: "/audio/vi/c4/pencil.mp3",
+      audio_path: "/audio/voice/chiếc-bút-chì.mp3",
     },
     {
       id: "sketchbook",
@@ -145,7 +145,7 @@ export const C4_OBS_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "tool",
-      audio_path: "/audio/vi/c4/sketchbook.mp3",
+      audio_path: "/audio/voice/quyển-vở-vẽ.mp3",
     },
     {
       id: "palette",
@@ -160,7 +160,7 @@ export const C4_OBS_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "tool",
-      audio_path: "/audio/vi/c4/palette.mp3",
+      audio_path: "/audio/voice/bảng-pha-màu.mp3",
     },
   ],
   axes: {

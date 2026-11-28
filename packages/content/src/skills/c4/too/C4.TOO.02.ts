@@ -55,7 +55,7 @@ export const C4_TOO_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "measure",
-      audio_path: "/audio/vi/c4/magnifier.mp3",
+      audio_path: "/audio/voice/kính-lúp-soi.mp3",
     },
     {
       id: "ruler",
@@ -70,7 +70,7 @@ export const C4_TOO_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "measure",
-      audio_path: "/audio/vi/c4/ruler.mp3",
+      audio_path: "/audio/voice/thước-kẻ-thẳng.mp3",
     },
     {
       id: "scale",
@@ -85,7 +85,7 @@ export const C4_TOO_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "measure",
-      audio_path: "/audio/vi/c4/scale.mp3",
+      audio_path: "/audio/voice/chiếc-cân-đĩa.mp3",
     },
     {
       id: "thermometer",
@@ -100,7 +100,7 @@ export const C4_TOO_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "measure",
-      audio_path: "/audio/vi/c4/thermometer.mp3",
+      audio_path: "/audio/voice/nhiệt-kế-ấm.mp3",
     },
     {
       id: "scissors",
@@ -115,7 +115,7 @@ export const C4_TOO_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "craft",
-      audio_path: "/audio/vi/c4/scissors.mp3",
+      audio_path: "/audio/voice/chiếc-kéo-nhỏ.mp3",
     },
     {
       id: "hammer",
@@ -130,7 +130,7 @@ export const C4_TOO_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "craft",
-      audio_path: "/audio/vi/c4/hammer.mp3",
+      audio_path: "/audio/voice/chiếc-búa-gõ.mp3",
     },
     {
       id: "wrench",
@@ -145,7 +145,7 @@ export const C4_TOO_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "craft",
-      audio_path: "/audio/vi/c4/wrench.mp3",
+      audio_path: "/audio/voice/chiếc-cờ-lê.mp3",
     },
     {
       id: "paintbrush",
@@ -160,7 +160,7 @@ export const C4_TOO_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "craft",
-      audio_path: "/audio/vi/c4/paintbrush.mp3",
+      audio_path: "/audio/voice/chiếc-cọ-vẽ.mp3",
     },
   ],
   axes: {

@@ -57,7 +57,7 @@ export const C4_SEN_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "high",
-      audio_path: "/audio/vi/c4/bird_song.mp3",
+      audio_path: "/audio/voice/tiếng-chim-hót.mp3",
     },
     {
       id: "wind_bell",
@@ -72,7 +72,7 @@ export const C4_SEN_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "high",
-      audio_path: "/audio/vi/c4/wind_bell.mp3",
+      audio_path: "/audio/voice/tiếng-chuông-gió.mp3",
     },
     {
       id: "flute",
@@ -87,7 +87,7 @@ export const C4_SEN_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "high",
-      audio_path: "/audio/vi/c4/flute.mp3",
+      audio_path: "/audio/voice/tiếng-sáo-ngân.mp3",
     },
     {
       id: "violin",
@@ -102,7 +102,7 @@ export const C4_SEN_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "high",
-      audio_path: "/audio/vi/c4/violin.mp3",
+      audio_path: "/audio/voice/tiếng-đàn-vĩ.mp3",
     },
     {
       id: "bass_drum",
@@ -117,7 +117,7 @@ export const C4_SEN_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "low",
-      audio_path: "/audio/vi/c4/bass_drum.mp3",
+      audio_path: "/audio/voice/tiếng-trống-trầm.mp3",
     },
     {
       id: "train_horn",
@@ -132,7 +132,7 @@ export const C4_SEN_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "low",
-      audio_path: "/audio/vi/c4/train_horn.mp3",
+      audio_path: "/audio/voice/tiếng-còi-tàu.mp3",
     },
     {
       id: "tuba",
@@ -147,7 +147,7 @@ export const C4_SEN_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "low",
-      audio_path: "/audio/vi/c4/tuba.mp3",
+      audio_path: "/audio/voice/tiếng-kèn-đồng.mp3",
     },
     {
       id: "thunder",
@@ -162,7 +162,7 @@ export const C4_SEN_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "low",
-      audio_path: "/audio/vi/c4/thunder.mp3",
+      audio_path: "/audio/voice/tiếng-sấm-rền.mp3",
     },
   ],
   axes: {

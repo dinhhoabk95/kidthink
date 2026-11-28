@@ -54,7 +54,7 @@ export const C4_AUD_01_DATASET: SkillDataset = {
       contrast_group: "loud",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/aud_thunder.mp3",
+      audio_path: "/audio/voice/tiếng-sấm-sét.mp3",
     },
     {
       id: "aud_drum_loud",
@@ -69,7 +69,7 @@ export const C4_AUD_01_DATASET: SkillDataset = {
       contrast_group: "loud",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/aud_drum_loud.mp3",
+      audio_path: "/audio/voice/tiếng-trống-vang.mp3",
     },
     {
       id: "aud_plane_loud",
@@ -84,7 +84,7 @@ export const C4_AUD_01_DATASET: SkillDataset = {
       contrast_group: "loud",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/aud_plane_loud.mp3",
+      audio_path: "/audio/voice/tiếng-máy-bay.mp3",
     },
     {
       id: "aud_lion_roar",
@@ -99,7 +99,7 @@ export const C4_AUD_01_DATASET: SkillDataset = {
       contrast_group: "loud",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/aud_lion_roar.mp3",
+      audio_path: "/audio/voice/tiếng-sư-tử-gầm.mp3",
     },
     {
       id: "aud_whisper",
@@ -114,7 +114,7 @@ export const C4_AUD_01_DATASET: SkillDataset = {
       contrast_group: "quiet",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/aud_whisper.mp3",
+      audio_path: "/audio/voice/tiếng-thì-thầm.mp3",
     },
     {
       id: "aud_clock_tick",
@@ -129,7 +129,7 @@ export const C4_AUD_01_DATASET: SkillDataset = {
       contrast_group: "quiet",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/aud_clock_tick.mp3",
+      audio_path: "/audio/voice/tiếng-đồng-hồ.mp3",
     },
     {
       id: "aud_drizzle",
@@ -144,7 +144,7 @@ export const C4_AUD_01_DATASET: SkillDataset = {
       contrast_group: "quiet",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/aud_drizzle.mp3",
+      audio_path: "/audio/voice/tiếng-mưa-phùn.mp3",
     },
     {
       id: "aud_cat_purr",
@@ -159,7 +159,7 @@ export const C4_AUD_01_DATASET: SkillDataset = {
       contrast_group: "quiet",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/aud_cat_purr.mp3",
+      audio_path: "/audio/voice/tiếng-mèo-kêu.mp3",
     },
   ],
   relations: [

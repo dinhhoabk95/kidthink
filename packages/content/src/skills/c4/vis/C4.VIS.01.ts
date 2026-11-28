@@ -57,7 +57,7 @@ export const C4_VIS_01_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "sky",
-      audio_path: "/audio/vi/c4/sun.mp3",
+      audio_path: "/audio/voice/ông-mặt-trời.mp3",
     },
     {
       id: "cloud",
@@ -72,7 +72,7 @@ export const C4_VIS_01_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "sky",
-      audio_path: "/audio/vi/c4/cloud.mp3",
+      audio_path: "/audio/voice/đám-mây-trắng.mp3",
     },
     {
       id: "star",
@@ -87,7 +87,7 @@ export const C4_VIS_01_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "sky",
-      audio_path: "/audio/vi/c4/star.mp3",
+      audio_path: "/audio/voice/ngôi-sao-vàng.mp3",
     },
     {
       id: "rainbow",
@@ -102,7 +102,7 @@ export const C4_VIS_01_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "sky",
-      audio_path: "/audio/vi/c4/rainbow.mp3",
+      audio_path: "/audio/voice/cầu-vồng-đẹp.mp3",
     },
     {
       id: "rose",
@@ -117,7 +117,7 @@ export const C4_VIS_01_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "garden",
-      audio_path: "/audio/vi/c4/rose.mp3",
+      audio_path: "/audio/voice/bông-hoa-hồng.mp3",
     },
     {
       id: "sunflower",
@@ -132,7 +132,7 @@ export const C4_VIS_01_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "garden",
-      audio_path: "/audio/vi/c4/sunflower.mp3",
+      audio_path: "/audio/voice/hoa-hướng-dương.mp3",
     },
     {
       id: "butterfly",
@@ -147,7 +147,7 @@ export const C4_VIS_01_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "garden",
-      audio_path: "/audio/vi/c4/butterfly.mp3",
+      audio_path: "/audio/voice/chú-bướm-xinh.mp3",
     },
     {
       id: "bird",
@@ -162,7 +162,7 @@ export const C4_VIS_01_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "garden",
-      audio_path: "/audio/vi/c4/bird.mp3",
+      audio_path: "/audio/voice/chú-chim-non.mp3",
     },
     // --- Ngữ liệu WB03: Trái cây & Hình khối ---
     {
@@ -173,7 +173,7 @@ export const C4_VIS_01_DATASET: SkillDataset = {
       category: { type: "trái cây", contour: "tròn có cuống lá" },
       value: 1,
       ordering: 9,
-      audio_path: "/audio/vi/c4/apple.mp3",
+      audio_path: "/audio/voice/quả-táo-đỏ.mp3",
     },
     {
       id: "fruit_banana",
@@ -183,7 +183,7 @@ export const C4_VIS_01_DATASET: SkillDataset = {
       category: { type: "trái cây", contour: "cong lưỡi liềm" },
       value: 2,
       ordering: 10,
-      audio_path: "/audio/vi/c4/banana.mp3",
+      audio_path: "/audio/voice/nải-chuối-vàng.mp3",
     },
     {
       id: "fruit_pineapple",
@@ -193,7 +193,7 @@ export const C4_VIS_01_DATASET: SkillDataset = {
       category: { type: "trái cây", contour: "chùm lá nhọn" },
       value: 3,
       ordering: 11,
-      audio_path: "/audio/vi/c4/pineapple.mp3",
+      audio_path: "/audio/voice/quả-dứa-chín.mp3",
     },
     // --- Ngữ liệu WB03: Đồ chơi & Phương tiện ---
     {
@@ -434,7 +434,7 @@ export const CHANG_05_SYMBOL_HUNT_DATASET: SkillDataset = {
     {
       id: "vis_bee_yellow",
       label: "Ong vàng sọc đen",
-      audio_path: "/audio/voice/montessori/chang05/bee_yellow.mp3",
+      audio_path: "/audio/voice/ong-vàng-sọc-đen.mp3",
       image: { kind: "emoji", ref: "🐝" },
       category: { type: "côn trùng", color: "vàng" },
       contrast_group: "insect_hunt",
@@ -444,7 +444,7 @@ export const CHANG_05_SYMBOL_HUNT_DATASET: SkillDataset = {
     {
       id: "vis_ladybug_red",
       label: "Bọ rùa đỏ chấm bi",
-      audio_path: "/audio/voice/montessori/chang05/ladybug_red.mp3",
+      audio_path: "/audio/voice/bọ-rùa-đỏ-chấm-bi.mp3",
       image: { kind: "emoji", ref: "🐞" },
       category: { type: "côn trùng", color: "đỏ" },
       contrast_group: "insect_hunt",
@@ -454,7 +454,7 @@ export const CHANG_05_SYMBOL_HUNT_DATASET: SkillDataset = {
     {
       id: "vis_butterfly_pink",
       label: "Bướm hồng phấn",
-      audio_path: "/audio/voice/montessori/chang05/butterfly_pink.mp3",
+      audio_path: "/audio/voice/bướm-hồng-phấn.mp3",
       image: { kind: "emoji", ref: "🦋" },
       category: { type: "côn trùng", color: "hồng" },
       contrast_group: "insect_hunt",
@@ -464,7 +464,7 @@ export const CHANG_05_SYMBOL_HUNT_DATASET: SkillDataset = {
     {
       id: "vis_dog_pointy_ear",
       label: "Cún cam tai vểnh",
-      audio_path: "/audio/voice/montessori/chang05/dog_pointy.mp3",
+      audio_path: "/audio/voice/cún-cam-tai-vểnh.mp3",
       image: { kind: "emoji", ref: "🐕" },
       category: { type: "thú cưng", detail: "tai vểnh" },
       contrast_group: "dog_hunt",
@@ -474,7 +474,7 @@ export const CHANG_05_SYMBOL_HUNT_DATASET: SkillDataset = {
     {
       id: "vis_dog_floppy_ear",
       label: "Cún nâu tai cụp",
-      audio_path: "/audio/voice/montessori/chang05/dog_floppy.mp3",
+      audio_path: "/audio/voice/cún-nâu-tai-cụp.mp3",
       image: { kind: "emoji", ref: "🐶" },
       category: { type: "thú cưng", detail: "tai cụp" },
       contrast_group: "dog_hunt",
@@ -484,7 +484,7 @@ export const CHANG_05_SYMBOL_HUNT_DATASET: SkillDataset = {
     {
       id: "vis_gecko_left",
       label: "Tắc kè sọc vàng quay trái",
-      audio_path: "/audio/voice/montessori/chang05/gecko_left.mp3",
+      audio_path: "/audio/voice/tắc-kè-sọc-vàng-quay-trái.mp3",
       image: { kind: "emoji", ref: "🦎" },
       category: { type: "bò sát", orientation: "trái" },
       contrast_group: "gecko_hunt",

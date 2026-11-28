@@ -54,7 +54,7 @@ export const C4_SAF_05_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "safe",
-      audio_path: "/audio/vi/c4/crosswalk_walk.mp3",
+      audio_path: "/audio/voice/vạch-qua-đường.mp3",
     },
     {
       id: "hold_hands",
@@ -69,7 +69,7 @@ export const C4_SAF_05_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "safe",
-      audio_path: "/audio/vi/c4/hold_hands.mp3",
+      audio_path: "/audio/voice/nắm-tay-mẹ.mp3",
     },
     {
       id: "look_both_ways",
@@ -84,7 +84,7 @@ export const C4_SAF_05_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "safe",
-      audio_path: "/audio/vi/c4/look_both_ways.mp3",
+      audio_path: "/audio/voice/quan-sát-đường.mp3",
     },
     {
       id: "wear_helmet",
@@ -99,7 +99,7 @@ export const C4_SAF_05_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "safe",
-      audio_path: "/audio/vi/c4/wear_helmet.mp3",
+      audio_path: "/audio/voice/mũ-bảo-hiểm.mp3",
     },
     {
       id: "run_across",
@@ -114,7 +114,7 @@ export const C4_SAF_05_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "danger",
-      audio_path: "/audio/vi/c4/run_across.mp3",
+      audio_path: "/audio/voice/chạy-qua-đường.mp3",
     },
     {
       id: "play_ball_road",
@@ -129,7 +129,7 @@ export const C4_SAF_05_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "danger",
-      audio_path: "/audio/vi/c4/play_ball_road.mp3",
+      audio_path: "/audio/voice/đá-bóng-đường.mp3",
     },
     {
       id: "climb_fence",
@@ -144,7 +144,7 @@ export const C4_SAF_05_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "danger",
-      audio_path: "/audio/vi/c4/climb_fence.mp3",
+      audio_path: "/audio/voice/trèo-rào-chắn.mp3",
     },
     {
       id: "ignore_red_light",
@@ -159,7 +159,7 @@ export const C4_SAF_05_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "danger",
-      audio_path: "/audio/vi/c4/ignore_red_light.mp3",
+      audio_path: "/audio/voice/vượt-đèn-đỏ.mp3",
     },
   ],
   axes: {

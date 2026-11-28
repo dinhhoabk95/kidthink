@@ -55,7 +55,7 @@ export const C4_CAU_03_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/right_water.mp3",
+      audio_path: "/audio/voice/bình-tưới-nước.mp3",
     },
     {
       id: "right_sun",
@@ -70,7 +70,7 @@ export const C4_CAU_03_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/right_sun.mp3",
+      audio_path: "/audio/voice/nắng-mặt-trời.mp3",
     },
     {
       id: "right_switch",
@@ -85,7 +85,7 @@ export const C4_CAU_03_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/right_switch.mp3",
+      audio_path: "/audio/voice/nút-bấm-điện.mp3",
     },
     {
       id: "right_freeze",
@@ -100,7 +100,7 @@ export const C4_CAU_03_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/right_freeze.mp3",
+      audio_path: "/audio/voice/ngăn-tuyết-lạnh.mp3",
     },
     {
       id: "eff_tree_grow",
@@ -115,7 +115,7 @@ export const C4_CAU_03_DATASET: SkillDataset = {
       contrast_group: "effect",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/eff_tree_grow.mp3",
+      audio_path: "/audio/voice/cây-xanh-tốt.mp3",
     },
     {
       id: "eff_cloth_dry",
@@ -130,7 +130,7 @@ export const C4_CAU_03_DATASET: SkillDataset = {
       contrast_group: "effect",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/eff_cloth_dry.mp3",
+      audio_path: "/audio/voice/quần-áo-khô.mp3",
     },
     {
       id: "eff_lamp_on",
@@ -145,7 +145,7 @@ export const C4_CAU_03_DATASET: SkillDataset = {
       contrast_group: "effect",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/eff_lamp_on.mp3",
+      audio_path: "/audio/voice/bóng-đèn-sáng.mp3",
     },
     {
       id: "eff_ice_made",
@@ -160,7 +160,7 @@ export const C4_CAU_03_DATASET: SkillDataset = {
       contrast_group: "effect",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/eff_ice_made.mp3",
+      audio_path: "/audio/voice/viên-đá-cứng.mp3",
     },
   ],
   relations: [

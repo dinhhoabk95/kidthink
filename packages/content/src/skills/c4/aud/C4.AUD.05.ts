@@ -54,7 +54,7 @@ export const C4_AUD_05_DATASET: SkillDataset = {
       contrast_group: "high_pitch",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/aud_bird_high.mp3",
+      audio_path: "/audio/voice/tiếng-chim-hót.mp3",
     },
     {
       id: "aud_bell_high",
@@ -69,7 +69,7 @@ export const C4_AUD_05_DATASET: SkillDataset = {
       contrast_group: "high_pitch",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/aud_bell_high.mp3",
+      audio_path: "/audio/voice/tiếng-chuông-cao.mp3",
     },
     {
       id: "aud_flute_high",
@@ -84,7 +84,7 @@ export const C4_AUD_05_DATASET: SkillDataset = {
       contrast_group: "high_pitch",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/aud_flute_high.mp3",
+      audio_path: "/audio/voice/tiếng-sáo-cao.mp3",
     },
     {
       id: "aud_whistle",
@@ -99,7 +99,7 @@ export const C4_AUD_05_DATASET: SkillDataset = {
       contrast_group: "high_pitch",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/aud_whistle.mp3",
+      audio_path: "/audio/voice/tiếng-còi-cao.mp3",
     },
     {
       id: "aud_drum_bass",
@@ -114,7 +114,7 @@ export const C4_AUD_05_DATASET: SkillDataset = {
       contrast_group: "low_pitch",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/aud_drum_bass.mp3",
+      audio_path: "/audio/voice/tiếng-trống-trầm.mp3",
     },
     {
       id: "aud_frog_bass",
@@ -129,7 +129,7 @@ export const C4_AUD_05_DATASET: SkillDataset = {
       contrast_group: "low_pitch",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/aud_frog_bass.mp3",
+      audio_path: "/audio/voice/tiếng-ếch-trầm.mp3",
     },
     {
       id: "aud_cow_bass",
@@ -144,7 +144,7 @@ export const C4_AUD_05_DATASET: SkillDataset = {
       contrast_group: "low_pitch",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/aud_cow_bass.mp3",
+      audio_path: "/audio/voice/tiếng-bò-trầm.mp3",
     },
     {
       id: "aud_ship_bass",
@@ -159,7 +159,7 @@ export const C4_AUD_05_DATASET: SkillDataset = {
       contrast_group: "low_pitch",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/aud_ship_bass.mp3",
+      audio_path: "/audio/voice/tiếng-còi-tàu.mp3",
     },
   ],
   relations: [

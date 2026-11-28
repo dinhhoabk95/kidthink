@@ -55,7 +55,7 @@ export const C4_SOC_07_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "appearance",
-      audio_path: "/audio/vi/c4/boy_hair.mp3",
+      audio_path: "/audio/voice/bạn-tóc-ngắn.mp3",
     },
     {
       id: "girl_hair",
@@ -70,7 +70,7 @@ export const C4_SOC_07_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "appearance",
-      audio_path: "/audio/vi/c4/girl_hair.mp3",
+      audio_path: "/audio/voice/bạn-tóc-dài.mp3",
     },
     {
       id: "curly_hair",
@@ -85,7 +85,7 @@ export const C4_SOC_07_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "appearance",
-      audio_path: "/audio/vi/c4/curly_hair.mp3",
+      audio_path: "/audio/voice/bạn-tóc-xoăn.mp3",
     },
     {
       id: "glasses",
@@ -100,7 +100,7 @@ export const C4_SOC_07_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "appearance",
-      audio_path: "/audio/vi/c4/glasses.mp3",
+      audio_path: "/audio/voice/bạn-đeo-kính.mp3",
     },
     {
       id: "soccer",
@@ -115,7 +115,7 @@ export const C4_SOC_07_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "hobby",
-      audio_path: "/audio/vi/c4/soccer.mp3",
+      audio_path: "/audio/voice/môn-bóng-đá.mp3",
     },
     {
       id: "painting",
@@ -130,7 +130,7 @@ export const C4_SOC_07_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "hobby",
-      audio_path: "/audio/vi/c4/painting.mp3",
+      audio_path: "/audio/voice/bảng-vẽ-màu.mp3",
     },
     {
       id: "reading",
@@ -145,7 +145,7 @@ export const C4_SOC_07_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "hobby",
-      audio_path: "/audio/vi/c4/reading.mp3",
+      audio_path: "/audio/voice/sách-truyện-tranh.mp3",
     },
     {
       id: "music",
@@ -160,7 +160,7 @@ export const C4_SOC_07_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "hobby",
-      audio_path: "/audio/vi/c4/music.mp3",
+      audio_path: "/audio/voice/nốt-nhạc-vui.mp3",
     },
   ],
   axes: {

@@ -52,7 +52,7 @@ export const C5_PRN_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "📚",
       },
-      audio_path: "/audio/vi/c5/prn/bien_tiem_sach.mp3",
+      audio_path: "/audio/voice/tiệm-sách.mp3",
       category: {
         type: "biển cửa hàng",
       },
@@ -66,7 +66,7 @@ export const C5_PRN_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🥖",
       },
-      audio_path: "/audio/vi/c5/prn/bien_tiem_banh.mp3",
+      audio_path: "/audio/voice/tiệm-bánh.mp3",
       category: {
         type: "biển cửa hàng",
       },
@@ -80,7 +80,7 @@ export const C5_PRN_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "💊",
       },
-      audio_path: "/audio/vi/c5/prn/bien_quay_thuoc.mp3",
+      audio_path: "/audio/voice/quầy-thuốc.mp3",
       category: {
         type: "biển cửa hàng",
       },
@@ -94,7 +94,7 @@ export const C5_PRN_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "📒",
       },
-      audio_path: "/audio/vi/c5/prn/nhan_dan_vo.mp3",
+      audio_path: "/audio/voice/nhãn-vở.mp3",
       category: {
         type: "nhãn đồ dùng",
       },
@@ -108,7 +108,7 @@ export const C5_PRN_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "✏️",
       },
-      audio_path: "/audio/vi/c5/prn/nhan_hop_but.mp3",
+      audio_path: "/audio/voice/nhãn-hộp-bút.mp3",
       category: {
         type: "nhãn đồ dùng",
       },
@@ -122,7 +122,7 @@ export const C5_PRN_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🎒",
       },
-      audio_path: "/audio/vi/c5/prn/nhan_ba_lo.mp3",
+      audio_path: "/audio/voice/nhãn-ba-lô.mp3",
       category: {
         type: "nhãn đồ dùng",
       },

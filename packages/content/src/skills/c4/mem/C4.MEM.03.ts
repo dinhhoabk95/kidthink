@@ -54,7 +54,7 @@ export const C4_MEM_03_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "fruit",
-      audio_path: "/audio/vi/c4/strawberry.mp3",
+      audio_path: "/audio/voice/quả-dâu-tây.mp3",
     },
     {
       id: "orange",
@@ -69,7 +69,7 @@ export const C4_MEM_03_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "fruit",
-      audio_path: "/audio/vi/c4/orange.mp3",
+      audio_path: "/audio/voice/quả-cam-ngọt.mp3",
     },
     {
       id: "banana",
@@ -84,7 +84,7 @@ export const C4_MEM_03_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "fruit",
-      audio_path: "/audio/vi/c4/banana.mp3",
+      audio_path: "/audio/voice/quả-chuối-vàng.mp3",
     },
     {
       id: "green_apple",
@@ -99,7 +99,7 @@ export const C4_MEM_03_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "fruit",
-      audio_path: "/audio/vi/c4/green_apple.mp3",
+      audio_path: "/audio/voice/quả-táo-xanh.mp3",
     },
     {
       id: "rose",
@@ -114,7 +114,7 @@ export const C4_MEM_03_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "flower",
-      audio_path: "/audio/vi/c4/rose.mp3",
+      audio_path: "/audio/voice/bông-hoa-hồng.mp3",
     },
     {
       id: "tulip",
@@ -129,7 +129,7 @@ export const C4_MEM_03_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "flower",
-      audio_path: "/audio/vi/c4/tulip.mp3",
+      audio_path: "/audio/voice/bông-hoa-tu-líp.mp3",
     },
     {
       id: "sunflower",
@@ -144,7 +144,7 @@ export const C4_MEM_03_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "flower",
-      audio_path: "/audio/vi/c4/sunflower.mp3",
+      audio_path: "/audio/voice/hoa-hướng-dương.mp3",
     },
     {
       id: "lotus",
@@ -159,7 +159,7 @@ export const C4_MEM_03_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "flower",
-      audio_path: "/audio/vi/c4/lotus.mp3",
+      audio_path: "/audio/voice/bông-hoa-sen.mp3",
     },
   ],
   axes: {

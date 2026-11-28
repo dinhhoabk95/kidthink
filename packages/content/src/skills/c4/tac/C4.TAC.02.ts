@@ -54,7 +54,7 @@ export const C4_TAC_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "soft",
-      audio_path: "/audio/vi/c4/teddy.mp3",
+      audio_path: "/audio/voice/gấu-bông-mềm.mp3",
     },
     {
       id: "pillow",
@@ -69,7 +69,7 @@ export const C4_TAC_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "soft",
-      audio_path: "/audio/vi/c4/pillow.mp3",
+      audio_path: "/audio/voice/đệm-ghế-êm.mp3",
     },
     {
       id: "yarn",
@@ -84,7 +84,7 @@ export const C4_TAC_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "soft",
-      audio_path: "/audio/vi/c4/yarn.mp3",
+      audio_path: "/audio/voice/cuộn-len-mềm.mp3",
     },
     {
       id: "scarf",
@@ -99,7 +99,7 @@ export const C4_TAC_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "soft",
-      audio_path: "/audio/vi/c4/scarf.mp3",
+      audio_path: "/audio/voice/khăn-len-ấm.mp3",
     },
     {
       id: "brick",
@@ -114,7 +114,7 @@ export const C4_TAC_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "hard",
-      audio_path: "/audio/vi/c4/brick.mp3",
+      audio_path: "/audio/voice/viên-gạch-cứng.mp3",
     },
     {
       id: "stone",
@@ -129,7 +129,7 @@ export const C4_TAC_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "hard",
-      audio_path: "/audio/vi/c4/stone.mp3",
+      audio_path: "/audio/voice/hòn-đá-rắn.mp3",
     },
     {
       id: "iron_pan",
@@ -144,7 +144,7 @@ export const C4_TAC_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "hard",
-      audio_path: "/audio/vi/c4/iron_pan.mp3",
+      audio_path: "/audio/voice/chảo-sắt-cứng.mp3",
     },
     {
       id: "wood_block",
@@ -159,7 +159,7 @@ export const C4_TAC_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "hard",
-      audio_path: "/audio/vi/c4/wood_block.mp3",
+      audio_path: "/audio/voice/khúc-gỗ-cứng.mp3",
     },
   ],
   axes: {

@@ -54,7 +54,7 @@ export const C4_TOO_03_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "small",
-      audio_path: "/audio/vi/c4/ant.mp3",
+      audio_path: "/audio/voice/chú-kiến-nhỏ.mp3",
     },
     {
       id: "leaf_pattern",
@@ -69,7 +69,7 @@ export const C4_TOO_03_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "small",
-      audio_path: "/audio/vi/c4/leaf_pattern.mp3",
+      audio_path: "/audio/voice/gân-lá-cây.mp3",
     },
     {
       id: "ladybug",
@@ -84,7 +84,7 @@ export const C4_TOO_03_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "small",
-      audio_path: "/audio/vi/c4/ladybug.mp3",
+      audio_path: "/audio/voice/chú-bọ-rùa.mp3",
     },
     {
       id: "caterpillar",
@@ -99,7 +99,7 @@ export const C4_TOO_03_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "small",
-      audio_path: "/audio/vi/c4/caterpillar.mp3",
+      audio_path: "/audio/voice/chú-sâu-nhỏ.mp3",
     },
     {
       id: "big_tree",
@@ -114,7 +114,7 @@ export const C4_TOO_03_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "large",
-      audio_path: "/audio/vi/c4/big_tree.mp3",
+      audio_path: "/audio/voice/cây-cổ-thụ.mp3",
     },
     {
       id: "house",
@@ -129,7 +129,7 @@ export const C4_TOO_03_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "large",
-      audio_path: "/audio/vi/c4/house.mp3",
+      audio_path: "/audio/voice/ngôi-nhà-cao.mp3",
     },
     {
       id: "big_ball",
@@ -144,7 +144,7 @@ export const C4_TOO_03_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "large",
-      audio_path: "/audio/vi/c4/big_ball.mp3",
+      audio_path: "/audio/voice/quả-bóng-to.mp3",
     },
     {
       id: "elephant",
@@ -159,7 +159,7 @@ export const C4_TOO_03_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "large",
-      audio_path: "/audio/vi/c4/elephant.mp3",
+      audio_path: "/audio/voice/chú-voi-to.mp3",
     },
   ],
   axes: {

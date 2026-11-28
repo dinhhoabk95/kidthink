@@ -59,7 +59,7 @@ export const C5_ONS_03_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c5/ons/am_l.mp3",
+      audio_path: "/audio/voice/âm-đầu-l-chiếc-lá.mp3",
     },
     {
       id: "ons_m",
@@ -76,7 +76,7 @@ export const C5_ONS_03_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c5/ons/am_m.mp3",
+      audio_path: "/audio/voice/âm-đầu-m-con-mèo.mp3",
     },
     {
       id: "ons_n",
@@ -93,7 +93,7 @@ export const C5_ONS_03_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c5/ons/am_n.mp3",
+      audio_path: "/audio/voice/âm-đầu-n-cây-nấm.mp3",
     },
     {
       id: "ons_ng_ngh",
@@ -110,7 +110,7 @@ export const C5_ONS_03_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c5/ons/am_ng.mp3",
+      audio_path: "/audio/voice/âm-đầu-ng-ngh-bắp-ngô.mp3",
     },
     {
       id: "ons_nh",
@@ -127,7 +127,7 @@ export const C5_ONS_03_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 5,
       ordering: 5,
-      audio_path: "/audio/vi/c5/ons/am_nh.mp3",
+      audio_path: "/audio/voice/âm-đầu-nh-ngôi-nhà.mp3",
     },
     {
       id: "ons_p",
@@ -144,7 +144,7 @@ export const C5_ONS_03_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 6,
       ordering: 6,
-      audio_path: "/audio/vi/c5/ons/am_p.mp3",
+      audio_path: "/audio/voice/âm-đầu-p-cục-pin.mp3",
     },
   ],
   axes: {

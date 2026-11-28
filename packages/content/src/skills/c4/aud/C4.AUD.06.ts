@@ -54,7 +54,7 @@ export const C4_AUD_06_DATASET: SkillDataset = {
       contrast_group: "percussion",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/aud_inst_drum.mp3",
+      audio_path: "/audio/voice/tiếng-trống-vang.mp3",
     },
     {
       id: "aud_inst_bell",
@@ -69,7 +69,7 @@ export const C4_AUD_06_DATASET: SkillDataset = {
       contrast_group: "percussion",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/aud_inst_bell.mp3",
+      audio_path: "/audio/voice/tiếng-chuông-gõ.mp3",
     },
     {
       id: "aud_inst_maraca",
@@ -84,7 +84,7 @@ export const C4_AUD_06_DATASET: SkillDataset = {
       contrast_group: "percussion",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/aud_inst_maraca.mp3",
+      audio_path: "/audio/voice/tiếng-lục-lạc.mp3",
     },
     {
       id: "aud_inst_woodblock",
@@ -99,7 +99,7 @@ export const C4_AUD_06_DATASET: SkillDataset = {
       contrast_group: "percussion",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/aud_inst_woodblock.mp3",
+      audio_path: "/audio/voice/tiếng-mõ-gỗ.mp3",
     },
     {
       id: "aud_inst_guitar",
@@ -114,7 +114,7 @@ export const C4_AUD_06_DATASET: SkillDataset = {
       contrast_group: "string",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/aud_inst_guitar.mp3",
+      audio_path: "/audio/voice/tiếng-đàn-ghi-ta.mp3",
     },
     {
       id: "aud_inst_violin",
@@ -129,7 +129,7 @@ export const C4_AUD_06_DATASET: SkillDataset = {
       contrast_group: "string",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/aud_inst_violin.mp3",
+      audio_path: "/audio/voice/tiếng-đàn-vĩ-cầm.mp3",
     },
     {
       id: "aud_inst_piano",
@@ -144,7 +144,7 @@ export const C4_AUD_06_DATASET: SkillDataset = {
       contrast_group: "string",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/aud_inst_piano.mp3",
+      audio_path: "/audio/voice/tiếng-đàn-pi-a-nô.mp3",
     },
     {
       id: "aud_inst_harp",
@@ -159,7 +159,7 @@ export const C4_AUD_06_DATASET: SkillDataset = {
       contrast_group: "string",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/aud_inst_harp.mp3",
+      audio_path: "/audio/voice/tiếng-đàn-hạc.mp3",
     },
   ],
   relations: [

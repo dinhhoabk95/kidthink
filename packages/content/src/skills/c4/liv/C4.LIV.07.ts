@@ -55,7 +55,7 @@ export const C4_LIV_07_DATASET: SkillDataset = {
       contrast_group: "butterfly",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/cyc_egg.mp3",
+      audio_path: "/audio/voice/trứng-bướm-nhỏ.mp3",
     },
     {
       id: "cyc_caterpillar",
@@ -70,7 +70,7 @@ export const C4_LIV_07_DATASET: SkillDataset = {
       contrast_group: "butterfly",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/cyc_caterpillar.mp3",
+      audio_path: "/audio/voice/sâu-bướm-non.mp3",
     },
     {
       id: "cyc_pupa",
@@ -85,7 +85,7 @@ export const C4_LIV_07_DATASET: SkillDataset = {
       contrast_group: "butterfly",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/cyc_pupa.mp3",
+      audio_path: "/audio/voice/kén-lá-vàng.mp3",
     },
     {
       id: "cyc_butterfly",
@@ -100,7 +100,7 @@ export const C4_LIV_07_DATASET: SkillDataset = {
       contrast_group: "butterfly",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/cyc_butterfly.mp3",
+      audio_path: "/audio/voice/bướm-lượn-bay.mp3",
     },
     {
       id: "cyc_seed",
@@ -115,7 +115,7 @@ export const C4_LIV_07_DATASET: SkillDataset = {
       contrast_group: "plant",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/cyc_seed.mp3",
+      audio_path: "/audio/voice/hạt-dẻ-gieo.mp3",
     },
     {
       id: "cyc_sprout",
@@ -130,7 +130,7 @@ export const C4_LIV_07_DATASET: SkillDataset = {
       contrast_group: "plant",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/cyc_sprout.mp3",
+      audio_path: "/audio/voice/mầm-non-nhú.mp3",
     },
     {
       id: "cyc_flower",
@@ -145,7 +145,7 @@ export const C4_LIV_07_DATASET: SkillDataset = {
       contrast_group: "plant",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/cyc_flower.mp3",
+      audio_path: "/audio/voice/cây-nở-hoa.mp3",
     },
     {
       id: "cyc_fruit",
@@ -160,7 +160,7 @@ export const C4_LIV_07_DATASET: SkillDataset = {
       contrast_group: "plant",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/cyc_fruit.mp3",
+      audio_path: "/audio/voice/cây-táo-sai-quả.mp3",
     },
   ],
   relations: [

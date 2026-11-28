@@ -55,7 +55,7 @@ export const C4_CAU_05_DATASET: SkillDataset = {
       contrast_group: "plant",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/seq_seed.mp3",
+      audio_path: "/audio/voice/hạt-dẻ-giống.mp3",
     },
     {
       id: "seq_sprout",
@@ -70,7 +70,7 @@ export const C4_CAU_05_DATASET: SkillDataset = {
       contrast_group: "plant",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/seq_sprout.mp3",
+      audio_path: "/audio/voice/mầm-non-nhú.mp3",
     },
     {
       id: "seq_flower",
@@ -85,7 +85,7 @@ export const C4_CAU_05_DATASET: SkillDataset = {
       contrast_group: "plant",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/seq_flower.mp3",
+      audio_path: "/audio/voice/bông-hoa-nở.mp3",
     },
     {
       id: "seq_fruit",
@@ -100,7 +100,7 @@ export const C4_CAU_05_DATASET: SkillDataset = {
       contrast_group: "plant",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/seq_fruit.mp3",
+      audio_path: "/audio/voice/quả-táo-chín.mp3",
     },
     {
       id: "seq_egg",
@@ -115,7 +115,7 @@ export const C4_CAU_05_DATASET: SkillDataset = {
       contrast_group: "animal",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/seq_egg.mp3",
+      audio_path: "/audio/voice/quả-trứng-tròn.mp3",
     },
     {
       id: "seq_hatch",
@@ -130,7 +130,7 @@ export const C4_CAU_05_DATASET: SkillDataset = {
       contrast_group: "animal",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/seq_hatch.mp3",
+      audio_path: "/audio/voice/trứng-nứt-vỏ.mp3",
     },
     {
       id: "seq_chick",
@@ -145,7 +145,7 @@ export const C4_CAU_05_DATASET: SkillDataset = {
       contrast_group: "animal",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/seq_chick.mp3",
+      audio_path: "/audio/voice/gà-con-xinh.mp3",
     },
     {
       id: "seq_hen",
@@ -160,7 +160,7 @@ export const C4_CAU_05_DATASET: SkillDataset = {
       contrast_group: "animal",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/seq_hen.mp3",
+      audio_path: "/audio/voice/gà-mẹ-lớn.mp3",
     },
   ],
   relations: [

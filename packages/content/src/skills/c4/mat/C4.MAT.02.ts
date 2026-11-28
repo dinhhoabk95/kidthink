@@ -54,7 +54,7 @@ export const C4_MAT_02_DATASET: SkillDataset = {
       contrast_group: "hot",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/mat_hot_soup.mp3",
+      audio_path: "/audio/voice/nồi-súp-nóng.mp3",
     },
     {
       id: "mat_hot_tea",
@@ -69,7 +69,7 @@ export const C4_MAT_02_DATASET: SkillDataset = {
       contrast_group: "hot",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/mat_hot_tea.mp3",
+      audio_path: "/audio/voice/tách-trà-nóng.mp3",
     },
     {
       id: "mat_hot_sun",
@@ -84,7 +84,7 @@ export const C4_MAT_02_DATASET: SkillDataset = {
       contrast_group: "hot",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/mat_hot_sun.mp3",
+      audio_path: "/audio/voice/mặt-trời-nóng.mp3",
     },
     {
       id: "mat_hot_fire",
@@ -99,7 +99,7 @@ export const C4_MAT_02_DATASET: SkillDataset = {
       contrast_group: "hot",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/mat_hot_fire.mp3",
+      audio_path: "/audio/voice/ngọn-lửa-hồng.mp3",
     },
     {
       id: "mat_cold_icecream",
@@ -114,7 +114,7 @@ export const C4_MAT_02_DATASET: SkillDataset = {
       contrast_group: "cold",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/mat_cold_icecream.mp3",
+      audio_path: "/audio/voice/cây-kem-mát-lạnh.mp3",
     },
     {
       id: "mat_cold_ice",
@@ -129,7 +129,7 @@ export const C4_MAT_02_DATASET: SkillDataset = {
       contrast_group: "cold",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/mat_cold_ice.mp3",
+      audio_path: "/audio/voice/viên-đá-lạnh-buốt.mp3",
     },
     {
       id: "mat_cold_snowman",
@@ -144,7 +144,7 @@ export const C4_MAT_02_DATASET: SkillDataset = {
       contrast_group: "cold",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/mat_cold_snowman.mp3",
+      audio_path: "/audio/voice/người-tuyết-trắng.mp3",
     },
     {
       id: "mat_cold_snowflake",
@@ -159,7 +159,7 @@ export const C4_MAT_02_DATASET: SkillDataset = {
       contrast_group: "cold",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/mat_cold_snowflake.mp3",
+      audio_path: "/audio/voice/bông-tuyết-rơi.mp3",
     },
   ],
   relations: [

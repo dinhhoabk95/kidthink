@@ -53,7 +53,7 @@ export const C5_PRN_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "⬅️",
       },
-      audio_path: "/audio/vi/c5/prn/chu_ben_trai.mp3",
+      audio_path: "/audio/voice/chữ-bên-trái.mp3",
       category: {
         type: "hướng trái phải",
       },
@@ -68,7 +68,7 @@ export const C5_PRN_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "↔️",
       },
-      audio_path: "/audio/vi/c5/prn/chu_o_giua.mp3",
+      audio_path: "/audio/voice/chữ-ở-giữa.mp3",
       category: {
         type: "hướng trái phải",
       },
@@ -83,7 +83,7 @@ export const C5_PRN_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "➡️",
       },
-      audio_path: "/audio/vi/c5/prn/chu_ben_phai.mp3",
+      audio_path: "/audio/voice/chữ-bên-phải.mp3",
       category: {
         type: "hướng trái phải",
       },
@@ -98,7 +98,7 @@ export const C5_PRN_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "⬆️",
       },
-      audio_path: "/audio/vi/c5/prn/dong_o_tren.mp3",
+      audio_path: "/audio/voice/dòng-ở-trên.mp3",
       category: {
         type: "hướng trên dưới",
       },
@@ -113,7 +113,7 @@ export const C5_PRN_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "↕️",
       },
-      audio_path: "/audio/vi/c5/prn/dong_o_giua.mp3",
+      audio_path: "/audio/voice/dòng-ở-giữa.mp3",
       category: {
         type: "hướng trên dưới",
       },
@@ -128,7 +128,7 @@ export const C5_PRN_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "⬇️",
       },
-      audio_path: "/audio/vi/c5/prn/dong_o_duoi.mp3",
+      audio_path: "/audio/voice/dòng-ở-dưới.mp3",
       category: {
         type: "hướng trên dưới",
       },

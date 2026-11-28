@@ -54,7 +54,7 @@ export const C4_SAF_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "guide",
-      audio_path: "/audio/vi/c4/pedestrian_sign.mp3",
+      audio_path: "/audio/voice/biển-lối-đi.mp3",
     },
     {
       id: "hospital_sign",
@@ -69,7 +69,7 @@ export const C4_SAF_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "guide",
-      audio_path: "/audio/vi/c4/hospital_sign.mp3",
+      audio_path: "/audio/voice/biển-bệnh-viện.mp3",
     },
     {
       id: "bus_stop_sign",
@@ -84,7 +84,7 @@ export const C4_SAF_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "guide",
-      audio_path: "/audio/vi/c4/bus_stop_sign.mp3",
+      audio_path: "/audio/voice/biển-bến-xe.mp3",
     },
     {
       id: "traffic_light_sign",
@@ -99,7 +99,7 @@ export const C4_SAF_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "guide",
-      audio_path: "/audio/vi/c4/traffic_light_sign.mp3",
+      audio_path: "/audio/voice/biển-cột-đèn.mp3",
     },
     {
       id: "stop_sign",
@@ -114,7 +114,7 @@ export const C4_SAF_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "warning",
-      audio_path: "/audio/vi/c4/stop_sign.mp3",
+      audio_path: "/audio/voice/biển-dừng-lại.mp3",
     },
     {
       id: "no_entry_sign",
@@ -129,7 +129,7 @@ export const C4_SAF_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "warning",
-      audio_path: "/audio/vi/c4/no_entry_sign.mp3",
+      audio_path: "/audio/voice/biển-đường-cấm.mp3",
     },
     {
       id: "warning_fire_sign",
@@ -144,7 +144,7 @@ export const C4_SAF_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "warning",
-      audio_path: "/audio/vi/c4/warning_fire_sign.mp3",
+      audio_path: "/audio/voice/biển-có-lửa.mp3",
     },
     {
       id: "work_sign",
@@ -159,7 +159,7 @@ export const C4_SAF_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "warning",
-      audio_path: "/audio/vi/c4/work_sign.mp3",
+      audio_path: "/audio/voice/biển-rào-chắn.mp3",
     },
   ],
   axes: {

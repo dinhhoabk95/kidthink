@@ -55,7 +55,7 @@ export const C4_LIV_05_DATASET: SkillDataset = {
       contrast_group: "water",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/hab_fish.mp3",
+      audio_path: "/audio/voice/chú-cá-vàng.mp3",
     },
     {
       id: "hab_dolphin",
@@ -70,7 +70,7 @@ export const C4_LIV_05_DATASET: SkillDataset = {
       contrast_group: "water",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/hab_dolphin.mp3",
+      audio_path: "/audio/voice/chú-cá-heo.mp3",
     },
     {
       id: "hab_crab",
@@ -85,7 +85,7 @@ export const C4_LIV_05_DATASET: SkillDataset = {
       contrast_group: "water",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/hab_crab.mp3",
+      audio_path: "/audio/voice/chú-cua-biển.mp3",
     },
     {
       id: "hab_octopus",
@@ -100,7 +100,7 @@ export const C4_LIV_05_DATASET: SkillDataset = {
       contrast_group: "water",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/hab_octopus.mp3",
+      audio_path: "/audio/voice/chú-bạch-tuộc.mp3",
     },
     {
       id: "hab_dog",
@@ -115,7 +115,7 @@ export const C4_LIV_05_DATASET: SkillDataset = {
       contrast_group: "land",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/hab_dog.mp3",
+      audio_path: "/audio/voice/chú-cún-con.mp3",
     },
     {
       id: "hab_cat",
@@ -130,7 +130,7 @@ export const C4_LIV_05_DATASET: SkillDataset = {
       contrast_group: "land",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/hab_cat.mp3",
+      audio_path: "/audio/voice/chú-mèo-mướp.mp3",
     },
     {
       id: "hab_bird",
@@ -145,7 +145,7 @@ export const C4_LIV_05_DATASET: SkillDataset = {
       contrast_group: "land",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/hab_bird.mp3",
+      audio_path: "/audio/voice/chú-chim-sẻ.mp3",
     },
     {
       id: "hab_elephant",
@@ -160,7 +160,7 @@ export const C4_LIV_05_DATASET: SkillDataset = {
       contrast_group: "land",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/hab_elephant.mp3",
+      audio_path: "/audio/voice/chú-voi-con.mp3",
     },
   ],
   relations: [

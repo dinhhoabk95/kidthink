@@ -57,7 +57,7 @@ export const C4_VIS_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "toy",
-      audio_path: "/audio/vi/c4/ball.mp3",
+      audio_path: "/audio/voice/quả-bóng-nảy.mp3",
     },
     {
       id: "teddy",
@@ -72,7 +72,7 @@ export const C4_VIS_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "toy",
-      audio_path: "/audio/vi/c4/teddy.mp3",
+      audio_path: "/audio/voice/chú-gấu-bông.mp3",
     },
     {
       id: "car",
@@ -87,7 +87,7 @@ export const C4_VIS_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "toy",
-      audio_path: "/audio/vi/c4/car.mp3",
+      audio_path: "/audio/voice/xe-ô-tô-con.mp3",
     },
     {
       id: "blocks",
@@ -102,7 +102,7 @@ export const C4_VIS_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "toy",
-      audio_path: "/audio/vi/c4/blocks.mp3",
+      audio_path: "/audio/voice/viên-gạch-đỏ.mp3",
     },
     {
       id: "book",
@@ -117,7 +117,7 @@ export const C4_VIS_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "tool",
-      audio_path: "/audio/vi/c4/book.mp3",
+      audio_path: "/audio/voice/quyển-sách-tranh.mp3",
     },
     {
       id: "crayons",
@@ -132,7 +132,7 @@ export const C4_VIS_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "tool",
-      audio_path: "/audio/vi/c4/crayons.mp3",
+      audio_path: "/audio/voice/bút-sáp-màu.mp3",
     },
     {
       id: "backpack",
@@ -147,7 +147,7 @@ export const C4_VIS_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "tool",
-      audio_path: "/audio/vi/c4/backpack.mp3",
+      audio_path: "/audio/voice/chiếc-cặp-sách.mp3",
     },
     {
       id: "scissors",
@@ -162,7 +162,7 @@ export const C4_VIS_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "tool",
-      audio_path: "/audio/vi/c4/scissors.mp3",
+      audio_path: "/audio/voice/cái-kéo-nhỏ.mp3",
     },
   ],
   axes: {

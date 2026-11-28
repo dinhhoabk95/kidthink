@@ -54,7 +54,7 @@ export const C4_EXP_03_DATASET: SkillDataset = {
       contrast_group: "dissolve",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/sol_salt.mp3",
+      audio_path: "/audio/voice/hạt-muối-trắng.mp3",
     },
     {
       id: "sol_sugar",
@@ -69,7 +69,7 @@ export const C4_EXP_03_DATASET: SkillDataset = {
       contrast_group: "dissolve",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/sol_sugar.mp3",
+      audio_path: "/audio/voice/viên-kẹo-đường.mp3",
     },
     {
       id: "sol_honey",
@@ -84,7 +84,7 @@ export const C4_EXP_03_DATASET: SkillDataset = {
       contrast_group: "dissolve",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/sol_honey.mp3",
+      audio_path: "/audio/voice/mật-ong-thơm.mp3",
     },
     {
       id: "sol_milk",
@@ -99,7 +99,7 @@ export const C4_EXP_03_DATASET: SkillDataset = {
       contrast_group: "dissolve",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/sol_milk.mp3",
+      audio_path: "/audio/voice/bột-sữa-trắng.mp3",
     },
     {
       id: "insol_pebble",
@@ -114,7 +114,7 @@ export const C4_EXP_03_DATASET: SkillDataset = {
       contrast_group: "remain",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/insol_pebble.mp3",
+      audio_path: "/audio/voice/viên-sỏi-đá.mp3",
     },
     {
       id: "insol_bean",
@@ -129,7 +129,7 @@ export const C4_EXP_03_DATASET: SkillDataset = {
       contrast_group: "remain",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/insol_bean.mp3",
+      audio_path: "/audio/voice/hạt-đậu-khô.mp3",
     },
     {
       id: "insol_spoon",
@@ -144,7 +144,7 @@ export const C4_EXP_03_DATASET: SkillDataset = {
       contrast_group: "remain",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/insol_spoon.mp3",
+      audio_path: "/audio/voice/cái-muỗng-inox.mp3",
     },
     {
       id: "insol_wood",
@@ -159,7 +159,7 @@ export const C4_EXP_03_DATASET: SkillDataset = {
       contrast_group: "remain",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/insol_wood.mp3",
+      audio_path: "/audio/voice/khối-gỗ-nhỏ.mp3",
     },
   ],
   relations: [

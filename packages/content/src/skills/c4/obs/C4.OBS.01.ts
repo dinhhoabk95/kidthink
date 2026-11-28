@@ -55,7 +55,7 @@ export const C4_OBS_01_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "sky",
-      audio_path: "/audio/vi/c4/sun.mp3",
+      audio_path: "/audio/voice/ông-mặt-trời.mp3",
     },
     {
       id: "rainbow",
@@ -70,7 +70,7 @@ export const C4_OBS_01_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "sky",
-      audio_path: "/audio/vi/c4/rainbow.mp3",
+      audio_path: "/audio/voice/cầu-vồng-đẹp.mp3",
     },
     {
       id: "cloud",
@@ -85,7 +85,7 @@ export const C4_OBS_01_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "sky",
-      audio_path: "/audio/vi/c4/cloud.mp3",
+      audio_path: "/audio/voice/đám-mây-trắng.mp3",
     },
     {
       id: "star",
@@ -100,7 +100,7 @@ export const C4_OBS_01_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "sky",
-      audio_path: "/audio/vi/c4/star.mp3",
+      audio_path: "/audio/voice/ngôi-sao-sáng.mp3",
     },
     {
       id: "tree",
@@ -115,7 +115,7 @@ export const C4_OBS_01_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "plant",
-      audio_path: "/audio/vi/c4/tree.mp3",
+      audio_path: "/audio/voice/cây-xanh-mát.mp3",
     },
     {
       id: "sunflower",
@@ -130,7 +130,7 @@ export const C4_OBS_01_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "plant",
-      audio_path: "/audio/vi/c4/sunflower.mp3",
+      audio_path: "/audio/voice/hoa-hướng-dương.mp3",
     },
     {
       id: "tulip",
@@ -145,7 +145,7 @@ export const C4_OBS_01_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "plant",
-      audio_path: "/audio/vi/c4/tulip.mp3",
+      audio_path: "/audio/voice/bông-hoa-tu-líp.mp3",
     },
     {
       id: "leaf",
@@ -160,7 +160,7 @@ export const C4_OBS_01_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "plant",
-      audio_path: "/audio/vi/c4/leaf.mp3",
+      audio_path: "/audio/voice/chiếc-lá-phong.mp3",
     },
   ],
   axes: {

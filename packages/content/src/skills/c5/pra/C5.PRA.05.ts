@@ -58,7 +58,7 @@ export const C5_PRA_05_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c5/pra/ke_chuyen_lop_hoc.mp3",
+      audio_path: "/audio/voice/kể-chuyện-ở-lớp.mp3",
     },
     {
       id: "pra_ke_tro_choi",
@@ -74,7 +74,7 @@ export const C5_PRA_05_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c5/pra/ke_tro_choi_ban.mp3",
+      audio_path: "/audio/voice/kể-trò-chơi-với-bạn.mp3",
     },
     {
       id: "pra_ke_bua_an",
@@ -90,7 +90,7 @@ export const C5_PRA_05_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c5/pra/ke_bua_an_trua.mp3",
+      audio_path: "/audio/voice/kể-bữa-ăn-trưa-ngon.mp3",
     },
     {
       id: "pra_ke_khen_thuong",
@@ -106,7 +106,7 @@ export const C5_PRA_05_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c5/pra/ke_phieu_be_ngoan.mp3",
+      audio_path: "/audio/voice/kể-được-khen-thưởng.mp3",
     },
     {
       id: "pra_ke_di_choi",
@@ -122,7 +122,7 @@ export const C5_PRA_05_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 5,
       ordering: 5,
-      audio_path: "/audio/vi/c5/pra/ke_di_cong_vien.mp3",
+      audio_path: "/audio/voice/kể-chuyến-đi-dạo.mp3",
     },
     {
       id: "pra_ke_ve_tranh",
@@ -138,7 +138,7 @@ export const C5_PRA_05_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 6,
       ordering: 6,
-      audio_path: "/audio/vi/c5/pra/ke_buc_tranh_ve.mp3",
+      audio_path: "/audio/voice/kể-bức-tranh-bé-vẽ.mp3",
     },
   ],
   axes: {

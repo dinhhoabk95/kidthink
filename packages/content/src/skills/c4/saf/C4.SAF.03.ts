@@ -55,7 +55,7 @@ export const C4_SAF_03_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "safe",
-      audio_path: "/audio/vi/c4/teddy.mp3",
+      audio_path: "/audio/voice/gấu-bông-mềm.mp3",
     },
     {
       id: "ball",
@@ -70,7 +70,7 @@ export const C4_SAF_03_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "safe",
-      audio_path: "/audio/vi/c4/ball.mp3",
+      audio_path: "/audio/voice/quả-bóng-nhựa.mp3",
     },
     {
       id: "book",
@@ -85,7 +85,7 @@ export const C4_SAF_03_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "safe",
-      audio_path: "/audio/vi/c4/book.mp3",
+      audio_path: "/audio/voice/quyển-sách-xanh.mp3",
     },
     {
       id: "blocks",
@@ -100,7 +100,7 @@ export const C4_SAF_03_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "safe",
-      audio_path: "/audio/vi/c4/blocks.mp3",
+      audio_path: "/audio/voice/khúc-gỗ-nhỏ.mp3",
     },
     {
       id: "knife",
@@ -115,7 +115,7 @@ export const C4_SAF_03_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "danger",
-      audio_path: "/audio/vi/c4/knife.mp3",
+      audio_path: "/audio/voice/con-dao-nhọn.mp3",
     },
     {
       id: "scissors",
@@ -130,7 +130,7 @@ export const C4_SAF_03_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "danger",
-      audio_path: "/audio/vi/c4/scissors.mp3",
+      audio_path: "/audio/voice/cây-kéo-nhọn.mp3",
     },
     {
       id: "fire",
@@ -145,7 +145,7 @@ export const C4_SAF_03_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "danger",
-      audio_path: "/audio/vi/c4/fire.mp3",
+      audio_path: "/audio/voice/ngọn-lửa-nóng.mp3",
     },
     {
       id: "socket",
@@ -160,7 +160,7 @@ export const C4_SAF_03_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "danger",
-      audio_path: "/audio/vi/c4/socket.mp3",
+      audio_path: "/audio/voice/ổ-cắm-điện.mp3",
     },
   ],
   axes: {

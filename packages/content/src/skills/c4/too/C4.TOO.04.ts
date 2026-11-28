@@ -54,7 +54,7 @@ export const C4_TOO_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "length",
-      audio_path: "/audio/vi/c4/ruler.mp3",
+      audio_path: "/audio/voice/thước-kẻ-thẳng.mp3",
     },
     {
       id: "tape_measure",
@@ -69,7 +69,7 @@ export const C4_TOO_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "length",
-      audio_path: "/audio/vi/c4/tape_measure.mp3",
+      audio_path: "/audio/voice/thước-tam-giác.mp3",
     },
     {
       id: "pencil_mark",
@@ -84,7 +84,7 @@ export const C4_TOO_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "length",
-      audio_path: "/audio/vi/c4/pencil_mark.mp3",
+      audio_path: "/audio/voice/dải-ruy-băng-đo.mp3",
     },
     {
       id: "tool_box",
@@ -99,7 +99,7 @@ export const C4_TOO_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "length",
-      audio_path: "/audio/vi/c4/tool_box.mp3",
+      audio_path: "/audio/voice/thanh-đo-dài.mp3",
     },
     {
       id: "digital_scale",
@@ -114,7 +114,7 @@ export const C4_TOO_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "weight",
-      audio_path: "/audio/vi/c4/digital_scale.mp3",
+      audio_path: "/audio/voice/chiếc-cân-đĩa.mp3",
     },
     {
       id: "stopwatch",
@@ -129,7 +129,7 @@ export const C4_TOO_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "weight",
-      audio_path: "/audio/vi/c4/stopwatch.mp3",
+      audio_path: "/audio/voice/chiếc-mỏ-neo-nặng.mp3",
     },
     {
       id: "wall_clock",
@@ -144,7 +144,7 @@ export const C4_TOO_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "weight",
-      audio_path: "/audio/vi/c4/wall_clock.mp3",
+      audio_path: "/audio/voice/quả-dưa-nặng.mp3",
     },
     {
       id: "thermometer",
@@ -159,7 +159,7 @@ export const C4_TOO_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "weight",
-      audio_path: "/audio/vi/c4/thermometer.mp3",
+      audio_path: "/audio/voice/bao-gạo-nặng.mp3",
     },
   ],
   axes: {

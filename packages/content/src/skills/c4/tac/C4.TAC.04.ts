@@ -54,7 +54,7 @@ export const C4_TAC_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "light",
-      audio_path: "/audio/vi/c4/feather.mp3",
+      audio_path: "/audio/voice/lông-chim-nhẹ.mp3",
     },
     {
       id: "dry_leaf",
@@ -69,7 +69,7 @@ export const C4_TAC_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "light",
-      audio_path: "/audio/vi/c4/dry_leaf.mp3",
+      audio_path: "/audio/voice/chiếc-lá-khô.mp3",
     },
     {
       id: "balloon",
@@ -84,7 +84,7 @@ export const C4_TAC_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "light",
-      audio_path: "/audio/vi/c4/balloon.mp3",
+      audio_path: "/audio/voice/quả-bóng-bay.mp3",
     },
     {
       id: "paper",
@@ -99,7 +99,7 @@ export const C4_TAC_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "light",
-      audio_path: "/audio/vi/c4/paper.mp3",
+      audio_path: "/audio/voice/mẩu-giấy-nhỏ.mp3",
     },
     {
       id: "water_jug",
@@ -114,7 +114,7 @@ export const C4_TAC_04_DATASET: SkillDataset = {
       value: 5,
       ordering: 5,
       contrast_group: "heavy",
-      audio_path: "/audio/vi/c4/water_jug.mp3",
+      audio_path: "/audio/voice/lọ-thủy-tinh-đầy.mp3",
     },
     {
       id: "heavy_books",
@@ -129,7 +129,7 @@ export const C4_TAC_04_DATASET: SkillDataset = {
       value: 6,
       ordering: 6,
       contrast_group: "heavy",
-      audio_path: "/audio/vi/c4/heavy_books.mp3",
+      audio_path: "/audio/voice/chồng-sách-dày.mp3",
     },
     {
       id: "big_rock",
@@ -144,7 +144,7 @@ export const C4_TAC_04_DATASET: SkillDataset = {
       value: 7,
       ordering: 7,
       contrast_group: "heavy",
-      audio_path: "/audio/vi/c4/big_rock.mp3",
+      audio_path: "/audio/voice/hòn-đá-to.mp3",
     },
     {
       id: "dumbbell",
@@ -159,7 +159,7 @@ export const C4_TAC_04_DATASET: SkillDataset = {
       value: 8,
       ordering: 8,
       contrast_group: "heavy",
-      audio_path: "/audio/vi/c4/dumbbell.mp3",
+      audio_path: "/audio/voice/mỏ-neo-sắt.mp3",
     },
   ],
   axes: {

@@ -54,7 +54,7 @@ export const C4_MAT_07_DATASET: SkillDataset = {
       contrast_group: "receiver",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/wnd_kite.mp3",
+      audio_path: "/audio/voice/cánh-diều-no-gió.mp3",
     },
     {
       id: "wnd_chime",
@@ -69,7 +69,7 @@ export const C4_MAT_07_DATASET: SkillDataset = {
       contrast_group: "receiver",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/wnd_chime.mp3",
+      audio_path: "/audio/voice/chuông-gió-ngân.mp3",
     },
     {
       id: "wnd_boat",
@@ -84,7 +84,7 @@ export const C4_MAT_07_DATASET: SkillDataset = {
       contrast_group: "receiver",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/wnd_boat.mp3",
+      audio_path: "/audio/voice/thuyền-buồm-lướt.mp3",
     },
     {
       id: "wnd_balloon",
@@ -99,7 +99,7 @@ export const C4_MAT_07_DATASET: SkillDataset = {
       contrast_group: "receiver",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/wnd_balloon.mp3",
+      audio_path: "/audio/voice/bóng-bay-lên-cao.mp3",
     },
     {
       id: "wnd_fan",
@@ -114,7 +114,7 @@ export const C4_MAT_07_DATASET: SkillDataset = {
       contrast_group: "source",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/wnd_fan.mp3",
+      audio_path: "/audio/voice/luồng-gió-xoáy.mp3",
     },
     {
       id: "wnd_hand_fan",
@@ -129,7 +129,7 @@ export const C4_MAT_07_DATASET: SkillDataset = {
       contrast_group: "source",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/wnd_hand_fan.mp3",
+      audio_path: "/audio/voice/cái-quạt-nan.mp3",
     },
     {
       id: "wnd_blow",
@@ -144,7 +144,7 @@ export const C4_MAT_07_DATASET: SkillDataset = {
       contrast_group: "source",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/wnd_blow.mp3",
+      audio_path: "/audio/voice/miệng-bé-thổi.mp3",
     },
     {
       id: "wnd_wind",
@@ -159,7 +159,7 @@ export const C4_MAT_07_DATASET: SkillDataset = {
       contrast_group: "source",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/wnd_wind.mp3",
+      audio_path: "/audio/voice/cơn-gió-thổi.mp3",
     },
   ],
   relations: [

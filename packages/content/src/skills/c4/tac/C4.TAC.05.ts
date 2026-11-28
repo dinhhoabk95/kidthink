@@ -57,7 +57,7 @@ export const C4_TAC_05_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "round",
-      audio_path: "/audio/vi/c4/round_ball.mp3",
+      audio_path: "/audio/voice/quả-bóng-tròn.mp3",
     },
     {
       id: "orange",
@@ -72,7 +72,7 @@ export const C4_TAC_05_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "round",
-      audio_path: "/audio/vi/c4/orange.mp3",
+      audio_path: "/audio/voice/quả-cam-tròn.mp3",
     },
     {
       id: "apple",
@@ -87,7 +87,7 @@ export const C4_TAC_05_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "round",
-      audio_path: "/audio/vi/c4/apple.mp3",
+      audio_path: "/audio/voice/quả-táo-ngọt.mp3",
     },
     {
       id: "yarn_ball",
@@ -102,7 +102,7 @@ export const C4_TAC_05_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "round",
-      audio_path: "/audio/vi/c4/yarn_ball.mp3",
+      audio_path: "/audio/voice/cuộn-len-mềm.mp3",
     },
     {
       id: "wooden_block",
@@ -117,7 +117,7 @@ export const C4_TAC_05_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "angular",
-      audio_path: "/audio/vi/c4/wooden_block.mp3",
+      audio_path: "/audio/voice/viên-gạch-vuông.mp3",
     },
     {
       id: "pencil_case",
@@ -132,7 +132,7 @@ export const C4_TAC_05_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "angular",
-      audio_path: "/audio/vi/c4/pencil_case.mp3",
+      audio_path: "/audio/voice/hộp-bút-dài.mp3",
     },
     {
       id: "story_book",
@@ -147,7 +147,7 @@ export const C4_TAC_05_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "angular",
-      audio_path: "/audio/vi/c4/story_book.mp3",
+      audio_path: "/audio/voice/quyển-sách-nhỏ.mp3",
     },
     {
       id: "ruler",
@@ -162,7 +162,7 @@ export const C4_TAC_05_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "angular",
-      audio_path: "/audio/vi/c4/ruler.mp3",
+      audio_path: "/audio/voice/chiếc-thước-dài.mp3",
     },
   ],
   axes: {

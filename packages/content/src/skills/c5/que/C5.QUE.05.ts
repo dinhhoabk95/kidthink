@@ -49,7 +49,7 @@ export const C5_QUE_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🍚",
       },
-      audio_path: "/audio/vi/c5/que/tai_sao_an_com.mp3",
+      audio_path: "/audio/voice/ăn-cơm-vì-đói.mp3",
       category: {
         type: "việc sinh hoạt",
       },
@@ -63,7 +63,7 @@ export const C5_QUE_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🛏️",
       },
-      audio_path: "/audio/vi/c5/que/tai_sao_di_ngu.mp3",
+      audio_path: "/audio/voice/đi-ngủ-vì-buồn-ngủ.mp3",
       category: {
         type: "việc sinh hoạt",
       },
@@ -77,7 +77,7 @@ export const C5_QUE_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🧼",
       },
-      audio_path: "/audio/vi/c5/que/tai_sao_rua_tay.mp3",
+      audio_path: "/audio/voice/rửa-tay-vì-bẩn.mp3",
       category: {
         type: "việc sinh hoạt",
       },
@@ -91,7 +91,7 @@ export const C5_QUE_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "☂️",
       },
-      audio_path: "/audio/vi/c5/que/tai_sao_che_o.mp3",
+      audio_path: "/audio/voice/che-ô-vì-trời-mưa.mp3",
       category: {
         type: "việc thời tiết",
       },
@@ -105,7 +105,7 @@ export const C5_QUE_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🧥",
       },
-      audio_path: "/audio/vi/c5/que/tai_sao_mac_am.mp3",
+      audio_path: "/audio/voice/mặc-áo-vì-trời-rét.mp3",
       category: {
         type: "việc thời tiết",
       },
@@ -119,7 +119,7 @@ export const C5_QUE_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🧢",
       },
-      audio_path: "/audio/vi/c5/que/tai_sao_doi_mu.mp3",
+      audio_path: "/audio/voice/đội-mũ-vì-trời-nắng.mp3",
       category: {
         type: "việc thời tiết",
       },

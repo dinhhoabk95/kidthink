@@ -55,7 +55,7 @@ export const C5_PHO_02_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c5/pho/ca.mp3",
+      audio_path: "/audio/voice/tiếng-cá-1-tiếng.mp3",
     },
     {
       id: "pho_ga",
@@ -71,7 +71,7 @@ export const C5_PHO_02_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c5/pho/ga.mp3",
+      audio_path: "/audio/voice/tiếng-gà-1-tiếng.mp3",
     },
     {
       id: "pho_meo",
@@ -87,7 +87,7 @@ export const C5_PHO_02_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c5/pho/meo.mp3",
+      audio_path: "/audio/voice/tiếng-mèo-1-tiếng.mp3",
     },
     {
       id: "pho_hoa_hong",
@@ -103,7 +103,7 @@ export const C5_PHO_02_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c5/pho/hoa_hong.mp3",
+      audio_path: "/audio/voice/từ-hoa-hồng-2-tiếng.mp3",
     },
     {
       id: "pho_may_bay",
@@ -119,7 +119,7 @@ export const C5_PHO_02_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 5,
       ordering: 5,
-      audio_path: "/audio/vi/c5/pho/may_bay.mp3",
+      audio_path: "/audio/voice/từ-máy-bay-2-tiếng.mp3",
     },
     {
       id: "pho_xe_dap",
@@ -135,7 +135,7 @@ export const C5_PHO_02_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 6,
       ordering: 6,
-      audio_path: "/audio/vi/c5/pho/xe_dap.mp3",
+      audio_path: "/audio/voice/từ-xe-đạp-2-tiếng.mp3",
     },
   ],
   axes: {

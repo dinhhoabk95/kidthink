@@ -54,7 +54,7 @@ export const C4_MEM_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "curve",
-      audio_path: "/audio/vi/c4/star.mp3",
+      audio_path: "/audio/voice/ngôi-sao-vàng.mp3",
     },
     {
       id: "heart",
@@ -69,7 +69,7 @@ export const C4_MEM_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "curve",
-      audio_path: "/audio/vi/c4/heart.mp3",
+      audio_path: "/audio/voice/trái-tim-đỏ.mp3",
     },
     {
       id: "moon",
@@ -84,7 +84,7 @@ export const C4_MEM_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "curve",
-      audio_path: "/audio/vi/c4/moon.mp3",
+      audio_path: "/audio/voice/mặt-trăng-khuyết.mp3",
     },
     {
       id: "sun",
@@ -99,7 +99,7 @@ export const C4_MEM_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "curve",
-      audio_path: "/audio/vi/c4/sun.mp3",
+      audio_path: "/audio/voice/mặt-trời-tròn.mp3",
     },
     {
       id: "square",
@@ -114,7 +114,7 @@ export const C4_MEM_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "angular",
-      audio_path: "/audio/vi/c4/square.mp3",
+      audio_path: "/audio/voice/hình-vuông-xanh.mp3",
     },
     {
       id: "triangle",
@@ -129,7 +129,7 @@ export const C4_MEM_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "angular",
-      audio_path: "/audio/vi/c4/triangle.mp3",
+      audio_path: "/audio/voice/hình-tam-giác.mp3",
     },
     {
       id: "rectangle",
@@ -144,7 +144,7 @@ export const C4_MEM_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "angular",
-      audio_path: "/audio/vi/c4/rectangle.mp3",
+      audio_path: "/audio/voice/quyển-sách-nhỏ.mp3",
     },
     {
       id: "diamond",
@@ -159,7 +159,7 @@ export const C4_MEM_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "angular",
-      audio_path: "/audio/vi/c4/diamond.mp3",
+      audio_path: "/audio/voice/hình-thoi-lam.mp3",
     },
   ],
   axes: {

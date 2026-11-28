@@ -59,7 +59,7 @@ export const C5_PHO_06_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c5/pho/ba.mp3",
+      audio_path: "/audio/voice/tiếng-ba-b-a.mp3",
     },
     {
       id: "pho_ca_nau",
@@ -76,7 +76,7 @@ export const C5_PHO_06_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c5/pho/ca.mp3",
+      audio_path: "/audio/voice/tiếng-cá-c-a.mp3",
     },
     {
       id: "pho_la_cay",
@@ -93,7 +93,7 @@ export const C5_PHO_06_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c5/pho/la.mp3",
+      audio_path: "/audio/voice/tiếng-lá-l-a.mp3",
     },
     {
       id: "pho_bo_vang",
@@ -110,7 +110,7 @@ export const C5_PHO_06_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c5/pho/bo.mp3",
+      audio_path: "/audio/voice/tiếng-bò-b-o.mp3",
     },
     {
       id: "pho_co_xanh",
@@ -127,7 +127,7 @@ export const C5_PHO_06_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 5,
       ordering: 5,
-      audio_path: "/audio/vi/c5/pho/co.mp3",
+      audio_path: "/audio/voice/tiếng-cỏ-c-o.mp3",
     },
     {
       id: "pho_tho_trang",
@@ -144,7 +144,7 @@ export const C5_PHO_06_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 6,
       ordering: 6,
-      audio_path: "/audio/vi/c5/pho/tho.mp3",
+      audio_path: "/audio/voice/tiếng-thỏ-th-o.mp3",
     },
   ],
   axes: {

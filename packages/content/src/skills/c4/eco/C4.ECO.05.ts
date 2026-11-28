@@ -54,7 +54,7 @@ export const C4_ECO_05_DATASET: SkillDataset = {
       contrast_group: "reusable",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/mat_cloth_bag.mp3",
+      audio_path: "/audio/voice/túi-xách-vải.mp3",
     },
     {
       id: "mat_glass_cup",
@@ -69,7 +69,7 @@ export const C4_ECO_05_DATASET: SkillDataset = {
       contrast_group: "reusable",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/mat_glass_cup.mp3",
+      audio_path: "/audio/voice/cốc-thủy-tinh.mp3",
     },
     {
       id: "mat_lunch_box",
@@ -84,7 +84,7 @@ export const C4_ECO_05_DATASET: SkillDataset = {
       contrast_group: "reusable",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/mat_lunch_box.mp3",
+      audio_path: "/audio/voice/hộp-cơm-nhựa.mp3",
     },
     {
       id: "mat_metal_straw",
@@ -99,7 +99,7 @@ export const C4_ECO_05_DATASET: SkillDataset = {
       contrast_group: "reusable",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/mat_metal_straw.mp3",
+      audio_path: "/audio/voice/đôi-đũa-gỗ.mp3",
     },
     {
       id: "mat_plastic_bag",
@@ -114,7 +114,7 @@ export const C4_ECO_05_DATASET: SkillDataset = {
       contrast_group: "disposable",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/mat_plastic_bag.mp3",
+      audio_path: "/audio/voice/túi-nilon-mỏng.mp3",
     },
     {
       id: "mat_paper_cup",
@@ -129,7 +129,7 @@ export const C4_ECO_05_DATASET: SkillDataset = {
       contrast_group: "disposable",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/mat_paper_cup.mp3",
+      audio_path: "/audio/voice/ly-nước-giấy.mp3",
     },
     {
       id: "mat_straw",
@@ -144,7 +144,7 @@ export const C4_ECO_05_DATASET: SkillDataset = {
       contrast_group: "disposable",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/mat_straw.mp3",
+      audio_path: "/audio/voice/hộp-giấy-xốp.mp3",
     },
     {
       id: "mat_tissue",
@@ -159,7 +159,7 @@ export const C4_ECO_05_DATASET: SkillDataset = {
       contrast_group: "disposable",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/mat_tissue.mp3",
+      audio_path: "/audio/voice/khăn-giấy-ăn.mp3",
     },
   ],
   relations: [

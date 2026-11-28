@@ -57,7 +57,7 @@ export const C4_VIS_03_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "creature",
-      audio_path: "/audio/vi/c4/gecko.mp3",
+      audio_path: "/audio/voice/chú-thằn-lằn.mp3",
     },
     {
       id: "caterpillar",
@@ -72,7 +72,7 @@ export const C4_VIS_03_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "creature",
-      audio_path: "/audio/vi/c4/caterpillar.mp3",
+      audio_path: "/audio/voice/chú-sâu-nhỏ.mp3",
     },
     {
       id: "frog",
@@ -87,7 +87,7 @@ export const C4_VIS_03_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "creature",
-      audio_path: "/audio/vi/c4/frog.mp3",
+      audio_path: "/audio/voice/chú-ếch-xanh.mp3",
     },
     {
       id: "ladybug",
@@ -102,7 +102,7 @@ export const C4_VIS_03_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "creature",
-      audio_path: "/audio/vi/c4/ladybug.mp3",
+      audio_path: "/audio/voice/chú-bọ-rùa.mp3",
     },
     {
       id: "golden_key",
@@ -117,7 +117,7 @@ export const C4_VIS_03_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "item",
-      audio_path: "/audio/vi/c4/golden_key.mp3",
+      audio_path: "/audio/voice/chiếc-chìa-khóa.mp3",
     },
     {
       id: "magnifier",
@@ -132,7 +132,7 @@ export const C4_VIS_03_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "item",
-      audio_path: "/audio/vi/c4/magnifier.mp3",
+      audio_path: "/audio/voice/chiếc-kính-lúp.mp3",
     },
     {
       id: "tiny_bell",
@@ -147,7 +147,7 @@ export const C4_VIS_03_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "item",
-      audio_path: "/audio/vi/c4/tiny_bell.mp3",
+      audio_path: "/audio/voice/quả-chuông-nhỏ.mp3",
     },
     {
       id: "button",
@@ -162,7 +162,7 @@ export const C4_VIS_03_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "item",
-      audio_path: "/audio/vi/c4/button.mp3",
+      audio_path: "/audio/voice/nút-cúc-áo.mp3",
     },
   ],
   axes: {

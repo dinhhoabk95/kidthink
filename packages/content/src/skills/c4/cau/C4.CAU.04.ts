@@ -55,7 +55,7 @@ export const C4_CAU_04_DATASET: SkillDataset = {
       contrast_group: "clue",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/cue_paw.mp3",
+      audio_path: "/audio/voice/dấu-chân-nhỏ.mp3",
     },
     {
       id: "cue_smoke",
@@ -70,7 +70,7 @@ export const C4_CAU_04_DATASET: SkillDataset = {
       contrast_group: "clue",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/cue_smoke.mp3",
+      audio_path: "/audio/voice/làn-khói-thổi.mp3",
     },
     {
       id: "cue_puddle",
@@ -85,7 +85,7 @@ export const C4_CAU_04_DATASET: SkillDataset = {
       contrast_group: "clue",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/cue_puddle.mp3",
+      audio_path: "/audio/voice/vũng-nước-đổ.mp3",
     },
     {
       id: "cue_fallen",
@@ -100,7 +100,7 @@ export const C4_CAU_04_DATASET: SkillDataset = {
       contrast_group: "clue",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/cue_fallen.mp3",
+      audio_path: "/audio/voice/lá-rụng-nhiều.mp3",
     },
     {
       id: "hid_puppy",
@@ -115,7 +115,7 @@ export const C4_CAU_04_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/hid_puppy.mp3",
+      audio_path: "/audio/voice/chú-cún-con.mp3",
     },
     {
       id: "hid_fire",
@@ -130,7 +130,7 @@ export const C4_CAU_04_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/hid_fire.mp3",
+      audio_path: "/audio/voice/bếp-lửa-ấm.mp3",
     },
     {
       id: "hid_cup",
@@ -145,7 +145,7 @@ export const C4_CAU_04_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/hid_cup.mp3",
+      audio_path: "/audio/voice/ly-nước-đổ.mp3",
     },
     {
       id: "hid_wind",
@@ -160,7 +160,7 @@ export const C4_CAU_04_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/hid_wind.mp3",
+      audio_path: "/audio/voice/cơn-gió-mạnh.mp3",
     },
   ],
   relations: [

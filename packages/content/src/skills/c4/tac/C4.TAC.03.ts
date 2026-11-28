@@ -54,7 +54,7 @@ export const C4_TAC_03_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "cold",
-      audio_path: "/audio/vi/c4/ice_cube.mp3",
+      audio_path: "/audio/voice/viên-đá-lạnh.mp3",
     },
     {
       id: "snowflake",
@@ -69,7 +69,7 @@ export const C4_TAC_03_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "cold",
-      audio_path: "/audio/vi/c4/snowflake.mp3",
+      audio_path: "/audio/voice/bông-tuyết-lạnh.mp3",
     },
     {
       id: "ice_cream",
@@ -84,7 +84,7 @@ export const C4_TAC_03_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "cold",
-      audio_path: "/audio/vi/c4/ice_cream.mp3",
+      audio_path: "/audio/voice/que-kem-mát.mp3",
     },
     {
       id: "cold_drink",
@@ -99,7 +99,7 @@ export const C4_TAC_03_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "cold",
-      audio_path: "/audio/vi/c4/cold_drink.mp3",
+      audio_path: "/audio/voice/cốc-nước-đá.mp3",
     },
     {
       id: "warm_milk",
@@ -114,7 +114,7 @@ export const C4_TAC_03_DATASET: SkillDataset = {
       value: 5,
       ordering: 5,
       contrast_group: "hot",
-      audio_path: "/audio/vi/c4/warm_milk.mp3",
+      audio_path: "/audio/voice/cốc-sữa-ấm.mp3",
     },
     {
       id: "hot_soup",
@@ -129,7 +129,7 @@ export const C4_TAC_03_DATASET: SkillDataset = {
       value: 6,
       ordering: 6,
       contrast_group: "hot",
-      audio_path: "/audio/vi/c4/hot_soup.mp3",
+      audio_path: "/audio/voice/bát-súp-nóng.mp3",
     },
     {
       id: "hot_tea",
@@ -144,7 +144,7 @@ export const C4_TAC_03_DATASET: SkillDataset = {
       value: 7,
       ordering: 7,
       contrast_group: "hot",
-      audio_path: "/audio/vi/c4/hot_tea.mp3",
+      audio_path: "/audio/voice/ấm-trà-nóng.mp3",
     },
     {
       id: "warm_sun",
@@ -159,7 +159,7 @@ export const C4_TAC_03_DATASET: SkillDataset = {
       value: 8,
       ordering: 8,
       contrast_group: "hot",
-      audio_path: "/audio/vi/c4/warm_sun.mp3",
+      audio_path: "/audio/voice/mặt-trời-ấm.mp3",
     },
   ],
   axes: {

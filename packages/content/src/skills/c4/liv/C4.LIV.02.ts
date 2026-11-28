@@ -54,7 +54,7 @@ export const C4_LIV_02_DATASET: SkillDataset = {
       contrast_group: "head",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/anm_ear.mp3",
+      audio_path: "/audio/voice/đôi-tai-thỏ.mp3",
     },
     {
       id: "anm_eye",
@@ -69,7 +69,7 @@ export const C4_LIV_02_DATASET: SkillDataset = {
       contrast_group: "head",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/anm_eye.mp3",
+      audio_path: "/audio/voice/đôi-mắt-tròn.mp3",
     },
     {
       id: "anm_beak",
@@ -84,7 +84,7 @@ export const C4_LIV_02_DATASET: SkillDataset = {
       contrast_group: "head",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/anm_beak.mp3",
+      audio_path: "/audio/voice/mỏ-chim-nhọn.mp3",
     },
     {
       id: "anm_horn",
@@ -99,7 +99,7 @@ export const C4_LIV_02_DATASET: SkillDataset = {
       contrast_group: "head",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/anm_horn.mp3",
+      audio_path: "/audio/voice/cặp-sừng-hươu.mp3",
     },
     {
       id: "anm_wing",
@@ -114,7 +114,7 @@ export const C4_LIV_02_DATASET: SkillDataset = {
       contrast_group: "body",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/anm_wing.mp3",
+      audio_path: "/audio/voice/đôi-cánh-bướm.mp3",
     },
     {
       id: "anm_paw",
@@ -129,7 +129,7 @@ export const C4_LIV_02_DATASET: SkillDataset = {
       contrast_group: "body",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/anm_paw.mp3",
+      audio_path: "/audio/voice/bốn-chân-chạy.mp3",
     },
     {
       id: "anm_fin",
@@ -144,7 +144,7 @@ export const C4_LIV_02_DATASET: SkillDataset = {
       contrast_group: "body",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/anm_fin.mp3",
+      audio_path: "/audio/voice/vây-cá-bơi.mp3",
     },
     {
       id: "anm_tail",
@@ -159,7 +159,7 @@ export const C4_LIV_02_DATASET: SkillDataset = {
       contrast_group: "body",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/anm_tail.mp3",
+      audio_path: "/audio/voice/đuôi-khỉ-cong.mp3",
     },
   ],
   relations: [

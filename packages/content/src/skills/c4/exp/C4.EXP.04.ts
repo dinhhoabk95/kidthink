@@ -54,7 +54,7 @@ export const C4_EXP_04_DATASET: SkillDataset = {
       contrast_group: "magnetic",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/mag_key.mp3",
+      audio_path: "/audio/voice/chìa-khóa-sắt.mp3",
     },
     {
       id: "mag_clip",
@@ -69,7 +69,7 @@ export const C4_EXP_04_DATASET: SkillDataset = {
       contrast_group: "magnetic",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/mag_clip.mp3",
+      audio_path: "/audio/voice/kẹp-giấy-sắt.mp3",
     },
     {
       id: "mag_scissor",
@@ -84,7 +84,7 @@ export const C4_EXP_04_DATASET: SkillDataset = {
       contrast_group: "magnetic",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/mag_scissor.mp3",
+      audio_path: "/audio/voice/cây-kéo-thép.mp3",
     },
     {
       id: "mag_screw",
@@ -99,7 +99,7 @@ export const C4_EXP_04_DATASET: SkillDataset = {
       contrast_group: "magnetic",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/mag_screw.mp3",
+      audio_path: "/audio/voice/ốc-vít-sắt.mp3",
     },
     {
       id: "non_wood",
@@ -114,7 +114,7 @@ export const C4_EXP_04_DATASET: SkillDataset = {
       contrast_group: "nonmagnetic",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/non_wood.mp3",
+      audio_path: "/audio/voice/khúc-gỗ-khô.mp3",
     },
     {
       id: "non_bear",
@@ -129,7 +129,7 @@ export const C4_EXP_04_DATASET: SkillDataset = {
       contrast_group: "nonmagnetic",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/non_bear.mp3",
+      audio_path: "/audio/voice/gấu-bông-vải.mp3",
     },
     {
       id: "non_leaf",
@@ -144,7 +144,7 @@ export const C4_EXP_04_DATASET: SkillDataset = {
       contrast_group: "nonmagnetic",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/non_leaf.mp3",
+      audio_path: "/audio/voice/lá-cây-bay.mp3",
     },
     {
       id: "non_ball",
@@ -159,7 +159,7 @@ export const C4_EXP_04_DATASET: SkillDataset = {
       contrast_group: "nonmagnetic",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/non_ball.mp3",
+      audio_path: "/audio/voice/quả-bóng-cao-su.mp3",
     },
   ],
   relations: [

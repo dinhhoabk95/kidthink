@@ -55,7 +55,7 @@ export const C4_MAT_05_DATASET: SkillDataset = {
       contrast_group: "liquid",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/liq_glass.mp3",
+      audio_path: "/audio/voice/ly-nước-uống.mp3",
     },
     {
       id: "liq_drop",
@@ -70,7 +70,7 @@ export const C4_MAT_05_DATASET: SkillDataset = {
       contrast_group: "liquid",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/liq_drop.mp3",
+      audio_path: "/audio/voice/giọt-nước-mưa.mp3",
     },
     {
       id: "liq_river",
@@ -85,7 +85,7 @@ export const C4_MAT_05_DATASET: SkillDataset = {
       contrast_group: "liquid",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/liq_river.mp3",
+      audio_path: "/audio/voice/sóng-nước-xanh.mp3",
     },
     {
       id: "liq_bottle",
@@ -100,7 +100,7 @@ export const C4_MAT_05_DATASET: SkillDataset = {
       contrast_group: "liquid",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/liq_bottle.mp3",
+      audio_path: "/audio/voice/bình-nước-lọc.mp3",
     },
     {
       id: "sld_ice",
@@ -115,7 +115,7 @@ export const C4_MAT_05_DATASET: SkillDataset = {
       contrast_group: "solid_gas",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/sld_ice.mp3",
+      audio_path: "/audio/voice/viên-đá-lạnh.mp3",
     },
     {
       id: "sld_cream",
@@ -130,7 +130,7 @@ export const C4_MAT_05_DATASET: SkillDataset = {
       contrast_group: "solid_gas",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/sld_cream.mp3",
+      audio_path: "/audio/voice/cây-kem-đông.mp3",
     },
     {
       id: "stm_cloud",
@@ -145,7 +145,7 @@ export const C4_MAT_05_DATASET: SkillDataset = {
       contrast_group: "solid_gas",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/stm_cloud.mp3",
+      audio_path: "/audio/voice/đám-mây-hơi-nước.mp3",
     },
     {
       id: "stm_steam",
@@ -160,7 +160,7 @@ export const C4_MAT_05_DATASET: SkillDataset = {
       contrast_group: "solid_gas",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/stm_steam.mp3",
+      audio_path: "/audio/voice/làn-hơi-ấm.mp3",
     },
   ],
   relations: [

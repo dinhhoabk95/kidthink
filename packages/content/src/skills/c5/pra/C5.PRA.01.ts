@@ -58,7 +58,7 @@ export const C5_PRA_01_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c5/pra/chao_co_giao.mp3",
+      audio_path: "/audio/voice/chào-cô-giáo.mp3",
     },
     {
       id: "pra_chao_ba",
@@ -74,7 +74,7 @@ export const C5_PRA_01_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c5/pra/chao_ong_ba.mp3",
+      audio_path: "/audio/voice/chào-ông-bà.mp3",
     },
     {
       id: "pra_chao_ban",
@@ -90,7 +90,7 @@ export const C5_PRA_01_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c5/pra/chao_ban_be.mp3",
+      audio_path: "/audio/voice/chào-bạn-bè.mp3",
     },
     {
       id: "pra_cam_on_tang_qua",
@@ -106,7 +106,7 @@ export const C5_PRA_01_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c5/pra/cam_on_nhan_qua.mp3",
+      audio_path: "/audio/voice/cảm-ơn-khi-nhận-quà.mp3",
     },
     {
       id: "pra_cam_on_giup_do",
@@ -122,7 +122,7 @@ export const C5_PRA_01_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 5,
       ordering: 5,
-      audio_path: "/audio/vi/c5/pra/cam_on_duoc_giup.mp3",
+      audio_path: "/audio/voice/cảm-ơn-khi-được-giúp.mp3",
     },
     {
       id: "pra_xin_loi_lam_roi",
@@ -138,7 +138,7 @@ export const C5_PRA_01_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 6,
       ordering: 6,
-      audio_path: "/audio/vi/c5/pra/xin_loi_lam_roi_do.mp3",
+      audio_path: "/audio/voice/xin-lỗi-khi-làm-rơi-đồ.mp3",
     },
   ],
   axes: {

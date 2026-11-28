@@ -55,7 +55,7 @@ export const C4_SEN_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "curve",
-      audio_path: "/audio/vi/c4/ball.mp3",
+      audio_path: "/audio/voice/quả-bóng-tròn.mp3",
     },
     {
       id: "clock",
@@ -70,7 +70,7 @@ export const C4_SEN_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "curve",
-      audio_path: "/audio/vi/c4/clock.mp3",
+      audio_path: "/audio/voice/mặt-đồng-hồ.mp3",
     },
     {
       id: "plate",
@@ -85,7 +85,7 @@ export const C4_SEN_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "curve",
-      audio_path: "/audio/vi/c4/plate.mp3",
+      audio_path: "/audio/voice/chiếc-đĩa-tròn.mp3",
     },
     {
       id: "orange",
@@ -100,7 +100,7 @@ export const C4_SEN_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "curve",
-      audio_path: "/audio/vi/c4/orange.mp3",
+      audio_path: "/audio/voice/quả-cam-tròn.mp3",
     },
     {
       id: "book",
@@ -115,7 +115,7 @@ export const C4_SEN_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "angular",
-      audio_path: "/audio/vi/c4/book.mp3",
+      audio_path: "/audio/voice/quyển-sách-nhỏ.mp3",
     },
     {
       id: "gift_box",
@@ -130,7 +130,7 @@ export const C4_SEN_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "angular",
-      audio_path: "/audio/vi/c4/gift_box.mp3",
+      audio_path: "/audio/voice/hộp-quà-vuông.mp3",
     },
     {
       id: "picture_frame",
@@ -145,7 +145,7 @@ export const C4_SEN_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "angular",
-      audio_path: "/audio/vi/c4/picture_frame.mp3",
+      audio_path: "/audio/voice/khung-tranh-vuông.mp3",
     },
     {
       id: "wood_block",
@@ -160,7 +160,7 @@ export const C4_SEN_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "angular",
-      audio_path: "/audio/vi/c4/wood_block.mp3",
+      audio_path: "/audio/voice/viên-gạch-vuông.mp3",
     },
   ],
   axes: {

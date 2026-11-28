@@ -58,7 +58,7 @@ export const C5_PHO_01_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c5/pho/be_di_hoc.mp3",
+      audio_path: "/audio/voice/bé-đi-học.mp3",
     },
     {
       id: "pho_me_di_cho",
@@ -74,7 +74,7 @@ export const C5_PHO_01_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c5/pho/me_di_cho.mp3",
+      audio_path: "/audio/voice/mẹ-đi-chợ.mp3",
     },
     {
       id: "pho_ba_ke_chuyen",
@@ -90,7 +90,7 @@ export const C5_PHO_01_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c5/pho/ba_ke_chuyen.mp3",
+      audio_path: "/audio/voice/bà-kể-chuyện.mp3",
     },
     {
       id: "pho_troi_mua_rat_to",
@@ -106,7 +106,7 @@ export const C5_PHO_01_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c5/pho/troi_mua_rat_to.mp3",
+      audio_path: "/audio/voice/trời-mưa-rất-to.mp3",
     },
     {
       id: "pho_chim_hot_liu_lo",
@@ -122,7 +122,7 @@ export const C5_PHO_01_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 5,
       ordering: 5,
-      audio_path: "/audio/vi/c5/pho/chim_hot_liu_lo.mp3",
+      audio_path: "/audio/voice/chim-hót-líu-lo.mp3",
     },
     {
       id: "pho_be_yeu_ong_ba",
@@ -138,7 +138,7 @@ export const C5_PHO_01_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 6,
       ordering: 6,
-      audio_path: "/audio/vi/c5/pho/be_yeu_ong_ba.mp3",
+      audio_path: "/audio/voice/bé-yêu-ông-bà.mp3",
     },
   ],
   axes: {

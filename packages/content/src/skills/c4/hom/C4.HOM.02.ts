@@ -54,7 +54,7 @@ export const C4_HOM_02_DATASET: SkillDataset = {
       contrast_group: "food",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/tet_chung.mp3",
+      audio_path: "/audio/voice/bánh-chưng-cơm-nếp.mp3",
     },
     {
       id: "tet_melon",
@@ -69,7 +69,7 @@ export const C4_HOM_02_DATASET: SkillDataset = {
       contrast_group: "food",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/tet_melon.mp3",
+      audio_path: "/audio/voice/dưa-hấu-đỏ.mp3",
     },
     {
       id: "tet_jam",
@@ -84,7 +84,7 @@ export const C4_HOM_02_DATASET: SkillDataset = {
       contrast_group: "food",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/tet_jam.mp3",
+      audio_path: "/audio/voice/khay-kẹo-mứt-tết.mp3",
     },
     {
       id: "tet_fruit_tray",
@@ -99,7 +99,7 @@ export const C4_HOM_02_DATASET: SkillDataset = {
       contrast_group: "food",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/tet_fruit_tray.mp3",
+      audio_path: "/audio/voice/mâm-cam-quýt-tết.mp3",
     },
     {
       id: "tet_peach",
@@ -114,7 +114,7 @@ export const C4_HOM_02_DATASET: SkillDataset = {
       contrast_group: "culture",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/tet_peach.mp3",
+      audio_path: "/audio/voice/cành-hoa-đào.mp3",
     },
     {
       id: "tet_apricot",
@@ -129,7 +129,7 @@ export const C4_HOM_02_DATASET: SkillDataset = {
       contrast_group: "culture",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/tet_apricot.mp3",
+      audio_path: "/audio/voice/cành-hoa-mai.mp3",
     },
     {
       id: "tet_envelope",
@@ -144,7 +144,7 @@ export const C4_HOM_02_DATASET: SkillDataset = {
       contrast_group: "culture",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/tet_envelope.mp3",
+      audio_path: "/audio/voice/bao-lì-xì-đỏ.mp3",
     },
     {
       id: "tet_lion",
@@ -159,7 +159,7 @@ export const C4_HOM_02_DATASET: SkillDataset = {
       contrast_group: "culture",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/tet_lion.mp3",
+      audio_path: "/audio/voice/múa-lân-sư-tử.mp3",
     },
   ],
   relations: [

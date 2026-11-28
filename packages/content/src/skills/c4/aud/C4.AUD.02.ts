@@ -54,7 +54,7 @@ export const C4_AUD_02_DATASET: SkillDataset = {
       contrast_group: "animal",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/aud_dog.mp3",
+      audio_path: "/audio/voice/tiếng-chó-sủa.mp3",
     },
     {
       id: "aud_cat",
@@ -69,7 +69,7 @@ export const C4_AUD_02_DATASET: SkillDataset = {
       contrast_group: "animal",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/aud_cat.mp3",
+      audio_path: "/audio/voice/tiếng-mèo-kêu.mp3",
     },
     {
       id: "aud_rooster",
@@ -84,7 +84,7 @@ export const C4_AUD_02_DATASET: SkillDataset = {
       contrast_group: "animal",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/aud_rooster.mp3",
+      audio_path: "/audio/voice/tiếng-gà-gáy.mp3",
     },
     {
       id: "aud_duck",
@@ -99,7 +99,7 @@ export const C4_AUD_02_DATASET: SkillDataset = {
       contrast_group: "animal",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/aud_duck.mp3",
+      audio_path: "/audio/voice/tiếng-vịt-kêu.mp3",
     },
     {
       id: "aud_car",
@@ -114,7 +114,7 @@ export const C4_AUD_02_DATASET: SkillDataset = {
       contrast_group: "vehicle",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/aud_car.mp3",
+      audio_path: "/audio/voice/tiếng-còi-ô-tô.mp3",
     },
     {
       id: "aud_train",
@@ -129,7 +129,7 @@ export const C4_AUD_02_DATASET: SkillDataset = {
       contrast_group: "vehicle",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/aud_train.mp3",
+      audio_path: "/audio/voice/tiếng-tàu-hỏa.mp3",
     },
     {
       id: "aud_ambulance",
@@ -144,7 +144,7 @@ export const C4_AUD_02_DATASET: SkillDataset = {
       contrast_group: "vehicle",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/aud_ambulance.mp3",
+      audio_path: "/audio/voice/tiếng-xe-cứu-thương.mp3",
     },
     {
       id: "aud_airplane",
@@ -159,7 +159,7 @@ export const C4_AUD_02_DATASET: SkillDataset = {
       contrast_group: "vehicle",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/aud_airplane.mp3",
+      audio_path: "/audio/voice/tiếng-máy-bay.mp3",
     },
   ],
   relations: [

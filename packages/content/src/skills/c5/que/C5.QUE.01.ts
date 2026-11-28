@@ -49,7 +49,7 @@ export const C5_QUE_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "👩‍🏫",
       },
-      audio_path: "/audio/vi/c5/que/co_giao_day_hoc.mp3",
+      audio_path: "/audio/voice/cô-giáo-dạy-học.mp3",
       category: {
         type: "người ở trường",
       },
@@ -63,7 +63,7 @@ export const C5_QUE_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "👨‍⚕️",
       },
-      audio_path: "/audio/vi/c5/que/bac_si_kham_benh.mp3",
+      audio_path: "/audio/voice/bác-sĩ-khám-bệnh.mp3",
       category: {
         type: "người ở trường",
       },
@@ -77,7 +77,7 @@ export const C5_QUE_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "👮",
       },
-      audio_path: "/audio/vi/c5/que/bac_bao_ve.mp3",
+      audio_path: "/audio/voice/chú-cảnh-sát.mp3",
       category: {
         type: "người ở trường",
       },
@@ -91,7 +91,7 @@ export const C5_QUE_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🧑‍✈️",
       },
-      audio_path: "/audio/vi/c5/que/chu_tai_xe.mp3",
+      audio_path: "/audio/voice/chú-phi-công.mp3",
       category: {
         type: "người quanh bé",
       },
@@ -105,7 +105,7 @@ export const C5_QUE_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "👨‍🍳",
       },
-      audio_path: "/audio/vi/c5/que/dau_bep_nau_an.mp3",
+      audio_path: "/audio/voice/chú-đầu-bếp.mp3",
       category: {
         type: "người quanh bé",
       },
@@ -119,7 +119,7 @@ export const C5_QUE_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🧑‍🌾",
       },
-      audio_path: "/audio/vi/c5/que/bac_lam_vuon.mp3",
+      audio_path: "/audio/voice/bác-làm-vườn.mp3",
       category: {
         type: "người quanh bé",
       },

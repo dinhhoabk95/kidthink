@@ -54,7 +54,7 @@ export const C4_TOO_01_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "habit",
-      audio_path: "/audio/vi/c4/sit_straight.mp3",
+      audio_path: "/audio/voice/ghế-ngồi-thẳng.mp3",
     },
     {
       id: "safe_distance",
@@ -69,7 +69,7 @@ export const C4_TOO_01_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "habit",
-      audio_path: "/audio/vi/c4/safe_distance.mp3",
+      audio_path: "/audio/voice/thước-canh-chuẩn.mp3",
     },
     {
       id: "look_green",
@@ -84,7 +84,7 @@ export const C4_TOO_01_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "habit",
-      audio_path: "/audio/vi/c4/look_green.mp3",
+      audio_path: "/audio/voice/cây-xanh-mát.mp3",
     },
     {
       id: "blink_rest",
@@ -99,7 +99,7 @@ export const C4_TOO_01_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "habit",
-      audio_path: "/audio/vi/c4/blink_rest.mp3",
+      audio_path: "/audio/voice/đôi-mắt-sáng.mp3",
     },
     {
       id: "study_lamp",
@@ -114,7 +114,7 @@ export const C4_TOO_01_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "item",
-      audio_path: "/audio/vi/c4/study_lamp.mp3",
+      audio_path: "/audio/voice/đèn-bàn-sáng.mp3",
     },
     {
       id: "safe_glasses",
@@ -129,7 +129,7 @@ export const C4_TOO_01_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "item",
-      audio_path: "/audio/vi/c4/safe_glasses.mp3",
+      audio_path: "/audio/voice/kính-bảo-vệ.mp3",
     },
     {
       id: "timer_clock",
@@ -144,7 +144,7 @@ export const C4_TOO_01_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "item",
-      audio_path: "/audio/vi/c4/timer_clock.mp3",
+      audio_path: "/audio/voice/đồng-hồ-hẹn.mp3",
     },
     {
       id: "sun_window",
@@ -159,7 +159,7 @@ export const C4_TOO_01_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "item",
-      audio_path: "/audio/vi/c4/sun_window.mp3",
+      audio_path: "/audio/voice/cửa-sổ-sáng.mp3",
     },
   ],
   axes: {

@@ -54,7 +54,7 @@ export const C4_DET_04_DATASET: SkillDataset = {
       contrast_group: "high",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/pos_bird.mp3",
+      audio_path: "/audio/voice/chú-chim-trên-cành.mp3",
     },
     {
       id: "pos_kite",
@@ -69,7 +69,7 @@ export const C4_DET_04_DATASET: SkillDataset = {
       contrast_group: "high",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/pos_kite.mp3",
+      audio_path: "/audio/voice/cánh-diều-bay-cao.mp3",
     },
     {
       id: "pos_cloud",
@@ -84,7 +84,7 @@ export const C4_DET_04_DATASET: SkillDataset = {
       contrast_group: "high",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/pos_cloud.mp3",
+      audio_path: "/audio/voice/đám-mây-trên-trời.mp3",
     },
     {
       id: "pos_airplane",
@@ -99,7 +99,7 @@ export const C4_DET_04_DATASET: SkillDataset = {
       contrast_group: "high",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/pos_airplane.mp3",
+      audio_path: "/audio/voice/máy-bay-trên-trời.mp3",
     },
     {
       id: "pos_cat",
@@ -114,7 +114,7 @@ export const C4_DET_04_DATASET: SkillDataset = {
       contrast_group: "low",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/pos_cat.mp3",
+      audio_path: "/audio/voice/chú-mèo-dưới-đất.mp3",
     },
     {
       id: "pos_flower",
@@ -129,7 +129,7 @@ export const C4_DET_04_DATASET: SkillDataset = {
       contrast_group: "low",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/pos_flower.mp3",
+      audio_path: "/audio/voice/bông-hoa-dưới-đất.mp3",
     },
     {
       id: "pos_mushroom",
@@ -144,7 +144,7 @@ export const C4_DET_04_DATASET: SkillDataset = {
       contrast_group: "low",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/pos_mushroom.mp3",
+      audio_path: "/audio/voice/cây-nấm-dưới-đất.mp3",
     },
     {
       id: "pos_turtle",
@@ -159,7 +159,7 @@ export const C4_DET_04_DATASET: SkillDataset = {
       contrast_group: "low",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/pos_turtle.mp3",
+      audio_path: "/audio/voice/chú-rùa-dưới-đất.mp3",
     },
     // --- Ngữ liệu WB03: Phân biệt tư thế & động tác ---
     {

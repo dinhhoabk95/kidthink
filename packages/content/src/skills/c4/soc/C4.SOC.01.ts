@@ -57,7 +57,7 @@ export const C4_SOC_01_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "sport",
-      audio_path: "/audio/vi/c4/soccer.mp3",
+      audio_path: "/audio/voice/quả-bóng-đá.mp3",
     },
     {
       id: "cycling",
@@ -72,7 +72,7 @@ export const C4_SOC_01_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "sport",
-      audio_path: "/audio/vi/c4/cycling.mp3",
+      audio_path: "/audio/voice/chiếc-xe-đạp.mp3",
     },
     {
       id: "swimming",
@@ -87,7 +87,7 @@ export const C4_SOC_01_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "sport",
-      audio_path: "/audio/vi/c4/swimming.mp3",
+      audio_path: "/audio/voice/bạn-bơi-lội.mp3",
     },
     {
       id: "running",
@@ -102,7 +102,7 @@ export const C4_SOC_01_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "sport",
-      audio_path: "/audio/vi/c4/running.mp3",
+      audio_path: "/audio/voice/bạn-chạy-bộ.mp3",
     },
     {
       id: "painting",
@@ -117,7 +117,7 @@ export const C4_SOC_01_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "art",
-      audio_path: "/audio/vi/c4/painting.mp3",
+      audio_path: "/audio/voice/bảng-vẽ-màu.mp3",
     },
     {
       id: "reading",
@@ -132,7 +132,7 @@ export const C4_SOC_01_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "art",
-      audio_path: "/audio/vi/c4/reading.mp3",
+      audio_path: "/audio/voice/sách-truyện-tranh.mp3",
     },
     {
       id: "piano",
@@ -147,7 +147,7 @@ export const C4_SOC_01_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "art",
-      audio_path: "/audio/vi/c4/piano.mp3",
+      audio_path: "/audio/voice/chiếc-đàn-phím.mp3",
     },
     {
       id: "singing",
@@ -162,7 +162,7 @@ export const C4_SOC_01_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "art",
-      audio_path: "/audio/vi/c4/singing.mp3",
+      audio_path: "/audio/voice/chiếc-mi-crô.mp3",
     },
   ],
   axes: {

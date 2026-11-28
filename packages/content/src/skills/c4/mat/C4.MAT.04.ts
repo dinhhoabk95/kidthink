@@ -54,7 +54,7 @@ export const C4_MAT_04_DATASET: SkillDataset = {
       contrast_group: "warm",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/sea_spring_flower.mp3",
+      audio_path: "/audio/voice/hoa-nở-mùa-xuân.mp3",
     },
     {
       id: "sea_spring_sprout",
@@ -69,7 +69,7 @@ export const C4_MAT_04_DATASET: SkillDataset = {
       contrast_group: "warm",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/sea_spring_sprout.mp3",
+      audio_path: "/audio/voice/mầm-non-mùa-xuân.mp3",
     },
     {
       id: "sea_summer_sun",
@@ -84,7 +84,7 @@ export const C4_MAT_04_DATASET: SkillDataset = {
       contrast_group: "warm",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/sea_summer_sun.mp3",
+      audio_path: "/audio/voice/nắng-hè-rực-rỡ.mp3",
     },
     {
       id: "sea_summer_swim",
@@ -99,7 +99,7 @@ export const C4_MAT_04_DATASET: SkillDataset = {
       contrast_group: "warm",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/sea_summer_swim.mp3",
+      audio_path: "/audio/voice/áo-bơi-mùa-hè.mp3",
     },
     {
       id: "sea_autumn_leaf",
@@ -114,7 +114,7 @@ export const C4_MAT_04_DATASET: SkillDataset = {
       contrast_group: "cold",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/sea_autumn_leaf.mp3",
+      audio_path: "/audio/voice/lá-vàng-mùa-thu.mp3",
     },
     {
       id: "sea_autumn_moon",
@@ -129,7 +129,7 @@ export const C4_MAT_04_DATASET: SkillDataset = {
       contrast_group: "cold",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/sea_autumn_moon.mp3",
+      audio_path: "/audio/voice/trăng-rằm-mùa-thu.mp3",
     },
     {
       id: "sea_winter_snow",
@@ -144,7 +144,7 @@ export const C4_MAT_04_DATASET: SkillDataset = {
       contrast_group: "cold",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/sea_winter_snow.mp3",
+      audio_path: "/audio/voice/tuyết-rơi-mùa-đông.mp3",
     },
     {
       id: "sea_winter_scarf",
@@ -159,7 +159,7 @@ export const C4_MAT_04_DATASET: SkillDataset = {
       contrast_group: "cold",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/sea_winter_scarf.mp3",
+      audio_path: "/audio/voice/khăn-ấm-mùa-đông.mp3",
     },
   ],
   relations: [

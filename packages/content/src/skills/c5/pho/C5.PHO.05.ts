@@ -57,7 +57,7 @@ export const C5_PHO_05_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c5/pho/ca.mp3",
+      audio_path: "/audio/voice/tiếng-cá-âm-đầu-c.mp3",
     },
     {
       id: "pho_cua_dong",
@@ -74,7 +74,7 @@ export const C5_PHO_05_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c5/pho/cua.mp3",
+      audio_path: "/audio/voice/tiếng-cua-âm-đầu-c.mp3",
     },
     {
       id: "pho_cam_ngot",
@@ -91,7 +91,7 @@ export const C5_PHO_05_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c5/pho/cam.mp3",
+      audio_path: "/audio/voice/tiếng-cam-âm-đầu-c.mp3",
     },
     {
       id: "pho_ga_trong",
@@ -108,7 +108,7 @@ export const C5_PHO_05_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c5/pho/ga.mp3",
+      audio_path: "/audio/voice/tiếng-gà-âm-đầu-g.mp3",
     },
     {
       id: "pho_gau_bong",
@@ -125,7 +125,7 @@ export const C5_PHO_05_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 5,
       ordering: 5,
-      audio_path: "/audio/vi/c5/pho/gau.mp3",
+      audio_path: "/audio/voice/tiếng-gấu-âm-đầu-g.mp3",
     },
     {
       id: "pho_guong_soi",
@@ -142,7 +142,7 @@ export const C5_PHO_05_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 6,
       ordering: 6,
-      audio_path: "/audio/vi/c5/pho/guong.mp3",
+      audio_path: "/audio/voice/tiếng-gương-âm-đầu-g.mp3",
     },
   ],
   axes: {

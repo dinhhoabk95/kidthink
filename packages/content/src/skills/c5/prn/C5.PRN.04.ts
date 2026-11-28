@@ -50,7 +50,7 @@ export const C5_PRN_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "📏",
       },
-      audio_path: "/audio/vi/c5/prn/khoang_cach_chu_o.mp3",
+      audio_path: "/audio/voice/khoảng-cách-chữ-o.mp3",
       category: {
         type: "khoảng cách đều",
       },
@@ -64,7 +64,7 @@ export const C5_PRN_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "☝️",
       },
-      audio_path: "/audio/vi/c5/prn/khoang_cach_ngon_tay.mp3",
+      audio_path: "/audio/voice/khoảng-cách-ngón-tay.mp3",
       category: {
         type: "khoảng cách đều",
       },
@@ -78,7 +78,7 @@ export const C5_PRN_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "✨",
       },
-      audio_path: "/audio/vi/c5/prn/hang_chu_cach_deu.mp3",
+      audio_path: "/audio/voice/hàng-chữ-cách-đều.mp3",
       category: {
         type: "khoảng cách đều",
       },
@@ -92,7 +92,7 @@ export const C5_PRN_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🧩",
       },
-      audio_path: "/audio/vi/c5/prn/tu_dinh_sat_nhau.mp3",
+      audio_path: "/audio/voice/từ-dính-sát.mp3",
       category: {
         type: "khoảng cách lệch",
       },
@@ -106,7 +106,7 @@ export const C5_PRN_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🕳️",
       },
-      audio_path: "/audio/vi/c5/prn/tu_cach_qua_xa.mp3",
+      audio_path: "/audio/voice/từ-cách-xa.mp3",
       category: {
         type: "khoảng cách lệch",
       },
@@ -120,7 +120,7 @@ export const C5_PRN_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "〰️",
       },
-      audio_path: "/audio/vi/c5/prn/khoang_cach_khong_deu.mp3",
+      audio_path: "/audio/voice/khoảng-cách-lệch.mp3",
       category: {
         type: "khoảng cách lệch",
       },

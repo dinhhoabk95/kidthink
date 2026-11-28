@@ -54,7 +54,7 @@ export const C4_DET_02_DATASET: SkillDataset = {
       contrast_group: "circle",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/shp_ball.mp3",
+      audio_path: "/audio/voice/quả-bóng-tròn.mp3",
     },
     {
       id: "shp_clock",
@@ -69,7 +69,7 @@ export const C4_DET_02_DATASET: SkillDataset = {
       contrast_group: "circle",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/shp_clock.mp3",
+      audio_path: "/audio/voice/đồng-hồ-tròn.mp3",
     },
     {
       id: "shp_donut",
@@ -84,7 +84,7 @@ export const C4_DET_02_DATASET: SkillDataset = {
       contrast_group: "circle",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/shp_donut.mp3",
+      audio_path: "/audio/voice/bánh-vòng-tròn.mp3",
     },
     {
       id: "shp_wheel",
@@ -99,7 +99,7 @@ export const C4_DET_02_DATASET: SkillDataset = {
       contrast_group: "circle",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/shp_wheel.mp3",
+      audio_path: "/audio/voice/bánh-xe-tròn.mp3",
     },
     {
       id: "shp_gift",
@@ -114,7 +114,7 @@ export const C4_DET_02_DATASET: SkillDataset = {
       contrast_group: "square",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/shp_gift.mp3",
+      audio_path: "/audio/voice/hộp-quà-vuông.mp3",
     },
     {
       id: "shp_frame",
@@ -129,7 +129,7 @@ export const C4_DET_02_DATASET: SkillDataset = {
       contrast_group: "square",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/shp_frame.mp3",
+      audio_path: "/audio/voice/khung-ảnh-vuông.mp3",
     },
     {
       id: "shp_window",
@@ -144,7 +144,7 @@ export const C4_DET_02_DATASET: SkillDataset = {
       contrast_group: "square",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/shp_window.mp3",
+      audio_path: "/audio/voice/khung-cửa-sổ.mp3",
     },
     {
       id: "shp_dice",
@@ -159,7 +159,7 @@ export const C4_DET_02_DATASET: SkillDataset = {
       contrast_group: "square",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/shp_dice.mp3",
+      audio_path: "/audio/voice/viên-xúc-xắc.mp3",
     },
   ],
   relations: [

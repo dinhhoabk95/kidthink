@@ -55,7 +55,7 @@ export const C4_ECO_02_DATASET: SkillDataset = {
       contrast_group: "plant",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/care_plant_water.mp3",
+      audio_path: "/audio/voice/chậu-cây-xanh.mp3",
     },
     {
       id: "care_plant_sun",
@@ -70,7 +70,7 @@ export const C4_ECO_02_DATASET: SkillDataset = {
       contrast_group: "plant",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/care_plant_sun.mp3",
+      audio_path: "/audio/voice/ánh-nắng-ấm.mp3",
     },
     {
       id: "care_plant_leaf",
@@ -85,7 +85,7 @@ export const C4_ECO_02_DATASET: SkillDataset = {
       contrast_group: "plant",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/care_plant_leaf.mp3",
+      audio_path: "/audio/voice/nhánh-lá-xanh.mp3",
     },
     {
       id: "care_plant_soil",
@@ -100,7 +100,7 @@ export const C4_ECO_02_DATASET: SkillDataset = {
       contrast_group: "plant",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/care_plant_soil.mp3",
+      audio_path: "/audio/voice/mầm-cây-non.mp3",
     },
     {
       id: "care_pet_food",
@@ -115,7 +115,7 @@ export const C4_ECO_02_DATASET: SkillDataset = {
       contrast_group: "pet",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/care_pet_food.mp3",
+      audio_path: "/audio/voice/bát-thức-ăn.mp3",
     },
     {
       id: "care_pet_water",
@@ -130,7 +130,7 @@ export const C4_ECO_02_DATASET: SkillDataset = {
       contrast_group: "pet",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/care_pet_water.mp3",
+      audio_path: "/audio/voice/ly-nước-sạch.mp3",
     },
     {
       id: "care_pet_comb",
@@ -145,7 +145,7 @@ export const C4_ECO_02_DATASET: SkillDataset = {
       contrast_group: "pet",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/care_pet_comb.mp3",
+      audio_path: "/audio/voice/lược-chải-lông.mp3",
     },
     {
       id: "care_pet_bed",
@@ -160,7 +160,7 @@ export const C4_ECO_02_DATASET: SkillDataset = {
       contrast_group: "pet",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/care_pet_bed.mp3",
+      audio_path: "/audio/voice/đệm-ngủ-êm.mp3",
     },
   ],
   relations: [

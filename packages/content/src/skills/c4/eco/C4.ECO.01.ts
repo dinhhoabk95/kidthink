@@ -54,7 +54,7 @@ export const C4_ECO_01_DATASET: SkillDataset = {
       contrast_group: "trash",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/trash_banana.mp3",
+      audio_path: "/audio/voice/vỏ-chuối-chín.mp3",
     },
     {
       id: "trash_paper",
@@ -69,7 +69,7 @@ export const C4_ECO_01_DATASET: SkillDataset = {
       contrast_group: "trash",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/trash_paper.mp3",
+      audio_path: "/audio/voice/mẩu-giấy-vụn.mp3",
     },
     {
       id: "trash_can",
@@ -84,7 +84,7 @@ export const C4_ECO_01_DATASET: SkillDataset = {
       contrast_group: "trash",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/trash_can.mp3",
+      audio_path: "/audio/voice/vỏ-lon-rỗng.mp3",
     },
     {
       id: "trash_box",
@@ -99,7 +99,7 @@ export const C4_ECO_01_DATASET: SkillDataset = {
       contrast_group: "trash",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/trash_box.mp3",
+      audio_path: "/audio/voice/hộp-sữa-giấy.mp3",
     },
     {
       id: "keep_toy",
@@ -114,7 +114,7 @@ export const C4_ECO_01_DATASET: SkillDataset = {
       contrast_group: "keep",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/keep_toy.mp3",
+      audio_path: "/audio/voice/đồ-chơi-gấu.mp3",
     },
     {
       id: "keep_book",
@@ -129,7 +129,7 @@ export const C4_ECO_01_DATASET: SkillDataset = {
       contrast_group: "keep",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/keep_book.mp3",
+      audio_path: "/audio/voice/quyển-sách-truyện.mp3",
     },
     {
       id: "keep_backpack",
@@ -144,7 +144,7 @@ export const C4_ECO_01_DATASET: SkillDataset = {
       contrast_group: "keep",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/keep_backpack.mp3",
+      audio_path: "/audio/voice/ba-lô-đi-học.mp3",
     },
     {
       id: "keep_bottle",
@@ -159,7 +159,7 @@ export const C4_ECO_01_DATASET: SkillDataset = {
       contrast_group: "keep",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/keep_bottle.mp3",
+      audio_path: "/audio/voice/bình-nước-uống.mp3",
     },
   ],
   relations: [

@@ -54,7 +54,7 @@ export const C4_HOM_03_DATASET: SkillDataset = {
       contrast_group: "toy",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/mid_star.mp3",
+      audio_path: "/audio/voice/đèn-ông-sao.mp3",
     },
     {
       id: "mid_carp",
@@ -69,7 +69,7 @@ export const C4_HOM_03_DATASET: SkillDataset = {
       contrast_group: "toy",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/mid_carp.mp3",
+      audio_path: "/audio/voice/đèn-cá-chép.mp3",
     },
     {
       id: "mid_mask",
@@ -84,7 +84,7 @@ export const C4_HOM_03_DATASET: SkillDataset = {
       contrast_group: "toy",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/mid_mask.mp3",
+      audio_path: "/audio/voice/mặt-nạ-cuội.mp3",
     },
     {
       id: "mid_drum",
@@ -99,7 +99,7 @@ export const C4_HOM_03_DATASET: SkillDataset = {
       contrast_group: "toy",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/mid_drum.mp3",
+      audio_path: "/audio/voice/trống-ếch-gõ.mp3",
     },
     {
       id: "mid_cake",
@@ -114,7 +114,7 @@ export const C4_HOM_03_DATASET: SkillDataset = {
       contrast_group: "feast",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/mid_cake.mp3",
+      audio_path: "/audio/voice/bánh-nướng-dẻo.mp3",
     },
     {
       id: "mid_moon",
@@ -129,7 +129,7 @@ export const C4_HOM_03_DATASET: SkillDataset = {
       contrast_group: "feast",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/mid_moon.mp3",
+      audio_path: "/audio/voice/ánh-trăng-rằm.mp3",
     },
     {
       id: "mid_pomelo",
@@ -144,7 +144,7 @@ export const C4_HOM_03_DATASET: SkillDataset = {
       contrast_group: "feast",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/mid_pomelo.mp3",
+      audio_path: "/audio/voice/quả-dưa-ngọt.mp3",
     },
     {
       id: "mid_banana",
@@ -159,7 +159,7 @@ export const C4_HOM_03_DATASET: SkillDataset = {
       contrast_group: "feast",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/mid_banana.mp3",
+      audio_path: "/audio/voice/nải-chuối-chín.mp3",
     },
   ],
   relations: [

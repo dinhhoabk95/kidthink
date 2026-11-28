@@ -18,6 +18,7 @@ import {
   RETRY_ENCOURAGEMENTS,
   spokenKeywordForAsset,
 } from "@mindkid/game-engine";
+import { ENGINE_STORY_LINES } from "@mindkid/game-engine/story-lines";
 import {
   COMPETENCY_CATALOG,
   CONTENT_THEMES,
@@ -568,6 +569,9 @@ function collectSharedKidUiConstants(collector: CatalogCollector): void {
   }
   for (const [idx, storyText] of GT002_ALL_STORY_LINES.entries()) {
     collector.add(storyText, "kid_ui", `gt002:story_line:${idx + 1}`);
+  }
+  for (const [idx, storyText] of ENGINE_STORY_LINES.entries()) {
+    collector.add(storyText, "kid_ui", `engine:story_line:${idx + 1}`);
   }
 }
 

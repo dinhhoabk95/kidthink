@@ -54,7 +54,7 @@ export const C4_CAU_02_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/why_cold.mp3",
+      audio_path: "/audio/voice/bông-tuyết-lạnh.mp3",
     },
     {
       id: "why_rain",
@@ -69,7 +69,7 @@ export const C4_CAU_02_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/why_rain.mp3",
+      audio_path: "/audio/voice/trời-đổ-mưa.mp3",
     },
     {
       id: "why_dark",
@@ -84,7 +84,7 @@ export const C4_CAU_02_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/why_dark.mp3",
+      audio_path: "/audio/voice/trăng-ban-đêm.mp3",
     },
     {
       id: "why_sunny",
@@ -99,7 +99,7 @@ export const C4_CAU_02_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/why_sunny.mp3",
+      audio_path: "/audio/voice/trời-nắng-gắt.mp3",
     },
     {
       id: "act_jacket",
@@ -114,7 +114,7 @@ export const C4_CAU_02_DATASET: SkillDataset = {
       contrast_group: "effect",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/act_jacket.mp3",
+      audio_path: "/audio/voice/áo-khoác-ấm.mp3",
     },
     {
       id: "act_umbrella",
@@ -129,7 +129,7 @@ export const C4_CAU_02_DATASET: SkillDataset = {
       contrast_group: "effect",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/act_umbrella.mp3",
+      audio_path: "/audio/voice/cái-ô-che-mưa.mp3",
     },
     {
       id: "act_sleep",
@@ -144,7 +144,7 @@ export const C4_CAU_02_DATASET: SkillDataset = {
       contrast_group: "effect",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/act_sleep.mp3",
+      audio_path: "/audio/voice/giường-ngủ-êm.mp3",
     },
     {
       id: "act_hat",
@@ -159,7 +159,7 @@ export const C4_CAU_02_DATASET: SkillDataset = {
       contrast_group: "effect",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/act_hat.mp3",
+      audio_path: "/audio/voice/mũ-rộng-vành.mp3",
     },
   ],
   relations: [

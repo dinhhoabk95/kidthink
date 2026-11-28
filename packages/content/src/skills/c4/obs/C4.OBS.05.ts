@@ -55,7 +55,7 @@ export const C4_OBS_05_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "insect",
-      audio_path: "/audio/vi/c4/ant.mp3",
+      audio_path: "/audio/voice/chú-kiến-nhỏ.mp3",
     },
     {
       id: "ladybug",
@@ -70,7 +70,7 @@ export const C4_OBS_05_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "insect",
-      audio_path: "/audio/vi/c4/ladybug.mp3",
+      audio_path: "/audio/voice/chú-bọ-rùa.mp3",
     },
     {
       id: "snail",
@@ -85,7 +85,7 @@ export const C4_OBS_05_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "insect",
-      audio_path: "/audio/vi/c4/snail.mp3",
+      audio_path: "/audio/voice/chú-ốc-sên.mp3",
     },
     {
       id: "bee",
@@ -100,7 +100,7 @@ export const C4_OBS_05_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "insect",
-      audio_path: "/audio/vi/c4/bee.mp3",
+      audio_path: "/audio/voice/chú-ong-mật.mp3",
     },
     {
       id: "leaf_vein",
@@ -115,7 +115,7 @@ export const C4_OBS_05_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "detail",
-      audio_path: "/audio/vi/c4/leaf_vein.mp3",
+      audio_path: "/audio/voice/gân-lá-cây.mp3",
     },
     {
       id: "sand_grain",
@@ -130,7 +130,7 @@ export const C4_OBS_05_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "detail",
-      audio_path: "/audio/vi/c4/sand_grain.mp3",
+      audio_path: "/audio/voice/hạt-mầm-nhỏ.mp3",
     },
     {
       id: "petal",
@@ -145,7 +145,7 @@ export const C4_OBS_05_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "detail",
-      audio_path: "/audio/vi/c4/petal.mp3",
+      audio_path: "/audio/voice/cánh-hoa-mỏng.mp3",
     },
     {
       id: "dewdrop",
@@ -160,7 +160,7 @@ export const C4_OBS_05_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "detail",
-      audio_path: "/audio/vi/c4/dewdrop.mp3",
+      audio_path: "/audio/voice/giọt-sương-mai.mp3",
     },
   ],
   axes: {

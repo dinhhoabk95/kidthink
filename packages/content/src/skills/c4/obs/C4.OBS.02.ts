@@ -55,7 +55,7 @@ export const C4_OBS_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "land",
-      audio_path: "/audio/vi/c4/bus.mp3",
+      audio_path: "/audio/voice/xe-buýt-lớn.mp3",
     },
     {
       id: "car",
@@ -70,7 +70,7 @@ export const C4_OBS_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "land",
-      audio_path: "/audio/vi/c4/car.mp3",
+      audio_path: "/audio/voice/xe-ô-tô-con.mp3",
     },
     {
       id: "bicycle",
@@ -85,7 +85,7 @@ export const C4_OBS_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "land",
-      audio_path: "/audio/vi/c4/bicycle.mp3",
+      audio_path: "/audio/voice/chiếc-xe-đạp.mp3",
     },
     {
       id: "train",
@@ -100,7 +100,7 @@ export const C4_OBS_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "land",
-      audio_path: "/audio/vi/c4/train.mp3",
+      audio_path: "/audio/voice/tàu-hỏa-dài.mp3",
     },
     {
       id: "airplane",
@@ -115,7 +115,7 @@ export const C4_OBS_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "air_sea",
-      audio_path: "/audio/vi/c4/airplane.mp3",
+      audio_path: "/audio/voice/chiếc-máy-bay.mp3",
     },
     {
       id: "helicopter",
@@ -130,7 +130,7 @@ export const C4_OBS_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "air_sea",
-      audio_path: "/audio/vi/c4/helicopter.mp3",
+      audio_path: "/audio/voice/trực-thăng-nhỏ.mp3",
     },
     {
       id: "sailboat",
@@ -145,7 +145,7 @@ export const C4_OBS_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "air_sea",
-      audio_path: "/audio/vi/c4/sailboat.mp3",
+      audio_path: "/audio/voice/thuyền-buồm-nhỏ.mp3",
     },
     {
       id: "ship",
@@ -160,7 +160,7 @@ export const C4_OBS_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "air_sea",
-      audio_path: "/audio/vi/c4/ship.mp3",
+      audio_path: "/audio/voice/tàu-thủy-lớn.mp3",
     },
   ],
   axes: {

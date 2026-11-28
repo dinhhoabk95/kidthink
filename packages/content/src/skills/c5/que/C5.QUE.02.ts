@@ -49,7 +49,7 @@ export const C5_QUE_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🧢",
       },
-      audio_path: "/audio/vi/c5/que/cai_mu.mp3",
+      audio_path: "/audio/voice/cái-mũ-đội-đầu.mp3",
       category: {
         type: "đồ để mặc",
       },
@@ -63,7 +63,7 @@ export const C5_QUE_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "👟",
       },
-      audio_path: "/audio/vi/c5/que/doi_giay.mp3",
+      audio_path: "/audio/voice/đôi-giày-đi-chân.mp3",
       category: {
         type: "đồ để mặc",
       },
@@ -77,7 +77,7 @@ export const C5_QUE_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🧥",
       },
-      audio_path: "/audio/vi/c5/que/chiec_ao.mp3",
+      audio_path: "/audio/voice/chiếc-áo-ấm.mp3",
       category: {
         type: "đồ để mặc",
       },
@@ -91,7 +91,7 @@ export const C5_QUE_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "☂️",
       },
-      audio_path: "/audio/vi/c5/que/cai_o.mp3",
+      audio_path: "/audio/voice/cái-ô-che-mưa.mp3",
       category: {
         type: "đồ sinh hoạt",
       },
@@ -105,7 +105,7 @@ export const C5_QUE_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🥛",
       },
-      audio_path: "/audio/vi/c5/que/cai_coc.mp3",
+      audio_path: "/audio/voice/cái-cốc-uống-nước.mp3",
       category: {
         type: "đồ sinh hoạt",
       },
@@ -119,7 +119,7 @@ export const C5_QUE_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🖍️",
       },
-      audio_path: "/audio/vi/c5/que/but_sap_mau.mp3",
+      audio_path: "/audio/voice/bút-sáp-màu.mp3",
       category: {
         type: "đồ sinh hoạt",
       },

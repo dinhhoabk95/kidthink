@@ -55,7 +55,7 @@ export const C4_ECO_04_DATASET: SkillDataset = {
       contrast_group: "save",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/eco_tap_off.mp3",
+      audio_path: "/audio/voice/khóa-vòi-nước.mp3",
     },
     {
       id: "eco_light_off",
@@ -70,7 +70,7 @@ export const C4_ECO_04_DATASET: SkillDataset = {
       contrast_group: "save",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/eco_light_off.mp3",
+      audio_path: "/audio/voice/tắt-bóng-đèn.mp3",
     },
     {
       id: "eco_fan_off",
@@ -85,7 +85,7 @@ export const C4_ECO_04_DATASET: SkillDataset = {
       contrast_group: "save",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/eco_fan_off.mp3",
+      audio_path: "/audio/voice/tắt-quạt-điện.mp3",
     },
     {
       id: "eco_tv_off",
@@ -100,7 +100,7 @@ export const C4_ECO_04_DATASET: SkillDataset = {
       contrast_group: "save",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/eco_tv_off.mp3",
+      audio_path: "/audio/voice/tắt-ti-vi.mp3",
     },
     {
       id: "eco_tap_run",
@@ -115,7 +115,7 @@ export const C4_ECO_04_DATASET: SkillDataset = {
       contrast_group: "waste",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/eco_tap_run.mp3",
+      audio_path: "/audio/voice/vòi-nước-tràn.mp3",
     },
     {
       id: "eco_light_on",
@@ -130,7 +130,7 @@ export const C4_ECO_04_DATASET: SkillDataset = {
       contrast_group: "waste",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/eco_light_on.mp3",
+      audio_path: "/audio/voice/đèn-bật-mãi.mp3",
     },
     {
       id: "eco_fridge_open",
@@ -145,7 +145,7 @@ export const C4_ECO_04_DATASET: SkillDataset = {
       contrast_group: "waste",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/eco_fridge_open.mp3",
+      audio_path: "/audio/voice/cửa-mở-toang.mp3",
     },
     {
       id: "eco_ac_open",
@@ -160,7 +160,7 @@ export const C4_ECO_04_DATASET: SkillDataset = {
       contrast_group: "waste",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/eco_ac_open.mp3",
+      audio_path: "/audio/voice/gió-điều-hòa.mp3",
     },
   ],
   relations: [

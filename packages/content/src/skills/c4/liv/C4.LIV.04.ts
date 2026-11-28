@@ -54,7 +54,7 @@ export const C4_LIV_04_DATASET: SkillDataset = {
       contrast_group: "herbivore",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/diet_rabbit.mp3",
+      audio_path: "/audio/voice/thỏ-thích-cà-rốt.mp3",
     },
     {
       id: "diet_cow",
@@ -69,7 +69,7 @@ export const C4_LIV_04_DATASET: SkillDataset = {
       contrast_group: "herbivore",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/diet_cow.mp3",
+      audio_path: "/audio/voice/bò-thích-gặm-cỏ.mp3",
     },
     {
       id: "diet_monkey",
@@ -84,7 +84,7 @@ export const C4_LIV_04_DATASET: SkillDataset = {
       contrast_group: "herbivore",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/diet_monkey.mp3",
+      audio_path: "/audio/voice/khỉ-thích-chuối.mp3",
     },
     {
       id: "diet_panda",
@@ -99,7 +99,7 @@ export const C4_LIV_04_DATASET: SkillDataset = {
       contrast_group: "herbivore",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/diet_panda.mp3",
+      audio_path: "/audio/voice/gấu-trúc-ăn-tre.mp3",
     },
     {
       id: "diet_cat",
@@ -114,7 +114,7 @@ export const C4_LIV_04_DATASET: SkillDataset = {
       contrast_group: "carnivore",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/diet_cat.mp3",
+      audio_path: "/audio/voice/mèo-thích-ăn-cá.mp3",
     },
     {
       id: "diet_frog",
@@ -129,7 +129,7 @@ export const C4_LIV_04_DATASET: SkillDataset = {
       contrast_group: "carnivore",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/diet_frog.mp3",
+      audio_path: "/audio/voice/ếch-bắt-côn-trùng.mp3",
     },
     {
       id: "diet_lion",
@@ -144,7 +144,7 @@ export const C4_LIV_04_DATASET: SkillDataset = {
       contrast_group: "carnivore",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/diet_lion.mp3",
+      audio_path: "/audio/voice/sư-tử-săn-mồi.mp3",
     },
     {
       id: "diet_penguin",
@@ -159,7 +159,7 @@ export const C4_LIV_04_DATASET: SkillDataset = {
       contrast_group: "carnivore",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/diet_penguin.mp3",
+      audio_path: "/audio/voice/chim-cánh-cụt.mp3",
     },
   ],
   relations: [

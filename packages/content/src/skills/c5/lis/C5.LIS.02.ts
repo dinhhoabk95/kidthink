@@ -55,7 +55,7 @@ export const C5_LIS_02_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c5/lis/be_vo_tay.mp3",
+      audio_path: "/audio/voice/bé-vỗ-tay.mp3",
     },
     {
       id: "lis_gio_tay",
@@ -71,7 +71,7 @@ export const C5_LIS_02_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c5/lis/be_gio_tay.mp3",
+      audio_path: "/audio/voice/bé-giơ-tay.mp3",
     },
     {
       id: "lis_khoanh_tay",
@@ -87,7 +87,7 @@ export const C5_LIS_02_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c5/lis/be_khoanh_tay.mp3",
+      audio_path: "/audio/voice/bé-khoanh-tay-cúi-chào.mp3",
     },
     {
       id: "lis_dam_chan",
@@ -103,7 +103,7 @@ export const C5_LIS_02_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c5/lis/be_dam_chan.mp3",
+      audio_path: "/audio/voice/bé-dậm-chân.mp3",
     },
     {
       id: "lis_dung_len",
@@ -119,7 +119,7 @@ export const C5_LIS_02_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 5,
       ordering: 5,
-      audio_path: "/audio/vi/c5/lis/be_dung_len.mp3",
+      audio_path: "/audio/voice/bé-đứng-lên.mp3",
     },
     {
       id: "lis_ngoi_xuong",
@@ -135,7 +135,7 @@ export const C5_LIS_02_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 6,
       ordering: 6,
-      audio_path: "/audio/vi/c5/lis/be_ngoi_xuong.mp3",
+      audio_path: "/audio/voice/bé-ngồi-xuống.mp3",
     },
   ],
   relations: [

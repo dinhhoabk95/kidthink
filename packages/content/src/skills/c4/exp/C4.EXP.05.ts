@@ -55,7 +55,7 @@ export const C4_EXP_05_DATASET: SkillDataset = {
       contrast_group: "action",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/exp_paint.mp3",
+      audio_path: "/audio/voice/pha-màu-vẽ.mp3",
     },
     {
       id: "exp_bean",
@@ -70,7 +70,7 @@ export const C4_EXP_05_DATASET: SkillDataset = {
       contrast_group: "action",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/exp_bean.mp3",
+      audio_path: "/audio/voice/gieo-hạt-đậu.mp3",
     },
     {
       id: "exp_ice",
@@ -85,7 +85,7 @@ export const C4_EXP_05_DATASET: SkillDataset = {
       contrast_group: "action",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/exp_ice.mp3",
+      audio_path: "/audio/voice/đá-dưới-nắng.mp3",
     },
     {
       id: "exp_soap",
@@ -100,7 +100,7 @@ export const C4_EXP_05_DATASET: SkillDataset = {
       contrast_group: "action",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/exp_soap.mp3",
+      audio_path: "/audio/voice/thổi-xà-phòng.mp3",
     },
     {
       id: "res_green",
@@ -115,7 +115,7 @@ export const C4_EXP_05_DATASET: SkillDataset = {
       contrast_group: "result",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/res_green.mp3",
+      audio_path: "/audio/voice/ra-màu-xanh.mp3",
     },
     {
       id: "res_sprout",
@@ -130,7 +130,7 @@ export const C4_EXP_05_DATASET: SkillDataset = {
       contrast_group: "result",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/res_sprout.mp3",
+      audio_path: "/audio/voice/mầm-non-mọc.mp3",
     },
     {
       id: "res_water",
@@ -145,7 +145,7 @@ export const C4_EXP_05_DATASET: SkillDataset = {
       contrast_group: "result",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/res_water.mp3",
+      audio_path: "/audio/voice/giọt-nước-tan.mp3",
     },
     {
       id: "res_bubble",
@@ -160,7 +160,7 @@ export const C4_EXP_05_DATASET: SkillDataset = {
       contrast_group: "result",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/res_bubble.mp3",
+      audio_path: "/audio/voice/bong-bóng-tròn.mp3",
     },
   ],
   relations: [

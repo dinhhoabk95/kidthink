@@ -57,7 +57,7 @@ export const C4_OBS_03_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "day",
-      audio_path: "/audio/vi/c4/sunrise.mp3",
+      audio_path: "/audio/voice/bình-minh-sớm.mp3",
     },
     {
       id: "sun",
@@ -72,7 +72,7 @@ export const C4_OBS_03_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "day",
-      audio_path: "/audio/vi/c4/sun.mp3",
+      audio_path: "/audio/voice/nắng-ban-trưa.mp3",
     },
     {
       id: "sunset",
@@ -87,7 +87,7 @@ export const C4_OBS_03_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "day",
-      audio_path: "/audio/vi/c4/sunset.mp3",
+      audio_path: "/audio/voice/hoàng-hôn-chiều.mp3",
     },
     {
       id: "rainbow",
@@ -102,7 +102,7 @@ export const C4_OBS_03_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "day",
-      audio_path: "/audio/vi/c4/rainbow.mp3",
+      audio_path: "/audio/voice/cầu-vồng-mưa.mp3",
     },
     {
       id: "full_moon",
@@ -117,7 +117,7 @@ export const C4_OBS_03_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "night",
-      audio_path: "/audio/vi/c4/full_moon.mp3",
+      audio_path: "/audio/voice/ánh-trăng-tròn.mp3",
     },
     {
       id: "crescent_moon",
@@ -132,7 +132,7 @@ export const C4_OBS_03_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "night",
-      audio_path: "/audio/vi/c4/crescent_moon.mp3",
+      audio_path: "/audio/voice/mặt-trăng-khuyết.mp3",
     },
     {
       id: "night_stars",
@@ -147,7 +147,7 @@ export const C4_OBS_03_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "night",
-      audio_path: "/audio/vi/c4/night_stars.mp3",
+      audio_path: "/audio/voice/ngôi-sao-đêm.mp3",
     },
     {
       id: "cloudy_night",
@@ -162,7 +162,7 @@ export const C4_OBS_03_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "night",
-      audio_path: "/audio/vi/c4/cloudy_night.mp3",
+      audio_path: "/audio/voice/mây-trời-đêm.mp3",
     },
   ],
   axes: {

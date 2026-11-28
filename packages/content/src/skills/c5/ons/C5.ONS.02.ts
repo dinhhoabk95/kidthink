@@ -59,7 +59,7 @@ export const C5_ONS_02_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c5/ons/am_b.mp3",
+      audio_path: "/audio/voice/âm-b-bướm.mp3",
     },
     {
       id: "ons_đ",
@@ -76,7 +76,7 @@ export const C5_ONS_02_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c5/ons/am_d_ngang.mp3",
+      audio_path: "/audio/voice/âm-đ-đào.mp3",
     },
     {
       id: "ons_h",
@@ -93,7 +93,7 @@ export const C5_ONS_02_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c5/ons/am_h.mp3",
+      audio_path: "/audio/voice/âm-h-hoa.mp3",
     },
     {
       id: "ons_c_k_q",
@@ -110,7 +110,7 @@ export const C5_ONS_02_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c5/ons/am_c.mp3",
+      audio_path: "/audio/voice/âm-c-k-q-cá.mp3",
     },
     {
       id: "ons_d_gi",
@@ -127,7 +127,7 @@ export const C5_ONS_02_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 5,
       ordering: 5,
-      audio_path: "/audio/vi/c5/ons/am_d.mp3",
+      audio_path: "/audio/voice/âm-d-gi-dê.mp3",
     },
     {
       id: "ons_g_gh",
@@ -144,7 +144,7 @@ export const C5_ONS_02_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 6,
       ordering: 6,
-      audio_path: "/audio/vi/c5/ons/am_g.mp3",
+      audio_path: "/audio/voice/âm-g-gh-gà.mp3",
     },
   ],
   axes: {

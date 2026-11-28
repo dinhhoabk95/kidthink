@@ -55,7 +55,7 @@ export const C5_LIS_01_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c5/lis/tieng_mua_roi.mp3",
+      audio_path: "/audio/voice/tiếng-mưa-rơi.mp3",
     },
     {
       id: "lis_gio_thoi",
@@ -71,7 +71,7 @@ export const C5_LIS_01_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c5/lis/tieng_gio_thoi.mp3",
+      audio_path: "/audio/voice/tiếng-gió-thổi.mp3",
     },
     {
       id: "lis_song_bien",
@@ -87,7 +87,7 @@ export const C5_LIS_01_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c5/lis/tieng_song_bien.mp3",
+      audio_path: "/audio/voice/tiếng-sóng-biển.mp3",
     },
     {
       id: "lis_chim_hot",
@@ -103,7 +103,7 @@ export const C5_LIS_01_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c5/lis/tieng_chim_hot.mp3",
+      audio_path: "/audio/voice/tiếng-chim-hót.mp3",
     },
     {
       id: "lis_meo_keu",
@@ -119,7 +119,7 @@ export const C5_LIS_01_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 5,
       ordering: 5,
-      audio_path: "/audio/vi/c5/lis/tieng_meo_keu.mp3",
+      audio_path: "/audio/voice/tiếng-mèo-kêu.mp3",
     },
     {
       id: "lis_cho_sua",
@@ -135,7 +135,7 @@ export const C5_LIS_01_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 6,
       ordering: 6,
-      audio_path: "/audio/vi/c5/lis/tieng_cho_sua.mp3",
+      audio_path: "/audio/voice/tiếng-chó-sủa.mp3",
     },
   ],
   relations: [

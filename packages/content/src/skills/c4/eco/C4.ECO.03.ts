@@ -54,7 +54,7 @@ export const C4_ECO_03_DATASET: SkillDataset = {
       contrast_group: "organic",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/org_apple.mp3",
+      audio_path: "/audio/voice/cuống-táo-thừa.mp3",
     },
     {
       id: "org_banana",
@@ -69,7 +69,7 @@ export const C4_ECO_03_DATASET: SkillDataset = {
       contrast_group: "organic",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/org_banana.mp3",
+      audio_path: "/audio/voice/vỏ-chuối-chín.mp3",
     },
     {
       id: "org_leaf",
@@ -84,7 +84,7 @@ export const C4_ECO_03_DATASET: SkillDataset = {
       contrast_group: "organic",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/org_leaf.mp3",
+      audio_path: "/audio/voice/lá-rụng-khô.mp3",
     },
     {
       id: "org_carrot",
@@ -99,7 +99,7 @@ export const C4_ECO_03_DATASET: SkillDataset = {
       contrast_group: "organic",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/org_carrot.mp3",
+      audio_path: "/audio/voice/đầu-củ-cà-rốt.mp3",
     },
     {
       id: "rec_plastic",
@@ -114,7 +114,7 @@ export const C4_ECO_03_DATASET: SkillDataset = {
       contrast_group: "recyclable",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/rec_plastic.mp3",
+      audio_path: "/audio/voice/chai-dầu-gội-nhựa.mp3",
     },
     {
       id: "rec_can",
@@ -129,7 +129,7 @@ export const C4_ECO_03_DATASET: SkillDataset = {
       contrast_group: "recyclable",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/rec_can.mp3",
+      audio_path: "/audio/voice/vỏ-lon-nhôm.mp3",
     },
     {
       id: "rec_cardboard",
@@ -144,7 +144,7 @@ export const C4_ECO_03_DATASET: SkillDataset = {
       contrast_group: "recyclable",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/rec_cardboard.mp3",
+      audio_path: "/audio/voice/hộp-giấy-bìa.mp3",
     },
     {
       id: "rec_glass",
@@ -159,7 +159,7 @@ export const C4_ECO_03_DATASET: SkillDataset = {
       contrast_group: "recyclable",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/rec_glass.mp3",
+      audio_path: "/audio/voice/lọ-thủy-tinh.mp3",
     },
   ],
   relations: [

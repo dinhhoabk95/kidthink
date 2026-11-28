@@ -56,7 +56,7 @@ export const C5_PHO_03_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c5/pho/tao.mp3",
+      audio_path: "/audio/voice/tiếng-ngắn-quả-táo.mp3",
     },
     {
       id: "pho_ngan_la",
@@ -72,7 +72,7 @@ export const C5_PHO_03_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c5/pho/la.mp3",
+      audio_path: "/audio/voice/tiếng-ngắn-chiếc-lá.mp3",
     },
     {
       id: "pho_ngan_hoa",
@@ -88,7 +88,7 @@ export const C5_PHO_03_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c5/pho/hoa.mp3",
+      audio_path: "/audio/voice/tiếng-ngắn-bông-hoa.mp3",
     },
     {
       id: "pho_dai_dong_ho",
@@ -104,7 +104,7 @@ export const C5_PHO_03_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c5/pho/dong_ho_reo.mp3",
+      audio_path: "/audio/voice/tiếng-dài-đồng-hồ-reo.mp3",
     },
     {
       id: "pho_dai_xe_cuu_hoa",
@@ -120,7 +120,7 @@ export const C5_PHO_03_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 5,
       ordering: 5,
-      audio_path: "/audio/vi/c5/pho/xe_cuu_hoa.mp3",
+      audio_path: "/audio/voice/tiếng-dài-xe-cứu-hoả.mp3",
     },
     {
       id: "pho_dai_cau_vong",
@@ -136,7 +136,7 @@ export const C5_PHO_03_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 6,
       ordering: 6,
-      audio_path: "/audio/vi/c5/pho/cau_vong_dep.mp3",
+      audio_path: "/audio/voice/tiếng-dài-cầu-vồng-đẹp.mp3",
     },
   ],
   axes: {

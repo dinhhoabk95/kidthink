@@ -54,7 +54,7 @@ export const C4_LIV_03_DATASET: SkillDataset = {
       contrast_group: "living",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/liv_puppy.mp3",
+      audio_path: "/audio/voice/chú-cún-con.mp3",
     },
     {
       id: "liv_tree",
@@ -69,7 +69,7 @@ export const C4_LIV_03_DATASET: SkillDataset = {
       contrast_group: "living",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/liv_tree.mp3",
+      audio_path: "/audio/voice/cây-xanh-mát.mp3",
     },
     {
       id: "liv_bird",
@@ -84,7 +84,7 @@ export const C4_LIV_03_DATASET: SkillDataset = {
       contrast_group: "living",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/liv_bird.mp3",
+      audio_path: "/audio/voice/chú-chim-sẻ.mp3",
     },
     {
       id: "liv_flower",
@@ -99,7 +99,7 @@ export const C4_LIV_03_DATASET: SkillDataset = {
       contrast_group: "living",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/liv_flower.mp3",
+      audio_path: "/audio/voice/bông-hoa-hồng.mp3",
     },
     {
       id: "non_rock",
@@ -114,7 +114,7 @@ export const C4_LIV_03_DATASET: SkillDataset = {
       contrast_group: "nonliving",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/non_rock.mp3",
+      audio_path: "/audio/voice/hòn-đá-tảng.mp3",
     },
     {
       id: "non_chair",
@@ -129,7 +129,7 @@ export const C4_LIV_03_DATASET: SkillDataset = {
       contrast_group: "nonliving",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/non_chair.mp3",
+      audio_path: "/audio/voice/cái-ghế-gỗ.mp3",
     },
     {
       id: "non_car",
@@ -144,7 +144,7 @@ export const C4_LIV_03_DATASET: SkillDataset = {
       contrast_group: "nonliving",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/non_car.mp3",
+      audio_path: "/audio/voice/xe-ô-tô.mp3",
     },
     {
       id: "non_robot",
@@ -159,7 +159,7 @@ export const C4_LIV_03_DATASET: SkillDataset = {
       contrast_group: "nonliving",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/non_robot.mp3",
+      audio_path: "/audio/voice/robot-đồ-chơi.mp3",
     },
   ],
   relations: [

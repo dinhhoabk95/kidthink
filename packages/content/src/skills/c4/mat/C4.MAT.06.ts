@@ -54,7 +54,7 @@ export const C4_MAT_06_DATASET: SkillDataset = {
       contrast_group: "light",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/src_sun.mp3",
+      audio_path: "/audio/voice/mặt-trời-sáng.mp3",
     },
     {
       id: "src_bulb",
@@ -69,7 +69,7 @@ export const C4_MAT_06_DATASET: SkillDataset = {
       contrast_group: "light",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/src_bulb.mp3",
+      audio_path: "/audio/voice/bóng-đèn-sáng.mp3",
     },
     {
       id: "src_candle",
@@ -84,7 +84,7 @@ export const C4_MAT_06_DATASET: SkillDataset = {
       contrast_group: "light",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/src_candle.mp3",
+      audio_path: "/audio/voice/ngọn-nến-lung-linh.mp3",
     },
     {
       id: "src_flash",
@@ -99,7 +99,7 @@ export const C4_MAT_06_DATASET: SkillDataset = {
       contrast_group: "light",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/src_flash.mp3",
+      audio_path: "/audio/voice/đèn-pin-chiếu.mp3",
     },
     {
       id: "shd_tree",
@@ -114,7 +114,7 @@ export const C4_MAT_06_DATASET: SkillDataset = {
       contrast_group: "shadow",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/shd_tree.mp3",
+      audio_path: "/audio/voice/tán-cây-bóng-mát.mp3",
     },
     {
       id: "shd_umbrella",
@@ -129,7 +129,7 @@ export const C4_MAT_06_DATASET: SkillDataset = {
       contrast_group: "shadow",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/shd_umbrella.mp3",
+      audio_path: "/audio/voice/cái-dù-che-nắng.mp3",
     },
     {
       id: "shd_hand",
@@ -144,7 +144,7 @@ export const C4_MAT_06_DATASET: SkillDataset = {
       contrast_group: "shadow",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/shd_hand.mp3",
+      audio_path: "/audio/voice/bàn-tay-chắn.mp3",
     },
     {
       id: "shd_wall",
@@ -159,7 +159,7 @@ export const C4_MAT_06_DATASET: SkillDataset = {
       contrast_group: "shadow",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/shd_wall.mp3",
+      audio_path: "/audio/voice/tường-gạch-chắn.mp3",
     },
   ],
   relations: [

@@ -54,7 +54,7 @@ export const C4_HOM_05_DATASET: SkillDataset = {
       contrast_group: "north",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/food_pho.mp3",
+      audio_path: "/audio/voice/bát-phở-bò.mp3",
     },
     {
       id: "food_buncha",
@@ -69,7 +69,7 @@ export const C4_HOM_05_DATASET: SkillDataset = {
       contrast_group: "north",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/food_buncha.mp3",
+      audio_path: "/audio/voice/nồi-bún-nấu-thơm.mp3",
     },
     {
       id: "food_com",
@@ -84,7 +84,7 @@ export const C4_HOM_05_DATASET: SkillDataset = {
       contrast_group: "north",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/food_com.mp3",
+      audio_path: "/audio/voice/cốm-lúa-non.mp3",
     },
     {
       id: "food_banhcuon",
@@ -99,7 +99,7 @@ export const C4_HOM_05_DATASET: SkillDataset = {
       contrast_group: "north",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/food_banhcuon.mp3",
+      audio_path: "/audio/voice/đĩa-bánh-cuốn.mp3",
     },
     {
       id: "food_hutieu",
@@ -114,7 +114,7 @@ export const C4_HOM_05_DATASET: SkillDataset = {
       contrast_group: "south",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/food_hutieu.mp3",
+      audio_path: "/audio/voice/tô-hủ-tiếu.mp3",
     },
     {
       id: "food_banhxeo",
@@ -129,7 +129,7 @@ export const C4_HOM_05_DATASET: SkillDataset = {
       contrast_group: "south",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/food_banhxeo.mp3",
+      audio_path: "/audio/voice/bánh-xèo-vàng.mp3",
     },
     {
       id: "food_comtam",
@@ -144,7 +144,7 @@ export const C4_HOM_05_DATASET: SkillDataset = {
       contrast_group: "south",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/food_comtam.mp3",
+      audio_path: "/audio/voice/đĩa-cơm-tấm.mp3",
     },
     {
       id: "food_che",
@@ -159,7 +159,7 @@ export const C4_HOM_05_DATASET: SkillDataset = {
       contrast_group: "south",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/food_che.mp3",
+      audio_path: "/audio/voice/ly-chè-mát.mp3",
     },
   ],
   relations: [

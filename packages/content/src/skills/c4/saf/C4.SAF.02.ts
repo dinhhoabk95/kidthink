@@ -54,7 +54,7 @@ export const C4_SAF_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "go",
-      audio_path: "/audio/vi/c4/green_light.mp3",
+      audio_path: "/audio/voice/đèn-màu-xanh.mp3",
     },
     {
       id: "walk_sign",
@@ -69,7 +69,7 @@ export const C4_SAF_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "go",
-      audio_path: "/audio/vi/c4/walk_sign.mp3",
+      audio_path: "/audio/voice/đèn-đi-bộ.mp3",
     },
     {
       id: "crosswalk",
@@ -84,7 +84,7 @@ export const C4_SAF_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "go",
-      audio_path: "/audio/vi/c4/crosswalk.mp3",
+      audio_path: "/audio/voice/vạch-sang-đường.mp3",
     },
     {
       id: "helmet",
@@ -99,7 +99,7 @@ export const C4_SAF_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "go",
-      audio_path: "/audio/vi/c4/helmet.mp3",
+      audio_path: "/audio/voice/mũ-bảo-hiểm.mp3",
     },
     {
       id: "red_light",
@@ -114,7 +114,7 @@ export const C4_SAF_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "stop",
-      audio_path: "/audio/vi/c4/red_light.mp3",
+      audio_path: "/audio/voice/đèn-màu-đỏ.mp3",
     },
     {
       id: "yellow_light",
@@ -129,7 +129,7 @@ export const C4_SAF_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "stop",
-      audio_path: "/audio/vi/c4/yellow_light.mp3",
+      audio_path: "/audio/voice/đèn-màu-vàng.mp3",
     },
     {
       id: "siren",
@@ -144,7 +144,7 @@ export const C4_SAF_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "stop",
-      audio_path: "/audio/vi/c4/siren.mp3",
+      audio_path: "/audio/voice/còi-báo-động.mp3",
     },
     {
       id: "barrier",
@@ -159,7 +159,7 @@ export const C4_SAF_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "stop",
-      audio_path: "/audio/vi/c4/barrier.mp3",
+      audio_path: "/audio/voice/hàng-rào-chắn.mp3",
     },
   ],
   axes: {

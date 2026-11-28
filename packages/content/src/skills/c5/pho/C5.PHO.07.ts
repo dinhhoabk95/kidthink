@@ -59,7 +59,7 @@ export const C5_PHO_07_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c5/pho/tieng_ba.mp3",
+      audio_path: "/audio/voice/tiếng-ba-b-a.mp3",
     },
     {
       id: "pho_tieng_ca",
@@ -76,7 +76,7 @@ export const C5_PHO_07_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c5/pho/tieng_ca.mp3",
+      audio_path: "/audio/voice/tiếng-cá-c-a.mp3",
     },
     {
       id: "pho_tieng_ga",
@@ -93,7 +93,7 @@ export const C5_PHO_07_DATASET: SkillDataset = {
       contrast_group: "primary",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c5/pho/tieng_ga.mp3",
+      audio_path: "/audio/voice/tiếng-gà-g-a.mp3",
     },
     {
       id: "pho_tieng_be",
@@ -110,7 +110,7 @@ export const C5_PHO_07_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c5/pho/tieng_be.mp3",
+      audio_path: "/audio/voice/tiếng-bé-b-e.mp3",
     },
     {
       id: "pho_tieng_me",
@@ -127,7 +127,7 @@ export const C5_PHO_07_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 5,
       ordering: 5,
-      audio_path: "/audio/vi/c5/pho/tieng_me.mp3",
+      audio_path: "/audio/voice/tiếng-mẹ-m-e.mp3",
     },
     {
       id: "pho_tieng_xe",
@@ -144,7 +144,7 @@ export const C5_PHO_07_DATASET: SkillDataset = {
       contrast_group: "contrast",
       value: 6,
       ordering: 6,
-      audio_path: "/audio/vi/c5/pho/tieng_xe.mp3",
+      audio_path: "/audio/voice/tiếng-xe-x-e.mp3",
     },
   ],
   axes: {

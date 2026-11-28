@@ -54,7 +54,7 @@ export const C4_HOM_04_DATASET: SkillDataset = {
       contrast_group: "nature",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/vis_bay.mp3",
+      audio_path: "/audio/voice/vịnh-biển-biếc.mp3",
     },
     {
       id: "vis_mountain",
@@ -69,7 +69,7 @@ export const C4_HOM_04_DATASET: SkillDataset = {
       contrast_group: "nature",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/vis_mountain.mp3",
+      audio_path: "/audio/voice/núi-non-cao.mp3",
     },
     {
       id: "vis_waterfall",
@@ -84,7 +84,7 @@ export const C4_HOM_04_DATASET: SkillDataset = {
       contrast_group: "nature",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/vis_waterfall.mp3",
+      audio_path: "/audio/voice/thác-nước-reo.mp3",
     },
     {
       id: "vis_cave",
@@ -99,7 +99,7 @@ export const C4_HOM_04_DATASET: SkillDataset = {
       contrast_group: "nature",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/vis_cave.mp3",
+      audio_path: "/audio/voice/hang-đá-rộng.mp3",
     },
     {
       id: "vis_temple",
@@ -114,7 +114,7 @@ export const C4_HOM_04_DATASET: SkillDataset = {
       contrast_group: "heritage",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/vis_temple.mp3",
+      audio_path: "/audio/voice/ngôi-chùa-cổ.mp3",
     },
     {
       id: "vis_citadel",
@@ -129,7 +129,7 @@ export const C4_HOM_04_DATASET: SkillDataset = {
       contrast_group: "heritage",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/vis_citadel.mp3",
+      audio_path: "/audio/voice/kinh-thành-xưa.mp3",
     },
     {
       id: "vis_bridge",
@@ -144,7 +144,7 @@ export const C4_HOM_04_DATASET: SkillDataset = {
       contrast_group: "heritage",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/vis_bridge.mp3",
+      audio_path: "/audio/voice/cầu-cong-đẹp.mp3",
     },
     {
       id: "vis_gate",
@@ -159,7 +159,7 @@ export const C4_HOM_04_DATASET: SkillDataset = {
       contrast_group: "heritage",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/vis_gate.mp3",
+      audio_path: "/audio/voice/cổng-làng-xưa.mp3",
     },
   ],
   relations: [

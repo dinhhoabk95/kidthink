@@ -54,7 +54,7 @@ export const C4_HOM_01_DATASET: SkillDataset = {
       contrast_group: "flag",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/vn_flag.mp3",
+      audio_path: "/audio/voice/lá-cờ-việt-nam.mp3",
     },
     {
       id: "vn_star",
@@ -69,7 +69,7 @@ export const C4_HOM_01_DATASET: SkillDataset = {
       contrast_group: "flag",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/vn_star.mp3",
+      audio_path: "/audio/voice/ngôi-sao-vàng.mp3",
     },
     {
       id: "vn_red",
@@ -84,7 +84,7 @@ export const C4_HOM_01_DATASET: SkillDataset = {
       contrast_group: "flag",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/vn_red.mp3",
+      audio_path: "/audio/voice/nền-cờ-đỏ.mp3",
     },
     {
       id: "vn_pole",
@@ -99,7 +99,7 @@ export const C4_HOM_01_DATASET: SkillDataset = {
       contrast_group: "flag",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/vn_pole.mp3",
+      audio_path: "/audio/voice/cột-cờ-đỏ.mp3",
     },
     {
       id: "vn_lotus",
@@ -114,7 +114,7 @@ export const C4_HOM_01_DATASET: SkillDataset = {
       contrast_group: "homeland",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/vn_lotus.mp3",
+      audio_path: "/audio/voice/hoa-sen-hồng.mp3",
     },
     {
       id: "vn_bamboo",
@@ -129,7 +129,7 @@ export const C4_HOM_01_DATASET: SkillDataset = {
       contrast_group: "homeland",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/vn_bamboo.mp3",
+      audio_path: "/audio/voice/cây-tre-xanh.mp3",
     },
     {
       id: "vn_hat",
@@ -144,7 +144,7 @@ export const C4_HOM_01_DATASET: SkillDataset = {
       contrast_group: "homeland",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/vn_hat.mp3",
+      audio_path: "/audio/voice/mũ-nón-lá.mp3",
     },
     {
       id: "vn_map",
@@ -159,7 +159,7 @@ export const C4_HOM_01_DATASET: SkillDataset = {
       contrast_group: "homeland",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/vn_map.mp3",
+      audio_path: "/audio/voice/bản-đồ-chữ-s.mp3",
     },
   ],
   relations: [

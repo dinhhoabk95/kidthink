@@ -55,7 +55,7 @@ export const C4_SOC_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "person",
-      audio_path: "/audio/vi/c4/doctor.mp3",
+      audio_path: "/audio/voice/cô-bác-sĩ.mp3",
     },
     {
       id: "firefighter",
@@ -70,7 +70,7 @@ export const C4_SOC_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "person",
-      audio_path: "/audio/vi/c4/firefighter.mp3",
+      audio_path: "/audio/voice/chú-cứu-hỏa.mp3",
     },
     {
       id: "chef",
@@ -85,7 +85,7 @@ export const C4_SOC_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "person",
-      audio_path: "/audio/vi/c4/chef.mp3",
+      audio_path: "/audio/voice/đầu-bếp-giỏi.mp3",
     },
     {
       id: "teacher",
@@ -100,7 +100,7 @@ export const C4_SOC_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "person",
-      audio_path: "/audio/vi/c4/teacher.mp3",
+      audio_path: "/audio/voice/cô-giáo-hiền.mp3",
     },
     {
       id: "stethoscope",
@@ -115,7 +115,7 @@ export const C4_SOC_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "tool",
-      audio_path: "/audio/vi/c4/stethoscope.mp3",
+      audio_path: "/audio/voice/ống-nghe-khám.mp3",
     },
     {
       id: "fire_truck",
@@ -130,7 +130,7 @@ export const C4_SOC_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "tool",
-      audio_path: "/audio/vi/c4/fire_truck.mp3",
+      audio_path: "/audio/voice/xe-cứu-hỏa.mp3",
     },
     {
       id: "pan",
@@ -145,7 +145,7 @@ export const C4_SOC_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "tool",
-      audio_path: "/audio/vi/c4/pan.mp3",
+      audio_path: "/audio/voice/chảo-nấu-ăn.mp3",
     },
     {
       id: "textbook",
@@ -160,7 +160,7 @@ export const C4_SOC_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "tool",
-      audio_path: "/audio/vi/c4/textbook.mp3",
+      audio_path: "/audio/voice/sách-giáo-khoa.mp3",
     },
   ],
   axes: {

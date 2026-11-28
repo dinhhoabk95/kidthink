@@ -55,7 +55,7 @@ export const C4_MAT_01_DATASET: SkillDataset = {
       contrast_group: "sunny",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/wth_sun.mp3",
+      audio_path: "/audio/voice/ông-mặt-trời.mp3",
     },
     {
       id: "wth_glasses",
@@ -70,7 +70,7 @@ export const C4_MAT_01_DATASET: SkillDataset = {
       contrast_group: "sunny",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/wth_glasses.mp3",
+      audio_path: "/audio/voice/kính-râm-mát.mp3",
     },
     {
       id: "wth_hat",
@@ -85,7 +85,7 @@ export const C4_MAT_01_DATASET: SkillDataset = {
       contrast_group: "sunny",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/wth_hat.mp3",
+      audio_path: "/audio/voice/mũ-che-nắng.mp3",
     },
     {
       id: "wth_fan",
@@ -100,7 +100,7 @@ export const C4_MAT_01_DATASET: SkillDataset = {
       contrast_group: "sunny",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/wth_fan.mp3",
+      audio_path: "/audio/voice/cái-quạt-nan.mp3",
     },
     {
       id: "wth_rain",
@@ -115,7 +115,7 @@ export const C4_MAT_01_DATASET: SkillDataset = {
       contrast_group: "rainy",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/wth_rain.mp3",
+      audio_path: "/audio/voice/đám-mây-mưa.mp3",
     },
     {
       id: "wth_umbrella",
@@ -130,7 +130,7 @@ export const C4_MAT_01_DATASET: SkillDataset = {
       contrast_group: "rainy",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/wth_umbrella.mp3",
+      audio_path: "/audio/voice/cái-ô-che-mưa.mp3",
     },
     {
       id: "wth_coat",
@@ -145,7 +145,7 @@ export const C4_MAT_01_DATASET: SkillDataset = {
       contrast_group: "rainy",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/wth_coat.mp3",
+      audio_path: "/audio/voice/áo-khoác-đi-mưa.mp3",
     },
     {
       id: "wth_boots",
@@ -160,7 +160,7 @@ export const C4_MAT_01_DATASET: SkillDataset = {
       contrast_group: "rainy",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/wth_boots.mp3",
+      audio_path: "/audio/voice/đôi-ủng-đi-mưa.mp3",
     },
   ],
   relations: [

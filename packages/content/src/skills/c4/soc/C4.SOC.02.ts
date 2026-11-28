@@ -57,7 +57,7 @@ export const C4_SOC_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "adult",
-      audio_path: "/audio/vi/c4/grandfather.mp3",
+      audio_path: "/audio/voice/ông-hiền-từ.mp3",
     },
     {
       id: "grandmother",
@@ -72,7 +72,7 @@ export const C4_SOC_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "adult",
-      audio_path: "/audio/vi/c4/grandmother.mp3",
+      audio_path: "/audio/voice/bà-dịu-dàng.mp3",
     },
     {
       id: "father",
@@ -87,7 +87,7 @@ export const C4_SOC_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "adult",
-      audio_path: "/audio/vi/c4/father.mp3",
+      audio_path: "/audio/voice/bố-mạnh-mẽ.mp3",
     },
     {
       id: "mother",
@@ -102,7 +102,7 @@ export const C4_SOC_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "adult",
-      audio_path: "/audio/vi/c4/mother.mp3",
+      audio_path: "/audio/voice/mẹ-yêu-thương.mp3",
     },
     {
       id: "brother",
@@ -117,7 +117,7 @@ export const C4_SOC_02_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "child",
-      audio_path: "/audio/vi/c4/brother.mp3",
+      audio_path: "/audio/voice/anh-trai-vui.mp3",
     },
     {
       id: "sister",
@@ -132,7 +132,7 @@ export const C4_SOC_02_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "child",
-      audio_path: "/audio/vi/c4/sister.mp3",
+      audio_path: "/audio/voice/chị-gái-ngoan.mp3",
     },
     {
       id: "baby",
@@ -147,7 +147,7 @@ export const C4_SOC_02_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "child",
-      audio_path: "/audio/vi/c4/baby.mp3",
+      audio_path: "/audio/voice/em-bé-nhỏ.mp3",
     },
     {
       id: "kid",
@@ -162,7 +162,7 @@ export const C4_SOC_02_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "child",
-      audio_path: "/audio/vi/c4/kid.mp3",
+      audio_path: "/audio/voice/bạn-nhỏ-ngoan.mp3",
     },
   ],
   axes: {

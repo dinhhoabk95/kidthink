@@ -54,7 +54,7 @@ export const C4_SOC_03_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "clean",
-      audio_path: "/audio/vi/c4/sweep.mp3",
+      audio_path: "/audio/voice/chổi-quét-nhà.mp3",
     },
     {
       id: "wipe_table",
@@ -69,7 +69,7 @@ export const C4_SOC_03_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "clean",
-      audio_path: "/audio/vi/c4/wipe_table.mp3",
+      audio_path: "/audio/voice/miếng-bọt-biển.mp3",
     },
     {
       id: "laundry",
@@ -84,7 +84,7 @@ export const C4_SOC_03_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "clean",
-      audio_path: "/audio/vi/c4/laundry.mp3",
+      audio_path: "/audio/voice/giỏ-đựng-đồ.mp3",
     },
     {
       id: "trash_sort",
@@ -99,7 +99,7 @@ export const C4_SOC_03_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "clean",
-      audio_path: "/audio/vi/c4/trash_sort.mp3",
+      audio_path: "/audio/voice/thùng-đựng-rác.mp3",
     },
     {
       id: "cook",
@@ -114,7 +114,7 @@ export const C4_SOC_03_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "kitchen",
-      audio_path: "/audio/vi/c4/cook.mp3",
+      audio_path: "/audio/voice/chảo-nấu-ăn.mp3",
     },
     {
       id: "wash_dishes",
@@ -129,7 +129,7 @@ export const C4_SOC_03_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "kitchen",
-      audio_path: "/audio/vi/c4/wash_dishes.mp3",
+      audio_path: "/audio/voice/bát-ăn-cơm.mp3",
     },
     {
       id: "cooking_pot",
@@ -144,7 +144,7 @@ export const C4_SOC_03_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "kitchen",
-      audio_path: "/audio/vi/c4/cooking_pot.mp3",
+      audio_path: "/audio/voice/nồi-nấu-canh.mp3",
     },
     {
       id: "spoon",
@@ -159,7 +159,7 @@ export const C4_SOC_03_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "kitchen",
-      audio_path: "/audio/vi/c4/spoon.mp3",
+      audio_path: "/audio/voice/chiếc-thìa-nhỏ.mp3",
     },
   ],
   axes: {

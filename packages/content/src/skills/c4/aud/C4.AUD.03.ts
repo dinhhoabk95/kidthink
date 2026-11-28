@@ -54,7 +54,7 @@ export const C4_AUD_03_DATASET: SkillDataset = {
       contrast_group: "fast",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/aud_horse_gallop.mp3",
+      audio_path: "/audio/voice/tiếng-ngựa-phi.mp3",
     },
     {
       id: "aud_clap_fast",
@@ -69,7 +69,7 @@ export const C4_AUD_03_DATASET: SkillDataset = {
       contrast_group: "fast",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/aud_clap_fast.mp3",
+      audio_path: "/audio/voice/tiếng-vỗ-tay-nhanh.mp3",
     },
     {
       id: "aud_train_fast",
@@ -84,7 +84,7 @@ export const C4_AUD_03_DATASET: SkillDataset = {
       contrast_group: "fast",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/aud_train_fast.mp3",
+      audio_path: "/audio/voice/tiếng-tàu-nhanh.mp3",
     },
     {
       id: "aud_drum_roll",
@@ -99,7 +99,7 @@ export const C4_AUD_03_DATASET: SkillDataset = {
       contrast_group: "fast",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/aud_drum_roll.mp3",
+      audio_path: "/audio/voice/tiếng-trống-nhanh.mp3",
     },
     {
       id: "aud_clock_slow",
@@ -114,7 +114,7 @@ export const C4_AUD_03_DATASET: SkillDataset = {
       contrast_group: "slow",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/aud_clock_slow.mp3",
+      audio_path: "/audio/voice/tiếng-đồng-hồ-chậm.mp3",
     },
     {
       id: "aud_step_slow",
@@ -129,7 +129,7 @@ export const C4_AUD_03_DATASET: SkillDataset = {
       contrast_group: "slow",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/aud_step_slow.mp3",
+      audio_path: "/audio/voice/tiếng-chân-chậm.mp3",
     },
     {
       id: "aud_drip_slow",
@@ -144,7 +144,7 @@ export const C4_AUD_03_DATASET: SkillDataset = {
       contrast_group: "slow",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/aud_drip_slow.mp3",
+      audio_path: "/audio/voice/tiếng-nước-chậm.mp3",
     },
     {
       id: "aud_bell_slow",
@@ -159,7 +159,7 @@ export const C4_AUD_03_DATASET: SkillDataset = {
       contrast_group: "slow",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/aud_bell_slow.mp3",
+      audio_path: "/audio/voice/tiếng-chuông-chậm.mp3",
     },
   ],
   relations: [

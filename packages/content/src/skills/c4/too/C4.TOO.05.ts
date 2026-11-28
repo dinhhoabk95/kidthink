@@ -55,7 +55,7 @@ export const C4_TOO_05_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "device",
-      audio_path: "/audio/vi/c4/tablet.mp3",
+      audio_path: "/audio/voice/máy-tính-bảng.mp3",
     },
     {
       id: "computer",
@@ -70,7 +70,7 @@ export const C4_TOO_05_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "device",
-      audio_path: "/audio/vi/c4/computer.mp3",
+      audio_path: "/audio/voice/máy-tính-bàn.mp3",
     },
     {
       id: "headphones",
@@ -85,7 +85,7 @@ export const C4_TOO_05_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "device",
-      audio_path: "/audio/vi/c4/headphones.mp3",
+      audio_path: "/audio/voice/chiếc-tai-nghe.mp3",
     },
     {
       id: "mouse",
@@ -100,7 +100,7 @@ export const C4_TOO_05_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "device",
-      audio_path: "/audio/vi/c4/mouse.mp3",
+      audio_path: "/audio/voice/chuột-máy-tính.mp3",
     },
     {
       id: "charger_adult",
@@ -115,7 +115,7 @@ export const C4_TOO_05_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "protection",
-      audio_path: "/audio/vi/c4/charger_adult.mp3",
+      audio_path: "/audio/voice/đèn-bàn-sáng.mp3",
     },
     {
       id: "screen_cloth",
@@ -130,7 +130,7 @@ export const C4_TOO_05_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "protection",
-      audio_path: "/audio/vi/c4/screen_cloth.mp3",
+      audio_path: "/audio/voice/miếng-bọt-biển-mềm.mp3",
     },
     {
       id: "break_timer",
@@ -145,7 +145,7 @@ export const C4_TOO_05_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "protection",
-      audio_path: "/audio/vi/c4/break_timer.mp3",
+      audio_path: "/audio/voice/đồng-hồ-hẹn.mp3",
     },
     {
       id: "blue_glasses",
@@ -160,7 +160,7 @@ export const C4_TOO_05_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "protection",
-      audio_path: "/audio/vi/c4/blue_glasses.mp3",
+      audio_path: "/audio/voice/kính-bảo-vệ.mp3",
     },
   ],
   axes: {

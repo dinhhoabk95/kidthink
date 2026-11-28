@@ -54,7 +54,7 @@ export const C4_DET_03_DATASET: SkillDataset = {
       contrast_group: "large",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/size_elephant.mp3",
+      audio_path: "/audio/voice/con-voi-to.mp3",
     },
     {
       id: "size_whale",
@@ -69,7 +69,7 @@ export const C4_DET_03_DATASET: SkillDataset = {
       contrast_group: "large",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/size_whale.mp3",
+      audio_path: "/audio/voice/cá-voi-to.mp3",
     },
     {
       id: "size_truck",
@@ -84,7 +84,7 @@ export const C4_DET_03_DATASET: SkillDataset = {
       contrast_group: "large",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/size_truck.mp3",
+      audio_path: "/audio/voice/xe-tải-to.mp3",
     },
     {
       id: "size_house",
@@ -99,7 +99,7 @@ export const C4_DET_03_DATASET: SkillDataset = {
       contrast_group: "large",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/size_house.mp3",
+      audio_path: "/audio/voice/ngôi-nhà-to.mp3",
     },
     {
       id: "size_ant",
@@ -114,7 +114,7 @@ export const C4_DET_03_DATASET: SkillDataset = {
       contrast_group: "small",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/size_ant.mp3",
+      audio_path: "/audio/voice/con-kiến-nhỏ.mp3",
     },
     {
       id: "size_mouse",
@@ -129,7 +129,7 @@ export const C4_DET_03_DATASET: SkillDataset = {
       contrast_group: "small",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/size_mouse.mp3",
+      audio_path: "/audio/voice/chuột-nhắt-nhỏ.mp3",
     },
     {
       id: "size_button",
@@ -144,7 +144,7 @@ export const C4_DET_03_DATASET: SkillDataset = {
       contrast_group: "small",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/size_button.mp3",
+      audio_path: "/audio/voice/nút-áo-nhỏ.mp3",
     },
     {
       id: "size_cherry",
@@ -159,7 +159,7 @@ export const C4_DET_03_DATASET: SkillDataset = {
       contrast_group: "small",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/size_cherry.mp3",
+      audio_path: "/audio/voice/quả-anh-đào-nhỏ.mp3",
     },
   ],
   relations: [

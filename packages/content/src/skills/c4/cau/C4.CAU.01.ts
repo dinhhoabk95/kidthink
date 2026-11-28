@@ -55,7 +55,7 @@ export const C4_CAU_01_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/cau_rain.mp3",
+      audio_path: "/audio/voice/cơn-mưa-rào.mp3",
     },
     {
       id: "cau_sun",
@@ -70,7 +70,7 @@ export const C4_CAU_01_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/cau_sun.mp3",
+      audio_path: "/audio/voice/nắng-sau-mưa.mp3",
     },
     {
       id: "cau_seed",
@@ -85,7 +85,7 @@ export const C4_CAU_01_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/cau_seed.mp3",
+      audio_path: "/audio/voice/hạt-mầm-gieo.mp3",
     },
     {
       id: "cau_heat_ice",
@@ -100,7 +100,7 @@ export const C4_CAU_01_DATASET: SkillDataset = {
       contrast_group: "cause",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/cau_heat_ice.mp3",
+      audio_path: "/audio/voice/viên-đá-lạnh.mp3",
     },
     {
       id: "eff_puddle",
@@ -115,7 +115,7 @@ export const C4_CAU_01_DATASET: SkillDataset = {
       contrast_group: "effect",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/eff_puddle.mp3",
+      audio_path: "/audio/voice/vũng-nước-mưa.mp3",
     },
     {
       id: "eff_rainbow",
@@ -130,7 +130,7 @@ export const C4_CAU_01_DATASET: SkillDataset = {
       contrast_group: "effect",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/eff_rainbow.mp3",
+      audio_path: "/audio/voice/cầu-vồng-rực-rỡ.mp3",
     },
     {
       id: "eff_flower",
@@ -145,7 +145,7 @@ export const C4_CAU_01_DATASET: SkillDataset = {
       contrast_group: "effect",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/eff_flower.mp3",
+      audio_path: "/audio/voice/bông-hoa-nở.mp3",
     },
     {
       id: "eff_water",
@@ -160,7 +160,7 @@ export const C4_CAU_01_DATASET: SkillDataset = {
       contrast_group: "effect",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/eff_water.mp3",
+      audio_path: "/audio/voice/giọt-nước-tan.mp3",
     },
   ],
   relations: [

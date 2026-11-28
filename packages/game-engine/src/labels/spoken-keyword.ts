@@ -363,11 +363,16 @@ function emojiKeyword(ref: string): string | undefined {
   return resolved;
 }
 
+/** Chuỗi chỉ có emoji/ký hiệu không đọc được: stem giọng sẽ là hash8, kho không có file. */
+const HAS_LETTER_OR_DIGIT = /[\p{L}\p{N}]/u;
+
 function textKeyword(text: string): string | undefined {
   if (textKeywordCache.has(text)) {
     return textKeywordCache.get(text);
   }
-  const resolved = formatSpokenLabel(text);
+  const resolved = HAS_LETTER_OR_DIGIT.test(text)
+    ? formatSpokenLabel(text)
+    : undefined;
   if (textKeywordCache.size >= MAX_KEYWORD_CACHE_SIZE) {
     textKeywordCache.clear();
   }

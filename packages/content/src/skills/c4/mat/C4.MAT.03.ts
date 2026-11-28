@@ -54,7 +54,7 @@ export const C4_MAT_03_DATASET: SkillDataset = {
       contrast_group: "day",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/tod_sun.mp3",
+      audio_path: "/audio/voice/mặt-trời-tỏa-sáng.mp3",
     },
     {
       id: "tod_rooster",
@@ -69,7 +69,7 @@ export const C4_MAT_03_DATASET: SkillDataset = {
       contrast_group: "day",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/tod_rooster.mp3",
+      audio_path: "/audio/voice/gà-gáy-báo-thức.mp3",
     },
     {
       id: "tod_school",
@@ -84,7 +84,7 @@ export const C4_MAT_03_DATASET: SkillDataset = {
       contrast_group: "day",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/tod_school.mp3",
+      audio_path: "/audio/voice/cặp-sách-học.mp3",
     },
     {
       id: "tod_rainbow",
@@ -99,7 +99,7 @@ export const C4_MAT_03_DATASET: SkillDataset = {
       contrast_group: "day",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/tod_rainbow.mp3",
+      audio_path: "/audio/voice/cầu-vồng-rực-rỡ.mp3",
     },
     {
       id: "tod_moon",
@@ -114,7 +114,7 @@ export const C4_MAT_03_DATASET: SkillDataset = {
       contrast_group: "night",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/tod_moon.mp3",
+      audio_path: "/audio/voice/mặt-trăng-soi-sáng.mp3",
     },
     {
       id: "tod_stars",
@@ -129,7 +129,7 @@ export const C4_MAT_03_DATASET: SkillDataset = {
       contrast_group: "night",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/tod_stars.mp3",
+      audio_path: "/audio/voice/ngôi-sao-lấp-lánh.mp3",
     },
     {
       id: "tod_owl",
@@ -144,7 +144,7 @@ export const C4_MAT_03_DATASET: SkillDataset = {
       contrast_group: "night",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/tod_owl.mp3",
+      audio_path: "/audio/voice/chú-cú-mèo.mp3",
     },
     {
       id: "tod_sleep",
@@ -159,7 +159,7 @@ export const C4_MAT_03_DATASET: SkillDataset = {
       contrast_group: "night",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/tod_sleep.mp3",
+      audio_path: "/audio/voice/giường-ngủ-êm.mp3",
     },
   ],
   relations: [

@@ -54,7 +54,7 @@ export const C4_DET_01_DATASET: SkillDataset = {
       contrast_group: "warm",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/col_red.mp3",
+      audio_path: "/audio/voice/màu-đỏ-thắm.mp3",
     },
     {
       id: "col_orange",
@@ -69,7 +69,7 @@ export const C4_DET_01_DATASET: SkillDataset = {
       contrast_group: "warm",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/col_orange.mp3",
+      audio_path: "/audio/voice/màu-cam-tươi.mp3",
     },
     {
       id: "col_yellow",
@@ -84,7 +84,7 @@ export const C4_DET_01_DATASET: SkillDataset = {
       contrast_group: "warm",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/col_yellow.mp3",
+      audio_path: "/audio/voice/màu-vàng-rực.mp3",
     },
     {
       id: "col_pink",
@@ -99,7 +99,7 @@ export const C4_DET_01_DATASET: SkillDataset = {
       contrast_group: "warm",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/col_pink.mp3",
+      audio_path: "/audio/voice/màu-hồng-phấn.mp3",
     },
     {
       id: "col_blue",
@@ -114,7 +114,7 @@ export const C4_DET_01_DATASET: SkillDataset = {
       contrast_group: "cool",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/col_blue.mp3",
+      audio_path: "/audio/voice/màu-xanh-dương.mp3",
     },
     {
       id: "col_green",
@@ -129,7 +129,7 @@ export const C4_DET_01_DATASET: SkillDataset = {
       contrast_group: "cool",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/col_green.mp3",
+      audio_path: "/audio/voice/màu-xanh-lá.mp3",
     },
     {
       id: "col_purple",
@@ -144,7 +144,7 @@ export const C4_DET_01_DATASET: SkillDataset = {
       contrast_group: "cool",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/col_purple.mp3",
+      audio_path: "/audio/voice/màu-tím-biếc.mp3",
     },
     {
       id: "col_brown",
@@ -159,7 +159,7 @@ export const C4_DET_01_DATASET: SkillDataset = {
       contrast_group: "cool",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/col_brown.mp3",
+      audio_path: "/audio/voice/màu-nâu-đất.mp3",
     },
   ],
   relations: [

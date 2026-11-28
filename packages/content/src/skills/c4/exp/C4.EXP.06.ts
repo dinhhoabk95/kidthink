@@ -57,7 +57,7 @@ export const C4_EXP_06_DATASET: SkillDataset = {
       contrast_group: "initial",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/cond_cold.mp3",
+      audio_path: "/audio/voice/cốc-nước-đá.mp3",
     },
     {
       id: "cond_ramp_low",
@@ -72,7 +72,7 @@ export const C4_EXP_06_DATASET: SkillDataset = {
       contrast_group: "initial",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/cond_ramp_low.mp3",
+      audio_path: "/audio/voice/xe-dốc-thấp.mp3",
     },
     {
       id: "cond_wind_light",
@@ -87,7 +87,7 @@ export const C4_EXP_06_DATASET: SkillDataset = {
       contrast_group: "initial",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/cond_wind_light.mp3",
+      audio_path: "/audio/voice/diều-gió-nhẹ.mp3",
     },
     {
       id: "cond_shade",
@@ -102,7 +102,7 @@ export const C4_EXP_06_DATASET: SkillDataset = {
       contrast_group: "initial",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/cond_shade.mp3",
+      audio_path: "/audio/voice/mầm-cây-trong-bóng.mp3",
     },
     {
       id: "cond_warm",
@@ -117,7 +117,7 @@ export const C4_EXP_06_DATASET: SkillDataset = {
       contrast_group: "changed",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/cond_warm.mp3",
+      audio_path: "/audio/voice/cốc-nước-ấm.mp3",
     },
     {
       id: "cond_ramp_high",
@@ -132,7 +132,7 @@ export const C4_EXP_06_DATASET: SkillDataset = {
       contrast_group: "changed",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/cond_ramp_high.mp3",
+      audio_path: "/audio/voice/xe-dốc-cao.mp3",
     },
     {
       id: "cond_wind_strong",
@@ -147,7 +147,7 @@ export const C4_EXP_06_DATASET: SkillDataset = {
       contrast_group: "changed",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/cond_wind_strong.mp3",
+      audio_path: "/audio/voice/diều-gió-to.mp3",
     },
     {
       id: "cond_sun",
@@ -162,7 +162,7 @@ export const C4_EXP_06_DATASET: SkillDataset = {
       contrast_group: "changed",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/cond_sun.mp3",
+      audio_path: "/audio/voice/cây-ngoài-nắng.mp3",
     },
   ],
   relations: [

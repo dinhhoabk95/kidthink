@@ -54,7 +54,7 @@ export const C4_LIV_06_DATASET: SkillDataset = {
       contrast_group: "needed",
       value: 1,
       ordering: 1,
-      audio_path: "/audio/vi/c4/grow_water.mp3",
+      audio_path: "/audio/voice/nước-tưới-ấm.mp3",
     },
     {
       id: "grow_sun",
@@ -69,7 +69,7 @@ export const C4_LIV_06_DATASET: SkillDataset = {
       contrast_group: "needed",
       value: 2,
       ordering: 2,
-      audio_path: "/audio/vi/c4/grow_sun.mp3",
+      audio_path: "/audio/voice/ánh-nắng-mặt-trời.mp3",
     },
     {
       id: "grow_soil",
@@ -84,7 +84,7 @@ export const C4_LIV_06_DATASET: SkillDataset = {
       contrast_group: "needed",
       value: 3,
       ordering: 3,
-      audio_path: "/audio/vi/c4/grow_soil.mp3",
+      audio_path: "/audio/voice/chậu-đất-trồng-cây.mp3",
     },
     {
       id: "grow_air",
@@ -99,7 +99,7 @@ export const C4_LIV_06_DATASET: SkillDataset = {
       contrast_group: "needed",
       value: 4,
       ordering: 4,
-      audio_path: "/audio/vi/c4/grow_air.mp3",
+      audio_path: "/audio/voice/làn-gió-mát-lành.mp3",
     },
     {
       id: "nogrow_juice",
@@ -114,7 +114,7 @@ export const C4_LIV_06_DATASET: SkillDataset = {
       contrast_group: "other",
       value: 1,
       ordering: 5,
-      audio_path: "/audio/vi/c4/nogrow_juice.mp3",
+      audio_path: "/audio/voice/nước-ngọt-có-ga.mp3",
     },
     {
       id: "nogrow_toy",
@@ -129,7 +129,7 @@ export const C4_LIV_06_DATASET: SkillDataset = {
       contrast_group: "other",
       value: 2,
       ordering: 6,
-      audio_path: "/audio/vi/c4/nogrow_toy.mp3",
+      audio_path: "/audio/voice/ô-tô-đồ-chơi.mp3",
     },
     {
       id: "nogrow_ball",
@@ -144,7 +144,7 @@ export const C4_LIV_06_DATASET: SkillDataset = {
       contrast_group: "other",
       value: 3,
       ordering: 7,
-      audio_path: "/audio/vi/c4/nogrow_ball.mp3",
+      audio_path: "/audio/voice/quả-bóng-đá.mp3",
     },
     {
       id: "nogrow_candy",
@@ -159,7 +159,7 @@ export const C4_LIV_06_DATASET: SkillDataset = {
       contrast_group: "other",
       value: 4,
       ordering: 8,
-      audio_path: "/audio/vi/c4/nogrow_candy.mp3",
+      audio_path: "/audio/voice/kẹo-đường-ngọt.mp3",
     },
   ],
   relations: [

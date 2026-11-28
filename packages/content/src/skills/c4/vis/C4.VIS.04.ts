@@ -55,7 +55,7 @@ export const C4_VIS_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 1,
       contrast_group: "pet",
-      audio_path: "/audio/vi/c4/cat.mp3",
+      audio_path: "/audio/voice/chú-mèo-con.mp3",
     },
     {
       id: "dog",
@@ -70,7 +70,7 @@ export const C4_VIS_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 2,
       contrast_group: "pet",
-      audio_path: "/audio/vi/c4/dog.mp3",
+      audio_path: "/audio/voice/chú-cún-con.mp3",
     },
     {
       id: "rabbit",
@@ -85,7 +85,7 @@ export const C4_VIS_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 3,
       contrast_group: "pet",
-      audio_path: "/audio/vi/c4/rabbit.mp3",
+      audio_path: "/audio/voice/chú-thỏ-trắng.mp3",
     },
     {
       id: "rooster",
@@ -100,7 +100,7 @@ export const C4_VIS_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 4,
       contrast_group: "pet",
-      audio_path: "/audio/vi/c4/rooster.mp3",
+      audio_path: "/audio/voice/chú-gà-trống.mp3",
     },
     {
       id: "elephant",
@@ -115,7 +115,7 @@ export const C4_VIS_04_DATASET: SkillDataset = {
       value: 1,
       ordering: 5,
       contrast_group: "wild",
-      audio_path: "/audio/vi/c4/elephant.mp3",
+      audio_path: "/audio/voice/chú-voi-to.mp3",
     },
     {
       id: "giraffe",
@@ -130,7 +130,7 @@ export const C4_VIS_04_DATASET: SkillDataset = {
       value: 2,
       ordering: 6,
       contrast_group: "wild",
-      audio_path: "/audio/vi/c4/giraffe.mp3",
+      audio_path: "/audio/voice/chú-hươu-cao.mp3",
     },
     {
       id: "zebra",
@@ -145,7 +145,7 @@ export const C4_VIS_04_DATASET: SkillDataset = {
       value: 3,
       ordering: 7,
       contrast_group: "wild",
-      audio_path: "/audio/vi/c4/zebra.mp3",
+      audio_path: "/audio/voice/ngựa-vằn-sọc.mp3",
     },
     {
       id: "lion",
@@ -160,7 +160,7 @@ export const C4_VIS_04_DATASET: SkillDataset = {
       value: 4,
       ordering: 8,
       contrast_group: "wild",
-      audio_path: "/audio/vi/c4/lion.mp3",
+      audio_path: "/audio/voice/chú-sư-tử.mp3",
     },
   ],
   axes: {
