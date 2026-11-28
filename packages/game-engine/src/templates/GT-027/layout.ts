@@ -9,7 +9,7 @@ import type { EngineView, EntityVisual, ViewEntity } from "#src/interaction";
 import { resolveAssetLabels } from "#src/labels/spoken-keyword";
 import type { LogicSpace } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
-import { insetDrawSize, splitCaption } from "#src/layout/slot-fit";
+import { insetDrawSize } from "#src/layout/slot-fit";
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import { CARD_FLIP_MS } from "#src/render/flashcard";
@@ -286,6 +286,34 @@ export function resolveRoundItems(
   return sameOrder && first ? [...shuffled.slice(1), first] : shuffled;
 }
 
+const BANNER_BAND_MIN_PX = 44;
+/** Cao tối thiểu (px CSS) để icon luật >= 28 px CSS nằm lọt dải (`BR-E027-10`). */
+const BANNER_BAND_CSS = 38;
+
+/**
+ * Tách dải luật ở đỉnh stage. Dải cao theo `cssPerLogic` để icon luật luôn đủ
+ * lớn trên điện thoại (hệ số co nhỏ làm 44 đơn vị logic chưa tới 28 px CSS).
+ */
+export function splitGT027Caption(
+  stage: ZoneRect,
+  cssPerLogic: number | undefined
+): { readonly caption: ZoneRect; readonly body: ZoneRect } {
+  const scale = cssPerLogic && cssPerLogic > 0 ? cssPerLogic : 1;
+  const bandH = Math.min(
+    Math.max(BANNER_BAND_MIN_PX, Math.ceil(BANNER_BAND_CSS / scale)),
+    stage.h
+  );
+  return {
+    caption: { x: stage.x, y: stage.y, w: stage.w, h: bandH },
+    body: {
+      x: stage.x,
+      y: stage.y + bandH,
+      w: stage.w,
+      h: Math.max(0, stage.h - bandH),
+    },
+  };
+}
+
 export function computeGT027Slots(
   stageRect: ZoneRect | undefined,
   logicSpace: LogicSpace,
@@ -294,7 +322,9 @@ export function computeGT027Slots(
   cssPerLogic: number | undefined
 ): readonly Slot[] {
   const layoutFn = resolveLayout("grid");
-  const bodyRect = stageRect ? splitCaption(stageRect).body : undefined;
+  const bodyRect = stageRect
+    ? splitGT027Caption(stageRect, cssPerLogic).body
+    : undefined;
   const raw = layoutFn({
     slotCount: itemCount,
     ageBand,
@@ -481,6 +511,7 @@ export interface GT027RenderFrameInput {
   readonly particlesEnabled: boolean;
   readonly softShadowsEnabled: boolean;
   readonly timeMs: number;
+  readonly cssPerLogic: number | undefined;
   readonly isValid: Pred;
   readonly getRenderState: StateFn;
 }
@@ -505,6 +536,7 @@ export function buildGT027RenderFrame(input: GT027RenderFrameInput): {
     completedSteps: input.completedSteps,
     switchAfterTrials: input.switchAfterTrials,
     wrongFlashIntensity: input.isClosedOnMiss ? 1 : snap.bannerWrongIntensity,
+    cssPerLogic: input.cssPerLogic,
     hintLevel: input.hintLevel,
     softShadowsEnabled: input.softShadowsEnabled,
     timeMs,

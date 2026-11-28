@@ -6,7 +6,7 @@ export const GT027_FIXTURES: {
 }[] = [
   {
     content: {
-      prompt: "Bé nghe kỹ luật chơi và chọn đúng hình nhé!",
+      prompt: "Bé chọn các hình màu đỏ nhé!",
       rules: [
         {
           id: "rule-red",
@@ -15,7 +15,7 @@ export const GT027_FIXTURES: {
           dimension: "color",
           target_value: "red",
           signal_text: "Luật 1: Bé hãy chọn tất cả các hình màu đỏ!",
-          signal_audio_text: "Chọn hình màu đỏ",
+          signal_audio_text: "Luật mới! Bé chọn các hình màu đỏ nhé!",
         },
         {
           id: "rule-star",
@@ -24,7 +24,7 @@ export const GT027_FIXTURES: {
           dimension: "shape",
           target_value: "star",
           signal_text: "Đổi luật rồi: Giờ bé hãy chọn hình ngôi sao nhé!",
-          signal_audio_text: "Đổi luật, chọn hình ngôi sao",
+          signal_audio_text: "Luật mới! Bé chọn hình ngôi sao nhé!",
         },
       ],
       items: [
@@ -76,7 +76,7 @@ export const GT027_FIXTURES: {
   },
   {
     content: {
-      prompt: "Trò chơi đổi luật nhanh mắt nhanh tai!",
+      prompt: "Bé chọn các hình vuông nhé!",
       rules: [
         {
           id: "rule-square",
@@ -85,7 +85,7 @@ export const GT027_FIXTURES: {
           dimension: "shape",
           target_value: "square",
           signal_text: "Luật: Tìm tất cả các khối vuông!",
-          signal_audio_text: "Chọn hình vuông",
+          signal_audio_text: "Luật mới! Bé chọn các hình vuông nhé!",
         },
         {
           id: "rule-blue",
@@ -94,7 +94,7 @@ export const GT027_FIXTURES: {
           dimension: "color",
           target_value: "blue",
           signal_text: "Luật mới: Chọn tất cả hình màu xanh biển!",
-          signal_audio_text: "Đổi luật, chọn màu xanh",
+          signal_audio_text: "Luật mới! Bé chọn các hình màu xanh biển nhé!",
         },
       ],
       items: [
@@ -140,7 +140,7 @@ export const GT027_FIXTURES: {
   },
   {
     content: {
-      prompt: "Quan sát thật kỹ khi luật thay đổi nhé!",
+      prompt: "Bé chọn các hình tròn nhé!",
       rules: [
         {
           id: "rule-circle",
@@ -149,7 +149,7 @@ export const GT027_FIXTURES: {
           dimension: "shape",
           target_value: "circle",
           signal_text: "Luật 1: Hãy chạm vào các hình tròn!",
-          signal_audio_text: "Chọn hình tròn",
+          signal_audio_text: "Luật mới! Bé chọn các hình tròn nhé!",
         },
         {
           id: "rule-yellow",
@@ -158,7 +158,7 @@ export const GT027_FIXTURES: {
           dimension: "color",
           target_value: "yellow",
           signal_text: "Đổi luật: Giờ hãy chọn các hình màu vàng!",
-          signal_audio_text: "Đổi luật, chọn màu vàng",
+          signal_audio_text: "Luật mới! Bé chọn các hình màu vàng nhé!",
         },
       ],
       items: [

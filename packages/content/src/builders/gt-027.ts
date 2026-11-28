@@ -35,6 +35,16 @@ const SHAPE_NAME_VI: Readonly<Record<CardShape, string>> = {
   square: "hình vuông",
 };
 
+/** Câu mở vòng: nói luật đầu (`BR-E027-09`). */
+export function gt027OpeningLine(valueVi: string): string {
+  return `Bé chọn các ${valueVi} nhé!`;
+}
+
+/** Lời đọc luật mới, phát sau tiếng còi (`BR-E027-09`). */
+export function gt027SwitchLine(valueVi: string): string {
+  return `Luật mới! Bé chọn các ${valueVi} nhé!`;
+}
+
 function buildRuleSwitchItems(
   itemCount: number,
   colors: readonly [ColorCards, ColorCards]
@@ -71,6 +81,7 @@ export const projectGT027: Projection<"GT-027"> = {
     const targetShape: CardShape = rng.nextInt(2) === 0 ? "circle" : "square";
     const shapeVi = SHAPE_NAME_VI[targetShape];
 
+    // `BR-E027-09`: prompt nói luật đầu; `signal_audio_text` là lời đọc sau còi.
     const rules = [
       {
         id: "rule_shape",
@@ -79,6 +90,7 @@ export const projectGT027: Projection<"GT-027"> = {
         dimension: "shape" as const,
         target_value: targetShape,
         signal_text: `Hãy chọn ${shapeVi}`,
+        signal_audio_text: gt027SwitchLine(shapeVi),
       },
       {
         id: "rule_color",
@@ -87,6 +99,7 @@ export const projectGT027: Projection<"GT-027"> = {
         dimension: "color" as const,
         target_value: colorA.color,
         signal_text: `Đổi quy luật: hãy chọn ${colorA.name_vi}`,
+        signal_audio_text: gt027SwitchLine(`hình ${colorA.name_vi}`),
       },
     ];
 
@@ -95,7 +108,7 @@ export const projectGT027: Projection<"GT-027"> = {
 
     return {
       content_pack: {
-        prompt: "Bé nhìn kỹ tín hiệu rồi chọn đúng nhóm nhé!",
+        prompt: gt027OpeningLine(shapeVi),
         rules,
         items,
         switch_after_trials: 2,

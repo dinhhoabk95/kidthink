@@ -5,6 +5,7 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
+import { pairQuantityViolations, repeatGroupCount } from "./content-rules.js";
 import {
   createRng,
   pickAgeBandPrompt,
@@ -34,13 +35,30 @@ export const projectGT005: Projection<"GT-005"> = {
 
     const pairs = chosenItems.map((item) => {
       // Left: glyph (or text label). Right: image (or emoji).
-      const leftAsset = item.glyph
+      let leftAsset = item.glyph
         ? { kind: "text" as const, text: item.glyph }
         : resolveItemAsset(item, true);
-      const rightAsset = item.image ?? {
+      let rightAsset = item.image ?? {
         kind: "text" as const,
         text: item.label,
       };
+      // BR-E005-06: glyph là nhóm lặp k biểu tượng thì ghép chữ số k với nhóm k,
+      // không ghép nhóm k với một biểu tượng lẻ.
+      const groupSize = item.glyph
+        ? repeatGroupCount({ kind: "text", text: item.glyph })
+        : undefined;
+      if (item.glyph && groupSize !== undefined) {
+        leftAsset = { kind: "text" as const, text: String(groupSize) };
+        rightAsset = { kind: "text" as const, text: item.glyph };
+      }
+      const quantityViolations = pairQuantityViolations(
+        `pair-${item.id}`,
+        leftAsset,
+        rightAsset
+      );
+      if (quantityViolations.length > 0) {
+        throw new Error(quantityViolations.join("; "));
+      }
 
       return {
         pair_id: `pair-${item.id}`,

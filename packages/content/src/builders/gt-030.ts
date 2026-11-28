@@ -5,6 +5,7 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
+import { unitLabelViolations } from "./content-rules.js";
 import {
   countPromptWords,
   createRng,
@@ -15,21 +16,14 @@ import {
 } from "./utils.js";
 
 function buildGT030Prompt(unitLabel: string): string {
-  const candidate1 = `Đố bé vật này dài bằng mấy lần ${unitLabel} nhỉ?`;
-  if (countPromptWords(candidate1) <= 12) {
-    return sanitizeChildPrompt(
-      candidate1,
-      "Đố bé vật này dài bằng mấy đơn vị nhỉ?"
-    );
+  const violations = unitLabelViolations(unitLabel);
+  if (violations.length > 0) {
+    throw new Error(violations.join("; "));
   }
-  const candidate2 = `Vật này dài bằng mấy ${unitLabel} nhỉ?`;
-  if (countPromptWords(candidate2) <= 12) {
-    return sanitizeChildPrompt(
-      candidate2,
-      "Đố bé vật này dài bằng mấy đơn vị nhỉ?"
-    );
-  }
-  return "Đố bé vật này dài bằng mấy đơn vị nhỉ?";
+  const question = `Dài bằng mấy ${unitLabel}?`;
+  return countPromptWords(question) <= 12
+    ? sanitizeChildPrompt(question, "Dài bằng mấy đơn vị?")
+    : "Dài bằng mấy đơn vị?";
 }
 
 function buildAnswerOptions(

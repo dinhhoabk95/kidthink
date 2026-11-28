@@ -12,7 +12,7 @@ import {
 } from "#src/game-session";
 import type { EngineView, Gesture } from "#src/interaction";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
-import { dockRectAroundSlots, splitCaption } from "#src/layout/slot-fit";
+import { dockRectAroundSlots } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
   drawGT027ItemCard,
@@ -24,6 +24,7 @@ import {
   drawWoodenTokenDock,
 } from "#src/render/index.js";
 import type { MascotPose } from "#src/render/mascot";
+import { AudioController } from "#src/systems/audio-controller";
 import type { DegradationState } from "#src/systems/degradation";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
@@ -44,6 +45,7 @@ import {
   resolveGT027HintTargetIndex,
   resolveGT027UnselectedValidIndices,
   resolveRoundItems,
+  splitGT027Caption,
   tickGT027Clock,
   triggerGT027CorrectPulse,
   triggerGT027WrongFlash,
@@ -59,6 +61,11 @@ interface CardItem {
 
 export const GT027_STORY_LINE =
   "Cáo Con làm trọng tài, cứ thổi còi là luật chơi đổi. Bé nghe còi, nghe kỹ luật mới rồi chọn đúng hình nhé!";
+/**
+ * Câu hiện lúc báo đổi luật: chỉ nói luật đã đổi, **không** nói luật mới là gì.
+ * Luật mới được đọc sau tiếng còi (`BR-E027-09`).
+ */
+export const GT027_WHISTLE_LINE = "Cáo Con thổi còi, luật đổi rồi!";
 export const GT027_HAPPY_MS = 700;
 export const GT027_WONDER_MS = 1500;
 
@@ -78,6 +85,7 @@ export class GT027Session extends TemplateGameSession<
   private activeHintLevel: 0 | HintLevel = 0;
   private hoveredSlotIndex: number | null = null;
   private readonly mood = new MoodPulse();
+  private voice: AudioController | null = null;
 
   override storyLine(): string {
     return GT027_STORY_LINE;
@@ -94,6 +102,30 @@ export class GT027Session extends TemplateGameSession<
   override isAcceptingInput(): boolean {
     const blocked = this.isClosedOnMiss || this.isSignaling();
     return !blocked && super.isAcceptingInput();
+  }
+
+  /**
+   * Lời dẫn đang hiệu lực (`BR-E027-09`): vòng đầu là `content.prompt` (nói
+   * luật đầu); lúc còi báo là câu trung tính; sau còi là lời đọc luật mới.
+   */
+  private currentPromptLine(): string {
+    if (this.isSignaling()) {
+      return GT027_WHISTLE_LINE;
+    }
+    if (this.ruleSystem && this.ruleSystem.getTotalSwitches() > 0) {
+      const rule = this.ruleSystem.getActiveRule();
+      return rule.signalAudioPrompt ?? rule.description;
+    }
+    return this.content.prompt;
+  }
+
+  /** Đọc luật mới ngay sau khi còi xong, một lần mỗi lần đổi luật. */
+  private speakActiveRule(): void {
+    if (this.isWon || !this.isAudioEnabled() || !this.ruleSystem) {
+      return;
+    }
+    this.voice ??= new AudioController();
+    this.voice.speakPrompt(this.currentPromptLine());
   }
 
   getRoundItems(): readonly GT027Item[] {
@@ -298,7 +330,7 @@ export class GT027Session extends TemplateGameSession<
       this,
       this.slots,
       this.getRoundItems(),
-      this.content.prompt,
+      this.currentPromptLine(),
       this.hoveredSlotIndex,
       (id) => this.getRenderItemState(id)
     );
@@ -312,7 +344,9 @@ export class GT027Session extends TemplateGameSession<
         this.setRenderItemState(expiredId, "idle");
       }
     });
-    this.ruleSystem?.tick(deltaMs);
+    if (this.ruleSystem?.tick(deltaMs)) {
+      this.speakActiveRule();
+    }
     return null;
   }
 
@@ -327,6 +361,8 @@ export class GT027Session extends TemplateGameSession<
   override destroy(): void {
     super.destroy();
     this.renderItemStates.clear();
+    this.voice?.dispose();
+    this.voice = null;
     resetGT027Clock(this);
   }
 
@@ -402,7 +438,9 @@ export class GT027Session extends TemplateGameSession<
     timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    const split = this.stageRect ? splitCaption(this.stageRect) : undefined;
+    const split = this.stageRect
+      ? splitGT027Caption(this.stageRect, this.cssPerLogic)
+      : undefined;
     const bodyRect = split?.body;
     drawWoodenTokenDock(ctx, rs, dockRectAroundSlots(this.slots, bodyRect));
 
@@ -428,6 +466,7 @@ export class GT027Session extends TemplateGameSession<
       particlesEnabled: this.degradation?.particles_enabled ?? true,
       softShadowsEnabled: this.degradation?.soft_shadows_enabled ?? true,
       timeMs,
+      cssPerLogic: this.cssPerLogic,
       isValid: (it) => rule.validator(it),
       getRenderState: (id) => this.getRenderItemState(id),
     });

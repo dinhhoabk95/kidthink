@@ -44,7 +44,7 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
   items: [
     {
       id: "meas08-i1",
-      label: "kẹp giấy một gang",
+      label: "kẹp giấy",
       value: 1,
       image: {
         kind: "emoji",
@@ -59,7 +59,7 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
     },
     {
       id: "meas08-i2",
-      label: "bút chì hai gang",
+      label: "bút chì",
       value: 2,
       image: {
         kind: "emoji",
@@ -74,7 +74,7 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
     },
     {
       id: "meas08-i3",
-      label: "hộp bút ba gang",
+      label: "hộp bút",
       value: 3,
       image: {
         kind: "emoji",
@@ -89,7 +89,7 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
     },
     {
       id: "meas08-i4",
-      label: "quyển sách bốn gang",
+      label: "quyển sách",
       value: 4,
       image: {
         kind: "emoji",
@@ -104,7 +104,7 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
     },
     {
       id: "meas08-i5",
-      label: "ba lô năm gang",
+      label: "ba lô",
       value: 5,
       image: {
         kind: "emoji",
@@ -119,7 +119,7 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
     },
     {
       id: "meas08-i6",
-      label: "mặt bàn sáu gang",
+      label: "mặt bàn",
       value: 6,
       image: {
         kind: "emoji",

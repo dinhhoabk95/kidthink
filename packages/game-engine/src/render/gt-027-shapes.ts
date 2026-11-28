@@ -25,6 +25,7 @@ export interface GT027RuleBannerParams extends GT027SharedRenderParams {
   readonly completedSteps: number;
   readonly switchAfterTrials: number;
   readonly wrongFlashIntensity: number;
+  readonly cssPerLogic?: number;
 }
 export interface GT027ItemCardParams extends GT027SharedRenderParams {
   readonly slot: Slot;
@@ -121,36 +122,124 @@ function drawPoly(g: Ctx, c: Arc3, shape: string, b?: SceneBox) {
   g.fill();
   g.stroke();
 }
-function drawCriterionBadge(g: Ctx, box: Box4, p: GT027RuleBannerParams) {
-  const sb = p.stageRect;
-  const r0 = cl(Math.floor(box[3] * 0.36), 8, 13);
-  const [cx, cy, r] = clampArc(box[0] + r0 + 10, box[1] + box[3] / 2, r0, sb);
-  st(g, m.plateLight, p.hintLevel === 2 ? cY : m.woodBevel, 2);
-  circ(g, [cx, cy, r], true);
-  if (p.hintLevel === 2) {
-    st(g, alpha(m.amberGlow, 0.25), cY, 2.2);
-    circ(g, clampArc(cx, cy, r + 3, sb), true);
+export type GT027RuleGlyph =
+  | { readonly kind: "dot"; readonly color: string }
+  | { readonly kind: "shape"; readonly shape: string }
+  | { readonly kind: "size"; readonly level: number };
+
+/** Hình icon luật = chính **giá trị** luật: một chấm đỏ, một hình vuông (`BR-E027-10`). */
+export function resolveGT027RuleGlyph(
+  criterion: "color" | "shape" | "size",
+  value: string
+): GT027RuleGlyph {
+  if (criterion === "color") {
+    return { kind: "dot", color: value };
   }
-  if (p.criterion === "color") {
-    const [fill, rim] = resolveAttrColor(p.targetValue);
-    st(g, fill, rim, 1.8);
-    circ(g, clampArc(cx, cy, r * 0.62, sb), true);
-  } else if (p.criterion === "shape") {
-    st(g, m.indigoLight, m.indigo, 1.8);
-    drawPoly(g, clampArc(cx, cy, r * 0.64, sb), p.targetValue, sb);
+  if (criterion === "shape") {
+    return { kind: "shape", shape: value };
+  }
+  const at = SZ_K.indexOf(value);
+  return { kind: "size", level: at >= 0 ? at : 1 };
+}
+
+/** Cạnh icon luật tối thiểu theo px CSS (`BR-E027-10`); 1 px dư cho viền làm tròn. */
+const ICON_MIN_CSS = 29;
+const BANNER_PAD = 6;
+const BANNER_DOT_STEP = 12;
+
+export interface GT027BannerLayout {
+  readonly box: SceneBox;
+  readonly icon: SceneBox;
+  readonly pill: SceneBox;
+}
+
+/**
+ * Bố cục dải luật: cột icon bên trái (>= 28 px CSS), chấm tiến độ bên phải,
+ * pill chữ nằm giữa hai cột nên không bao giờ đè icon (`BR-E027-10`).
+ */
+export function layoutGT027RuleBanner(
+  caption: SceneBox,
+  cssPerLogic: number | undefined,
+  steps = 0
+): GT027BannerLayout {
+  const scale = cssPerLogic && cssPerLogic > 0 ? cssPerLogic : 1;
+  const box = {
+    x: caption.x + 12,
+    y: caption.y + 2,
+    w: Math.max(180, caption.w - 24),
+    h: Math.max(30, caption.h - BANNER_PAD),
+  };
+  const side = Math.min(Math.ceil(ICON_MIN_CSS / scale), box.h - 2);
+  const icon = {
+    x: box.x + BANNER_PAD,
+    y: box.y + (box.h - side) / 2,
+    w: side,
+    h: side,
+  };
+  const dotsW = steps > 0 ? steps * BANNER_DOT_STEP + 8 : 0;
+  const left = icon.x + icon.w + 8;
+  const right = box.x + box.w - dotsW - BANNER_PAD;
+  const pillH = Math.min(32, box.h);
+  const pill = {
+    x: left,
+    y: box.y + (box.h - pillH) / 2,
+    w: Math.max(40, right - left),
+    h: pillH,
+  };
+  return { box, icon, pill };
+}
+
+function drawRuleGlyph(g: Ctx, icon: SceneBox, p: GT027RuleBannerParams) {
+  const [cx, cy, r] = [icon.x + icon.w / 2, icon.y + icon.h / 2, icon.w / 2];
+  const glyph = resolveGT027RuleGlyph(p.criterion, p.targetValue);
+  if (glyph.kind === "dot") {
+    const [fill, rim] = resolveAttrColor(glyph.color);
+    st(g, fill, rim, 2);
+    circ(g, clampArc(cx, cy, r * 0.62, p.stageRect), true);
+  } else if (glyph.kind === "shape") {
+    st(g, m.indigoLight, m.indigo, 2);
+    drawPoly(
+      g,
+      clampArc(cx, cy, r * 0.68, p.stageRect),
+      glyph.shape,
+      p.stageRect
+    );
   } else {
     for (let i = 0; i < 3; i++) {
-      const on = p.targetValue === SZ_K[i];
+      const on = glyph.level === i;
       st(g, on ? cY : m.plateInner, on ? m.amberDark : m.woodBevel, 1.5);
-      const [dx, dy, rr] = [-0.5 + i * 0.47, 0.14 - i * 0.1, 0.18 + i * 0.08];
-      circ(g, clampArc(cx + r * dx, cy + r * dy, r * rr, sb), true);
+      const [dx, dy, rr] = [-0.5 + i * 0.47, 0.14 - i * 0.1, 0.26 + i * 0.1];
+      circ(g, clampArc(cx + r * dx, cy + r * dy, r * rr, p.stageRect), true);
     }
   }
+}
+
+function drawRuleIcon(g: Ctx, icon: SceneBox, p: GT027RuleBannerParams) {
+  const hint = p.hintLevel === 2;
+  st(g, m.plateLight, hint ? cY : m.woodBevel, hint ? 3 : 2);
+  rBox(
+    g,
+    [icon.x, icon.y, icon.w, icon.h],
+    icon.w * 0.28,
+    p.stageRect,
+    true,
+    0
+  );
+  if (hint) {
+    st(g, alpha(m.amberGlow, 0.25), cY, 2.2);
+    rBox(
+      g,
+      [icon.x - 3, icon.y - 3, icon.w + 6, icon.h + 6],
+      icon.w * 0.3,
+      p.stageRect
+    );
+  }
+  drawRuleGlyph(g, icon, p);
   if (p.isSignaling) {
     st(g, cY, m.amberDark, 1.4);
-    circ(g, clampArc(cx + r * 0.62, cy - r * 0.62, r * 0.28, sb), true);
+    const dot = [icon.x + icon.w - 4, icon.y + 4, 4] as const;
+    circ(g, clampArc(dot[0], dot[1], dot[2], p.stageRect), true);
   }
-  return r0;
 }
 function applyBannerStyle(g: Ctx, p: GT027RuleBannerParams) {
   const h1 = p.hintLevel === 1;
@@ -169,25 +258,28 @@ function resolveFlip(p: GT027RuleBannerParams, reduced: boolean) {
   }
   return [1, p.currentText] as const;
 }
-function drawBannerDots(g: Ctx, box: Box4, p: GT027RuleBannerParams) {
-  const [bx, by, bw, bh] = box;
-  const [steps, dotR, dotStep] = [cl(p.switchAfterTrials, 1, 6), 4.5, 12];
-  const [dotsW, dotsX] = [steps * dotStep + 8, bx + bw - steps * dotStep - 4];
+function drawBannerDots(g: Ctx, box: SceneBox, p: GT027RuleBannerParams) {
+  const steps = cl(p.switchAfterTrials, 1, 6);
+  const dotsX = box.x + box.w - steps * BANNER_DOT_STEP - 4;
   for (let i = 0; i < steps; i++) {
     const done = i < p.completedSteps;
     st(g, done ? cG : m.plateInner, done ? cGL : m.woodBevel, 1.5);
-    circ(g, clampArc(dotsX + i * dotStep, by + bh / 2, dotR, p.stageRect));
+    circ(
+      g,
+      clampArc(dotsX + i * BANNER_DOT_STEP, box.y + box.h / 2, 4.5, p.stageRect)
+    );
   }
-  return dotsW;
 }
 function drawRuleBanner(g: Ctx, rs: RenderSystem, p: GT027RuleBannerParams) {
   const [x, y] = [rs.LOGIC_WIDTH * 0.12, rs.LOGIC_HEIGHT * 0.12];
   const c = p.captionRect ?? { x, y, w: rs.LOGIC_WIDTH * 0.76, h: 44 };
+  const steps = cl(p.switchAfterTrials, 1, 6);
+  const lay = layoutGT027RuleBanner(c, p.cssPerLogic, steps);
   const [scaleX, shownText] = resolveFlip(p, rs.reducedMotion);
   const sinP = Math.sin(p.timeMs * 0.008) * 0.025;
   const pulse = p.hintLevel === 1 && !rs.reducedMotion ? 1 + sinP : 1;
-  const [cx, cy, bx, by] = [c.x + c.w / 2, c.y + c.h / 2, c.x + 12, c.y + 2];
-  const [bw, bh] = [Math.max(180, c.w - 24), Math.max(30, c.h - 6)];
+  const [cx, cy] = [c.x + c.w / 2, c.y + c.h / 2];
+  const { x: bx, y: by, w: bw, h: bh } = lay.box;
   g.save();
   g.translate(cx, cy);
   g.scale(scaleX * pulse, pulse);
@@ -198,17 +290,14 @@ function drawRuleBanner(g: Ctx, rs: RenderSystem, p: GT027RuleBannerParams) {
   applyBannerStyle(g, p);
   const hasSh = rs.softShadowsEnabled && (p.softShadowsEnabled ?? true);
   rBox(g, [bx, by, bw, bh], 16, p.stageRect, true, hasSh ? 8 : 0);
-  const badgeR = drawCriterionBadge(g, [bx, by, bw, bh], p);
-  const dotsW = drawBannerDots(g, [bx, by, bw, bh], p);
+  drawRuleIcon(g, lay.icon, p);
+  drawBannerDots(g, lay.box, p);
   if (p.isSignaling) {
     const barW = Math.max(8, (bw - 28) * cl(1 - p.signalProgress, 0.05, 1));
     st(g, cY, m.amberDark, 1);
     rBox(g, [bx + 14, by + bh - 4, barW, 2.5], 2, p.stageRect, false, 0);
   }
-  const [lp, aw] = [badgeR * 2 + 16, bw - badgeR * 2 - 20 - dotsW];
-  const [tx, tw] = aw >= 100 ? [bx + lp, aw] : [bx + 4, Math.max(40, bw - 8)];
-  const tRect = { x: tx, y: c.y + 1, w: tw, h: Math.max(28, c.h - 2) };
-  drawSubPromptText(g, rs, shownText, tRect);
+  drawSubPromptText(g, rs, shownText, lay.pill);
   g.restore();
 }
 function cardBox(p: GT027ItemCardParams, red: boolean): Box6 {

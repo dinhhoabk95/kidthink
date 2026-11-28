@@ -5,6 +5,7 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
+import { spotDiffKindViolations } from "./content-rules.js";
 import {
   createRng,
   resolveItemAsset,
@@ -24,6 +25,51 @@ interface SpotDiffDifference {
   left_id: string;
   right_id: string;
   description: string;
+}
+
+const DIGITS_ONLY_REGEX = /^\d+$/u;
+
+/**
+ * BR-E025-08: vế phải của một điểm khác là cùng vật với vế trái, chỉ khác số lượng
+ * (vật lặp đôi). Ô chữ số thì đổi sang chữ số khác trong cùng bộ.
+ */
+function buildSameKindVariant(
+  base: SkillDataset["items"][number],
+  pool: SkillDataset["items"],
+  offset: number
+): { rightAsset: ReturnType<typeof resolveItemAsset>; description: string } {
+  const baseAsset = resolveItemAsset(base, true);
+  let shown = "";
+  if (baseAsset.kind === "emoji") {
+    shown = baseAsset.ref;
+  } else if (baseAsset.kind === "text") {
+    shown = baseAsset.text;
+  }
+  if (DIGITS_ONLY_REGEX.test(shown)) {
+    const altItem = pool
+      .map((_, k) => safeGetItem(pool, (offset + k) % pool.length))
+      .find((it) => {
+        const a = resolveItemAsset(it, true);
+        return (
+          a.kind === "text" &&
+          DIGITS_ONLY_REGEX.test(a.text) &&
+          a.text !== shown
+        );
+      });
+    if (!altItem) {
+      throw new Error(
+        `[BR-E025-08] Không có chữ số khác cùng bộ để so với "${shown}"`
+      );
+    }
+    return {
+      rightAsset: resolveItemAsset(altItem, true),
+      description: `Bên trái là ${base.label}, bên phải là ${altItem.label}`,
+    };
+  }
+  return {
+    rightAsset: { kind: "text", text: shown.repeat(2) },
+    description: `${base.label}: bên trái một, bên phải hai`,
+  };
 }
 
 function buildSpotDiffObjects(
@@ -49,10 +95,22 @@ function buildSpotDiffObjects(
     });
 
     if (isDiff) {
-      const alt = safeGetItem(shuffled, (i + itemCount) % shuffled.length);
+      const { rightAsset, description } = buildSameKindVariant(
+        base,
+        shuffled,
+        i + itemCount
+      );
+      const violations = spotDiffKindViolations(
+        `diff_${i + 1}`,
+        left_objects[i]?.asset ?? resolveItemAsset(base, true),
+        rightAsset
+      );
+      if (violations.length > 0) {
+        throw new Error(violations.join("; "));
+      }
       right_objects.push({
         id: `right_${i + 1}`,
-        asset: resolveItemAsset(alt, true),
+        asset: rightAsset,
         x: xPos,
         y: yPos,
       });
@@ -60,7 +118,7 @@ function buildSpotDiffObjects(
         id: `diff_${i + 1}`,
         left_id: `left_${i + 1}`,
         right_id: `right_${i + 1}`,
-        description: `Bên trái là ${base.label}, bên phải là ${alt.label}`,
+        description,
       });
     } else {
       right_objects.push({
