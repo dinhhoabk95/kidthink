@@ -348,6 +348,7 @@ Nếu chỉ đọc một mục trong toàn corpus, đọc mục này.
 |---|---|
 | `BR-ENG-07` `BR-FBK-01` `BR-FBK-02` | Sai có phản hồi, không trừng phạt — và im lặng cũng là defect |
 | `BR-ENG-05` `BR-A11-04` | Sàn chạm theo band tuổi |
+| `BR-ENG-19` | Kéo thả dễ dãi: thả lệch tâm đích 0,4 × sàn chạm vẫn được nhận như thả tâm; luật cần căn thì engine tự căn. Cổng `packages/game-engine/tests/gates/drop-snap-tolerance.test.ts` |
 | `BR-ENG-11` | Không đếm ngược, không hiện điểm lúc chơi, không đặt nút thoát ở chỗ dễ tap trúng |
 | `BR-PGT-01` | Nút thoát không đặt ở chỗ dễ tap trúng |
 | `BR-DSC-06` `BR-DSC-07` | Không dùng `dark:`, không dùng màu đỏ trên bề mặt trẻ |

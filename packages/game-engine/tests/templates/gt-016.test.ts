@@ -504,7 +504,12 @@ describe("GT-016 — Xoay kim đồng hồ (clock-hands) full regression suite",
       session.prepareRound("5-6", undefined, STAGE);
       session.update(GT016_SKY_RISE_MS);
 
-      expect(session.getHintTarget()).toEqual({ kind: "slot", index: 0 });
+      // BR-SCF-14: kim kéo từ mặt đồng hồ tới điểm giờ đích, nên hint mang toIndex.
+      expect(session.getHintTarget()).toEqual({
+        kind: "slot",
+        index: 0,
+        toIndex: 0,
+      });
       expect(session.getHintDestinationIndex()).toBe(0);
       const destPt = session.getHintDestinationPoint();
       expect(destPt).not.toBeNull();
@@ -523,10 +528,11 @@ describe("GT-016 — Xoay kim đồng hồ (clock-hands) full regression suite",
       const frameL2 = captureFrame(session, { reducedMotion: true });
       expect(frameL2.dashes).toContainEqual([5, 4]);
 
-      // L3: giữ { kind: "slot", index: 0 } và vẽ thêm cung mũi tên nét đứt [6, 4]
+      // L3: giữ { kind: "slot", index: 0, toIndex: 0 } và vẽ thêm cung mũi tên nét đứt [6, 4]
       expect(session.getHintTargetForLevel(3)).toEqual({
         kind: "slot",
         index: 0,
+        toIndex: 0,
       });
       session.onScaffoldEscalated(3);
       const frameL3 = captureFrame(session, { reducedMotion: true });

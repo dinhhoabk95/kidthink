@@ -37,7 +37,10 @@ function toBand(raw: string | undefined, fallback: Band): Band {
   return BANDS.find((b) => b === raw) ?? fallback;
 }
 
-function candidatesOf(session: TemplateGameSession, t: number): Gesture[] {
+export function candidatesOf(
+  session: TemplateGameSession,
+  t: number
+): Gesture[] {
   const entities = session.getView?.().entities ?? [];
   const taps: Gesture[] = entities.map((e) => ({
     type: "tap",

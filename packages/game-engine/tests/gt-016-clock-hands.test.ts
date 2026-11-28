@@ -263,7 +263,11 @@ describe("GT-016: Xoay kim đồng hồ (clock-hands)", () => {
       session.setupEntities();
       session.setHour(4);
       session.setMinute(0);
-      expect(session.getHintTarget()).toEqual({ kind: "slot", index: 0 });
+      expect(session.getHintTarget()).toEqual({
+        kind: "slot",
+        index: 0,
+        toIndex: 0,
+      });
 
       session.setMinute(30);
       expect(session.getHintTarget()).toEqual({ kind: "action" });

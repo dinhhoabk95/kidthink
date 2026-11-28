@@ -89,6 +89,7 @@ một tầng theo dõi không đoán trước được vào đúng chỗ không 
 | `BR-ENG-16` (audio) | Audio: master ceiling cưỡng chế trong code, mục tiêu −16 LUFS, true peak ≤ −1 dBTP, ramp vào ≥20ms ra ≥40ms | Onset tức thì làm trẻ giật mình |
 | `BR-ENG-17` (bundle) | Ngân sách bundle mỗi template ≤ **80 KB** gzipped | Tablet 2GB trên mạng 4G |
 | `BR-ENG-18` (hook con trỏ) | `TemplateGameSession` có hai hook tuỳ chọn, mặc định **không làm gì**: `onPointerMove(point, origin)` và `onPointerRelease()`. Shell gọi `onPointerMove` (toạ độ logic, `origin` là điểm nhấn xuống) chỉ khi con trỏ đã vượt ngưỡng kéo (`dragSlopCssPx`), và gọi `onPointerRelease()` sau khi gesture thả/chạm đã `dispatch` (cả khi bị huỷ). Hook chỉ để vẽ phản hồi theo ngón tay: không được đổi `validateAction`, `commit`, điểm hay telemetry, nên engine không ghi đè hành vi y hệt như cũ. Không thay `setPointerOver` (cờ hover đích của GT-003) | Phản hồi theo ngón tay cần toạ độ kéo, nhưng chấm điểm vẫn chỉ đi qua gesture thả để mọi lối vào (chạm, kéo, bàn phím) ra cùng một kết quả |
+| `BR-ENG-19` (thả dễ dãi) | Kéo thả dễ dãi: **thả gần ô là hút vào ô**. Mọi điểm thả lệch tâm đích tới `0,4 ×` sàn chạm của band (đo trên px CSS, đổi ra logic qua `cssPerLogic`, ở cả bốn hướng, miễn còn trong canvas) PHẢI được nhận như thả đúng tâm: cùng hành động, cùng phán quyết; hộp trúng của đích rộng ít nhất bằng sàn chạm mỗi trục (nửa sàn chạm mỗi bên tâm), ô kề nhau thì lấy đích có tâm gần nhất. Luật đòi căn vị trí (vd. GT-030 nối mép đơn vị, `BR-E030-06`) thì **engine tự căn** (snap) khi điểm thả nằm trong vùng hút, không bắt trẻ căn tay; chỉ khi thả ngoài vùng hút mới còn khe/chồng hay lần thả bị từ chối. Việc chạm được thì không bắt kéo (`BR-ENG-06`). Ngoại lệ có lý do ghi ở sổ `KNOWN_STRICT_DROP` của cổng `drop-snap-tolerance.test.ts` (đích là góc hoặc đường nét, không phải ô) | Trẻ 3–6 tuổi không kéo chính xác được; vật thả trúng tâm ô mà bị từ chối là lỗi của engine, không phải của trẻ |
 
 ## 7. Data
 
@@ -201,6 +202,12 @@ Scenario: BR-ENG-05 — sàn touch theo band
   Given một level cho band tuổi 3-4
   When đo mọi phần tử chạm được trong DOM snapshot
   Then không phần tử nào nhỏ hơn 96px
+
+Scenario: BR-ENG-19 — thả lệch tâm đích vẫn được nhận
+  Given một template có verb drop và một lần thả đúng tâm đích được nhận
+  When thả cùng vật đó lệch tâm đích 0,4 lần sàn chạm theo trái, phải, trên, dưới
+  Then engine ra cùng hành động và cùng phán quyết như thả đúng tâm
+  And luật đòi căn vị trí được engine tự căn, không để lại khe hay chồng lấn
 
 Scenario: BR-ENG-07 — sai có phản hồi, không trừng phạt
   Given trẻ thả sai vị trí

@@ -325,12 +325,17 @@ export function computePairColumnsInStage(input: PairColumnsInput): Slot[] {
     }
   }
 
+  // Hai khối cột không chồng nhau (`BR-ENG-19`): khối nào cần hơn nửa sân khấu
+  // thì rộng đúng bằng nhu cầu (sàn chạm không thu nhỏ, `BR-LAY-04`), khối đích
+  // dời sang sau khối nguồn một khe; phần dư ra ngoài là sức chứa nội dung.
+  const leftW = Math.max(zoneW, leftNeededW);
+  const rightW = Math.max(zoneW, rightNeededW);
   return [
     ...layoutBlock(
       {
         count: leftCount,
         originX: stage.x,
-        width: zoneW,
+        width: leftW,
         role: "source",
         firstIndex: 0,
       },
@@ -341,8 +346,8 @@ export function computePairColumnsInStage(input: PairColumnsInput): Slot[] {
     ...layoutBlock(
       {
         count: rightCount,
-        originX: stage.x + zoneW + SLOT_GAP_PX,
-        width: zoneW,
+        originX: stage.x + leftW + SLOT_GAP_PX,
+        width: rightW,
         role: "target",
         firstIndex: leftCount,
       },

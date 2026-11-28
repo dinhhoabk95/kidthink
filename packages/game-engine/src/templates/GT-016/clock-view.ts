@@ -65,6 +65,8 @@ export type GT016DayLabel =
   | "Buổi chiều"
   | "Buổi tối";
 
+/** Vùng hút quanh bước đích = 0,45 × sàn chạm: > 0,4 của `BR-ENG-19`, < nửa khoảng hai giờ liền kề. */
+export const GT016_SNAP_TOUCH_RATIO = 0.45;
 export const GT016_TICK_MS = 360;
 export const GT016_WRONG_MS = 450;
 export const GT016_CELEB_MS = 900;
@@ -517,6 +519,8 @@ export function resolveGT016ToAction(
     targetBadgeBox: computeGT016TargetBadgeBox(sb),
     currentTime: v.currentTime,
     minuteStep: v.difficulty.minute_step,
+    targetTime: v.content.target_time,
+    snapRadiusPx: GT016_SNAP_TOUCH_RATIO * v.touchFloor,
   });
 }
 
@@ -604,7 +608,7 @@ export function resolveGT016BaseHintTarget(
   if (v.content.mode === "set") {
     return isSameTime(v.currentTime, v.content.target_time)
       ? { kind: "action" }
-      : { kind: "slot", index: 0 };
+      : { kind: "slot", index: 0, toIndex: 0 };
   }
   return fallback;
 }

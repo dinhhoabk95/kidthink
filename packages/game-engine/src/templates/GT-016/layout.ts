@@ -284,16 +284,40 @@ export interface ClockGestureInput {
   readonly targetBadgeBox?: SceneBox;
   readonly currentTime: ClockTime;
   readonly minuteStep: Step;
+  /** Giờ đích: kim thả trong vùng hút quanh bước đích thì hút về bước đó (`BR-ENG-19`). */
+  readonly targetTime?: ClockTime;
+  /** Bán kính vùng hút (px logic) quanh đầu kim ở bước đích: 0,45 × sàn chạm. */
+  readonly snapRadiusPx?: number;
 }
 type Inp = ClockGestureInput;
+
+/** Hub = nơi trục kim: kéo từ đây là kéo kim mà trợ giúp đang chỉ, không phải kim nào cụ thể. */
+const HUB_RATIO = 0.18;
+
+/** Khoảng cách cung (px) từ điểm thả tới góc `deg` ở cùng bán kính với điểm thả. */
+function arcToAngle(a1: number, deg: number, radius: number): number {
+  const diff = Math.abs(((a1 - deg + 540) % 360) - 180);
+  return (diff * Math.PI * radius) / 180;
+}
+
+/** Điểm thả có nằm trong vùng hút của bước đích (góc `targetDeg`) không. */
+function attractedTo(
+  inp: Inp,
+  a1: number,
+  d1: number,
+  targetDeg: number
+): boolean {
+  return arcToAngle(a1, targetDeg, d1) <= (inp.snapRadiusPx ?? 0);
+}
 
 function stepMinDrop(
   cur: ClockTime,
   a0: number,
   a1: number,
-  st: Step
+  st: Step,
+  snappedMin: number | null
 ): GameAction {
-  const nextMin = degToMin(a1, st);
+  const nextMin = snappedMin ?? degToMin(a1, st);
   let hour = cur.hour;
   let minute = nextMin;
   if (a0 >= 270 && a1 <= 90) {
@@ -323,17 +347,29 @@ function resolveDrop(g: DropGesture, inp: Inp): GameAction | null {
   }
   const a0 = ptDeg(cx, cy, g.fromX, g.fromY);
   const a1 = ptDeg(cx, cy, g.toX, g.toY);
-  const { currentTime: cur, minuteStep: st } = inp;
+  const { currentTime: cur, minuteStep: st, targetTime: tgt } = inp;
+  const hourDeg = tgt ? tgt.hour * 30 : null;
+  const hourOf = (): number =>
+    hourDeg !== null && attractedTo(inp, a1, d1, hourDeg)
+      ? (tgt?.hour ?? degToHour(a1))
+      : degToHour(a1);
   if (st === 60) {
-    return setAct(degToHour(a1), 0, "hour");
+    return setAct(hourOf(), 0, "hour");
   }
   const ang = timeToAngles(cur);
   const dh = handDist(g, cx, cy, ang.hourAngleDeg, r * 0.48);
   const dm = handDist(g, cx, cy, ang.minuteAngleDeg, r * 0.76);
-  if (d0 <= r * 0.56 && dh <= dm + 6) {
-    return setAct(degToHour(a1), cur.minute, "hour");
+  const hubGrab = tgt !== undefined && d0 <= r * HUB_RATIO;
+  const grabsHour = hubGrab ? cur.hour !== tgt.hour : dh <= dm + 6;
+  if ((hubGrab || d0 <= r * 0.56) && grabsHour) {
+    return setAct(hourOf(), cur.minute, "hour");
   }
-  return stepMinDrop(cur, a0, a1, st);
+  const tgtMinDeg = tgt && tgt.minute % st === 0 ? tgt.minute * 6 : null;
+  const snapped =
+    tgt && tgtMinDeg !== null && attractedTo(inp, a1, d1, tgtMinDeg)
+      ? tgt.minute
+      : null;
+  return stepMinDrop(cur, a0, a1, st, snapped);
 }
 
 export function resolveClockGestureTime(inp: Inp): GameAction | null {
@@ -420,7 +456,9 @@ export function resolveGT016HintTargetForLevel(p: HintP): HintTarget | null {
       return { kind: "action" };
     }
     const ids = p.level === 1 ? ["clock-face", "target-time"] : ["clock-face"];
-    return p.level <= 2 ? { kind: "region", ids } : { kind: "slot", index: 0 };
+    return p.level <= 2
+      ? { kind: "region", ids }
+      : { kind: "slot", index: 0, toIndex: 0 };
   }
   if (p.level === 1) {
     return { kind: "region", ids: ["clock-face"] };

@@ -616,14 +616,26 @@ export class GT030Session
     if (Math.abs(gesture.toY - strip.y) > strip.hitH / 2 + TAP_TOLERANCE_PX) {
       return null;
     }
-    return {
-      type: "place_unit",
-      data: {
-        offset_px: Math.round(
-          gesture.toX - this.getCellCenterX(this.placedUnitsCount)
-        ),
-      },
-    };
+    const offset = Math.round(
+      gesture.toX - this.getCellCenterX(this.placedUnitsCount)
+    );
+    // `BR-ENG-19`, `BR-E030-06`: thả trong vùng hút thì engine tự căn vào mép.
+    if (Math.abs(offset) <= this.dropSnapRadiusPx(strip)) {
+      return { type: "place_unit", data: {} };
+    }
+    return { type: "place_unit", data: { offset_px: offset } };
+  }
+
+  /**
+   * Vùng hút quanh tâm ô kế tiếp: dung sai `gap_tolerance_pct`, nhưng không hẹp
+   * hơn nửa sàn chạm của band, và không rộng quá nửa cạnh đơn vị — chiều cao vùng chạm của dải đo chính là sàn
+   * chạm theo band (`BR-E030-08`).
+   */
+  private dropSnapRadiusPx(strip: Slot): number {
+    return Math.max(
+      this.snapTolerancePx(),
+      Math.min(strip.hitH / 2, this.getUnitWidth() / 2)
+    );
   }
 
   override toAction(gesture: Gesture): GameAction | null {

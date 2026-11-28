@@ -11,6 +11,7 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
@@ -38,6 +39,7 @@ import {
   MazePathTracker,
   type MazeSide,
   type MazeStepResult,
+  openNeighbors,
 } from "#src/systems/maze-system";
 import { MoodPulse } from "#src/systems/mood-pulse";
 import type { RenderSystem } from "#src/systems/render-system";
@@ -88,6 +90,8 @@ export class GT013Session extends TemplateGameSession<
   private isRoundClosed = false;
   private solutionRoute: readonly MazeCell[] = [];
   private decorGrains: readonly number[] = [];
+  /** Nửa sàn chạm (px logic): độ nở của ô hành lang khi vẽ/thả (`BR-ENG-19`). */
+  private corridorReachPx = 0;
 
   setupEntities(): void {
     resetClock(this);
@@ -327,6 +331,46 @@ export class GT013Session extends TemplateGameSession<
     return i >= 0 && r < rows && c < cols ? { row: r, col: c } : null;
   }
 
+  /**
+   * Ô hành lang gần nhất đi được từ `from` mà điểm (x, y) nằm trong ô nở thêm
+   * `corridorReachPx` (`BR-ENG-19`): hút về tâm hành lang thay vì ô tường bên cạnh.
+   */
+  private snapToCorridor(
+    x: number,
+    y: number,
+    from: MazeCell
+  ): MazeCell | null {
+    let best: MazeCell | null = null;
+    let bestDist = Number.POSITIVE_INFINITY;
+    for (const n of openNeighbors(this.grid, from)) {
+      const slot = this.slots[n.row * this.grid.cols + n.col];
+      if (!slot) {
+        continue;
+      }
+      const gapX = Math.abs(x - slot.x) - slot.w / 2;
+      const gapY = Math.abs(y - slot.y) - slot.h / 2;
+      const dist = Math.hypot(x - slot.x, y - slot.y);
+      if (
+        gapX <= this.corridorReachPx &&
+        gapY <= this.corridorReachPx &&
+        dist < bestDist
+      ) {
+        best = n;
+        bestDist = dist;
+      }
+    }
+    return best;
+  }
+
+  /** Ô mà ngón ở (x, y) đang chỉ, tính từ ô `from`: ô đi được thắng ô tường kề. */
+  private cellAt(x: number, y: number, from: MazeCell): MazeCell | null {
+    const exact = this.findHitCell(x, y);
+    if (exact && (sameCell(exact, from) || canMove(this.grid, from, exact))) {
+      return exact;
+    }
+    return this.snapToCorridor(x, y, from) ?? exact;
+  }
+
   private toStrokeAction(g: StrokeG): GameAction | null {
     const p0 = g.points[0];
     if (!(p0 && this.isInsideStage(p0.x, p0.y))) {
@@ -335,7 +379,7 @@ export class GT013Session extends TemplateGameSession<
     const head = this.tracker.getHead();
     const cells: MazeCell[] = [];
     for (const pt of g.points) {
-      const cell = this.findHitCell(pt.x, pt.y);
+      const cell = this.cellAt(pt.x, pt.y, cells.at(-1) ?? head);
       if (cell && !sameCell(cell, cells.at(-1) ?? head)) {
         cells.push(cell);
       }
@@ -349,7 +393,7 @@ export class GT013Session extends TemplateGameSession<
   }
 
   private toDropAction(g: DropG): GameAction | null {
-    const endCell = this.findHitCell(g.toX, g.toY);
+    const endCell = this.cellAt(g.toX, g.toY, this.tracker.getHead());
     if (endCell && this.isLegalStep(endCell)) {
       return { type: "draw_step", data: endCell };
     }
@@ -447,6 +491,7 @@ export class GT013Session extends TemplateGameSession<
   }
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const { grid, logicSpace: logic, stageRect: stage, cssPerLogic } = this;
+    this.corridorReachPx = resolveTouchFloor(ageBand, cssPerLogic) / 2;
     return computeGT013Slots({ grid, ageBand, logic, stage, cssPerLogic });
   }
 
