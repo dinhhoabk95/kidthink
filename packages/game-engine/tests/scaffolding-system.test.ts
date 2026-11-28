@@ -335,26 +335,71 @@ describe("ScaffoldingSystem (BR-SCF-01..08 & SCAFFOLDING-AND-HINTS spec)", () =>
     engine.destroy();
   });
 
-  describe("Task #313 B2 — fallback không giọng giữ mức hint", () => {
-    it("tick kế tiếp không kéo level 2 về 0", () => {
+  describe("Task #321 — fallback không giọng chỉ là gợi ý mức 1, không đặt sàn (BR-SCF-13)", () => {
+    it("sau triggerVisualFallback level là 1 và không đặt floorLevel", () => {
       const scaffolding = new ScaffoldingSystem("3-4");
+      const state = scaffolding.createInitialState();
+      const action = scaffolding.triggerVisualFallback(1, state);
+      expect(state.level).toBe(1);
+      expect(state.floorLevel).toBeUndefined();
       scaffolding.triggerVisualFallback(1);
-      expect(scaffolding.tick(16)).toBe(2);
-      expect(scaffolding.tick(5000)).toBe(2);
+      expect(scaffolding.getCurrentLevel()).toBe(1);
+      expect(action.level).toBe(1);
+      expect(action.trigger).toBe("voice_fallback");
+      expect(action.ghostHandSpeed).toBeUndefined();
       expect(scaffolding.focusIndex).toBe(1);
     });
 
-    it("vẫn leo tiếp lên level 3 theo thời gian", () => {
+    it("thang theo thời gian vẫn chạy: tới hint_after_ms thì lên L2 như thường", () => {
       const scaffolding = new ScaffoldingSystem("3-4");
       scaffolding.triggerVisualFallback(0);
-      expect(scaffolding.tick(26_000)).toBe(3);
+      expect(scaffolding.tick(16)).toBeLessThan(2);
+      expect(scaffolding.tick(26_000)).toBeGreaterThanOrEqual(2);
     });
 
-    it("trả lời đúng thì xoá sàn level", () => {
+    it("L1 sống qua tick kế: tick(16) vẫn L1, thang tiếp tục tới L2 đúng l2_time_s", () => {
+      const scaffolding = new ScaffoldingSystem("3-4");
+      scaffolding.triggerVisualFallback(0);
+      expect(scaffolding.tick(16)).toBe(1);
+      expect(scaffolding.tick(100)).toBe(1);
+      // Fallback đưa đồng hồ tới mốc L1 (10 s); L2 ở 18 s, L3 ở 25 s (band 3-4).
+      expect(scaffolding.tick(7000)).toBe(1);
+      expect(scaffolding.tick(1000)).toBe(2);
+    });
+
+    it("đang L2 thì fallback giữ L2, không hạ rồi leo lại", () => {
+      const scaffolding = new ScaffoldingSystem("3-4");
+      scaffolding.tick(30_000);
+      const before = scaffolding.getCurrentLevel();
+      expect(before).toBeGreaterThanOrEqual(2);
+      scaffolding.triggerVisualFallback(0);
+      expect(scaffolding.getCurrentLevel()).toBe(before);
+      expect(scaffolding.tick(16)).toBe(before);
+    });
+
+    it("ca âm: gọi hai lần không vượt L1 và không đặt sàn", () => {
+      const scaffolding = new ScaffoldingSystem("3-4");
+      const state = scaffolding.createInitialState();
+      scaffolding.triggerVisualFallback(0, state);
+      scaffolding.triggerVisualFallback(0, state);
+      expect(state.level).toBe(1);
+      expect(state.floorLevel).toBeUndefined();
+    });
+
+    it("trả lời đúng thì về 0", () => {
       const scaffolding = new ScaffoldingSystem("3-4");
       scaffolding.triggerVisualFallback(0);
       scaffolding.resetOnSuccess();
       expect(scaffolding.tick(16)).toBe(0);
+    });
+
+    it("vòng mới (onSuccess) reset state về 0", () => {
+      const scaffolding = new ScaffoldingSystem("3-4");
+      const state = scaffolding.createInitialState();
+      scaffolding.triggerVisualFallback(0, state);
+      scaffolding.onSuccess(state);
+      expect(state.level).toBe(0);
+      expect(state.floorLevel).toBeUndefined();
     });
   });
 });

@@ -122,7 +122,7 @@ describe("GT-018: Nghe rồi làm (listen-respond)", () => {
     }
   });
 
-  it("getHintTarget in sequence mode returns first mismatched index or action when correct", () => {
+  it("getHintTarget in sequence mode returns the next reorder move (from -> to) or action when correct", () => {
     const f3 = GT018_FIXTURES[2];
     if (!f3) {
       throw new Error("Missing sequence fixture");
@@ -131,8 +131,12 @@ describe("GT-018: Nghe rồi làm (listen-respond)", () => {
     session.prepareRound("5-6");
 
     // Initially sequence is [rabbit, ant, elephant], target is [ant, rabbit, elephant]
-    // Mismatch at index 0
-    expect(session.getHintTarget()).toEqual({ kind: "slot", index: 0 });
+    // BR-SCF-14: hint là thao tác kéo thẻ `ant` (ô 1) tới vị trí đúng (ô 0)
+    expect(session.getHintTarget()).toEqual({
+      kind: "slot",
+      index: 1,
+      toIndex: 0,
+    });
 
     // Reorder step from 1 (ant) to 0: [ant, rabbit, elephant] -> correct
     session.commit({

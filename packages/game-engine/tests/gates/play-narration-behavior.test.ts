@@ -50,10 +50,10 @@ describe("L5 — Dự phòng và hành vi chơi (BR-PNR-06..09 / Task #269)", ()
     expect(fallbackVisualCue).toHaveBeenCalledTimes(1);
     expect(onEnd).toHaveBeenCalledTimes(1);
 
-    // Kích hoạt scaffolding bàn tay dẫn L2
+    // Kích hoạt scaffolding mức 1 (không bàn tay ma, BR-PNR-06)
     const scaffolding = new ScaffoldingSystem("3-4");
     const scaffoldAction = scaffolding.triggerVisualFallback(1);
-    expect(scaffoldAction.level).toBe(2);
+    expect(scaffoldAction.level).toBe(1);
     expect(scaffoldAction.trigger).toBe("voice_fallback");
     expect(scaffoldAction.focusIndex).toBe(1);
   });

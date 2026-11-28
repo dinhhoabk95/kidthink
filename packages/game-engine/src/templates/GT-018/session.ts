@@ -340,7 +340,9 @@ export class GT018Session extends TemplateGameSession<Cnt, Diff> {
     }
     if (this.needsCommit) {
       const m = this.seqMove();
-      return m ? { kind: "slot", index: m.to } : { kind: "action" };
+      return m
+        ? { kind: "slot", index: m.from, toIndex: m.to }
+        : { kind: "action" };
     }
     const idx = this.getHintTargetIndex();
     return idx === null ? null : { kind: "slot", index: idx };

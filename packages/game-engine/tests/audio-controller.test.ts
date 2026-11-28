@@ -253,10 +253,10 @@ describe("Task #87 — Audio Runtime Delivery & Fallback (BR-ENG-10, BR-ENG-16, 
       const scaffolding = new ScaffoldingSystem("3-4");
       const action = scaffolding.triggerVisualFallback(2);
 
-      expect(action.level).toBe(2);
+      expect(action.level).toBe(1);
       expect(action.trigger).toBe("voice_fallback");
       expect(action.focusIndex).toBe(2);
-      expect(action.ghostHandSpeed).toBe(1.0);
+      expect(action.ghostHandSpeed).toBeUndefined();
     });
   });
 

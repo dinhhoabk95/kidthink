@@ -82,7 +82,7 @@ asset; spec này sở hữu hợp đồng **phát** trên bề mặt trẻ.
 
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
-| Thiếu hoặc hỏng file | `instruction_audio_path`, `audio_path`, hoặc file tại `resolveTeacherVoicePath(text)` không tồn tại, tải hỏng, hay quá hạn 3 giây | Rơi thẳng xuống bậc 2 của thứ tự mục 7.2 (tín hiệu thị giác: bàn tay dẫn `ghostHand` và nhấp nháy khung yêu cầu 1200 ms); không gọi giọng tổng hợp trình duyệt |
+| Thiếu hoặc hỏng file | `instruction_audio_path`, `audio_path`, hoặc file tại `resolveTeacherVoicePath(text)` không tồn tại, tải hỏng, hay quá hạn 3 giây | Rơi thẳng xuống bậc 2 của thứ tự mục 7.2 (tín hiệu thị giác: gợi ý mức 1 và nhấp nháy khung yêu cầu 1200 ms); không gọi giọng tổng hợp trình duyệt |
 | Trẻ tắt tiếng thiết bị | Trình duyệt hoặc hệ điều hành tắt tiếng / chặn phát | Bậc 2 tín hiệu thị giác chạy ngay; không hiện hộp thoại đòi bật tiếng |
 | Trình duyệt chặn autoplay | Chưa có tương tác người dùng | Câu dẫn hoãn tới lần chạm đầu tiên, và lần chạm đó không tính là lượt trả lời |
 | Nạp trước quá hạn | Quá 5 giây tổng | Vòng vẫn bắt đầu; narration phát khi sẵn sàng, không chặn màn chơi |
@@ -98,7 +98,7 @@ asset; spec này sở hữu hợp đồng **phát** trên bề mặt trẻ.
 | `BR-PNR-03` (một nguồn giọng cho một vòng) | Câu dẫn của vòng lấy từ đúng một trường cấu hình: `instruction_audio_path` (với dự phòng đường dẫn tất định `resolveTeacherVoicePath(prompt)` khi trống). Cấm — NEVER thêm trường giọng song song ở cấp vòng | Đã có ba trường từng cùng tồn tại (`prompt_audio_ref`, `audio_url`); cổng `one-narration-source` được dựng chính vì drift đó |
 | `BR-PNR-04` (mọi engine đều nói) | Cả 38 engine (`GT-000`…`GT-037`) BẮT BUỘC phát câu dẫn ở nhịp mở vòng, không chỉ `GT-000` | Một nền tảng mầm non mà chỉ bài làm quen biết nói thì phần chơi chính không dùng được cho trẻ ba tuổi |
 | `BR-PNR-05` (một giọng cô giáo miền Bắc thống nhất) | Toàn bộ câu dẫn vòng, tên số, tên vật, lời khen và lý do pill Montessori BẮT BUỘC dùng chung một kho phẳng `/audio/voice/{stem}.mp3` (giọng `vieneu-myduyen`), trỏ qua `instruction_audio_path` / `audio_path` hoặc `resolveTeacherVoicePath(text)`. Tên file suy tất định từ chính câu chữ (mục 7.1) nên một câu chỉ có một file, mọi nơi nói câu đó dùng chung. Cấm — NEVER tạo thư mục con theo domain/kỹ năng, Cấm — NEVER trộn giọng khác trong cùng phiên học | Hai giọng người khác nhau giữa câu hỏi ("Chọn số ba") và lúc chạm vật ("Số ba") phá vỡ cảm giác có một cô giáo thật đang đồng hành cùng trẻ |
-| `BR-PNR-06` (dự phòng thị giác, cấm im lặng và cấm giọng robot) | Khi không phát được file `.mp3`, hệ thống BẮT BUỘC rơi xuống bậc 2 của mục 7.2: nâng trợ giúp lên bàn tay dẫn (`ghostHand`) và nhấp nháy khung yêu cầu 1200 ms. Cấm — NEVER gọi `window.speechSynthesis`, Cấm — NEVER kết thúc bằng im lặng. **Câu nhiều đoạn** (khung chuyện + câu dẫn, `BR-FBK-16`): đoạn lỗi thì bỏ qua và phát đoạn kế, không dừng chuỗi; bậc 2 chỉ chạy khi đoạn mang nội dung bắt buộc (câu dẫn, tức đoạn cuối) lỗi — gồm cả khi mọi đoạn lỗi — và chạy đúng một lần; `onEnd` gọi đúng một lần | Giọng tổng hợp trình duyệt đọc sai thanh điệu và ngắt nghỉ cơ học gây phản cảm sư phạm; còn im lặng với trẻ ba tuổi là bế tắc hoàn toàn |
+| `BR-PNR-06` (dự phòng thị giác, cấm im lặng và cấm giọng robot) | Khi không phát được file `.mp3`, hệ thống BẮT BUỘC rơi xuống bậc 2 của mục 7.2: nâng trợ giúp lên **mức 1** (nháy nhẹ vùng chơi/đích, `BR-SCF-13`) và nhấp nháy khung yêu cầu 1200 ms; Cấm — NEVER bàn tay ma, Cấm — NEVER lộ đáp án, Cấm — NEVER đặt sàn gợi ý (thang theo thời gian vẫn chạy bình thường). Cấm — NEVER gọi `window.speechSynthesis`, Cấm — NEVER kết thúc bằng im lặng. **Câu nhiều đoạn** (khung chuyện + câu dẫn, `BR-FBK-16`): đoạn lỗi thì bỏ qua và phát đoạn kế, không dừng chuỗi; bậc 2 chỉ chạy khi đoạn mang nội dung bắt buộc (câu dẫn, tức đoạn cuối) lỗi — gồm cả khi mọi đoạn lỗi — và chạy đúng một lần; `onEnd` gọi đúng một lần | Giọng tổng hợp trình duyệt đọc sai thanh điệu và ngắt nghỉ cơ học gây phản cảm sư phạm; còn im lặng với trẻ ba tuổi là bế tắc hoàn toàn |
 | `BR-PNR-07` (nghe lại luôn có) | Nút "Nghe lại" BẮT BUỘC có mặt và bấm được ở mọi vòng, mọi engine, kể cả khi câu dẫn đang phát | Trẻ nghe sót là chuyện thường; bắt trẻ chờ hết câu mới được nghe lại là bắt trẻ đoán |
 | `BR-PNR-08` (nghe lại không phạt) | Bấm "Nghe lại" BẮT BUỘC không tính là lượt sai, không làm leo bậc trợ giúp, không trừ điểm | Phạt việc hỏi lại dạy trẻ đoán bừa thay vì hỏi |
 | `BR-PNR-09` (không chặn màn chơi) | Narration BẮT BUỘC bất đồng bộ với vòng đời vòng chơi; quá hạn nạp thì vòng vẫn bắt đầu | Một vòng treo chờ file mp3 trên mạng yếu là một vòng hỏng |
@@ -142,7 +142,7 @@ Quy trình chuẩn hoá LUFS, bitrate và lưu trữ tuân theo mục 7 của
 | Bậc | Nguồn | Điều kiện chuyển xuống bậc dưới |
 |---|---|---|
 | 1 | File `.mp3` giọng cô giáo mầm non thật thống nhất (`/audio/voice/{stem}.mp3`), trỏ bởi `instruction_audio_path`, `audio_path` hoặc đường dẫn tất định `resolveTeacherVoicePath(text)` | File không có, tải hỏng, trình duyệt chặn phát, hoặc quá hạn 3 giây |
-| 2 | Tín hiệu thị giác: nâng trợ giúp lên bậc bàn tay dẫn (`ghostHand`) và nhấp nháy khung yêu cầu `1200 ms` (`BR-PNR-06`) | Không có — đây là bậc cuối, luôn chạy được |
+| 2 | Tín hiệu thị giác: nâng trợ giúp lên mức 1 (không bàn tay ma, không sàn, `BR-SCF-13`) và nhấp nháy khung yêu cầu `1200 ms` (`BR-PNR-06`) | Không có — đây là bậc cuối, luôn chạy được |
 
 Không còn bậc tổng hợp giọng trình duyệt (`window.speechSynthesis`) và không có bậc im lặng
 (`BR-PNR-06`). Quyết định Task `#316` loại bỏ hẳn Web Speech API vì chất lượng giọng máy khác biệt
@@ -218,7 +218,7 @@ Scenario: BR-PNR-06 — file mp3 tải hỏng thì rơi thẳng xuống tín hi�
   Given file mp3 tại instruction_audio_path và resolveTeacherVoicePath đều tải lỗi
   When vòng bắt đầu
   Then window.speechSynthesis Cấm — NEVER được gọi
-  And trợ giúp được nâng lên bậc bàn tay dẫn ghostHand
+  And trợ giúp được nâng lên mức 1 (không bàn tay ma, không sàn gợi ý)
   And khung yêu cầu nhấp nháy trong 1200 ms
 
 Scenario: BR-PNR-08 — bấm nghe lại không bị tính là sai

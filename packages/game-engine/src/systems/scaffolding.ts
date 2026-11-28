@@ -31,7 +31,7 @@ export interface ScaffoldState {
   l3DurationMs: number;
   skipSuggested: boolean;
   voiceAvailable?: boolean;
-  /** Sàn level do fallback không giọng đặt; `tick` không được hạ xuống dưới. */
+  /** Sàn level; fallback không giọng KHÔNG đặt sàn (`BR-SCF-13`). */
   floorLevel?: ScaffoldingLevel;
   lastTrigger?: "timer" | "miss_streak";
 }
@@ -229,7 +229,9 @@ export class ScaffoldingSystem {
 
   /**
    * Immediate visual fallback when speech is unavailable (BR-ENG-10, BR-A11-11).
-   * Promotes scaffolding to Level 2 (ghost hand demonstration) directly.
+   * Chỉ nâng lên gợi ý mức 1 (nháy nhẹ, không bàn tay ma, không lộ đáp án) và
+   * KHÔNG đặt `floorLevel`: thang theo thời gian vẫn chạy như thường
+   * (`BR-PNR-06`, `BR-SCF-13`, Task #321).
    */
   triggerVisualFallback(
     targetFocusIndex = 0,
@@ -237,15 +239,22 @@ export class ScaffoldingSystem {
     prefersReducedMotion = false
   ): ScaffoldAction {
     const targetState = state || this.internalState;
-    targetState.level = 2;
-    targetState.floorLevel = 2;
+    // Không bao giờ hạ level (đang L2/L3 thì giữ, tránh phát lại leo thang) và
+    // đưa đồng hồ tới mốc L1 để tick kế không kéo về 0 (`BR-SCF-13`). Không đặt sàn.
+    const level: ScaffoldingLevel =
+      targetState.level >= 1 ? targetState.level : 1;
+    targetState.level = level;
+    targetState.sinceMs = Math.max(
+      targetState.sinceMs,
+      this.internalThresholds.l1_time_s * 1000
+    );
     targetState.focusIndex = targetFocusIndex;
 
     return {
-      level: 2,
+      level,
       trigger: "voice_fallback",
       focusIndex: targetFocusIndex,
-      ghostHandSpeed: GHOST_HAND_SPEED[2],
+      ghostHandSpeed: GHOST_HAND_SPEED[level],
       reducedMotion: prefersReducedMotion,
     };
   }

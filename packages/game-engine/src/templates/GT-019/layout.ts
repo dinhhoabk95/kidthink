@@ -406,6 +406,9 @@ function toEnt(
   return { ...s, id, slotIndex, role, state, hitShape, ...labels, spokenLabel };
 }
 
+/** `slotIndex` của view = chỉ số trong `slots`, cùng không gian với `HintTarget.index`. */
+const slotIdx = (b: B, slot: Slot): number => b.slots.indexOf(slot);
+
 export function buildGT019ViewEntities(b: B): ViewEntity[] {
   const entities: ViewEntity[] = [];
   b.targetSlots.forEach((slot, i) => {
@@ -420,7 +423,9 @@ export function buildGT019ViewEntities(b: B): ViewEntity[] {
     const labels = refP ? resolveAssetSpeech(refP.asset) : undefined;
     const spk = `Cái bóng của ${labels?.spokenLabel ?? `Mảnh ${i + 1}`}`;
     const st = placedId ? "correct" : "idle";
-    entities.push(toEnt(slot, t.slot_id, i, "target", st, spk, labels));
+    entities.push(
+      toEnt(slot, t.slot_id, slotIdx(b, slot), "target", st, spk, labels)
+    );
   });
   b.sourceSlots.slice(0, b.displayPieces.length).forEach((slot, i) => {
     const p = b.displayPieces[i];
@@ -429,12 +434,13 @@ export function buildGT019ViewEntities(b: B): ViewEntity[] {
     }
     const labels = resolveAssetSpeech(p.asset);
     const spk = labels.spokenLabel ?? `Mảnh ${i + 1}`;
-    const idx = b.targetSlots.length + i;
     const st = resolveSourceEntityState(b, p.piece_id);
-    entities.push(toEnt(slot, p.piece_id, idx, "source", st, spk, labels));
+    entities.push(
+      toEnt(slot, p.piece_id, slotIdx(b, slot), "source", st, spk, labels)
+    );
   });
   if (b.flipButtonSlot) {
-    const idx = b.targetSlots.length + b.displayPieces.length;
+    const idx = slotIdx(b, b.flipButtonSlot);
     const st = b.hoveredId === "btn_flip" ? "active" : "idle";
     entities.push(
       toEnt(b.flipButtonSlot, "btn_flip", idx, "neutral", st, "Nút lật hình")
