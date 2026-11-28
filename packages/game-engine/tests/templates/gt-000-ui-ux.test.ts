@@ -226,6 +226,8 @@ describe("GT-000 — Đồng bộ hình học Flashcard, Tách biệt không đ�
     ] as const) {
       const space = deriveLogicSpace(cssW, cssH);
       const session = createQuietSession();
+      // Giọng còn đang đọc: chạm thẻ present là nghe lại (`BR-E000-14`).
+      vi.spyOn(session.audio, "speakPrompt").mockImplementation(() => true);
       session.setLogicSpace(space);
       session.prepareRound("3-4");
       const slot = session.slots[0];

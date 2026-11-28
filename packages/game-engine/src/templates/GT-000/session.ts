@@ -93,6 +93,9 @@ export class GT000Session extends TemplateGameSession<
   readonly particles: Particle[] = [];
   private readonly echoReplayCounts = new Map<string, number>();
   private stepPromptPending = false;
+  /** `BR-E000-14`: giọng của thẻ present/echo đã đọc xong ít nhất một lần ở bước này. */
+  private cardHeard = false;
+  private cardPlayId = 0;
   private stepPromptToken = 0;
   private stepPromptWaitedMs = 0;
   private advancePending = false;
@@ -276,6 +279,7 @@ export class GT000Session extends TemplateGameSession<
     );
     this.ensureStepAssetsCached(step);
     this.releaseStepPrompt();
+    this.cardHeard = false;
     this.recordEvent("intro_step_started", {
       step_id: `step_${this.currentStepIndex}`,
       action: step.action,
@@ -419,6 +423,7 @@ export class GT000Session extends TemplateGameSession<
     this.audioPromptCalled = true;
     const asset = this.getAsset(step.target_asset_id);
     const token = this.stepPromptToken;
+    const playId = ++this.cardPlayId;
     if (asset) {
       playGT000CardAudioWithFallback(
         this.audio,
@@ -431,7 +436,13 @@ export class GT000Session extends TemplateGameSession<
           this.lastTtsUsed = spoke;
         },
         (id) => this.reportTtsUnavailable(id),
-        () => token === this.stepPromptToken && !this.isWon
+        () => token === this.stepPromptToken && !this.isWon,
+        () => {
+          // Lượt giọng bị nghe lại ngắt cũng gọi onEnd: chỉ lượt mới nhất tính.
+          if (playId === this.cardPlayId && token === this.stepPromptToken) {
+            this.cardHeard = true;
+          }
+        }
       );
     }
     return asset;
@@ -508,7 +519,8 @@ export class GT000Session extends TemplateGameSession<
       this.selectedAssetId,
       this.renderItemStates,
       layout?.interactiveZone,
-      layout?.showcaseZone
+      layout?.showcaseZone,
+      this.cardHeard
     );
     if (res.linkSelectionChanged) {
       this.selectedAssetId = res.nextSelectedAssetId;

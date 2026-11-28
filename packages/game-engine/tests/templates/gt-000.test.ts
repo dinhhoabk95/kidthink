@@ -29,8 +29,9 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
     expect(targetEntity?.id).toBe("num_1");
   });
 
-  it("M0: toAction() maps tap on target slot to tap_item action; ở present chạm chỉ nghe lại, commit advance mới đi tiếp (BR-E000-14)", () => {
+  it("M0: toAction() maps tap on target slot to tap_item action; ở present khi giọng còn đọc chạm chỉ nghe lại, commit advance mới đi tiếp (BR-E000-14)", () => {
     const session = new GT000Session(fixture.content, fixture.difficulty);
+    vi.spyOn(session.audio, "speakPrompt").mockImplementation(() => true);
     session.prepareRound("3-4");
 
     const initialStep = session.currentStepIndex;
@@ -149,7 +150,10 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
     expect([speakSpy.mock.calls[0]?.[0] ?? ""].flat().join(" ")).toContain(
       "Đây là số một."
     );
-    expect(playPromptSpy).toHaveBeenCalledWith("/audio/numbers/num_1.mp3");
+    expect(playPromptSpy).toHaveBeenCalledWith(
+      "/audio/numbers/num_1.mp3",
+      expect.any(Function)
+    );
     expect(session.lastTtsUsed).toBe(true);
 
     // Sang bước 1 (không có narration_line riêng, không ở mở đầu phiên): phát thẳng audio_path
@@ -159,7 +163,7 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
 
     expect(playPromptSpy).toHaveBeenCalledWith(
       "/audio/numbers/num_2.mp3",
-      undefined,
+      expect.any(Function),
       expect.any(Function)
     );
     expect(speakSpy).not.toHaveBeenCalled();

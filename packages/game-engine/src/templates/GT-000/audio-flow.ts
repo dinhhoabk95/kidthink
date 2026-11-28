@@ -16,7 +16,10 @@ import {
   type RenderItem,
 } from "#src/render/index.js";
 import { spawnParticlesAtSlot, updateParticles } from "#src/render/particles";
-import { computeBookTurnProgress } from "#src/render/storybook-frame.js";
+import {
+  computeBookTurnProgress,
+  type StorybookPageBeads,
+} from "#src/render/storybook-frame.js";
 import type { AudioController } from "#src/systems/audio-controller";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { TeacherVoiceText } from "#src/systems/teacher-voice";
@@ -110,7 +113,7 @@ export interface GT000StepCacheSnapshot {
   readonly layoutKey: string;
   readonly layout: GT000ComputedStepLayout | null;
   readonly precomputedShowcase: GT000PrecomputedShowcase;
-  readonly pageBadge: string;
+  readonly pageBeads: StorybookPageBeads | null;
   readonly assets: readonly string[];
   readonly promptText: string;
   readonly renderItems: RenderItem[];
@@ -121,7 +124,7 @@ export const EMPTY_STEP_CACHE: GT000StepCacheSnapshot = {
   layoutKey: "",
   layout: null,
   precomputedShowcase: EMPTY_PRECOMPUTED_SHOWCASE,
-  pageBadge: "",
+  pageBeads: null,
   assets: [],
   promptText: "",
   renderItems: [],
@@ -190,7 +193,7 @@ export function buildGT000StepCacheSnapshot(
     ),
     layout,
     precomputedShowcase: precomputeGT000Showcase(layout.board, step, visualMap),
-    pageBadge: `${stepIndex + 1}/${Math.max(1, totalSteps)}`,
+    pageBeads: { current: stepIndex, total: Math.max(1, totalSteps) },
     assets: ids,
     promptText: getStepPromptText(step, target, speakAlong),
     renderItems: buildGT000BaseRenderItems(step, ids, assets, renderItemStates),
@@ -359,7 +362,8 @@ export function resolveGT000GestureToAction(
   selectedAssetId: string | null,
   renderItemStates: Map<string, ItemVisualState>,
   cardBounds?: ZoneRect,
-  showcaseZone?: ZoneRect | null
+  showcaseZone?: ZoneRect | null,
+  cardHeard = false
 ): {
   readonly action: GameAction | null;
   readonly nextSelectedAssetId: string | null;
@@ -427,14 +431,29 @@ export function resolveGT000GestureToAction(
       linkSelectionChanged: true,
     };
   }
+  if (step.action === "present" || step.action === "echo") {
+    // `BR-E000-14`: đang đọc thì nghe lại; đã đọc xong ít nhất một lần thì chạm
+    // thẻ = nút Tiếp theo (present) / Bé nói theo (echo, giữ payload chấm xong).
+    if (!cardHeard) {
+      return {
+        action: { type: "tap_item", data: { intent: "replay" } },
+        nextSelectedAssetId: selectedAssetId,
+        linkSelectionChanged: false,
+      };
+    }
+    if (step.action === "present") {
+      return {
+        action: { type: "tap_item", data: { intent: "advance" } },
+        nextSelectedAssetId: selectedAssetId,
+        linkSelectionChanged: false,
+      };
+    }
+  }
   return {
-    action:
-      step.action === "present"
-        ? { type: "tap_item", data: { intent: "replay" } }
-        : {
-            type: "tap_item",
-            data: { item_id: hit.itemId, asset_id: hit.itemId },
-          },
+    action: {
+      type: "tap_item",
+      data: { item_id: hit.itemId, asset_id: hit.itemId },
+    },
     nextSelectedAssetId: selectedAssetId,
     linkSelectionChanged: false,
   };
@@ -528,7 +547,8 @@ export function playGT000CardAudioWithFallback(
   onSpeaking: () => void,
   onSpokeChange: (spoke: boolean) => void,
   onTtsUnavailable: (assetId: string) => void,
-  isStillActiveStep: () => boolean = () => true
+  isStillActiveStep: () => boolean = () => true,
+  onHeard: () => void = () => undefined
 ): void {
   const chainedSpeech = resolveCardChainedSpeech(
     step,
@@ -539,7 +559,7 @@ export function playGT000CardAudioWithFallback(
 
   const speakFallback = (): void => {
     const text = chainedSpeech ?? getStepPromptText(step, asset, speakAlong);
-    const spoke = audio.speakPrompt(text, undefined, onSpeaking);
+    const spoke = audio.speakPrompt(text, onHeard, onSpeaking);
     onSpokeChange(spoke);
     if (!spoke) {
       onTtsUnavailable(asset.asset_id);
@@ -555,7 +575,7 @@ export function playGT000CardAudioWithFallback(
         () => {
           if (!chainedDone && isStillActiveStep()) {
             chainedDone = true;
-            audio.playPromptAudio(audioRef);
+            audio.playPromptAudio(audioRef, onHeard);
           }
         },
         onSpeaking
@@ -563,14 +583,26 @@ export function playGT000CardAudioWithFallback(
       onSpokeChange(spoke);
       if (!spoke) {
         chainedDone = true;
-        audio.playPromptAudio(audioRef, undefined, () =>
+        audio.playPromptAudio(audioRef, onHeard, () =>
           onTtsUnavailable(asset.asset_id)
         );
       }
       return;
     }
     onSpokeChange(false);
-    audio.playPromptAudio(asset.audio_path, undefined, speakFallback);
+    let fellBack = false;
+    audio.playPromptAudio(
+      asset.audio_path,
+      () => {
+        if (!fellBack) {
+          onHeard();
+        }
+      },
+      () => {
+        fellBack = true;
+        speakFallback();
+      }
+    );
     return;
   }
 
@@ -715,10 +747,13 @@ export function buildGT000StepRenderOptions(
       totalSegments: progress.totalCount,
       isLastReview: Boolean(progress.isLastReview),
       conceptLabel: s.content.concept.label,
-      pageBadge:
-        cacheMatches && stepCache.pageBadge
-          ? stepCache.pageBadge
-          : `${Math.min(s.currentStepIndex + 1, Math.max(1, s.steps.length))}/${Math.max(1, s.steps.length)}`,
+      pageBeads:
+        cacheMatches && stepCache.pageBeads
+          ? stepCache.pageBeads
+          : {
+              current: Math.min(s.currentStepIndex, s.steps.length - 1),
+              total: Math.max(1, s.steps.length),
+            },
       turnProgress: computeBookTurnProgress(s.pageTurnMs, rs.reducedMotion),
     },
     precomputedShowcase,

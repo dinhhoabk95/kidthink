@@ -24,13 +24,16 @@ const source = requireFixture();
 
 function makeSession(
   content: GT000Content = source.content,
-  difficulty: GT000Difficulty = source.difficulty
+  difficulty: GT000Difficulty = source.difficulty,
+  voiceEnds = true
 ) {
   const session = new GT000Session(content, difficulty);
   const spoken: string[] = [];
   vi.spyOn(session.audio, "speakPrompt").mockImplementation((text, onEnd) => {
     spoken.push(typeof text === "string" ? text : text.join(" "));
-    onEnd?.();
+    if (voiceEnds) {
+      onEnd?.();
+    }
     return true;
   });
   vi.spyOn(session.audio, "playPromptAudio").mockImplementation(() => {
@@ -56,7 +59,12 @@ function advanceTo(session: GT000Session, index: number): void {
 
 describe("GT-000 — present: chạm chỉ để nghe lại (BR-E000-14)", () => {
   it("chạm vào thẻ present không đi tiếp mà đọc lại tên chất liệu", () => {
-    const { session, spoken } = makeSession();
+    // Giọng còn đang đọc (chưa onEnd): chạm chỉ nghe lại.
+    const { session, spoken } = makeSession(
+      source.content,
+      source.difficulty,
+      false
+    );
     const before = session.currentStepIndex;
     const n = spoken.length;
     session.dispatch(tapEntity(session, "num_1"));

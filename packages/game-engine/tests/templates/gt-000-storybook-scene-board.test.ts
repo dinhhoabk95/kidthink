@@ -434,6 +434,8 @@ describe("GT-000 — Chạm khám phá Ngũ cung ở present, Lật trang 340ms 
     });
     const session = new GT000Session(content, BASE_DIFFICULTY);
     silenceAudio(session);
+    // Giọng còn đang đọc: chạm là khám phá, chưa phải đi tiếp (`BR-E000-14`).
+    vi.spyOn(session.audio, "speakPrompt").mockImplementation(() => true);
     const marimbaNotes: number[] = [];
     vi.spyOn(session.audio, "playMarimbaNote").mockImplementation((idx) => {
       marimbaNotes.push(idx);

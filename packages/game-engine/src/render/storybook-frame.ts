@@ -31,12 +31,32 @@ export interface BookSpreadLayout {
   };
 }
 
+/** Tiến độ trang sách dạng hạt tô dần, không chữ số (`BR-RSP-10`). */
+export interface StorybookPageBeads {
+  /** Chỉ số trang hiện tại (từ 0). */
+  readonly current: number;
+  readonly total: number;
+}
+
+const PAGE_BEADS_MAX = 10;
+
+/** Số hạt vẽ và số hạt đã tô cho `total` trang, hàm thuần. */
+export function resolvePageBeads(beads: StorybookPageBeads): {
+  readonly count: number;
+  readonly filled: number;
+} {
+  const total = Math.max(1, beads.total);
+  const count = Math.min(PAGE_BEADS_MAX, total);
+  const done = Math.min(total, Math.max(0, beads.current) + 1);
+  return { count, filled: Math.max(1, Math.ceil((done / total) * count)) };
+}
+
 export interface StorybookFrameState {
   readonly currentSegmentIndex: number;
   readonly totalSegments: number;
   readonly isLastReview: boolean;
   readonly conceptLabel?: string;
-  readonly pageBadge?: string;
+  readonly pageBeads?: StorybookPageBeads;
   readonly turnProgress: number;
 }
 
@@ -320,6 +340,33 @@ function drawLotusBudMarker(
   ctx.restore();
 }
 
+/** Vẽ một hàng hạt tiến độ sát `rightLimitX`; trả bề rộng đã chiếm (0 nếu không đủ chỗ). */
+function drawPageBeads(
+  ctx: CanvasRenderingContext2D,
+  zone: ZoneRect,
+  cy: number,
+  rightLimitX: number,
+  beads: { readonly count: number; readonly filled: number }
+): number {
+  const beadR = 3;
+  const beadStep = 9;
+  const beadsW = (beads.count - 1) * beadStep + beadR * 2;
+  if (beads.count < 2 || rightLimitX - zone.x < beadsW + 56) {
+    return 0;
+  }
+  const startX = rightLimitX - beadsW + beadR;
+  for (let i = 0; i < beads.count; i++) {
+    drawFilledCircle(
+      ctx,
+      startX + i * beadStep,
+      cy,
+      beadR,
+      i < beads.filled ? VN.bamboo.deep : alpha(VN.bamboo.deep, 0.25)
+    );
+  }
+  return beadsW + 10;
+}
+
 /**
  * Dải Dấu Trang Hoa Sen ở mép trên sách (`vnMaterials.lotus`) thay cho chấm tròn
  * đáy màn cũ (`drawGT000SegmentProgress`), kèm nhãn chủ đề gọn bên trái.
@@ -372,19 +419,15 @@ export function drawLotusBookmarkProgress(
     }
   }
 
-  const pageBadge = state.pageBadge?.trim();
   let rightLimitX = count >= 2 ? stripStartX - 10 : zone.x + zone.w - 4;
-  if (pageBadge && rightLimitX - zone.x >= 56) {
-    const badgeFontPx = Math.min(
-      Math.max(14, zone.h - 3),
-      legibleFontPx(16, rs.viewport?.scale)
+  if (state.pageBeads) {
+    rightLimitX -= drawPageBeads(
+      ctx,
+      zone,
+      cy,
+      rightLimitX,
+      resolvePageBeads(state.pageBeads)
     );
-    applyCanvasFontAtSize(ctx, badgeFontPx, "heading", "bold");
-    ctx.fillStyle = VN.bamboo.deep;
-    ctx.textAlign = "right";
-    ctx.textBaseline = "middle";
-    ctx.fillText(pageBadge, rightLimitX, cy, 48);
-    rightLimitX -= Math.ceil(ctx.measureText(pageBadge).width) + 10;
   }
 
   const label = state.conceptLabel?.trim();
