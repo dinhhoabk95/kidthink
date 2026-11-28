@@ -138,7 +138,7 @@
   .top-hud-bar {
     height: auto;
     min-height: 4.5rem;
-    padding: 0.5rem 0.75rem;
+    padding: 0.25rem 0.5rem;
     flex-wrap: wrap;
     gap: 0.5rem;
   }
@@ -329,6 +329,25 @@
   touch-action: none;
   border-radius: 1.75rem;
   box-shadow: 0 8px 24px rgba(180, 130, 70, 0.12);
+}
+
+/* Điện thoại dọc (`BR-LAY-13`): khung gỗ và đệm arena ăn 60 px ngang trong 360,
+   nên sàn chạm 96 px CSS thành 173 logic px và sân khấu 508 logic chỉ chứa 2
+   cột. Thu khung như điện thoại ngang để canvas rộng hơn: 3 cột vừa ở band 3-4. */
+@media (max-width: 640px) and (orientation: portrait) {
+  .main-arena {
+    padding: 0.25rem 0.25rem 0.5rem;
+  }
+
+  .wooden-tray-container {
+    padding: 4px;
+    border-width: 3px;
+    border-radius: 1.25rem;
+  }
+
+  .game-canvas {
+    border-radius: 1rem;
+  }
 }
 
 /* Loading & Error States */

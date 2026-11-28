@@ -59,18 +59,54 @@ function splitStacked(stage: ZoneRect): HeroSplit {
   };
 }
 
-/** Các ô sàn chạm xếp được trong `rest` mà không tràn chiều cao. */
-function restHoldsCells(rest: ZoneRect, fit: HeroRestFit): boolean {
-  const innerW = rest.w - 2 * REST_PADDING_PX;
+/**
+ * Chiều cao `rest` cần để chứa mọi ô sàn chạm ở bề rộng `restW`, gồm đệm trong.
+ * `null` khi một cột cũng không vừa.
+ */
+function restHeightFor(restW: number, fit: HeroRestFit): number | null {
+  const innerW = restW - 2 * REST_PADDING_PX;
   const cols = Math.floor(
     (innerW + SLOT_GAP_PX) / (fit.touchFloor + SLOT_GAP_PX)
   );
   if (cols < 1) {
-    return false;
+    return null;
   }
   const rows = Math.ceil(fit.count / Math.min(cols, fit.count));
-  const needH = rows * fit.touchFloor + (rows - 1) * SLOT_GAP_PX;
-  return needH <= rest.h - 2 * REST_PADDING_PX;
+  return rows * fit.touchFloor + (rows - 1) * SLOT_GAP_PX + 2 * REST_PADDING_PX;
+}
+
+/** Các ô sàn chạm xếp được trong `rest` mà không tràn chiều cao. */
+function restHoldsCells(rest: ZoneRect, fit: HeroRestFit): boolean {
+  const needH = restHeightFor(rest.w, fit);
+  return needH !== null && needH <= rest.h;
+}
+
+/**
+ * Màn dọc: phần chính 55% cao chỉ là mặc định. Lựa chọn cần nhiều chỗ hơn thì
+ * phần chính nhường bớt — nhưng không xuống dưới một cạnh sàn chạm, vì nó vẫn
+ * là thứ trẻ phải nhìn (mặt đồng hồ, tháp khối). Điện thoại dọc 360 px band
+ * 3-4: sân khấu 438, ô 154, phần còn lại 182 không chứa nổi một hàng ô nên ô
+ * rơi ra dưới đáy canvas (Task #321).
+ */
+function splitStackedToFit(stage: ZoneRect, fit: HeroRestFit): HeroSplit {
+  const stacked = splitStacked(stage);
+  const needH = restHeightFor(stage.w, fit);
+  if (needH === null || needH <= stacked.rest.h) {
+    return stacked;
+  }
+  const heroH = Math.max(
+    Math.min(fit.touchFloor, stacked.hero.h),
+    stage.h - needH - SLOT_GAP_PX
+  );
+  return {
+    hero: { x: stage.x, y: stage.y, w: stage.w, h: heroH },
+    rest: {
+      x: stage.x,
+      y: stage.y + heroH + SLOT_GAP_PX,
+      w: stage.w,
+      h: stage.h - heroH - SLOT_GAP_PX,
+    },
+  };
 }
 
 /**
@@ -92,10 +128,20 @@ export function splitHeroStage(
     return splitSideBySide(stage);
   }
   const stacked = splitStacked(stage);
-  if (fit && stage.w > stage.h && !restHoldsCells(stacked.rest, fit)) {
-    return splitSideBySide(stage);
+  if (!fit) {
+    return stacked;
   }
-  return stacked;
+  if (restHoldsCells(stacked.rest, fit)) {
+    return stacked;
+  }
+  const fitted = splitStackedToFit(stage, fit);
+  if (restHoldsCells(fitted.rest, fit) || stage.w <= stage.h) {
+    return fitted;
+  }
+  // Sân khấu thấp mà xếp dọc vẫn không đủ: thử chính trái – lựa chọn phải
+  // (điện thoại ngang). Kiểu nào cũng không đủ thì giữ kiểu dọc đã co.
+  const side = splitSideBySide(stage);
+  return restHoldsCells(side.rest, fit) ? side : fitted;
 }
 
 /** Slot phủ trọn vùng chính — thực thể "mặt đồng hồ" / "mô hình" của view. */

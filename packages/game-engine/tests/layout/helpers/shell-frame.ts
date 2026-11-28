@@ -45,10 +45,10 @@ export interface CanvasBox {
 /**
  * Hộp CSS của canvas trong viewport dọc.
  * - `preview`: `preview-sandbox.vue?fit=fill` — canvas lấp cả viewport.
- * - `play`: `play/[code].vue` + `play-surface.css` — trừ HUD (`.top-hud-bar`:
- *   cao `max(4.5rem, sàn chạm + 16)` cộng viền 3), arena (đệm 8 trên, 16 dưới,
- *   16 hai bên) và khung gỗ (đệm 10 + viền 4 mỗi cạnh). Đã đo trên Chromium ở
- *   trang chơi thật (Phase 26), khớp từng px. Giả định HUD **một hàng**: level
+ * - `play`: `play/[code].vue` + `play-surface.css` ở điện thoại dọc (≤ 640 px)
+ *   — trừ HUD (`.top-hud-bar`: cao `max(4.5rem, sàn chạm + 8)` cộng viền 3),
+ *   arena (đệm 4 trên, 8 dưới, 4 hai bên) và khung gỗ (đệm 4 + viền 3 mỗi
+ *   cạnh). Đã đo trên Chromium ở trang chơi thật (Task #321), khớp từng px. Giả định HUD **một hàng**: level
  *   nhiều vòng (band 3-4, 360 px, từ 4 vòng) làm hạt tiến độ xuống dòng và
  *   canvas thấp hơn số ở đây.
  */
@@ -60,9 +60,9 @@ export function canvasBoxOf(
   if (surface === "preview") {
     return { w: viewport.w, h: viewport.h };
   }
-  const hud = Math.max(72, touchFloorOf(band) + 16) + 3;
-  const chromeX = 2 * 16 + 2 * (10 + 4);
-  const chromeY = hud + 8 + 16 + 2 * (10 + 4);
+  const hud = Math.max(72, touchFloorOf(band) + 8) + 3;
+  const chromeX = 2 * 4 + 2 * (4 + 3);
+  const chromeY = hud + 4 + 8 + 2 * (4 + 3);
   return { w: viewport.w - chromeX, h: viewport.h - chromeY };
 }
 
