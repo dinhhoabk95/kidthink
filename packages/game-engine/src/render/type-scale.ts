@@ -135,29 +135,15 @@ export function spaceOf(rs: RenderSystem): {
   return cached;
 }
 
+export type CanvasFontFamily = "sans" | "heading";
+export type CanvasFontWeight = number | "normal" | "bold";
+
 export function applyCanvasFontAtSize(
-  ctx: CanvasRenderingContext2D,
+  ctx: Pick<CanvasRenderingContext2D, "font">,
   sizePx: number,
-  arg3: "sans" | "heading" | number | string = "sans",
-  arg4: "sans" | "heading" | number | string = 400
+  family: CanvasFontFamily = "sans",
+  weight: CanvasFontWeight = 400
 ): void {
-  let family: "sans" | "heading" = "sans";
-  let weight: number | string = 400;
-
-  if (arg3 === "sans" || arg3 === "heading") {
-    family = arg3;
-    if (typeof arg4 === "number" || typeof arg4 === "string") {
-      weight = arg4;
-    }
-  } else if (arg4 === "sans" || arg4 === "heading") {
-    family = arg4;
-    if (typeof arg3 === "number" || typeof arg3 === "string") {
-      weight = arg3;
-    }
-  } else if (typeof arg3 === "number" || typeof arg3 === "string") {
-    weight = arg3;
-  }
-
   const fontFace =
     family === "heading" ? designTokens.fonts.heading : designTokens.fonts.sans;
   ctx.font = `${weight} ${sizePx}px ${fontFace}`;
@@ -168,8 +154,8 @@ export function applyCanvasFont(
   role: CanvasTypeRole,
   space: LogicSpace,
   scale?: number,
-  family: "sans" | "heading" = "sans",
-  weight: number | string = 400
+  family: CanvasFontFamily = "sans",
+  weight: CanvasFontWeight = 400
 ): void {
   const sizePx = canvasFontPx(space, role, scale);
   applyCanvasFontAtSize(ctx, sizePx, family, weight);

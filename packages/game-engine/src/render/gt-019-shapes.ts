@@ -167,12 +167,13 @@ export function drawGT019TargetSlot(ctx: Ctx, rs: RS, slot: Slot, p: TP): void {
   const pr = r * 0.88;
   ctx.save();
   if (p.mode === "empty") {
+    disc(ctx, slot.x, slot.y, pr, alpha(m.woodBorder, 0.16));
     const v: TransformVec = [
       p.rotDeg,
       p.flipScaleX,
       p.flipScaleY,
       pr,
-      p.hintLevel >= 2 ? 0.58 : 0.28,
+      p.hintLevel >= 2 ? 0.78 : 0.55,
     ];
     drawTransformedPiece(ctx, slot, p.asset, v, true, false);
     if (p.hintLevel >= 1) {

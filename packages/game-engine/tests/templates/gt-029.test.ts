@@ -407,3 +407,68 @@ describe("GT-029 — bớt khỏi tập hợp trên bề mặt web (BR-E029, BR-
     }
   });
 });
+
+describe("GT-029 — bước trung gian là thao tác nháp (BR-E029-12, BR-EIC-10)", () => {
+  const f = GT029_FIXTURES[0];
+  if (!f) {
+    throw new Error("Fixture GT-029 not found");
+  }
+  const { content: fx, difficulty: fd } = f;
+  const QUIET = { valid: true, feedback: "none" };
+
+  function build(): GT029Session {
+    const session = new GT029Session(fx, fd, 1);
+    const space = deriveLogicSpace(964, 628);
+    const cssPerLogic = 964 / space.w;
+    const zones = computeStageZones({
+      logicW: space.w,
+      logicH: space.h,
+      ageBand: "4-5",
+      cssPerLogic,
+      needsTray: false,
+      needsCommit: false,
+    });
+    session.prepareRound("4-5", space, zones.stage, undefined, cssPerLogic);
+    return session;
+  }
+
+  it("bớt, hoàn lại một vật và chạm thẻ đáp số khi còn khoá đều QUIET_OK", () => {
+    const session = build();
+    const id = session.getDisplayItems()[0]?.item_id ?? "";
+    const opt = session.getDisplayOptions()[0];
+    expect(
+      session.validateAction({ type: "remove_item", data: { item_id: id } })
+    ).toEqual(QUIET);
+    session.commit({ type: "remove_item", data: { item_id: id } });
+    expect(
+      session.validateAction({ type: "remove_item", data: { item_id: id } })
+    ).toEqual(QUIET);
+    session.commit({ type: "remove_item", data: { item_id: id } });
+    if (fx.remove_count > 0) {
+      expect(
+        session.validateAction({
+          type: "select_option",
+          data: { option_id: opt?.option_id },
+        })
+      ).toEqual(QUIET);
+    }
+  });
+
+  it("ca âm: bớt đủ rồi chọn đáp số sai vẫn RETRY", () => {
+    const session = build();
+    const items = session.getDisplayItems();
+    for (let i = 0; i < fx.remove_count; i++) {
+      session.commit({
+        type: "remove_item",
+        data: { item_id: items[i]?.item_id },
+      });
+    }
+    const wrong = session.getDisplayOptions().find((o) => !o.is_correct);
+    expect(
+      session.validateAction({
+        type: "select_option",
+        data: { option_id: wrong?.option_id },
+      })
+    ).toBe(ACTION_RETRY);
+  });
+});

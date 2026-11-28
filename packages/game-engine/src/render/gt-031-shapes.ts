@@ -112,7 +112,7 @@ function textStyle(
   applyCanvasFontAtSize(
     ctx,
     canvasFontPx(space, variant, scale),
-    "display",
+    "heading",
     700
   );
   ctx.fillStyle = color;

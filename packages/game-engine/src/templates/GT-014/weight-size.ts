@@ -35,7 +35,11 @@ import {
   resolvePickExpectedSide,
   solveGT014NextHintMove,
 } from "./layout.js";
-import type { PlacedPanItem, WeightedAssetItem } from "./template.js";
+import type {
+  GT014Content,
+  PlacedPanItem,
+  WeightedAssetItem,
+} from "./template.js";
 import {
   getGT014Clock,
   referenceScaleBoxesInStage,
@@ -46,7 +50,9 @@ import {
 export type { PlacedPanItem, WeightedAssetItem } from "./template.js";
 
 const MIN_SIZE_FRACTION = 0.4;
-const HEAVIEST_PER_PAN_ROW = 3;
+const MAX_ITEMS_PER_PAN = 3;
+const PAN_HEIGHT_CAP = 4;
+const PAN_FLOOR_RATIO = 0.6;
 const ROW_FILL_RATIO = 0.94;
 const ROW_GAP_PX = 2;
 const MIN_PAN_ITEM_PX = 14;
@@ -69,10 +75,26 @@ export function maxItemWeight(
   );
 }
 
-export function panUnitSize(pan: SceneBox): number {
+/** Số vật tối đa trên một đĩa trong cả bài, kẹp 1..3 (`BR-E014-03`). */
+export function maxItemsPerPan(content: GT014Content): number {
+  const initial = Math.max(content.left_pan.length, content.right_pan.length);
+  const refs = (content.reference_scales ?? []).map((r) =>
+    Math.max(r.left_pan.length, r.right_pan.length)
+  );
+  const direct =
+    content.goal === "balance" ? initial + content.tray.length : initial;
+  return Math.min(MAX_ITEMS_PER_PAN, Math.max(1, direct, ...refs));
+}
+
+/** Cỡ vật nặng nhất: ba vật cùng hàng vẫn vừa 0,94 bề rộng đĩa, một vật thì lấp gần hết. */
+export function panUnitSize(
+  pan: SceneBox,
+  perPan: number = MAX_ITEMS_PER_PAN
+): number {
+  const count = Math.min(MAX_ITEMS_PER_PAN, Math.max(1, perPan));
   return Math.max(
     MIN_PAN_ITEM_PX,
-    Math.min(pan.w / HEAVIEST_PER_PAN_ROW, pan.h * 2.5)
+    Math.min((pan.w * ROW_FILL_RATIO) / count, pan.h * PAN_HEIGHT_CAP)
   );
 }
 
@@ -85,7 +107,7 @@ export function layoutPanItems(
   const sizes = items.map((item) =>
     Math.max(
       MIN_PAN_ITEM_PX,
-      Math.round(unit * weightSizeFraction(item.weight, maxWeight))
+      Math.floor(unit * weightSizeFraction(item.weight, maxWeight))
     )
   );
   const capacity = pan.w * ROW_FILL_RATIO;
@@ -101,7 +123,7 @@ export function layoutPanItems(
     rows.push({ indices: [i], width: size, height: size });
   });
   const placed: PlacedPanItem[] = [];
-  let bottom = pan.y;
+  let bottom = pan.y + pan.h * PAN_FLOOR_RATIO;
   for (const row of rows) {
     let left = pan.x + (pan.w - row.width) / 2;
     for (const i of row.indices) {
@@ -141,14 +163,20 @@ function drawPanItemsWithFallback(
   items: readonly WeightedItem[],
   assetById: ReadonlyMap<string, KeywordAsset>,
   maxWeight: number,
-  stageBounds: SceneBox
+  stageBounds: SceneBox,
+  perPan: number
 ): void {
   const weighted: WeightedAssetItem[] = items.map((i) => ({
     item_id: i.item_id,
     weight: i.weight,
     asset: assetById.get(i.item_id),
   }));
-  for (const p of layoutPanItems(pan, weighted, maxWeight)) {
+  for (const p of layoutPanItems(
+    pan,
+    weighted,
+    maxWeight,
+    panUnitSize(pan, perPan)
+  )) {
     if (isGT014BrokenAsset(p.item.asset)) {
       drawGT014FallbackWeight(
         ctx,
@@ -230,7 +258,8 @@ function renderClosedReveal(
   const pan = side === "left" ? leftPan : rightPan;
   const gw = move?.kind === "place" ? move.item.weight : 1;
   const ghost = isBal
-    ? panUnitSize(pan) * weightSizeFraction(gw, s.maxWeight)
+    ? panUnitSize(pan, maxItemsPerPan(s.content)) *
+      weightSizeFraction(gw, s.maxWeight)
     : 0;
   drawGT014ClosedReveal(ctx, pan, ghost, s.stageBounds);
 }
@@ -283,7 +312,8 @@ function renderRefScales(
         ref.left_pan,
         s.assetById,
         s.maxWeight,
-        s.stageBounds
+        s.stageBounds,
+        maxItemsPerPan(s.content)
       );
       drawPanItemsWithFallback(
         ctx,
@@ -292,7 +322,8 @@ function renderRefScales(
         ref.right_pan,
         s.assetById,
         s.maxWeight,
-        s.stageBounds
+        s.stageBounds,
+        maxItemsPerPan(s.content)
       );
     }
   });
@@ -360,7 +391,8 @@ export function renderGT014Stage(
     s.solverInput.leftItems,
     s.assetById,
     s.maxWeight,
-    s.stageBounds
+    s.stageBounds,
+    maxItemsPerPan(s.content)
   );
   drawPanItemsWithFallback(
     ctx,
@@ -369,7 +401,8 @@ export function renderGT014Stage(
     s.solverInput.rightItems,
     s.assetById,
     s.maxWeight,
-    s.stageBounds
+    s.stageBounds,
+    maxItemsPerPan(s.content)
   );
 
   if (s.wrongSide && wrongProg !== null) {

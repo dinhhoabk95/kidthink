@@ -220,7 +220,7 @@ export function drawGT036Bead(
       "badge",
       rs.viewport?.scale ?? 1
     );
-    applyCanvasFontAtSize(ctx, fontPx, "display", 700);
+    applyCanvasFontAtSize(ctx, fontPx, "heading", 700);
     ctx.fillStyle = woodBorder;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -275,7 +275,7 @@ export function drawGT036MotifGroups(
   }
   ctx.save();
   const fontPx = canvasFontPx(rs.logicSpace, "badge", rs.viewport?.scale ?? 1);
-  applyCanvasFontAtSize(ctx, fontPx, "display", 700);
+  applyCanvasFontAtSize(ctx, fontPx, "heading", 700);
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   const bg = alpha(BRAND[500], 0.09);

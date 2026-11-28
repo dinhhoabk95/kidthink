@@ -22,6 +22,8 @@ import type { ItemVisualState, RenderAsset, RenderItem } from "./types.js";
 
 const LABEL_FONT_RATIO = 0.16;
 const GLYPH_FILL_RATIO = 0.52;
+const TEXT_FIT_RATIO = 0.85;
+const MIN_FIT_FONT_PX = 10;
 export const SPRITE_FILL_RATIO = 0.68;
 
 const SEGMENTER =
@@ -307,16 +309,44 @@ export function drawTextInSlot(
   slot: Slot,
   color: string = designTokens.colors.surface[800]
 ): void {
-  const size = Math.max(
+  if (isEmojiRun(text)) {
+    drawEmojiRunInSlot(ctx, text, slot);
+    return;
+  }
+  const preferred = Math.max(
     minLegiblePx(DEFAULT_LOGIC_SPACE),
     Math.floor(Math.min(slot.w, slot.h) * 0.42)
   );
   ctx.save();
   ctx.fillStyle = color;
-  applyCanvasFontAtSize(ctx, size, "heading", "bold");
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(text, slot.x, slot.y, slot.w * 0.85);
+  applyCanvasFontAtSize(ctx, preferred, "heading", "bold");
+  // Thu cỡ đồng đều tới khi vừa bề ngang; không bóp ngang bằng maxWidth.
+  const maxWidth = slot.w * TEXT_FIT_RATIO;
+  let size = preferred;
+  const measured = ctx.measureText(text).width;
+  if (measured > maxWidth && measured > 0) {
+    size = Math.max(
+      MIN_FIT_FONT_PX,
+      Math.floor((preferred * maxWidth) / measured)
+    );
+    applyCanvasFontAtSize(ctx, size, "heading", "bold");
+  }
+  ctx.fillText(text, slot.x, slot.y);
+  ctx.restore();
+}
+
+/** Chuỗi toàn emoji: vẽ từng glyph trên lưới đều bằng font emoji, không maxWidth. */
+function drawEmojiRunInSlot(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  slot: Slot
+): void {
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  drawMultiGlyphClusterInSlot(ctx, getGraphemeParts(text), slot);
   ctx.restore();
 }
 

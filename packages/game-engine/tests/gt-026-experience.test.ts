@@ -21,6 +21,7 @@ function openSession(): GT026Session {
   };
   const session = new GT026Session(content, FIXTURE.difficulty);
   session.prepareRound("5-6");
+  session.commit({ type: "start_trials", data: {} });
   return session;
 }
 

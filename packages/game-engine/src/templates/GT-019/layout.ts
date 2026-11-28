@@ -55,6 +55,8 @@ export const GT019_FLIP_PULSE_MS = 240;
 export const GT019_BURST_MS = 520;
 export const GT019_AUTO_RESOLVE_MS = 900;
 const TARGET_CELL_MAX_PX = 96;
+const FEW_TARGETS = 2;
+const FEW_TARGET_CELL_MAX_PX = 160;
 const ALL_ROTATIONS: readonly RotationAngle90[] = [0, 90, 180, 270];
 
 export const toRotationAngle = (v: number | undefined): RotationAngle90 =>
@@ -278,6 +280,23 @@ export function resolveGT019RoundSetup(
   return { displayPieces, transforms };
 }
 
+/** Trần cạnh ô đích: ít đích thì to hơn để bóng xoay đọc được trên sân khấu trống. */
+function targetCellCap(
+  targetCount: number,
+  stage: { readonly w: number; readonly h: number }
+): number {
+  if (targetCount > FEW_TARGETS) {
+    return TARGET_CELL_MAX_PX;
+  }
+  return Math.max(
+    TARGET_CELL_MAX_PX,
+    Math.min(
+      FEW_TARGET_CELL_MAX_PX,
+      Math.floor(Math.min(stage.w, stage.h) * 0.45)
+    )
+  );
+}
+
 export function computeGT019LayoutSlots(
   b: B,
   ageBand: AgeBand,
@@ -289,7 +308,8 @@ export function computeGT019LayoutSlots(
   const zones = pickTrayZones(b.stageRect, b.trayRect);
   if (zones) {
     const touchFloor = resolveTouchFloor(ageBand, cssPerLogic);
-    const maxCell = { w: TARGET_CELL_MAX_PX, h: TARGET_CELL_MAX_PX };
+    const cap = targetCellCap(targetCount, zones.stage);
+    const maxCell = { w: cap, h: cap };
     const targets = computeStageCellSlots({
       count: targetCount,
       stage: zones.stage,
@@ -363,12 +383,6 @@ export const readGT019ActionStr = (
   return typeof v === "string" ? v : null;
 };
 
-const FLIP_SUFFIX: Record<FlipAxis, string> = {
-  none: "",
-  horizontal: ", đã lật ngang",
-  vertical: ", đã lật dọc",
-};
-
 function resolveSourceEntityState(b: B, id: string): EntityVisual {
   if (b.placedPieceIds.has(id)) {
     return "correct";
@@ -404,8 +418,7 @@ export function buildGT019ViewEntities(b: B): ViewEntity[] {
       (p) => p.piece_id === placedId || p.target_slot_id === t.slot_id
     );
     const labels = refP ? resolveAssetSpeech(refP.asset) : undefined;
-    const base = labels?.spokenLabel ?? `Ô đích ${i + 1}`;
-    const spk = `${base}, góc ${t.target_rotation ?? 0} độ`;
+    const spk = `Cái bóng của ${labels?.spokenLabel ?? `Mảnh ${i + 1}`}`;
     const st = placedId ? "correct" : "idle";
     entities.push(toEnt(slot, t.slot_id, i, "target", st, spk, labels));
   });
@@ -415,10 +428,7 @@ export function buildGT019ViewEntities(b: B): ViewEntity[] {
       return;
     }
     const labels = resolveAssetSpeech(p.asset);
-    const tf = b.pieceTransforms.get(p.piece_id);
-    const rotDeg = tf?.rotation ?? p.initial_rotation ?? 0;
-    const base = labels.spokenLabel ?? `Mảnh ${i + 1}`;
-    const spk = `${base}, góc ${rotDeg} độ${FLIP_SUFFIX[tf?.flip ?? "none"]}`;
+    const spk = labels.spokenLabel ?? `Mảnh ${i + 1}`;
     const idx = b.targetSlots.length + i;
     const st = resolveSourceEntityState(b, p.piece_id);
     entities.push(toEnt(slot, p.piece_id, idx, "source", st, spk, labels));

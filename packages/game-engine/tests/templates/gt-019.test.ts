@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ACTION_IGNORED, ACTION_RETRY } from "#src/game-session";
 import { GT019Generator } from "#src/generators/gt019";
 import type { ThemeVocabulary } from "#src/generators/types";
+import { touchFloorOf } from "#src/layout/touch-floor";
 import { createRng } from "#src/rng/mulberry32";
 import { RenderSystem } from "#src/systems/render-system";
 import { GT019_FIXTURES } from "#src/templates/GT-019/fixtures";
@@ -17,6 +18,15 @@ import type {
 import { createFakeCanvas } from "#tests/gates/fake-canvas";
 import { solveWithWebGestures } from "#tests/gates/web-gesture-solver";
 import { collectRenderedText, lettersOnly } from "#tests/helpers/rendered-text";
+import {
+  canvasBoxOf,
+  placeRound,
+  SHELL_VIEWPORTS,
+} from "#tests/layout/helpers/shell-frame";
+
+const ANGLE_SPEECH = /\d+\s*độ/;
+
+type GT019Piece = GT019Content["pieces"][number];
 
 const TWO_PIECE_CONTENT: GT019Content = {
   prompt: "Bé hãy xoay và lật mảnh ghép cho khớp bóng trên tường nhé!",
@@ -421,5 +431,99 @@ describe("GT-019 Rotate Transform — Kiến trúc mới & Thang trợ giúp", (
       }
     }
     expect(targetRotations.size).toBe(4);
+  });
+});
+
+describe("GT-019 — lời đọc không lộ góc, ô đích đủ to (Task #321 C-03, C-04)", () => {
+  const EMOJIS = ["✋", "⭐", "🏠", "🔑"] as const;
+
+  function contentOf(count: number, unnamed = false): GT019Content {
+    const idx = Array.from({ length: count }, (_, i) => i);
+    const asset = (i: number): GT019Piece["asset"] =>
+      unnamed
+        ? { kind: "image", path: "/img/x.png" }
+        : { kind: "emoji", ref: EMOJIS[i] ?? "⭐" };
+    return {
+      prompt: "Bé hãy xoay hình cho khớp bóng nhé!",
+      target_slots: idx.map((i) => ({
+        slot_id: `slot-${i}`,
+        target_rotation: 180,
+        target_flip: "none" as const,
+        asset: asset(i),
+      })),
+      pieces: idx.map((i) => ({
+        piece_id: `piece-${i}`,
+        initial_rotation: 90,
+        initial_flip: "none" as const,
+        target_slot_id: `slot-${i}`,
+        asset: asset(i),
+      })),
+    };
+  }
+
+  function placed(count: number, unnamed = false) {
+    const session = new GT019Session(
+      contentOf(count, unnamed),
+      FLIP_DIFFICULTY,
+      0
+    );
+    const vp = SHELL_VIEWPORTS[0];
+    if (!vp) {
+      throw new Error("Thiếu viewport 360x640");
+    }
+    const round = placeRound(session, "5-6", canvasBoxOf(vp, "5-6", "play"));
+    return { session, round };
+  }
+
+  it("không spokenLabel nào chứa số độ (mảnh lẫn ô đích)", () => {
+    for (const count of [1, 2, 4]) {
+      const { session } = placed(count);
+      for (const e of session.getView().entities) {
+        expect(e.spokenLabel ?? "").not.toMatch(ANGLE_SPEECH);
+      }
+    }
+  });
+
+  it("asset không có tên: mảnh đọc 'Mảnh N', ô đích đọc 'Cái bóng của Mảnh N', không số độ", () => {
+    const { session } = placed(1, true);
+    const ents = session.getView().entities;
+    const piece = ents.find((e) => e.role === "source");
+    const target = ents.find((e) => e.role === "target");
+    expect(piece?.spokenLabel).toBe("Mảnh 1");
+    expect(target?.spokenLabel).toBe("Cái bóng của Mảnh 1");
+  });
+
+  it("ô đích đọc 'Cái bóng của {tên}' khi asset có tên", () => {
+    const { session } = placed(1);
+    const ents = session.getView().entities;
+    const piece = ents.find((e) => e.role === "source");
+    const target = ents.find((e) => e.role === "target");
+    expect(target?.spokenLabel).toBe(`Cái bóng của ${piece?.spokenLabel}`);
+  });
+
+  it("level 1 mảnh: ô đích cạnh >= 140 logic ở khung portrait 360x640", () => {
+    const { round } = placed(1);
+    const target = round.slots.find((s) => s.role === "target");
+    expect(target?.w ?? 0).toBeGreaterThanOrEqual(140);
+    expect(target?.h ?? 0).toBeGreaterThanOrEqual(140);
+  });
+
+  it("4 đích: vẫn >= sàn chạm, không chồng vùng chạm", () => {
+    const { round } = placed(4);
+    const floor = touchFloorOf("5-6");
+    const targets = round.slots.filter((s) => s.role === "target");
+    expect(targets).toHaveLength(4);
+    for (const t of targets) {
+      expect(t.hitW * round.scale).toBeGreaterThanOrEqual(floor - 0.5);
+      expect(t.hitH * round.scale).toBeGreaterThanOrEqual(floor - 0.5);
+    }
+    for (const [i, a] of targets.entries()) {
+      for (const b of targets.slice(i + 1)) {
+        const apart =
+          Math.abs(a.x - b.x) >= (a.hitW + b.hitW) / 2 ||
+          Math.abs(a.y - b.y) >= (a.hitH + b.hitH) / 2;
+        expect(apart).toBe(true);
+      }
+    }
   });
 });

@@ -8,7 +8,7 @@ import type {
 import { sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
-interface ClockTime {
+export interface ClockTime {
   hour: number;
   minute: 0 | 30;
 }
@@ -16,7 +16,7 @@ interface ClockTime {
 /** Hai kim phải lệch nhau ít nhất góc này, không thì đọc giờ thành đoán (12:00, 6:30...). */
 const MIN_HAND_GAP_DEG = 30;
 const MAX_TARGET_ATTEMPTS = 50;
-const HINT_AFTER_MS_BY_STEP = { 60: 9000, 30: 12_000 } as const;
+export const HINT_AFTER_MS_BY_STEP = { 60: 9000, 30: 12_000 } as const;
 
 function handGapDeg(time: ClockTime): number {
   const { hourAngleDeg, minuteAngleDeg } = timeToAngles(time);
@@ -28,7 +28,7 @@ function sameTime(a: ClockTime, b: ClockTime): boolean {
   return a.hour === b.hour && a.minute === b.minute;
 }
 
-function pickTarget(rng: Rng, minuteStep: 30 | 60): ClockTime {
+export function pickTarget(rng: Rng, minuteStep: 30 | 60): ClockTime {
   for (let attempt = 0; attempt < MAX_TARGET_ATTEMPTS; attempt++) {
     const candidate: ClockTime = {
       hour: 1 + rng.nextInt(12),
@@ -41,7 +41,7 @@ function pickTarget(rng: Rng, minuteStep: 30 | 60): ClockTime {
   return { hour: 3, minute: 0 };
 }
 
-function pickDistractors(
+export function pickDistractors(
   rng: Rng,
   target: ClockTime,
   minuteStep: 30 | 60,

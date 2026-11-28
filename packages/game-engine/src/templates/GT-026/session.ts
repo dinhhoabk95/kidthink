@@ -2,6 +2,7 @@ import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
+  ACTION_QUIET_OK,
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
@@ -27,6 +28,7 @@ import {
   buildGT026View,
   computeGT026Slots,
   computeGT026StartSlot,
+  type GT026ExitPhase,
   type GT026LayoutHost,
   getGT026Clock,
   renderGT026Frame,
@@ -45,6 +47,9 @@ export const GT026_STORY_LINE =
 /** Bội số nới ở bậc `L1` (cửa sổ) và `L2` (nhịp nghỉ); `L3` là không tính giờ. */
 const LADDER_WIDEN_FACTOR = 1.5;
 
+/** Độ dài pha thoát của pod sau lượt vừa xong (N4), kẹp theo `isi_ms`. */
+const GT026_EXIT_MS = 360;
+
 export class GT026Session
   extends TemplateGameSession<GT026Content, GT026Difficulty>
   implements GT026LayoutHost
@@ -55,7 +60,7 @@ export class GT026Session
 
   private inhibitionSystem!: InhibitionSystem;
   private isInputOpen = true;
-  private waitingForStart = false;
+  private waitingForStart = true;
   private currentBand: AgeBand = "4-5";
   private appliedLadderLevel = 0;
   private outcomeMood: MascotPose | null = null;
@@ -107,6 +112,25 @@ export class GT026Session
     return (
       this.inhibitionSystem?.getTotalTrials() ?? this.content.trials.length
     );
+  }
+
+  getExitPhase(): GT026ExitPhase | null {
+    const sys = this.inhibitionSystem;
+    if (
+      !(sys && this.isInputOpen) ||
+      this.waitingForStart ||
+      sys.getState() !== "isi"
+    ) {
+      return null;
+    }
+    const duration = Math.min(GT026_EXIT_MS, sys.getIsiMs());
+    const elapsed = sys.getTrialElapsedMs();
+    const last = sys.getResults().at(-1);
+    const trial = sys.getCurrentTrial();
+    if (!(last && trial) || duration <= 0 || elapsed >= duration) {
+      return null;
+    }
+    return { outcome: last.outcome, progress: elapsed / duration, trial };
   }
 
   getResults(): readonly TrialResult[] {
@@ -198,7 +222,7 @@ export class GT026Session
 
   setupEntities(): void {
     this.isWon = false;
-    this.waitingForStart = false;
+    this.waitingForStart = true;
     this.appliedLadderLevel = 0;
     this.outcomeMood = null;
     resetGT026Clock(this);
@@ -239,7 +263,8 @@ export class GT026Session
       return ACTION_IGNORED;
     }
     if (this.waitingForStart) {
-      return ACTION_IGNORED;
+      // Nút bắt đầu hợp lệ nhưng không phải câu trả lời (BR-EIC-10).
+      return action.type === "start_trials" ? ACTION_QUIET_OK : ACTION_IGNORED;
     }
     if (this.inhibitionSystem.getState() !== "stimulus") {
       return ACTION_IGNORED;

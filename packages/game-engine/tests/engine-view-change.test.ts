@@ -32,6 +32,8 @@ describe("GameEngine.onViewChanged — danh sách thực thể đổi ở nhịp
       },
       () => session
     );
+    // Phiên mặc định chờ nút bắt đầu (N1); load() dựng lại phiên nên bấm sau load.
+    session.commit({ type: "start_trials", data: {} });
     return engine;
   }
 

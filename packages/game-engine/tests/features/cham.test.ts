@@ -784,6 +784,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT026Session(f26.content, f26.difficulty);
       session.prepareRound("4-5");
+      session.commit({ type: "start_trials", data: {} });
 
       const pointer: ClientPoint = { x: 10, y: 10 };
       const logicPt = toLogicPoint(pointer, canvasRect);
@@ -808,6 +809,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT026Session(f26.content, f26.difficulty);
       session.prepareRound("4-5");
+      session.commit({ type: "start_trials", data: {} });
 
       const slot = session.slots[0];
       if (!slot) {
@@ -832,6 +834,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT027Session(f27.content, f27.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const pointer: ClientPoint = { x: 10, y: 10 };
       const logicPt = toLogicPoint(pointer, canvasRect);
@@ -855,6 +858,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT027Session(f27.content, f27.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const slot = session.slots[0];
       if (!slot) {
@@ -879,6 +883,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT028Session(f28.content, f28.difficulty);
       session.prepareRound("4-5");
+      session.commit({ type: "start_trials", data: {} });
 
       const pointer: ClientPoint = { x: 10, y: 10 };
       const logicPt = toLogicPoint(pointer, canvasRect);
@@ -903,6 +908,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT028Session(f28.content, f28.difficulty);
       session.prepareRound("4-5");
+      session.commit({ type: "start_trials", data: {} });
 
       const slot = session.slots[0];
       if (!slot) {
@@ -931,6 +937,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT029Session(f29.content, f29.difficulty);
       session.prepareRound("4-5");
+      session.commit({ type: "start_trials", data: {} });
 
       const pointer: ClientPoint = { x: 10, y: 10 };
       const logicPt = toLogicPoint(pointer, canvasRect);
@@ -955,6 +962,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT029Session(f29.content, f29.difficulty);
       session.prepareRound("4-5");
+      session.commit({ type: "start_trials", data: {} });
 
       const slot = session.slots[0];
       if (!slot) {
@@ -979,6 +987,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT030Session(f30.content, f30.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const pointer: ClientPoint = { x: 10, y: 10 };
       const logicPt = toLogicPoint(pointer, canvasRect);
@@ -1003,6 +1012,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT030Session(f30.content, f30.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const sourceSlot = session.slots[SOURCE_SLOT];
       if (!sourceSlot) {
@@ -1027,6 +1037,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT031Session(f31.content, f31.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const pointer: ClientPoint = { x: 10, y: 10 };
       const logicPt = toLogicPoint(pointer, canvasRect);
@@ -1051,6 +1062,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT031Session(f31.content, f31.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const coinSlot = session.slots[1];
       if (!coinSlot) {
@@ -1075,6 +1087,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT032Session(f32.content, f32.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const pointer: ClientPoint = { x: 10, y: 10 };
       const logicPt = toLogicPoint(pointer, canvasRect);
@@ -1099,6 +1112,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT032Session(f32.content, f32.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       // cup_b is correct in fixture 0 (more, fill 5 vs 2)
       const correctIdx = f32.content.cups.findIndex((c) =>
@@ -1130,6 +1144,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT033Session(f33.content, f33.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const pointer: ClientPoint = { x: 10, y: 10 };
       const logicPt = toLogicPoint(pointer, canvasRect);
@@ -1154,6 +1169,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT033Session(f33.content, f33.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const totalCells = f33.content.grid.rows * f33.content.grid.cols;
       // Palette item 1
@@ -1199,6 +1215,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT034Session(f34.content, f34.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const pointer: ClientPoint = { x: 10, y: 10 };
       const logicPt = toLogicPoint(pointer, canvasRect);
@@ -1223,6 +1240,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT034Session(f34.content, f34.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const patternLen = f34.content.target_pattern.length;
       const instSlot = session.slots[patternLen]; // First instrument
@@ -1250,6 +1268,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT035Session(f35.content, f35.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const pointer: ClientPoint = { x: 10, y: 10 };
       const logicPt = toLogicPoint(pointer, canvasRect);
@@ -1274,6 +1293,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT035Session(f35.content, f35.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const { rows, cols } = f35.content.grid;
       const gridSlotCount = rows * cols;
@@ -1301,6 +1321,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT036Session(f36.content, f36.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const pointer: ClientPoint = { x: 10, y: 10 };
       const logicPt = toLogicPoint(pointer, canvasRect);
@@ -1325,6 +1346,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       }
       const session = new GT036Session(f36.content, f36.difficulty);
       session.prepareRound("5-6");
+      session.commit({ type: "start_trials", data: {} });
 
       const count = f36.content.track_length;
       const palSlot = session.slots[count + 1]; // Second palette item
@@ -1348,6 +1370,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
     it("GT-001: chạm lại vào slot đã chọn thì giữ nguyên lựa chọn", () => {
       const session = new GT001Session(fixture.content, fixture.difficulty);
       session.prepareRound("3-4");
+      session.commit({ type: "start_trials", data: {} });
 
       const firstSlot = session.slots[0];
       if (!firstSlot) {

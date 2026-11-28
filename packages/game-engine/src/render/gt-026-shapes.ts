@@ -226,11 +226,24 @@ export function drawGT026StimulusPod(ctx: Ctx, rs: RS, p: SP): void {
   const { slot: s, stageBounds: sb } = p;
   const rSlot = p.shakeX === 0 ? s : { ...s, x: s.x + p.shakeX };
   ctx.save();
-  dLight(ctx, tBox(rSlot), p.kind === "go" ? "green" : "red", p.glow);
+  const ex = p.exit;
+  if (ex) {
+    const tail =
+      ex.kind === "shake"
+        ? Math.max(0, (ex.progress - 0.6) / 0.4)
+        : ex.progress;
+    ctx.globalAlpha = Math.max(0, 1 - tail);
+  } else {
+    dLight(ctx, tBox(rSlot), p.kind === "go" ? "green" : "red", p.glow);
+  }
   const stim = tStim(rSlot);
-  const noPulse = rs.reducedMotion || p.wrongProgress !== null;
+  const noPulse = rs.reducedMotion || p.wrongProgress !== null || Boolean(ex);
   const br = noPulse ? 1 : 1 + Math.sin(p.timeMs * 0.004) * 0.025;
-  const r = Math.min(stim.w, stim.h) * 0.43 * (p.isHovered ? 1.04 : br);
+  const pop =
+    ex?.kind === "pop" && !rs.reducedMotion
+      ? 1 + Math.sin(ex.progress * Math.PI) * 0.2
+      : 1;
+  const r = Math.min(stim.w, stim.h) * 0.43 * (p.isHovered ? 1.04 : br) * pop;
   const c = clampArc(stim.x, stim.y + (p.isHovered ? 1.5 : 0), r, sb);
   st(ctx, m.woodBorder, m.woodBorder, 1.5);
   circ(ctx, clampArc(c[0], c[1] + (p.isHovered ? 1.5 : 3), c[2], sb), false);

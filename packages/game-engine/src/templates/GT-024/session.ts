@@ -31,6 +31,7 @@ import {
   buildGT024ViewEntities,
   type GT024RenderHost,
   getGT024Clock,
+  gt024FitMargin,
   markGT024Reached,
   renderGT024,
   resetGT024Clock,
@@ -330,6 +331,16 @@ export class GT024Session
     return resolveGT024HintDestinationIndex(this);
   }
 
+  override getHintTarget(): HintTarget | null {
+    const cur = this.getCurrentOrderIndex();
+    const to = this.getHintDestinationIndex();
+    if (cur > 0 && to !== null) {
+      const from = this.slotOfWaypoint[cur - 1] ?? cur - 1;
+      return { kind: "slot", index: from, toIndex: to };
+    }
+    return super.getHintTarget();
+  }
+
   override getHintTargetForLevel(level: 1 | 2 | 3): HintTarget | null {
     return resolveGT024HintTargetForLevel(this, level);
   }
@@ -357,7 +368,12 @@ export class GT024Session
     ageBand: AgeBand
   ): readonly Slot[] {
     const floor = resolveTouchFloor(ageBand, this.cssPerLogic);
-    const fit = fitContentToStage(stage, floor / 2, this.content.waypoints);
+    const preHitHalf = Math.max(WAYPOINT_VIEW_RADIUS_PX, Math.round(floor) / 2);
+    const fit = fitContentToStage(
+      stage,
+      gt024FitMargin(preHitHalf),
+      this.content.waypoints
+    );
     this.screenWaypoints = this.content.waypoints.map((w) =>
       applyStageFit(w, fit)
     );

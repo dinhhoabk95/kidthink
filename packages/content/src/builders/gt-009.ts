@@ -6,7 +6,12 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
-import { createRng, resolveItemAsset, safeGetItem } from "./utils.js";
+import {
+  createRng,
+  resolveItemAsset,
+  safeGetItem,
+  shuffleDeterministic,
+} from "./utils.js";
 
 const MAX_CLUES_BAND_4_5 = 3;
 
@@ -111,105 +116,122 @@ function buildDed01HighClues(clueTotal: number): ClueSpec[] {
   ];
 }
 
+type NumericKind = "greater_than" | "less_than" | "not_equal";
+type Rng = ReturnType<typeof createRng>;
+const NUMERIC_SEARCH_ATTEMPTS = 4000;
+
+function numericClue(
+  index: number,
+  kind: NumericKind,
+  value: number
+): ClueSpec {
+  const text = {
+    greater_than: `Số này lớn hơn ${value}`,
+    less_than: `Số này nhỏ hơn ${value}`,
+    not_equal: `Số này khác ${value}`,
+  }[kind];
+  return { clue_id: `clue_${index}`, text, predicate: { kind, value } };
+}
+
+function drawNumericClue(
+  rng: Rng,
+  index: number,
+  answer: number,
+  candidateCount: number
+): ClueSpec | null {
+  const kinds: NumericKind[] = ["greater_than", "less_than", "not_equal"];
+  const kind = kinds[rng.nextInt(kinds.length)];
+  if (kind === "greater_than" && answer > 1) {
+    return numericClue(index, kind, 1 + rng.nextInt(answer - 1));
+  }
+  if (kind === "less_than" && answer < candidateCount) {
+    return numericClue(
+      index,
+      kind,
+      answer + 1 + rng.nextInt(candidateCount - answer)
+    );
+  }
+  if (kind === "not_equal" && candidateCount > 1) {
+    const other = 1 + rng.nextInt(candidateCount - 1);
+    return numericClue(index, kind, other >= answer ? other + 1 : other);
+  }
+  return null;
+}
+
+function numericHolds(value: number, clue: ClueSpec): boolean {
+  const { predicate } = clue;
+  if (predicate.kind === "greater_than") {
+    return value > predicate.value;
+  }
+  if (predicate.kind === "less_than") {
+    return value < predicate.value;
+  }
+  if (predicate.kind === "not_equal") {
+    return value !== predicate.value;
+  }
+  return false;
+}
+
+/** Mỗi manh mối loại thêm ≥1 ứng viên và cuối cùng còn đúng đáp án (`BR-E009-01/03`). */
+function isNumericChainValid(
+  clues: readonly ClueSpec[],
+  answer: number,
+  candidateCount: number
+): boolean {
+  let alive = Array.from({ length: candidateCount }, (_, i) => i + 1);
+  for (const clue of clues) {
+    const next = alive.filter((v) => numericHolds(v, clue));
+    if (next.length >= alive.length || !next.includes(answer)) {
+      return false;
+    }
+    alive = next;
+  }
+  return alive.length === 1 && alive[0] === answer;
+}
+
+/**
+ * Chọn đáp án theo rng của vòng rồi dựng manh mối quanh đáp án đó. `answerValue`
+ * là giá trị (1..candidateCount) của ứng viên đúng.
+ */
 function buildNumericClues(
+  rng: Rng,
   clueTotal: number,
   candidateCount: number
-): { prompt: string; answerCandidateId: string; clues: ClueSpec[] } {
+): { prompt: string; answerValue: number; clues: ClueSpec[] } {
   const prompt = "Đố bé mở manh mối tìm con số bí mật nhé!";
-  if (clueTotal === 1) {
-    return {
-      prompt,
-      answerCandidateId: `c${candidateCount}`,
-      clues: [
-        {
-          clue_id: "clue_1",
-          text: `Số này lớn hơn ${candidateCount - 1}`,
-          predicate: { kind: "greater_than", value: candidateCount - 1 },
-        },
-      ],
-    };
+  for (let attempt = 0; attempt < NUMERIC_SEARCH_ATTEMPTS; attempt++) {
+    const answerValue = 1 + rng.nextInt(candidateCount);
+    const clues: ClueSpec[] = [];
+    for (let i = 1; i <= clueTotal; i++) {
+      const clue = drawNumericClue(rng, i, answerValue, candidateCount);
+      if (clue) {
+        clues.push(clue);
+      }
+    }
+    if (
+      clues.length === clueTotal &&
+      isNumericChainValid(clues, answerValue, candidateCount)
+    ) {
+      return { prompt, answerValue, clues };
+    }
   }
-  if (clueTotal === 2) {
-    return {
-      prompt,
-      answerCandidateId: "c3",
-      clues: [
-        {
-          clue_id: "clue_1",
-          text: "Số này lớn hơn 2",
-          predicate: { kind: "greater_than", value: 2 },
-        },
-        {
-          clue_id: "clue_2",
-          text: "Số này nhỏ hơn 4",
-          predicate: { kind: "less_than", value: 4 },
-        },
-      ],
-    };
-  }
-  if (clueTotal >= FOUR_CLUES) {
-    // Sáu ứng viên (trần `BR-E009-09`): mỗi manh mối loại thêm ít nhất một ứng viên.
-    return {
-      prompt,
-      answerCandidateId: "c5",
-      clues: [
-        {
-          clue_id: "clue_1",
-          text: "Số này lớn hơn 2",
-          predicate: { kind: "greater_than", value: 2 },
-        },
-        {
-          clue_id: "clue_2",
-          text: "Số này nhỏ hơn 6",
-          predicate: { kind: "less_than", value: 6 },
-        },
-        {
-          clue_id: "clue_3",
-          text: "Số này khác 3",
-          predicate: { kind: "not_equal", value: 3 },
-        },
-        {
-          clue_id: "clue_4",
-          text: "Số này khác 4",
-          predicate: { kind: "not_equal", value: 4 },
-        },
-      ],
-    };
-  }
-  return {
-    prompt,
-    answerCandidateId: "c3",
-    clues: [
-      {
-        clue_id: "clue_1",
-        text: "Số này lớn hơn 1",
-        predicate: { kind: "greater_than", value: 1 },
-      },
-      {
-        clue_id: "clue_2",
-        text: "Số này nhỏ hơn 4",
-        predicate: { kind: "less_than", value: 4 },
-      },
-      {
-        clue_id: "clue_3",
-        text: "Số này khác 2",
-        predicate: { kind: "not_equal", value: 2 },
-      },
-    ],
-  };
+  throw new Error(
+    `[BR-E009-03] Không dựng được ${clueTotal} manh mối hợp lệ cho ${candidateCount} ứng viên`
+  );
 }
 
 function buildCluesForSkill(
   dataset: SkillDataset,
   opts: ProjectOptions,
+  rng: Rng,
   clueTotal: number,
   candidateCount: number
-): { prompt: string; answerCandidateId: string; clues: ClueSpec[] } {
+): { prompt: string; answerValue: number; clues: ClueSpec[] } {
   const attrPrompt = "Đố bé mở manh mối tìm đúng vật bí mật nhé!";
   if (dataset.skill_code === "C3.DED.02" && clueTotal === 3) {
     return {
       prompt: attrPrompt,
-      answerCandidateId: "c1",
+      answerValue: 1,
       clues: [
         {
           clue_id: "clue_1",
@@ -244,7 +266,7 @@ function buildCluesForSkill(
   if (dataset.skill_code === "C3.DED.01" && clueTotal === 2) {
     return {
       prompt: attrPrompt,
-      answerCandidateId: "c1",
+      answerValue: 1,
       clues: [
         {
           clue_id: "clue_1",
@@ -272,7 +294,7 @@ function buildCluesForSkill(
     // "nhỏ hơn 6" cũ chỉ loại c7/c8 (đã bỏ) nên thành dư thừa (`BR-E009-03`).
     return {
       prompt: attrPrompt,
-      answerCandidateId: "c5",
+      answerValue: 5,
       clues: [
         {
           clue_id: "clue_1",
@@ -303,11 +325,11 @@ function buildCluesForSkill(
   if (dataset.skill_code === "C3.DED.01" && opts.difficulty >= 4) {
     return {
       prompt: attrPrompt,
-      answerCandidateId: "c5",
+      answerValue: 5,
       clues: buildDed01HighClues(clueTotal),
     };
   }
-  return buildNumericClues(clueTotal, candidateCount);
+  return buildNumericClues(rng, clueTotal, candidateCount);
 }
 
 export const projectGT009: Projection<"GT-009"> = {
@@ -333,23 +355,40 @@ export const projectGT009: Projection<"GT-009"> = {
       rng.nextInt(dataset.items.length)
     );
 
-    const candidates = Array.from({ length: candidateCount }, (_, i) => {
-      const item = dataset.items[i % dataset.items.length] ?? baseItem;
+    const { prompt, answerValue, clues } = buildCluesForSkill(
+      dataset,
+      opts,
+      rng,
+      clueTotal,
+      candidateCount
+    );
+
+    // Xáo thứ tự hiển thị nhưng giữ cặp (vật, value) để mọi manh mối vẫn đúng;
+    // đáp án được xoay tới vị trí (base + round_index) nên các vòng không trùng chỗ.
+    const order = shuffleDeterministic(
+      Array.from({ length: candidateCount }, (_, i) => i),
+      rng
+    );
+    const answerSlot = order.indexOf(answerValue - 1);
+    const targetSlot =
+      (createRng(opts.seed).nextInt(candidateCount) + (opts.round_index ?? 0)) %
+      candidateCount;
+    const shift = (targetSlot - answerSlot + candidateCount) % candidateCount;
+    const candidates = order.map((_, slot) => {
+      const base = safeGetItem(
+        order,
+        (slot - shift + candidateCount) % candidateCount
+      );
+      const item = dataset.items[base % dataset.items.length] ?? baseItem;
       const attributes = extractStringAttributes(item);
       return {
-        candidate_id: `c${i + 1}`,
-        value: i + 1,
+        candidate_id: `c${slot + 1}`,
+        value: base + 1,
         asset: resolveItemAsset(item, true),
         ...(attributes ? { attributes } : {}),
       };
     });
-
-    const { prompt, answerCandidateId, clues } = buildCluesForSkill(
-      dataset,
-      opts,
-      clueTotal,
-      candidateCount
-    );
+    const answerCandidateId = `c${targetSlot + 1}`;
 
     return {
       content_pack: {

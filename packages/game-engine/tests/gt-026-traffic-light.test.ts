@@ -37,6 +37,7 @@ function open(): { session: GT026Session; rs: RenderSystem } {
   });
   const session = new GT026Session(content, difficulty, 3);
   session.prepareRound("5-6", space, zones.stage, undefined, cssPerLogic);
+  session.commit({ type: "start_trials", data: {} });
   const rs = new RenderSystem();
   rs.logicSpace = space;
   return { session, rs };

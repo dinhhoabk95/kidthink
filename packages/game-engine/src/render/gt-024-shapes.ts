@@ -161,7 +161,7 @@ export function drawGT024SandSlate(
       const half = sz / 2;
       ctx.drawImage(guideSprite, gx - half, gy - half, sz, sz);
     } else {
-      applyCanvasFontAtSize(ctx, px, "body", "normal");
+      applyCanvasFontAtSize(ctx, px, "sans", "normal");
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(opts.guideGlyph, gx, gy);

@@ -1,8 +1,19 @@
 import { describe, expect, it, vi } from "vitest";
+
+vi.mock("#src/render/gt-026-shapes", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("#src/render/gt-026-shapes")>();
+  return {
+    ...actual,
+    drawGT026StimulusPod: vi.fn(actual.drawGT026StimulusPod),
+  };
+});
+
 import { GT026Generator } from "#src/generators/gt026";
 import { deriveLogicSpace } from "#src/layout/constants";
 import { findHitEntity } from "#src/layout/hit-test";
 import { computeStageZones } from "#src/layout/stage-zones";
+import { drawGT026StimulusPod } from "#src/render/gt-026-shapes";
 import { createRng } from "#src/rng/mulberry32";
 import { RenderSystem } from "#src/systems/render-system";
 import { GT026_FIXTURES } from "#src/templates/GT-026/fixtures";
@@ -22,6 +33,12 @@ describe("GT-026 — phản xạ đi/dừng trên bề mặt web (BR-E026, BR-PN
   }
   const { content, difficulty } = fixture;
 
+  /** Phiên mặc định chờ nút bắt đầu (N1); các ca chơi phải bấm nút trước. */
+  function begin(session: GT026Session): GT026Session {
+    session.commit({ type: "start_trials", data: {} });
+    return session;
+  }
+
   function buildStageSession(seed = 1): GT026Session {
     const session = new GT026Session(content, difficulty, seed);
     const space = deriveLogicSpace(964, 628);
@@ -35,7 +52,7 @@ describe("GT-026 — phản xạ đi/dừng trên bề mặt web (BR-E026, BR-PN
       needsCommit: false,
     });
     session.prepareRound("4-5", space, zones.stage, undefined, cssPerLogic);
-    return session;
+    return begin(session);
   }
 
   function createCtx(): CanvasRenderingContext2D {
@@ -118,6 +135,7 @@ describe("GT-026 — phản xạ đi/dừng trên bề mặt web (BR-E026, BR-PN
       difficulty
     );
     nogoFirst.prepareRound("4-5");
+    begin(nogoFirst);
     const ctx = createCtx();
     const rs = new RenderSystem();
     const retrySpy = vi.spyOn(rs, "drawRetryRing");
@@ -153,6 +171,7 @@ describe("GT-026 — phản xạ đi/dừng trên bề mặt web (BR-E026, BR-PN
       difficulty
     );
     nogoSession.prepareRound("4-5");
+    begin(nogoSession);
     const verdict = nogoSession.update(difficulty.stimulus_window_ms + 10);
     expect(verdict?.valid).toBe(true);
     expect(getGT026Clock(nogoSession).outcomeFx?.kind).toBe(
@@ -193,10 +212,85 @@ describe("GT-026 — phản xạ đi/dừng trên bề mặt web (BR-E026, BR-PN
       y: startEntity.y,
       timeMs: 300,
     });
-    expect(startVerdict).toEqual({ valid: false, feedback: "none" });
+    expect(startVerdict).toEqual({ valid: true, feedback: "none" });
     expect(session.isWaitingForStart()).toBe(false);
     expect(session.isStimulusVisible()).toBe(true);
     expect(session.getView().entities[0]?.id).toBe(content.trials[0]?.id);
+  });
+
+  it("phiên mới mặc định chờ nút bắt đầu, update không ghi kết quả, bấm nút thì chuỗi chạy (N1, D-07)", () => {
+    const session = new GT026Session(content, difficulty, 1);
+    session.prepareRound("4-5");
+    expect(session.isWaitingForStart()).toBe(true);
+    expect(session.getView().entities[0]?.id).toBe("start-btn");
+
+    session.update(5000);
+    session.update(5000);
+    expect(session.getResults()).toHaveLength(0);
+    expect(session.getCurrentTrialIndex()).toBe(0);
+
+    begin(session);
+    expect(session.isWaitingForStart()).toBe(false);
+    expect(session.isStimulusVisible()).toBe(true);
+    session.update(difficulty.stimulus_window_ms + 10);
+    expect(session.getResults().length).toBe(1);
+  });
+
+  it("pha thoát: sau chạm pod vẫn vẽ không đèn, không nhận chạm; hết pha thì thôi vẽ (N4, BR-E026-12, D-08)", () => {
+    const session = buildStageSession();
+    const ctx = createCtx();
+    const rs = new RenderSystem();
+    const pod = vi.mocked(drawGT026StimulusPod);
+    const entity = session.getView().entities[0];
+    if (!entity) {
+      throw new Error("Missing stimulus entity");
+    }
+    session.render(ctx, rs, 100);
+    session.onTapStimulus();
+    expect(session.getState()).toBe("isi");
+
+    pod.mockClear();
+    session.render(ctx, rs, 200);
+    expect(pod).toHaveBeenCalledTimes(1);
+    expect(pod.mock.calls[0]?.[2].exit?.kind).toBe("pop");
+    expect(pod.mock.calls[0]?.[2].glow).toBe(0);
+    expect(
+      session.toAction({ type: "tap", x: entity.x, y: entity.y, timeMs: 210 })
+    ).toBeNull();
+    expect(session.getView().entities).toHaveLength(0);
+
+    session.update(Math.min(360, difficulty.isi_ms) + 5);
+    pod.mockClear();
+    session.render(ctx, rs, 700);
+    expect(session.getState()).toBe("isi");
+    expect(pod).not.toHaveBeenCalled();
+  });
+
+  it("pha thoát có nhánh reduced-motion và rung hổ phách khi chạm nhầm", () => {
+    const wrong = new GT026Session(
+      {
+        ...content,
+        trials: [
+          { id: "t1", kind: "nogo" },
+          { id: "t2", kind: "go" },
+          { id: "t3", kind: "go" },
+          { id: "t4", kind: "go" },
+        ],
+      },
+      difficulty
+    );
+    wrong.prepareRound("4-5");
+    begin(wrong);
+    wrong.render(createCtx(), new RenderSystem(), 100);
+    wrong.onTapStimulus();
+    const rs = new RenderSystem();
+    rs.reducedMotion = true;
+    const pod = vi.mocked(drawGT026StimulusPod);
+    pod.mockClear();
+    wrong.render(createCtx(), rs, 150);
+    const spec = pod.mock.calls[0]?.[2];
+    expect(spec?.exit?.kind).toBe("shake");
+    expect(spec?.shakeX).toBe(0);
   });
 
   it("thang gợi ý L1/L2/L3, getHintDemoSequence và onHintCleared hoạt động chuẩn (#301)", () => {
@@ -225,6 +319,7 @@ describe("GT-026 — phản xạ đi/dừng trên bề mặt web (BR-E026, BR-PN
       { ...difficulty, untimed: true }
     );
     untimedNogo.prepareRound("4-5");
+    begin(untimedNogo);
     expect(untimedNogo.getHintTargetForLevel(2)).toEqual({
       kind: "slot",
       index: 1,

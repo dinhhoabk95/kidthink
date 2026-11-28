@@ -40,6 +40,8 @@ describe("GameEngine.onUpdateVerdict — verdict ở nhịp update", () => {
       },
       () => session
     );
+    // Phiên mặc định chờ nút bắt đầu (N1); load() dựng lại phiên nên bấm sau load.
+    session.commit({ type: "start_trials", data: {} });
     const verdicts: boolean[] = [];
     engine.onUpdateVerdict = (isCorrect: boolean) => {
       verdicts.push(isCorrect);

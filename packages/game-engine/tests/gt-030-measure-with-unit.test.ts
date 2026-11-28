@@ -140,12 +140,13 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
       expect(session.getPlacedUnitsCount()).toBe(0);
       expect(session.checkWinCondition()).toBe(false);
 
-      // Attempting to select an answer before placing all units is rejected
+      // Chạm thẻ đáp số khi còn khoá: thao tác nháp, không chấm (BR-E029-12 / BR-E030-12)
       const premature = session.validateAction({
         type: "select_option",
         data: { option_id: "opt_4" },
       });
-      expect(premature.valid).toBe(false);
+      expect(premature.valid).toBe(true);
+      expect(premature.feedback).toBe("none");
       expect(session.checkWinCondition()).toBe(false);
 
       // Place 1st unit

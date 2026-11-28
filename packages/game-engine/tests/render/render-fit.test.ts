@@ -72,12 +72,12 @@ describe("drawSceneBackground — máy dọc phủ kín theo chiều cao", () =>
 });
 
 describe("chữ không tràn khung", () => {
-  it("drawTextInSlot truyền maxWidth 85% bề ngang ô", () => {
+  it("drawTextInSlot không bóp ngang bằng maxWidth (A-03)", () => {
     const { ctx, calls } = recordingContext();
     const slot = { x: 100, y: 100, w: 80, h: 80, hitW: 80, hitH: 80 } as Slot;
     drawTextInSlot(ctx, "04:30", slot);
     const text = calls.find((c) => c.name === "fillText");
-    expect(text?.args[3]).toBe(80 * 0.85);
+    expect(text?.args).toHaveLength(3);
   });
 
   it("drawPromptText giữ tối đa 2 dòng, dòng cuối kết thúc bằng …", () => {

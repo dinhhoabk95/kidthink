@@ -31,7 +31,11 @@ import {
   detectSlotVisualComparisonCue,
   drawSlotVisualComparisonCue,
 } from "./slot-decor.js";
-import { applyCanvasFontAtSize, legibleFontPx } from "./type-scale.js";
+import {
+  applyCanvasFontAtSize,
+  legibleFontPx,
+  REFERENCE_MOBILE_SCALE,
+} from "./type-scale.js";
 
 function fillCircle(
   ctx: CanvasRenderingContext2D,
@@ -183,7 +187,15 @@ function drawTrayFrontAndCard(
     h: card.h,
   };
   if (options.labelEmoji.trim().length > 0) {
-    drawGlyphInSlot(ctx, options.labelEmoji, cardSlot);
+    // Icon giỏ >= 24 px CSS: quy đổi theo tỉ lệ máy dọc tham chiếu (không có rs ở đây).
+    const minIconPx = Math.ceil(24 / REFERENCE_MOBILE_SCALE);
+    const naturalPx = Math.min(cardSlot.w, cardSlot.h) * 0.52;
+    drawGlyphInSlot(
+      ctx,
+      options.labelEmoji,
+      cardSlot,
+      Math.max(1, minIconPx / naturalPx)
+    );
   } else {
     const initial = options.label.trim().charAt(0).toUpperCase() || "•";
     drawTextInSlot(ctx, initial, cardSlot, theme.rim);

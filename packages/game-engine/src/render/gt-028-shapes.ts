@@ -171,7 +171,8 @@ export function drawGT028RunningTotalBadge(
 ): SceneBox {
   const { clip: c, dockRect: dk, wrongProgress: wp } = p;
   g.save();
-  const fontPx = setBadgeFont(g, rs, p.isWon ? SEM.success[700] : SF[900]);
+  const textCol = p.isWon ? SEM.success[700] : SF[900];
+  const fontPx = setBadgeFont(g, rs, textCol);
   const bw = Math.max(52, Math.round(fontPx * 2.2));
   const bh = Math.max(36, Math.round(fontPx * 1.45));
   const base = computeGT028TotalBadgeBox(c, dk, bw, bh);
@@ -183,6 +184,7 @@ export function drawGT028RunningTotalBadge(
   }
   const [bg, bd] = badgeCol(p);
   rbox(g, c, b, bg, bd);
+  g.fillStyle = textCol;
   const [tx, ty] = [cxIn(b.x + b.w / 2, c), cyIn(b.y + b.h / 2, c)];
   g.fillText(String(p.displayedTotal), tx, ty);
   g.restore();

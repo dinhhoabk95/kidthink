@@ -144,12 +144,13 @@ describe("GT-029: Bớt khỏi nhóm (remove-from-set)", () => {
       expect(session.getRemainingCount()).toBe(5);
       expect(session.checkWinCondition()).toBe(false);
 
-      // Attempting to select an answer before removing items fails
+      // Chạm thẻ đáp số khi còn khoá: thao tác nháp, không chấm (BR-E029-12 / BR-E030-12)
       const premature = session.validateAction({
         type: "select_option",
         data: { option_id: "opt_3" },
       });
-      expect(premature.valid).toBe(false);
+      expect(premature.valid).toBe(true);
+      expect(premature.feedback).toBe("none");
       expect(session.checkWinCondition()).toBe(false);
 
       // Remove item 1

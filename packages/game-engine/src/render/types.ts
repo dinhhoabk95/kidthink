@@ -357,6 +357,11 @@ export interface GT026StimulusPodSpec {
   readonly shakeX: number;
   readonly timeMs: number;
   readonly disableShadows: boolean;
+  /** Pha thoát sau chạm (N4, BR-E026-12): không vẽ đèn, chỉ vẽ pod đang tan. */
+  readonly exit?: {
+    readonly kind: "pop" | "fade" | "shake";
+    readonly progress: number;
+  };
 }
 
 export interface GT026StopPadSpec {

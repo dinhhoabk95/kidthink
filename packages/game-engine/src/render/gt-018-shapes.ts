@@ -225,7 +225,7 @@ function drawCardPost(ctx: Ctx, rs: Sys, s: Slot, p: GT018CardProps): void {
     circ(ctx, bx, by, brd);
     ctx.stroke();
     const px = legibleFontPx(brd * 1.15, rs.viewport?.scale);
-    applyCanvasFontAtSize(ctx, px, "bold");
+    applyCanvasFontAtSize(ctx, px, "sans", "bold");
     ctx.fillStyle = C.surface[900];
     [ctx.textAlign, ctx.textBaseline] = ["center", "middle"];
     ctx.fillText(String(orderNum), bx, by);

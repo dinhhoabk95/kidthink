@@ -24,7 +24,11 @@ import type { GT026DotStatus, RenderAsset, SceneBox } from "#src/render/types";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
-import type { TrialItem, TrialResult } from "#src/systems/inhibition-system";
+import type {
+  TrialItem,
+  TrialOutcome,
+  TrialResult,
+} from "#src/systems/inhibition-system";
 import type { RenderSystem } from "#src/systems/render-system";
 import { WrongFlash } from "#src/systems/wrong-flash";
 import type { GT026Content } from "./template.js";
@@ -96,6 +100,13 @@ export interface GT026Geometry {
   readonly windowRect: ZoneRect;
 }
 
+/** Pha thoát sau lượt vừa xong (N4): pod còn vẽ nhưng không nhận chạm, không đèn. */
+export interface GT026ExitPhase {
+  readonly outcome: TrialOutcome;
+  readonly progress: number;
+  readonly trial: TrialItem;
+}
+
 export interface GT026LayoutHost {
   readonly content: GT026Content;
   readonly cssPerLogic?: number;
@@ -106,6 +117,7 @@ export interface GT026LayoutHost {
   getAgeBand(): AgeBand;
   getCurrentTrial(): TrialItem | null;
   getCurrentTrialIndex(): number;
+  getExitPhase(): GT026ExitPhase | null;
   getResults(): readonly TrialResult[];
   getStageRect(): ZoneRect;
   getTotalTrials(): number;
@@ -451,6 +463,49 @@ function buildDotStatuses(host: GT026LayoutHost): GT026DotStatus[] {
   return dots;
 }
 
+function renderExitPod(
+  host: GT026LayoutHost,
+  clock: GT026ClockState,
+  ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
+  s0: Slot,
+  stageBounds: SceneBox,
+  phase: GT026ExitPhase
+): void {
+  const { trial, outcome, progress } = phase;
+  const stim =
+    trial.kind === "go" ? host.content.go_stimulus : host.content.nogo_stimulus;
+  let kind: "pop" | "fade" | "shake" = "fade";
+  if (outcome === "hit") {
+    kind = "pop";
+  } else if (outcome === "false_alarm") {
+    kind = "shake";
+  }
+  const shaking = kind === "shake";
+  const wrongActive = shaking && clock.wrongFlash.isActive(clock.lastFrameMs);
+  drawGT026StimulusPod(ctx, rs, {
+    slot: s0,
+    stageBounds,
+    kind: trial.kind,
+    asset: stim.asset,
+    glow: 0,
+    shakeX:
+      wrongActive && !rs.reducedMotion
+        ? Math.sin(clock.wrongFlash.elapsedMs(clock.lastFrameMs) / 30) * 4
+        : 0,
+    wrongProgress: wrongActive
+      ? clock.wrongFlash.progress(clock.lastFrameMs)
+      : null,
+    isHovered: false,
+    isHinted: false,
+    timeMs: clock.lastFrameMs,
+    disableShadows: host.degradation
+      ? !host.degradation.soft_shadows_enabled
+      : false,
+    exit: { kind, progress: cl(progress, 0, 1) },
+  });
+}
+
 function renderActiveStimulus(
   host: GT026LayoutHost,
   clock: GT026ClockState,
@@ -461,6 +516,12 @@ function renderActiveStimulus(
   stageBounds: SceneBox
 ): void {
   const trial = host.getCurrentTrial();
+  const exitPhase = host.getExitPhase();
+  if (exitPhase) {
+    clock.litTrialId = null;
+    renderExitPod(host, clock, ctx, rs, s0, stageBounds, exitPhase);
+    return;
+  }
   if (!(host.isStimulusVisible() && trial)) {
     clock.litTrialId = null;
     return;

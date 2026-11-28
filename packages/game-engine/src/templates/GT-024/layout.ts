@@ -242,6 +242,21 @@ export function gt024WaypointBaseRadius(hitHalfPx: number): number {
   return Number.isFinite(hitHalfPx) ? Math.max(legible, hitHalfPx) : legible;
 }
 
+const GT024_TARGET_SCALE = 1.12;
+const GT024_POP_SCALE = 1.14;
+const GT024_FIT_PAD_PX = 8;
+
+/**
+ * Lề fit của chấm mốc vào slate box: bán kính vẽ lớn nhất (chấm đích 1,12 x nhịp
+ * nháy 1,14) cộng đệm, để chấm không tràn viền bảng ở khung nhỏ.
+ */
+export function gt024FitMargin(hitHalfPx: number): number {
+  return Math.ceil(
+    gt024WaypointBaseRadius(hitHalfPx) * GT024_TARGET_SCALE * GT024_POP_SCALE +
+      GT024_FIT_PAD_PX
+  );
+}
+
 function buildOneRenderedWaypoint(
   host: GT024RenderHost,
   rs: RenderSystem,

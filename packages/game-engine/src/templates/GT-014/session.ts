@@ -64,7 +64,9 @@ import {
 } from "./template.js";
 import {
   layoutPanItems,
+  maxItemsPerPan,
   maxItemWeight,
+  panUnitSize,
   renderGT014Stage,
   renderGT014Tray,
 } from "./weight-size.js";
@@ -296,6 +298,7 @@ export class BalanceScaleSession extends TemplateGameSession<
     const c = this.content;
     const targets = this.targetSlots.slice().sort((a, b) => a.x - b.x);
     const maxWeight = maxItemWeight(allGT014WeightGroups(c));
+    const perPan = maxItemsPerPan(c);
     const assetById = populateGT014AssetMap(c, this.assetById);
     const { stageBounds, leftPan, rightPan, refBoxes } = computeGT014PanBoxes({
       stageRect: this.stageRect,
@@ -320,8 +323,18 @@ export class BalanceScaleSession extends TemplateGameSession<
       stageBounds,
       leftPanBox: leftPan,
       rightPanBox: rightPan,
-      leftPlaced: layoutPanItems(leftPan, wItems(this.leftItems), maxWeight),
-      rightPlaced: layoutPanItems(rightPan, wItems(this.rightItems), maxWeight),
+      leftPlaced: layoutPanItems(
+        leftPan,
+        wItems(this.leftItems),
+        maxWeight,
+        panUnitSize(leftPan, perPan)
+      ),
+      rightPlaced: layoutPanItems(
+        rightPan,
+        wItems(this.rightItems),
+        maxWeight,
+        panUnitSize(rightPan, perPan)
+      ),
       refBoxes,
       assetById,
       maxWeight,

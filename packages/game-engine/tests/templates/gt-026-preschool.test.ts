@@ -25,6 +25,8 @@ function build(
     { ...f.difficulty, untimed }
   );
   session.prepareRound("4-5");
+  // Phiên mặc định chờ nút bắt đầu (N1): bấm nút trước khi chơi.
+  session.commit({ type: "start_trials", data: {} });
   return session;
 }
 

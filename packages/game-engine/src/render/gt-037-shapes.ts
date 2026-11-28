@@ -287,7 +287,7 @@ export function drawGT037BrokenPlaceholder(
   applyCanvasFontAtSize(
     ctx,
     Math.max(16, Math.round(slot.h * 0.38)),
-    "body",
+    "sans",
     "bold"
   );
   ctx.fillStyle = designTokens.colors.surface[400];

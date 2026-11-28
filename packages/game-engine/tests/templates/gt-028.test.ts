@@ -431,3 +431,48 @@ describe("GT-028 — chạm đếm tích luỹ trên bề mặt web (BR-E028, BR
     ).toEqual([]);
   });
 });
+
+describe("GT-028 — bước trung gian là thao tác nháp (BR-E028-14, BR-EIC-10)", () => {
+  const f = GT028_FIXTURES[0];
+  if (!f) {
+    throw new Error("Fixture GT-028 not found");
+  }
+  const { content: fx, difficulty: fd } = f;
+
+  function build(): GT028Session {
+    const session = new GT028Session(fx, fd, 1);
+    const space = deriveLogicSpace(964, 628);
+    const cssPerLogic = 964 / space.w;
+    const zones = computeStageZones({
+      logicW: space.w,
+      logicH: space.h,
+      ageBand: "4-5",
+      cssPerLogic,
+      needsTray: false,
+      needsCommit: true,
+    });
+    session.prepareRound("4-5", space, zones.stage, undefined, cssPerLogic);
+    return session;
+  }
+
+  it("thêm, vượt đích rồi bớt đều trả feedback none, valid true", () => {
+    const session = build();
+    const ids = session.content.items.map((i) => i.item_id);
+    for (const id of ids) {
+      expect(session.onTapItem(id)).toEqual({ valid: true, feedback: "none" });
+    }
+    expect(session.onTapItem(ids[0] ?? "")).toEqual({
+      valid: true,
+      feedback: "none",
+    });
+  });
+
+  it("ca âm: nộp sai vẫn RETRY", () => {
+    const session = build();
+    const first = session.content.items[0]?.item_id ?? "";
+    session.onTapItem(first);
+    const r = session.onSubmitCount();
+    expect(r.valid).toBe(false);
+    expect(r.feedback).toBe("amber_soft");
+  });
+});

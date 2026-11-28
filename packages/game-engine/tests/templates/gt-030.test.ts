@@ -450,3 +450,37 @@ describe("GT-030 — hợp đồng vẽ thuần, 5 trạng thái, fallback, degr
     }
   });
 });
+
+describe("GT-030 — bước trung gian là thao tác nháp (BR-E030-12, BR-EIC-10)", () => {
+  const QUIET = { valid: true, feedback: "none" };
+
+  it("đặt, bỏ đơn vị và chạm đáp số khi dải chưa phủ kín đều QUIET_OK", () => {
+    const session = buildStageSession();
+    const opt = session.getDisplayOptions()[0];
+    expect(session.validateAction({ type: "place_unit", data: {} })).toEqual(
+      QUIET
+    );
+    session.commit({ type: "place_unit", data: {} });
+    expect(
+      session.validateAction({
+        type: "select_option",
+        data: { option_id: opt?.option_id },
+      })
+    ).toEqual(QUIET);
+    expect(session.validateAction({ type: "remove_unit", data: {} })).toEqual(
+      QUIET
+    );
+  });
+
+  it("ca âm: phủ kín rồi chọn đáp số sai vẫn RETRY", () => {
+    const session = buildStageSession();
+    placeAllUnits(session);
+    const wrong = session.getDisplayOptions().find((o) => !o.is_correct);
+    expect(
+      session.validateAction({
+        type: "select_option",
+        data: { option_id: wrong?.option_id },
+      }).valid
+    ).toBe(false);
+  });
+});

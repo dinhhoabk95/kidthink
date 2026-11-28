@@ -2,6 +2,7 @@ import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
+  ACTION_QUIET_OK,
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
@@ -357,19 +358,19 @@ export class GT030Session
     ) {
       return ACTION_RETRY;
     }
-    return ACTION_CORRECT;
+    return ACTION_QUIET_OK;
   }
 
   private validateRemoveAction(): ActionResult {
     if (this.placedUnitsCount <= 0) {
       return ACTION_IGNORED;
     }
-    return ACTION_CORRECT;
+    return ACTION_QUIET_OK;
   }
 
   private validateOptionAction(data: GT030ActionPayload): ActionResult {
     if (this.placedUnitsCount < this.content.object.length_in_units) {
-      return ACTION_RETRY;
+      return ACTION_QUIET_OK;
     }
     const option = this.resolveOption(data);
     if (!option) {

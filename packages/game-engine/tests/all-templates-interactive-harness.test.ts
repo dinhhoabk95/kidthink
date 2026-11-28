@@ -936,6 +936,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
         reduced_motion: false,
         audio_enabled: true,
       }) as unknown as {
+        commit: (action: { type: string; data: object }) => void;
         setupEntities: () => void;
         onTapStimulus: () => void;
         update: (delta: number) => void;
@@ -945,6 +946,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
         content: { trials: { kind: "go" | "nogo" }[] };
       };
       s.setupEntities();
+      s.commit({ type: "start_trials", data: {} });
       for (const _trial of s.content.trials) {
         const cur = s.getCurrentTrial();
         if (cur?.kind === "go") {

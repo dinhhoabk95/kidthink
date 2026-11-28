@@ -21,6 +21,7 @@ describe("GT-026: Chỉ chạm khi đúng dấu (go-nogo)", () => {
     }
     const session = new GT026Session(f1.content, f1.difficulty);
     session.setupEntities();
+    session.commit({ type: "start_trials", data: {} });
 
     const telemetry1 = session.getTelemetry();
     const roundStarted = telemetry1.events.find(
@@ -67,6 +68,7 @@ describe("GT-026: Chỉ chạm khi đúng dấu (go-nogo)", () => {
     }
     const session = new GT026Session(f1.content, f1.difficulty);
     session.prepareRound("4-5");
+    session.commit({ type: "start_trials", data: {} });
 
     const slot = session.slots[0];
     if (!slot) {
@@ -102,6 +104,7 @@ describe("GT-026: Chỉ chạm khi đúng dấu (go-nogo)", () => {
     const untimedDifficulty = { ...f1.difficulty, untimed: true };
     const session = new GT026Session(f1.content, untimedDifficulty);
     session.prepareRound("4-5");
+    session.commit({ type: "start_trials", data: {} });
 
     const slot = session.slots[0];
     if (!slot) {

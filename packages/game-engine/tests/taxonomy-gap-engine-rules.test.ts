@@ -92,6 +92,7 @@ describe("T18.4: Lô Taxonomy Gap — Luật cơ chế thật (GT-025..GT-027)",
     it("BR-E026-01: quy ước chuẩn Go và No-Go", () => {
       const session = new GT026Session(fixture.content, fixture.difficulty);
       session.setupEntities();
+      session.commit({ type: "start_trials", data: {} });
 
       const trial0 = fixture.content.trials[0];
       if (trial0?.kind === "go") {

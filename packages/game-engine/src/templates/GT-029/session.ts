@@ -2,6 +2,7 @@ import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
+  ACTION_QUIET_OK,
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
@@ -315,7 +316,7 @@ export class GT029Session
         removed_count: this.removedItemIds.size,
         remaining_needed: this.content.remove_count - this.removedItemIds.size,
       });
-      return ACTION_CORRECT;
+      return ACTION_QUIET_OK;
     }
 
     if (this.removedItemIds.size >= this.content.remove_count) {
@@ -340,7 +341,7 @@ export class GT029Session
       target_remove_count: this.content.remove_count,
     });
 
-    return ACTION_CORRECT;
+    return ACTION_QUIET_OK;
   }
 
   private handleOptionSelection(data: GT029ActionPayload): ActionResult {
@@ -404,12 +405,12 @@ export class GT029Session
       return ACTION_IGNORED;
     }
     if (this.removedItemIds.has(itemId)) {
-      return ACTION_CORRECT;
+      return ACTION_QUIET_OK;
     }
     if (this.removedItemIds.size >= this.content.remove_count) {
       return ACTION_RETRY;
     }
-    return ACTION_CORRECT;
+    return ACTION_QUIET_OK;
   }
 
   private validateOptionSelectionAction(
@@ -429,7 +430,7 @@ export class GT029Session
       return ACTION_IGNORED;
     }
     if (this.removedItemIds.size < this.content.remove_count) {
-      return ACTION_RETRY;
+      return ACTION_QUIET_OK;
     }
     return option.is_correct ? ACTION_CORRECT : ACTION_RETRY;
   }

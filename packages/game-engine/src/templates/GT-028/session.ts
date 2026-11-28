@@ -2,6 +2,7 @@ import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
+  ACTION_QUIET_OK,
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
@@ -275,7 +276,7 @@ export class GT028Session extends TemplateGameSession<
       this.react("happy", GT028_HOP_MS);
       const ev = { item_id: itemId, current_total: nCnt, step: s };
       this.recordEvent("item_tapped", ev);
-      return ACTION_CORRECT;
+      return ACTION_QUIET_OK;
     }
 
     if (this.difficulty.allow_undo) {
@@ -290,7 +291,7 @@ export class GT028Session extends TemplateGameSession<
       this.exploreTracker.recordExploreAction("step_counted");
       const ev = { item_id: itemId, current_total: nCnt, step: s };
       this.recordEvent("count_undone", ev);
-      return ACTION_CORRECT;
+      return ACTION_QUIET_OK;
     }
     return ACTION_IGNORED;
   }
